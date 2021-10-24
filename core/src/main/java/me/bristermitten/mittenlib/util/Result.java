@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.util;
 
+import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
+
 import java.util.Optional;
 import java.util.function.Function;
 

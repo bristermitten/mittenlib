@@ -1,0 +1,28 @@
+package me.bristermitten.mittenlib.util.lambda;
+
+import me.bristermitten.mittenlib.util.Errors;
+import me.bristermitten.mittenlib.util.Result;
+
+import java.util.function.Function;
+
+import static me.bristermitten.mittenlib.util.Result.runCatching;
+
+@FunctionalInterface
+public interface SafeFunction<T, R> {
+    R apply(T t) throws Throwable;
+
+    default Result<R> applyCatching(T t) {
+        return runCatching(() -> apply(t));
+    }
+
+    default Function<T, R> asFunction() {
+        return t -> {
+            try {
+                return apply(t);
+            } catch (Throwable e) {
+                Errors.sneakyThrow(e);
+                return null;
+            }
+        };
+    }
+}
