@@ -58,7 +58,7 @@ subprojects {
             publications {
                 create<MavenPublication>("maven") {
                     from(components["java"])
-                    groupId = "me.bristermitten.mittenlib"
+                    artifactId = "mittenlib-$artifactId"
                 }
             }
         }
