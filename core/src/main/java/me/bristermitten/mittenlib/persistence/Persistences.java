@@ -4,11 +4,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
+
 public interface Persistences<I, T, P extends Persistence<I, T>> {
-    @NotNull Optional<P> json();
+    @NotNull
+    default Optional<P> json() {
+        return empty();
+    }
 
-    @NotNull Optional<P> sqlite();
+    @NotNull
+    default Optional<P> sqlite() {
+        return empty();
+    }
 
-    @NotNull Optional<P> mariadb();
-
+    @NotNull
+    default Optional<P> mariadb() {
+        return empty();
+    }
 }
