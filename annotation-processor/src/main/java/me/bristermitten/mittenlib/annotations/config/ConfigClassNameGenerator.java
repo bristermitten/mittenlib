@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConfigClassNameGenerator {
-    private static final Pattern SUFFIX_PATTERN = Pattern.compile("(.+)(DAO|Config)");
+    private static final Pattern SUFFIX_PATTERN = Pattern.compile("(.+)(DTO|Config)");
 
     private ConfigClassNameGenerator() {
     }
