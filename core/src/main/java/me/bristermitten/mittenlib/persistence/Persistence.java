@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface Persistence<I, T> {
+    @NotNull CompletableFuture<Unit> init();
+
     @NotNull CompletableFuture<Unit> save(@NotNull T value);
 
     @NotNull CompletableFuture<Optional<T>> load(@NotNull I id);
