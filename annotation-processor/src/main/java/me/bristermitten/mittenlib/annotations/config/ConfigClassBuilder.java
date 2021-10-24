@@ -4,6 +4,7 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.StringUtil;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.ConfigMapLoader;
+import me.bristermitten.mittenlib.config.Source;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -63,21 +64,15 @@ public class ConfigClassBuilder {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
+        createConfigurationField(classType, className, typeSpecBuilder);
+
         final List<FieldSpec> fieldSpecs = variableElements.stream()
                 .map(this::createFieldSpec)
                 .collect(Collectors.toList());
 
         fieldSpecs.forEach(typeSpecBuilder::addField);
 
-        final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addParameters(variableElements.stream()
-                        .map(this::createParameterSpec)
-                        .collect(Collectors.toList()));
-
-        fieldSpecs.forEach(field ->
-                constructorBuilder.addStatement(String.format("this.%1$s = %1$s", field.name)));
-        typeSpecBuilder.addMethod(constructorBuilder.build());
+        addAllArgsConstructor(variableElements, fieldSpecs, typeSpecBuilder);
 
         typeSpecBuilder.addMethod(
                 createDeserializeMethod(classType, className, variableElements)
@@ -112,6 +107,30 @@ public class ConfigClassBuilder {
 
         return JavaFile.builder(packageName, typeSpecBuilder.build())
                 .build();
+    }
+
+    private void addAllArgsConstructor(List<VariableElement> variableElements, List<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder) {
+        final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addParameters(variableElements.stream()
+                        .map(this::createParameterSpec)
+                        .collect(Collectors.toList()));
+
+        fieldSpecs.forEach(field ->
+                constructorBuilder.addStatement(String.format("this.%1$s = %1$s", field.name)));
+        typeSpecBuilder.addMethod(constructorBuilder.build());
+    }
+
+    private void createConfigurationField(TypeElement classType, ClassName className, TypeSpec.Builder typeSpecBuilder) {
+        final Source annotation = classType.getAnnotation(Source.class);
+        if (annotation != null) {
+            // Create Configuration type
+            final FieldSpec configField = FieldSpec.builder(className, "CONFIG")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                    .initializer(String.format("new Configuration<>(%s, $T.class)", annotation.value()), className)
+                    .build();
+            typeSpecBuilder.addField(configField);
+        }
     }
 
     private MethodSpec createDeserializeMethod(TypeElement daoType, TypeName className, List<VariableElement> variableElements) {
