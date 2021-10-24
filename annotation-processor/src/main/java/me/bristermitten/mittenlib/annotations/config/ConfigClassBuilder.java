@@ -4,6 +4,7 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.StringUtil;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.ConfigMapLoader;
+import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.Source;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -127,7 +128,7 @@ public class ConfigClassBuilder {
             // Create Configuration type
             final FieldSpec configField = FieldSpec.builder(className, "CONFIG")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                    .initializer(String.format("new Configuration<>(%s, $T.class)", annotation.value()), className)
+                    .initializer("new $T<>($S, $T.class)", Configuration.class, annotation.value(), className)
                     .build();
             typeSpecBuilder.addField(configField);
         }
