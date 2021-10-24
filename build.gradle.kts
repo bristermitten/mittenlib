@@ -1,9 +1,11 @@
 plugins {
     java
+    `maven-publish`
 }
 
 subprojects {
     apply<JavaPlugin>()
+    apply<MavenPublishPlugin>()
 
 
     group = "me.bristermitten"
@@ -12,7 +14,10 @@ subprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = sourceCompatibility
+        withSourcesJar()
+        withJavadocJar()
     }
+
     repositories {
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -27,11 +32,37 @@ subprojects {
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     }
 
-    tasks.getByName<Test>("test") {
+    tasks.test {
         useJUnitPlatform()
     }
 
+    tasks.javadoc {
+        if (JavaVersion.current().isJava9Compatible) {
+            (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+        }
+    }
 
+    publishing {
+        repositories {
+            maven {
+                val releasesRepoUrl = "https://repo.bristermitten.me/repository/maven-releases"
+                val snapshotsRepoUrl = "https://repo.bristermitten.me/repository/maven-snapshots"
+                url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+
+                credentials {
+                    username = project.findProperty("mavenUser")?.toString() ?: System.getenv("MAVEN_USER")
+                    password = project.findProperty("mavenPassword")?.toString() ?: System.getenv("MAVEN_PASSWORD")
+                }
+            }
+
+            publications {
+                create<MavenPublication>("maven") {
+                    from(components["java"])
+                    groupId = "me.bristermitten.mittenlib"
+                }
+            }
+        }
+    }
 }
 
 
