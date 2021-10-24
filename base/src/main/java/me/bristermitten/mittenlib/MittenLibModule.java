@@ -1,13 +1,18 @@
 package me.bristermitten.mittenlib;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Set;
 
 public class MittenLibModule<T extends Plugin> extends AbstractModule {
     private final T plugin;
+    private final Set<Module> modules;
 
-    public MittenLibModule(T plugin) {
+    public MittenLibModule(T plugin, Set<Module> modules) {
         this.plugin = plugin;
+        this.modules = modules;
     }
 
     @Override
@@ -16,6 +21,8 @@ public class MittenLibModule<T extends Plugin> extends AbstractModule {
         //noinspection unchecked
         bind((Class<T>) plugin.getClass()).toInstance(plugin);
 
-        // TODO install the rest of the modules
+        for (Module module : modules) {
+            install(module);
+        }
     }
 }

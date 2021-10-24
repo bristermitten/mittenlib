@@ -87,7 +87,7 @@ public class FileWatcherService implements Runnable {
         for (WatchEvent<?> pollEvent : key.pollEvents()) {
             //noinspection unchecked
             WatchEvent<Path> event = (WatchEvent<Path>) pollEvent;
-            
+
             final Path resolved = at.resolve(event.context()); // the file that changed
             final Set<FileWatcher> fileWatchers = watchers.get(resolved);
             if (fileWatchers == null) {
