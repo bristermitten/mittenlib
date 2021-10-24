@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Source {
     /**
-     * File name for the source of the config
+     * @return File name for the source of the config
      */
     String value();
 }

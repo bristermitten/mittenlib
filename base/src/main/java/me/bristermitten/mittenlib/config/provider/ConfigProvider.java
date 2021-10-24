@@ -12,6 +12,8 @@ public interface ConfigProvider<T> extends Provider<T> {
      * <p>
      * However if it is coming from the File System (in most cases, it will), then a filled optional should
      * be returned to allow things like {@link FileWatchingConfigProvider}
+     *
+     * @return The path for of the config's source
      */
     Optional<Path> path();
 }

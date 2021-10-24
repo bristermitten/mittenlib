@@ -11,7 +11,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 /**
- * Creates a {@link TypeAdapter<LangMessage>} that can serialize elements with just a message to plain
+ * Creates a {@link TypeAdapter} that can serialize elements with just a message to plain
  * Strings (i.e not complex objects), and vice versa
  */
 public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
