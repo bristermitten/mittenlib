@@ -11,10 +11,7 @@ import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class MittenLib<T extends Plugin> {
 
@@ -40,9 +37,15 @@ public final class MittenLib<T extends Plugin> {
         return this;
     }
 
-    public MittenLib<T> addConfigModule(Set<Configuration<?>> configs) {
+    public MittenLib<T> addConfigModules(Set<Configuration<?>> configs) {
         addModule(new ConfigModule(configs));
         return this;
+    }
+
+    public MittenLib<T> addConfigModules(Configuration<?>... configs) {
+        return addConfigModules(
+                new HashSet<>(Arrays.asList(configs))
+        );
     }
 
     public MittenLib<T> addModule(Module module) {
