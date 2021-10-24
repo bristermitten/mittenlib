@@ -124,14 +124,17 @@ public class ConfigClassBuilder {
 
     private void createConfigurationField(TypeElement classType, ClassName className, TypeSpec.Builder typeSpecBuilder) {
         final Source annotation = classType.getAnnotation(Source.class);
-        if (annotation != null) {
-            // Create Configuration type
-            final FieldSpec configField = FieldSpec.builder(className, "CONFIG")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                    .initializer("new $T<>($S, $T.class)", Configuration.class, annotation.value(), className)
-                    .build();
-            typeSpecBuilder.addField(configField);
+        if (annotation == null) {
+            return;
         }
+
+        // Create Configuration type
+        final TypeName type = ParameterizedTypeName.get(ClassName.get(Configuration.class), className);
+        final FieldSpec configField = FieldSpec.builder(type, "CONFIG")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .initializer("new $T<>($S, $T.class)", Configuration.class, annotation.value(), className)
+                .build();
+        typeSpecBuilder.addField(configField);
     }
 
     private MethodSpec createDeserializeMethod(TypeElement daoType, TypeName className, List<VariableElement> variableElements) {
