@@ -9,6 +9,10 @@ import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 @FunctionalInterface
 public interface SafeFunction<T, R> {
+    static <T, R> SafeFunction<T, R> constant(R r) {
+        return unused -> r;
+    }
+
     R apply(T t) throws Throwable;
 
     default Result<R> applyCatching(T t) {
