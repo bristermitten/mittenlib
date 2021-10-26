@@ -2,6 +2,10 @@ package me.bristermitten.mittenlib.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
+import me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy;
+import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
+import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
+import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.LazyConfigProvider;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
@@ -23,6 +27,9 @@ public class ConfigModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ObjectLoader.class).to(SearchingObjectLoader.class);
+        bind(ConfigInitializationStrategy.class).to(PluginConfigInitializationStrategy.class);
+        bind(ConfigPathResolver.class).to(PluginConfigPathResolver.class);
+
         configurations.stream()
                 .collect(Collectors.toMap(Function.identity(), LazyConfigProvider::new))
                 .forEach((configuration, provider) -> {

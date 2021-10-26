@@ -4,7 +4,6 @@ import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 public class ReadingConfigProvider<T> implements ConfigProvider<T> {
@@ -12,10 +11,10 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
     private final ConfigReader reader;
     private final Path path;
 
-    public ReadingConfigProvider(Configuration<T> config, ConfigReader reader) {
+    public ReadingConfigProvider(Path path, Configuration<T> config, ConfigReader reader) {
+        this.path = path;
         this.config = config;
         this.reader = reader;
-        this.path = Paths.get(config.getFileName());
     }
 
     @Override
