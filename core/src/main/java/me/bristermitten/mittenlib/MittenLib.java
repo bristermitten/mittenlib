@@ -38,8 +38,7 @@ public final class MittenLib<T extends Plugin> {
     }
 
     public MittenLib<T> addConfigModules(Set<Configuration<?>> configs) {
-        addModule(new ConfigModule(configs));
-        return this;
+        return addModule(new ConfigModule(configs));
     }
 
     public MittenLib<T> addConfigModules(Configuration<?>... configs) {
