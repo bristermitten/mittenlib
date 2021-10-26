@@ -5,6 +5,7 @@ import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import java.nio.file.Path;
 
 public class YamlFileType implements FileType {
@@ -12,8 +13,9 @@ public class YamlFileType implements FileType {
     private static final String YAML_LONG_EXTENSION = "yaml";
     private final YamlObjectLoader yamlObjectLoader;
 
-    public YamlFileType(YamlObjectLoader yamlObjectLoader) {
-        this.yamlObjectLoader = yamlObjectLoader;
+    @Inject
+    public YamlFileType(YamlObjectLoader objectLoader) {
+        this.yamlObjectLoader = objectLoader;
     }
 
     @Override
