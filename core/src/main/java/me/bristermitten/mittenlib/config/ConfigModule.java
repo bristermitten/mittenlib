@@ -9,6 +9,7 @@ import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
 import me.bristermitten.mittenlib.util.CompositeType;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ConfigModule extends AbstractModule {
@@ -23,8 +24,9 @@ public class ConfigModule extends AbstractModule {
     protected void configure() {
         bind(ObjectLoader.class).to(SearchingObjectLoader.class);
         configurations.stream()
-                .collect(Collectors.toMap(Object::getClass, LazyConfigProvider::new))
-                .forEach((key, provider) -> {
+                .collect(Collectors.toMap(Function.identity(), LazyConfigProvider::new))
+                .forEach((configuration, provider) -> {
+                    final Class<?> key = configuration.getType();
                     // beware of evil generic type erasure hell
                     bind((Class<? super Object>) key).toProvider(provider); // bind the type itself, T to Provider<T>
 
