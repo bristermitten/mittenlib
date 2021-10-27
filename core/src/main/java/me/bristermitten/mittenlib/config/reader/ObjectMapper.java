@@ -5,8 +5,8 @@ import me.bristermitten.mittenlib.util.Result;
 import java.util.Map;
 
 public interface ObjectMapper {
-    <T> Result<T> map(Map<Object, Object> map, Class<T> type);
+    <T> Result<T> map(Map<String, Object> map, Class<T> type);
 
-    <T> Map<Object, Object> map(T t);
+    <T> Map<String, Object> map(T t);
 
 }

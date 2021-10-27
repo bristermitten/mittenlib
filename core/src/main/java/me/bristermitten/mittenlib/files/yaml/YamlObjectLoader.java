@@ -21,9 +21,9 @@ public class YamlObjectLoader implements ObjectLoader {
     }
 
     @Override
-    public @NotNull Result<Map<Object, Object>> load(@NotNull Path source) {
+    public @NotNull Result<Map<String, Object>> load(@NotNull Path source) {
         //noinspection unchecked
         return runCatching(() ->
-                (Map<Object, Object>) yaml.load(Files.newBufferedReader(source)));
+                (Map<String, Object>) yaml.load(Files.newBufferedReader(source)));
     }
 }

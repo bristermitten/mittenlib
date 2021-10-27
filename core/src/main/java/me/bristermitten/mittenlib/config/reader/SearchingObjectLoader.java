@@ -20,7 +20,7 @@ public class SearchingObjectLoader implements ObjectLoader {
     }
 
     @Override
-    public @NotNull Result<Map<Object, Object>> load(@NotNull Path source) {
+    public @NotNull Result<Map<String, Object>> load(@NotNull Path source) {
         for (FileType fileType : loaders) {
             if (!fileType.matches(source)) {
                 continue;

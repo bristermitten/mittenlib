@@ -7,7 +7,7 @@ import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
-import me.bristermitten.mittenlib.config.provider.LazyConfigProvider;
+import me.bristermitten.mittenlib.config.provider.DelegatingConfigProvider;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
 import me.bristermitten.mittenlib.util.CompositeType;
@@ -31,7 +31,7 @@ public class ConfigModule extends AbstractModule {
         bind(ConfigPathResolver.class).to(PluginConfigPathResolver.class);
 
         configurations.stream()
-                .collect(Collectors.toMap(Function.identity(), LazyConfigProvider::new))
+                .collect(Collectors.toMap(Function.identity(), DelegatingConfigProvider::new))
                 .forEach((configuration, provider) -> {
                     final Class<?> key = configuration.getType();
                     // beware of evil generic type erasure hell

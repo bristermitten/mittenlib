@@ -7,5 +7,5 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public interface ObjectLoader {
-    @NotNull Result<Map<Object, Object>> load(@NotNull final Path source);
+    @NotNull Result<Map<String, Object>> load(@NotNull final Path source);
 }

@@ -7,11 +7,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
-public class LazyConfigProvider<T> implements ConfigProvider<T> {
+public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
     private final Configuration<T> configuration;
     private ConfigProvider<T> delegate;
 
-    public LazyConfigProvider(Configuration<T> configuration) {
+    public DelegatingConfigProvider(Configuration<T> configuration) {
         this.configuration = configuration;
     }
 

@@ -20,7 +20,7 @@ public class GsonObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public <T> Result<T> map(Map<Object, Object> map, Class<T> type) {
+    public <T> Result<T> map(Map<String, Object> map, Class<T> type) {
         return Result.runCatching(() -> {
             final JsonElement tree = gson.toJsonTree(map);
             return gson.fromJson(tree, type);
@@ -28,7 +28,7 @@ public class GsonObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public <T> Map<Object, Object> map(T t) {
+    public <T> Map<String, Object> map(T t) {
         final JsonElement tree = gson.toJsonTree(t);
         return gson.fromJson(tree, MAP_OBJ_OBJ_TYPE);
     }

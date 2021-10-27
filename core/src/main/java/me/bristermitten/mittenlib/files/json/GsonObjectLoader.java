@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class GsonObjectLoader implements ObjectLoader {
-    private static final Type MAP_OBJ_OBJ_TYPE = new CompositeType(Map.class, Object.class, Object.class);
+    private static final Type MAP_STRING_OBJ_TYPE = new CompositeType(Map.class, String.class, Object.class);
     private final Gson gson;
 
     @Inject
@@ -23,7 +23,7 @@ public class GsonObjectLoader implements ObjectLoader {
 
     @Override
     @NotNull
-    public Result<Map<Object, Object>> load(@NotNull Path source) {
-        return Result.runCatching(() -> gson.fromJson(Files.newBufferedReader(source), MAP_OBJ_OBJ_TYPE));
+    public Result<Map<String, Object>> load(@NotNull Path source) {
+        return Result.runCatching(() -> gson.fromJson(Files.newBufferedReader(source), MAP_STRING_OBJ_TYPE));
     }
 }

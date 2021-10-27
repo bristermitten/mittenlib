@@ -19,7 +19,7 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
 
     @Override
     public T get() {
-        return reader.load(config.getType(), path)
+        return reader.load(config.getType(), path, config.getDeserializeFunction())
                 .getOrThrow();
     }
 
