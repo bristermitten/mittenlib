@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ConfigClassBuilder {
-    private static final TypeName MAP_STRING_OBJ_NAMe = ParameterizedTypeName.get(Map.class, String.class, Object.class);
+    private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private final ProcessingEnvironment environment;
 
     public ConfigClassBuilder(ProcessingEnvironment environment) {
@@ -141,7 +141,7 @@ public class ConfigClassBuilder {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(className)
-                .addParameter(ParameterSpec.builder(MAP_STRING_OBJ_NAMe, "data").addModifiers(Modifier.FINAL).build());
+                .addParameter(ParameterSpec.builder(MAP_STRING_OBJ_NAME, "data").addModifiers(Modifier.FINAL).build());
         // create the dao
         builder.addStatement("$1T dao = new $1T()", (daoType.asType()));
         for (VariableElement element : variableElements) {
@@ -163,7 +163,7 @@ public class ConfigClassBuilder {
             if (isConfigType) {
                 builder.nextControlFlow(String.format("else if (%s instanceof Map)", fromMapName));
                 builder.addStatement(String.format("%s = $T.deserialize(($T) %s)", variableName, fromMapName),
-                        elementType, MAP_STRING_OBJ_NAMe);
+                        elementType, MAP_STRING_OBJ_NAME);
             }
             builder.nextControlFlow("else");
             builder.addStatement(String.format("throw $T.throwNotFound($S, $S, $T.class, %s)", fromMapName), ConfigMapLoader.class, variableName, typeMirror, daoType);
