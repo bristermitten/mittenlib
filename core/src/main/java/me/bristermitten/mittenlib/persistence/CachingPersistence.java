@@ -39,13 +39,14 @@ public class CachingPersistence<I, T> implements Persistence<I, T> {
 
     @Override
     public @NotNull CompletableFuture<Unit> init() {
-        return delegate.loadAll()
-                .thenApply(elements -> {
-                    for (T element : elements) {
-                        addToCache(idFunction.apply(element), element);
-                    }
-                    return Unit.UNIT;
-                });
+        return delegate.init().thenCompose(unit ->
+                delegate.loadAll()
+                        .thenApply(elements -> {
+                            for (T element : elements) {
+                                addToCache(idFunction.apply(element), element);
+                            }
+                            return Unit.UNIT;
+                        }));
     }
 
     @Override
