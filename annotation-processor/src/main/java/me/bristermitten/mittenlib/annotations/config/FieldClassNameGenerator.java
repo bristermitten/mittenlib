@@ -5,6 +5,7 @@ import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.config.names.NamingPatternTransformer;
 import org.jetbrains.annotations.NotNull;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 
 public class FieldClassNameGenerator {
@@ -18,9 +19,18 @@ public class FieldClassNameGenerator {
         }
 
         NamingPattern annotation = element.getAnnotation(NamingPattern.class);
+        Element enclosingElement = element.getEnclosingElement();
+
         if (annotation == null) {
-            annotation = element.getEnclosingElement().getAnnotation(NamingPattern.class);
+            while (enclosingElement != null) {
+                annotation = enclosingElement.getAnnotation(NamingPattern.class);
+                if (annotation != null) {
+                    break;
+                }
+                enclosingElement = enclosingElement.getEnclosingElement();
+            }
         }
+
         if (annotation != null) {
             return NamingPatternTransformer.format(
                     element.getSimpleName().toString(), annotation.value()
