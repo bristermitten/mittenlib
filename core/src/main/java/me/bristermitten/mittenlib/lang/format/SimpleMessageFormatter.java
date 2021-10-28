@@ -18,6 +18,7 @@ public class SimpleMessageFormatter extends AbstractMessageFormatter {
 
     @Override
     public @NotNull Component format(@NotNull String message, @Nullable OfflinePlayer player) {
-        return LegacyComponentSerializer.legacySection().deserialize(message);
+        return LegacyComponentSerializer.legacySection().deserialize(
+                preFormat(message, player));
     }
 }
