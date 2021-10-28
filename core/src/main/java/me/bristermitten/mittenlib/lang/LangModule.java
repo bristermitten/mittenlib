@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.lang;
 import com.google.gson.TypeAdapterFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+import me.bristermitten.mittenlib.lang.format.MessageFormatter;
+import me.bristermitten.mittenlib.lang.format.SimpleMessageFormatter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 
 public class LangModule extends AbstractModule {
@@ -12,5 +14,6 @@ public class LangModule extends AbstractModule {
                 .addBinding().to(LangMessageTypeAdapterFactory.class);
 
         bind(BukkitAudiences.class).toProvider(AdventureAudienceProvider.class);
+        bind(MessageFormatter.class).to(SimpleMessageFormatter.class);
     }
 }

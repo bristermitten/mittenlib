@@ -1,10 +1,7 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.config.Config;
-import me.bristermitten.mittenlib.config.ConfigMapLoader;
-import me.bristermitten.mittenlib.config.Configuration;
-import me.bristermitten.mittenlib.config.Source;
+import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 
@@ -146,9 +143,11 @@ public class ConfigClassBuilder {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, className))
-                .addParameter(ParameterSpec.builder(MAP_STRING_OBJ_NAME, "data").addModifiers(Modifier.FINAL).build());
-        // create the dao
+                .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
+
+        builder.addStatement("$T data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement("$1T dao = new $1T()", (daoType.asType()));
+
         for (VariableElement variableElement : variableElements) {
             final TypeMirror typeMirror = variableElement.asType();
             final TypeMirror safeType = getSafeType(environment.getTypeUtils(), typeMirror);
@@ -167,16 +166,22 @@ public class ConfigClassBuilder {
             builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeElementType);
             builder.addStatement(format("%s = ($T) %s", variableName, fromMapName), elementType);
 
+
+            builder.nextControlFlow(format("else if (%s instanceof Map)", fromMapName));
+            builder.addStatement(String.format("$1T mapData = ($1T) %s", fromMapName), MAP_STRING_OBJ_NAME);
+            builder.addStatement("$T<$T> res", Result.class, safeElementType);
             if (isConfigType) {
-                builder.nextControlFlow(format("else if (%s instanceof Map)", fromMapName));
-                builder.addStatement(format("Result<$T> res = $T.deserialize(($T) %s)", fromMapName),
-                        elementType, elementType, MAP_STRING_OBJ_NAME);
-                builder.addStatement("$T<$T> error = res.error()", Optional.class, Throwable.class);
-                builder.beginControlFlow("if (error.isPresent())")
-                        .addStatement("return $T.fail(error.get())", Result.class)
-                        .endControlFlow();
-                builder.addStatement(format("%s = res.getOrThrow()", variableName));
+                builder.addStatement(("res = $1T.deserialize(context.withData(mapData))" +
+                                      ".orElse(() -> context.getMapper().map(mapData, $1T.class))"), elementType);
+            } else {
+                builder.addStatement("res = context.getMapper().map(mapData, $T.class)", safeElementType);
             }
+            builder.addStatement("$T<$T> error = res.error()", Optional.class, Throwable.class);
+            builder.beginControlFlow("if (error.isPresent())")
+                    .addStatement("return $T.fail(error.get())", Result.class)
+                    .endControlFlow();
+            builder.addStatement(format("%s = res.getOrThrow()", variableName));
+
             builder.nextControlFlow("else");
             builder.addStatement(format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName), Result.class, ConfigMapLoader.class, variableName, typeMirror, daoType);
             builder.endControlFlow();

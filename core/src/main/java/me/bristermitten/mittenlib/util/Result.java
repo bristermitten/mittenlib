@@ -4,6 +4,7 @@ import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface Result<T> {
     static <T> Result<T> ok(T t) {
@@ -31,6 +32,8 @@ public interface Result<T> {
         return flatMap(t -> ok(function.apply(t)));
     }
 
+    Result<T> orElse(Supplier<Result<T>> supplier);
+
     <R> Result<R> flatMap(Function<T, Result<R>> function); // monad :D
 
     T getOrThrow();
@@ -50,6 +53,11 @@ public interface Result<T> {
         @Override
         public Optional<Throwable> error() {
             return Optional.of(exception);
+        }
+
+        @Override
+        public Result<T> orElse(Supplier<Result<T>> supplier) {
+            return supplier.get();
         }
 
         @Override
@@ -80,6 +88,11 @@ public interface Result<T> {
         @Override
         public Optional<Throwable> error() {
             return Optional.empty();
+        }
+
+        @Override
+        public Result<T> orElse(Supplier<Result<T>> supplier) {
+            return this;
         }
 
         @Override

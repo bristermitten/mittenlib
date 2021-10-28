@@ -1,11 +1,11 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.function.Function;
 
 public class ConfigReader {
@@ -18,11 +18,12 @@ public class ConfigReader {
         this.mapper = mapper;
     }
 
-    public <T> Result<T> load(Class<T> type, Path source, @Nullable Function<Map<String, Object>, Result<T>> deserializeFunction) {
-        final Function<Map<String, Object>, Result<T>> mappingFunction =
-                deserializeFunction == null ? map -> mapper.map(map, type) : deserializeFunction;
+    public <T> Result<T> load(Class<T> type, Path source, @Nullable Function<DeserializationContext, Result<T>> deserializeFunction) {
+        final Function<DeserializationContext, Result<T>> mappingFunction =
+                deserializeFunction == null ? ctx -> mapper.map(ctx.getData(), type) : deserializeFunction;
 
         return loader.load(source)
+                .map(data -> new DeserializationContext(mapper, data))
                 .flatMap(mappingFunction);
     }
 }

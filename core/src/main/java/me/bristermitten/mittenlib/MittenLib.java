@@ -7,6 +7,7 @@ import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.lang.LangModule;
+import me.bristermitten.mittenlib.lang.format.hook.HookModule;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ public final class MittenLib<T extends Plugin> {
         addModule(new LangModule());
         addModule(new FileWatcherModule());
         addModule(new FileTypeModule());
+        addModule(new HookModule());
         return this;
     }
 
