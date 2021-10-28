@@ -147,11 +147,11 @@ public class ConfigClassBuilder {
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
                 .addParameter(ParameterSpec.builder(ClassName.get(daoType), "dao").build());
 
-        builder.addStatement("$T $data = context.getData()", MAP_STRING_OBJ_NAME);
+        builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement(format("$T %s", variableName), elementType);
         final String fromMapName = variableName + "FromMap";
         final String key = FieldClassNameGenerator.getConfigFieldName(element);
-        builder.addStatement(format("Object %s = $data.getOrDefault($S, dao.%s)", fromMapName, variableName), key);
+        builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName, variableName), key);
 
         if (!isNullable(element)) {
             builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
