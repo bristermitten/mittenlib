@@ -16,4 +16,8 @@ public class Maps {
     public static <K, V> @Unmodifiable Map<K, V> of(@NotNull K k, @NotNull V v) {
         return new MapImpls.Map1<>(k, v);
     }
+
+    public static <K, V> @Unmodifiable Map<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2) {
+        return new MapImpls.Map2<>(k1, v1, k2, v2);
+    }
 }

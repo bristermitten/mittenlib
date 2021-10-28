@@ -30,4 +30,28 @@ class SetsTest {
         assertTrue(sets.contains("hello"));
         assertFalse(sets.contains("hello_world"));
     }
+
+    @Test
+    void assertThat_set2_creationWorks() {
+        final Set<String> hello = Sets.of("hello", "world");
+        assertEquals(2, hello.size());
+    }
+
+    @Test
+    void assertThat_set2_equalityWorks() {
+        final Set<String> sets = Sets.of("hello", "world");
+        final Set<String> hashSet = new HashSet<>();
+        hashSet.add("hello");
+        hashSet.add("world");
+        assertEquals(hashSet, sets);
+        assertEquals(sets, hashSet);
+    }
+
+    @Test
+    void assertThat_set2_containsWorks() {
+        final Set<String> sets = Sets.of("hello", "world");
+        assertTrue(sets.contains("hello"));
+        assertTrue(sets.contains("world"));
+        assertFalse(sets.contains("hello_world"));
+    }
 }

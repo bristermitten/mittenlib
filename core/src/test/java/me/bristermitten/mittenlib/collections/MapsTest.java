@@ -33,4 +33,37 @@ class MapsTest {
         assertFalse(maps.containsKey("hello_world"));
         assertFalse(maps.containsValue("hello"));
     }
+
+    @Test
+    void assertThat_map2_creationWorks() {
+        final Map<String, String> maps = Maps.of("hello", "world", "a", "b");
+        assertEquals(2, maps.size());
+        assertEquals("world", maps.get("hello"));
+        assertEquals("b", maps.get("a"));
+    }
+
+    @Test
+    void assertThat_map2_equalityWorks() {
+        final Map<String, String> maps = Maps.of("hello", "world", "a", "b");
+        final Map<String, String> hashMap = new HashMap<>();
+        hashMap.put("hello", "world");
+        hashMap.put("a", "b");
+
+        assertEquals(hashMap, maps);
+        assertEquals(maps, hashMap);
+    }
+
+    @Test
+    void assertThat_map2_containsWorks() {
+        final Map<String, String> maps = Maps.of("hello", "world", "a", "b");
+        assertTrue(maps.containsKey("hello"));
+        assertTrue(maps.containsValue("world"));
+        assertTrue(maps.containsKey("a"));
+        assertTrue(maps.containsValue("b"));
+
+        assertFalse(maps.containsKey("hello_world"));
+        assertFalse(maps.containsValue("hello"));
+        assertFalse(maps.containsKey("b"));
+        assertFalse(maps.containsValue("a"));
+    }
 }

@@ -13,4 +13,8 @@ public class Sets {
     public static <E> Set<E> of(E e) {
         return new SetImpls.Set1<>(e);
     }
+
+    public static <E> Set<E> of(E e1, E e2) {
+        return new SetImpls.Set2<>(e1, e2);
+    }
 }
