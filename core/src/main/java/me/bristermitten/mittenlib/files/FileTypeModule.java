@@ -1,9 +1,11 @@
 package me.bristermitten.mittenlib.files;
 
+import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.files.json.GsonObjectMapper;
+import me.bristermitten.mittenlib.files.json.GsonProvider;
 
 public class FileTypeModule extends AbstractModule {
     private final FileTypes types;
@@ -26,5 +28,6 @@ public class FileTypeModule extends AbstractModule {
         }
 
         bind(ObjectMapper.class).to(objectMapper);
+        bind(Gson.class).toProvider(GsonProvider.class);
     }
 }
