@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.squareup.javapoet.*;
+import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
@@ -8,12 +9,9 @@ import me.bristermitten.mittenlib.util.Strings;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -77,9 +75,8 @@ public class ConfigClassBuilder {
 
         addAllArgsConstructor(variableElements, fieldSpecs, typeSpecBuilder);
 
-        typeSpecBuilder.addMethod(
-                createDeserializeMethod(classType, className, variableElements)
-        );
+
+        createDeserializeMethod(typeSpecBuilder, classType, className, variableElements);
 
         // Generate getter methods
         fieldSpecs.forEach(field ->
@@ -138,68 +135,101 @@ public class ConfigClassBuilder {
         typeSpecBuilder.addField(configField);
     }
 
-    private MethodSpec createDeserializeMethod(TypeElement daoType, TypeName className, List<VariableElement> variableElements) {
+    private MethodSpec createDeserializeMethodFor(TypeElement daoType, VariableElement element) {
+        final TypeName elementType = getTypeName(element.asType());
+        final Name variableName = element.getSimpleName();
+        final TypeMirror safeType = TypesUtil.getSafeType(environment.getTypeUtils(), element.asType());
+        final TypeName safeTypeName = getTypeName(safeType);
+
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize_" + variableName)
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, safeTypeName))
+                .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
+                .addParameter(ParameterSpec.builder(ClassName.get(daoType), "dao").build());
+
+        builder.addStatement("$T data = context.getData()", MAP_STRING_OBJ_NAME);
+        builder.addStatement(format("$T %s", variableName), elementType);
+        final String fromMapName = variableName + "FromMap";
+        final String key = FieldClassNameGenerator.getConfigFieldName(element);
+        builder.addStatement(format("Object %s = data.getOrDefault($S, dao.%s)", fromMapName, variableName), key);
+
+        if (!isNullable(element)) {
+            builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
+            builder.addStatement(String.format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName),
+                    Result.class, ConfigMapLoader.class, variableName, element, daoType);
+            builder.endControlFlow();
+        }
+
+        builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
+        builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
+        builder.endControlFlow();
+
+        if (isConfigType(element.asType())) {
+            builder.beginControlFlow(String.format("if (%s instanceof $T)", fromMapName), Map.class);
+            builder.addStatement(String.format("$1T mapData = ($1T) %s", fromMapName), MAP_STRING_OBJ_NAME);
+            builder.addStatement("return $T.deserialize(context.withData(mapData))", elementType);
+            builder.endControlFlow();
+        }
+
+        builder.addStatement(String.format("return context.getMapper().map(%1$s, $T.class)", fromMapName), safeTypeName);
+        return builder.build();
+    }
+
+    private boolean isConfigType(TypeMirror mirror) {
+        return mirror instanceof DeclaredType &&
+               ((DeclaredType) mirror).asElement().getAnnotation(Config.class) != null;
+    }
+
+    private boolean isNullable(VariableElement element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            if (ann.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder, TypeElement daoType, TypeName className, List<VariableElement> variableElements) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, className))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
 
-        builder.addStatement("$T data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement("$1T dao = new $1T()", (daoType.asType()));
 
-        for (VariableElement variableElement : variableElements) {
-            final TypeMirror typeMirror = variableElement.asType();
-            final TypeMirror safeType = getSafeType(environment.getTypeUtils(), typeMirror);
-            final TypeName elementType = getTypeName(typeMirror);
-            final TypeName safeElementType = getTypeName(safeType);
-            final Name variableName = variableElement.getSimpleName();
-            final String key = FieldClassNameGenerator.getConfigFieldName(variableElement);
+        final List<MethodSpec> deserializeMethods = variableElements.stream()
+                .map(variableElement -> createDeserializeMethodFor(daoType, variableElement))
+                .collect(Collectors.toList());
 
-            final boolean isConfigType = typeMirror instanceof DeclaredType &&
-                                         ((DeclaredType) typeMirror).asElement().getAnnotation(Config.class) != null;
+        deserializeMethods.forEach(typeSpecBuilder::addMethod);
 
-            builder.addStatement(format("$T %s", variableName), elementType);
-            final String fromMapName = variableName + "FromMap";
-            builder.addStatement(format("Object %s = data.getOrDefault($S, dao.%s)", fromMapName, variableName), key);
-
-            builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeElementType);
-            builder.addStatement(format("%s = ($T) %s", variableName, fromMapName), elementType);
-
-
-            builder.nextControlFlow(format("else if (%s instanceof Map)", fromMapName));
-            builder.addStatement(String.format("$1T mapData = ($1T) %s", fromMapName), MAP_STRING_OBJ_NAME);
-            builder.addStatement("$T<$T> res", Result.class, safeElementType);
-            if (isConfigType) {
-                builder.addStatement(("res = $1T.deserialize(context.withData(mapData))" +
-                                      ".orElse(() -> context.getMapper().map(mapData, $1T.class))"), elementType);
-            } else {
-                builder.addStatement("res = context.getMapper().map(mapData, $T.class)", safeElementType);
+        final StringBuilder expressionBuilder = new StringBuilder();
+        expressionBuilder.append("return ");
+        int i = 0;
+        for (MethodSpec deserializeMethod : deserializeMethods) {
+            expressionBuilder.append(deserializeMethod.name)
+                    .append("(context, dao)")
+                    .append(".flatMap(var")
+                    .append(i++)
+                    .append("->\n");
+        }
+        expressionBuilder.append("$T.ok(new $T(");
+        for (int i1 = 0; i1 < i; i1++) {
+            expressionBuilder.append("var")
+                    .append(i1);
+            if (i1 != i - 1) {
+                expressionBuilder.append(", ");
             }
-            builder.addStatement("$T<$T> error = res.error()", Optional.class, Throwable.class);
-            builder.beginControlFlow("if (error.isPresent())")
-                    .addStatement("return $T.fail(error.get())", Result.class)
-                    .endControlFlow();
-            builder.addStatement(format("%s = res.getOrThrow()", variableName));
-
-            builder.nextControlFlow("else");
-            builder.addStatement(format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName), Result.class, ConfigMapLoader.class, variableName, typeMirror, daoType);
-            builder.endControlFlow();
+        }
+        expressionBuilder.append("))"); // Close ok and new parens
+        for (int $ = 0; $ < i; $++) {
+            expressionBuilder.append(")"); // close all the flatMap parens
         }
 
-        final String constructorArguments = Strings.joinWith(variableElements, VariableElement::getSimpleName, ", ");
 
-        builder.addStatement(format("return $T.ok(new $T(%s))",
-                        constructorArguments),
-                Result.class, className);
+        builder.addStatement(expressionBuilder.toString(), Result.class, className);
 
-        return builder.build();
-    }
-
-    private TypeMirror getSafeType(Types types, TypeMirror typeMirror) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return types.boxedClass((PrimitiveType) typeMirror).asType();
-        }
-        return types.erasure(typeMirror);
+        typeSpecBuilder.addMethod(builder.build());
     }
 }
