@@ -5,8 +5,11 @@ import com.google.common.cache.CacheBuilder;
 import me.bristermitten.mittenlib.util.Unit;
 import me.bristermitten.mittenlib.util.lambda.Functions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -89,6 +92,16 @@ public class CachingPersistence<I, T> implements Persistence<I, T> {
                     }
                     o.forEach(this::addToCache);
                 });
+    }
+
+    /**
+     * Return all elements already in the cache
+     * This will not perform any blocking operations
+     *
+     * @return all elements already in the cache
+     */
+    public @UnmodifiableView Map<I, T> lookupAll() {
+        return Collections.unmodifiableMap(cache.asMap());
     }
 
     @Override
