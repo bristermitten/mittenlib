@@ -37,7 +37,7 @@ public class CachingPersistence<I, T> implements Persistence<I, T> {
     }
 
     protected void addToCache(T data) {
-        cache.put(idFunction.apply(data), data);
+        addToCache(idFunction.apply(data), data);
     }
 
     @Override
