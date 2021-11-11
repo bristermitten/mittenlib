@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import me.bristermitten.mittenlib.lang.format.MessageFormatter;
 import me.bristermitten.mittenlib.lang.format.SimpleMessageFormatter;
+import me.bristermitten.mittenlib.lang.format.hook.HookModule;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 
 public class LangModule extends AbstractModule {
@@ -15,5 +16,7 @@ public class LangModule extends AbstractModule {
 
         bind(BukkitAudiences.class).toProvider(AdventureAudienceProvider.class);
         bind(MessageFormatter.class).to(SimpleMessageFormatter.class);
+
+        install(new HookModule());
     }
 }

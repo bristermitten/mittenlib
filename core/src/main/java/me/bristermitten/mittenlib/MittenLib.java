@@ -3,11 +3,11 @@ package me.bristermitten.mittenlib;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.util.Modules;
 import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.lang.LangModule;
-import me.bristermitten.mittenlib.lang.format.hook.HookModule;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,6 @@ public final class MittenLib<T extends Plugin> {
         addModule(new LangModule());
         addModule(new FileWatcherModule());
         addModule(new FileTypeModule());
-        addModule(new HookModule());
         return this;
     }
 
@@ -59,6 +58,19 @@ public final class MittenLib<T extends Plugin> {
     }
 
     private void addModule0(Module module) {
+        Class<? extends Module> moduleClass = module.getClass();
+        boolean superClass = false;
+        for (Map.Entry<Class<? extends Module>, Module> entry :
+                new HashSet<>(modules.entrySet())) {
+            if (entry.getKey().isAssignableFrom(moduleClass)) {
+                final Module overriding = Modules.override(entry.getValue()).with(module);
+                modules.put(entry.getKey(), overriding);
+                superClass = true;
+            }
+        }
+        if (superClass) {
+            return;
+        }
         modules.put(module.getClass(), module);
     }
 }
