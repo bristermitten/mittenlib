@@ -30,6 +30,9 @@ public class FileWatcherService implements Runnable {
     }
 
     public void addWatcher(FileWatcher fileWatcher) {
+        if(!watching.get()){
+            startWatching();
+        }
         final Set<FileWatcher> fileWatchers =
                 watchers.computeIfAbsent(fileWatcher.getWatching(), path -> ConcurrentHashMap.newKeySet());
         fileWatchers.add(fileWatcher);
