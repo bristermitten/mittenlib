@@ -42,6 +42,7 @@ public class Version implements Comparable<Version> {
     public static final Version VER_1_16_5 = new Version(1, 16, 5);
     public static final Version VER_1_17 = new Version(1, 17, 0);
     public static final Version VER_1_17_1 = new Version(1, 17, 1);
+    public static final Version VER_1_18 = new Version(1, 18, 0);
 
     private static final Cached<Version> serverVersion;
 
@@ -52,7 +53,7 @@ public class Version implements Comparable<Version> {
                 final String[] parts = version.split("\\.");
                 int majorVer = Integer.parseInt(parts[0]);
                 int minorVer = Integer.parseInt(parts[1]);
-                int patchVer = Integer.parseInt(parts[2]);
+                int patchVer = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
                 return new Version(majorVer, minorVer, patchVer);
             } catch (RuntimeException e) {
                 e.printStackTrace();
