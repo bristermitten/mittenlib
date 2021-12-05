@@ -161,6 +161,22 @@ public class ConfigClassBuilder {
         typeSpecBuilder.addField(configField);
     }
 
+    private String getFieldAccessorName(VariableElement variableElement) {
+        var containing = ((TypeElement) variableElement.getEnclosingElement());
+        // look for a getter method
+        final String varName = variableElement.getSimpleName().toString();
+        var getterName = "get" + Strings.capitalize(varName);
+        return environment.getElementUtils().getAllMembers(containing)
+                .stream()
+                .filter(it -> it.getKind() == ElementKind.METHOD)
+                .map(it -> (ExecutableElement) it)
+                .filter(it -> it.getParameters().isEmpty()) // no-args method
+                .filter(it -> it.getSimpleName().toString().equals(getterName) || it.getSimpleName().toString().equals(varName))
+                .findFirst()
+                .map(getter -> getter.getSimpleName() + "()")
+                .orElse(varName);
+    }
+
     private MethodSpec createDeserializeMethodFor(TypeElement daoType, VariableElement element) {
         final TypeName elementType = getTypeName(element.asType());
         final Name variableName = element.getSimpleName();
@@ -177,7 +193,8 @@ public class ConfigClassBuilder {
         builder.addStatement(format("$T %s", variableName), elementType);
         final String fromMapName = variableName + "FromMap";
         final String key = FieldClassNameGenerator.getConfigFieldName(element);
-        builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName, variableName), key);
+        builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName,
+                getFieldAccessorName(element)), key);
 
         if (!isNullable(element)) {
             builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
