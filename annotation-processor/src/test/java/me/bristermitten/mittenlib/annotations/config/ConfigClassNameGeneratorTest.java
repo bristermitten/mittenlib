@@ -24,7 +24,7 @@ class ConfigClassNameGeneratorTest {
                                     public final CommandsDTO commands = null;
                                     @me.bristermitten.mittenlib.config.Config
                                     public static final class CommandsDTO {
-                                        private final SelectionDTO selection = null;
+                                        public final SelectionDTO selection = null;
                                         @me.bristermitten.mittenlib.config.Config
                                         public static final class SelectionDTO {
                                             public final me.bristermitten.mittenlib.lang.LangMessage rename = null;
@@ -37,7 +37,7 @@ class ConfigClassNameGeneratorTest {
                                     @me.bristermitten.mittenlib.config.Config
                                     public static final class ErrorsDTO {
                                         public final me.bristermitten.mittenlib.lang.LangMessage noSelection = null;
-                                        private final SelectionDTO selection = null;
+                                        public final SelectionDTO selection = null;
                                         @me.bristermitten.mittenlib.config.Config
                                         public static final class SelectionDTO {
                                             public final me.bristermitten.mittenlib.lang.LangMessage nodeExists = null;

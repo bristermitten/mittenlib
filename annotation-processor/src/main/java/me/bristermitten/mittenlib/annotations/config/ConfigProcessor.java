@@ -29,8 +29,6 @@ public class ConfigProcessor extends AbstractProcessor {
                 .stream()
                 .map(roundEnv::getElementsAnnotatedWith)
                 .flatMap(Collection::stream)
-                .map(Element::getEnclosedElements)
-                .flatMap(Collection::stream)
                 .filter(element -> element instanceof TypeElement)
                 .map(element -> (TypeElement) element)
                 .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
