@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.squareup.javapoet.*;
+import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.util.Result;
@@ -12,7 +13,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -41,6 +41,19 @@ public class ConfigClassBuilder {
                 .build();
     }
 
+    private void addInnerClasses(TypeSpec.Builder typeSpecBuilder, TypeElement classType) {
+        classType.getEnclosedElements()
+                .stream()
+                .filter(element -> element instanceof TypeElement)
+                .map(element -> (TypeElement) element)
+                .forEach(typeElement -> {
+                    TypeSpec configClass = createConfigClass(typeElement,
+                            ElementsUtil.getApplicableVariableElements(typeElement));
+                    configClass = configClass.toBuilder().addModifiers(Modifier.STATIC).build();
+                    typeSpecBuilder.addType(configClass);
+                });
+    }
+
     private TypeName getTypeName(TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return TypeName.get(typeMirror);
@@ -50,29 +63,33 @@ public class ConfigClassBuilder {
         if (packageElement.isUnnamed()) {
             throw new IllegalArgumentException("Unnamed packages are not supported");
         }
-        String packageName = packageElement.toString();
-        return ConfigClassNameGenerator.generateConfigClassName(element)
-                .map(className -> (TypeName) ClassName.get(packageName, className))
+        return ConfigClassNameGenerator.generateFullConfigClassName(environment, element)
+                .map(className -> (TypeName) className)
                 .orElseGet(() -> TypeName.get(typeMirror));
     }
 
-    public JavaFile createConfigClass(TypeElement classType, List<VariableElement> variableElements) {
-        final PackageElement packageOf = environment.getElementUtils().getPackageOf(classType);
-        final String packageName = packageOf.isUnnamed() ? "" : packageOf.toString();
-        final String simpleClassName = ConfigClassNameGenerator.generateConfigClassName(classType)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
-        ClassName className = ClassName.get(packageName, simpleClassName);
+    private TypeSpec createConfigClass(TypeElement classType,
+                                       List<VariableElement> variableElements) {
+        final ClassName className =
+                ConfigClassNameGenerator.generateFullConfigClassName(environment, classType)
+                        .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
+        return createConfigClass(classType, variableElements, className);
+    }
+
+    private TypeSpec createConfigClass(TypeElement classType,
+                                       List<VariableElement> variableElements,
+                                       ClassName className) {
+
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-
         createConfigurationField(classType, className, typeSpecBuilder);
 
         final List<FieldSpec> fieldSpecs = variableElements.stream()
                 .map(this::createFieldSpec)
-                .collect(Collectors.toList());
+                .toList();
 
         fieldSpecs.forEach(typeSpecBuilder::addField);
-
+        addInnerClasses(typeSpecBuilder, classType);
         addAllArgsConstructor(variableElements, fieldSpecs, typeSpecBuilder);
 
 
@@ -104,8 +121,17 @@ public class ConfigClassBuilder {
                             .build());
         });
 
-        return JavaFile.builder(packageName, typeSpecBuilder.build())
-                .build();
+        return typeSpecBuilder.build();
+    }
+
+    public JavaFile createConfigFile(TypeElement classType,
+                                     List<VariableElement> variableElements) {
+        final ClassName className =
+                ConfigClassNameGenerator.generateFullConfigClassName(environment, classType)
+                        .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
+        final TypeSpec configClass = createConfigClass(classType, variableElements, className);
+
+        return JavaFile.builder(className.packageName(), configClass).build();
     }
 
     private void addAllArgsConstructor(List<VariableElement> variableElements, List<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder) {
@@ -113,7 +139,7 @@ public class ConfigClassBuilder {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameters(variableElements.stream()
                         .map(this::createParameterSpec)
-                        .collect(Collectors.toList()));
+                        .toList());
 
         fieldSpecs.forEach(field ->
                 constructorBuilder.addStatement(format("this.%1$s = %1$s", field.name)));
@@ -200,7 +226,7 @@ public class ConfigClassBuilder {
 
         final List<MethodSpec> deserializeMethods = variableElements.stream()
                 .map(variableElement -> createDeserializeMethodFor(daoType, variableElement))
-                .collect(Collectors.toList());
+                .toList();
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
 
@@ -223,9 +249,7 @@ public class ConfigClassBuilder {
             }
         }
         expressionBuilder.append("))"); // Close ok and new parens
-        for (int $ = 0; $ < i; $++) {
-            expressionBuilder.append(")"); // close all the flatMap parens
-        }
+        expressionBuilder.append(")".repeat(Math.max(0, i))); // close all the flatMap parens
 
 
         builder.addStatement(expressionBuilder.toString(), Result.class, className);

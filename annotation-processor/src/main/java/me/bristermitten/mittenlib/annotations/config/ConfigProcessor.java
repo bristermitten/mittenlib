@@ -2,11 +2,12 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
+import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
+import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import java.io.IOException;
@@ -30,15 +31,16 @@ public class ConfigProcessor extends AbstractProcessor {
                 .flatMap(Collection::stream)
                 .map(Element::getEnclosedElements)
                 .flatMap(Collection::stream)
-                .filter(element -> element.getKind().isField())
-                .map(VariableElement.class::cast)
-                .filter(elem -> !elem.getModifiers().contains(Modifier.TRANSIENT)) // ignore transient fields
-                .filter(elem -> !elem.getModifiers().contains(Modifier.STATIC)) // ignore static fields
+                .filter(element -> element instanceof TypeElement)
+                .map(element -> (TypeElement) element)
+                .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
+                .map(ElementsUtil::getApplicableVariableElements)
+                .flatMap(Collection::stream)
                 .collect(groupingBy(VariableElement::getEnclosingElement));
 
         ConfigClassBuilder builder = new ConfigClassBuilder(processingEnv);
         types.forEach((clazz, fields) -> {
-            JavaFile fileContent = builder.createConfigClass((TypeElement) clazz, fields);
+            JavaFile fileContent = builder.createConfigFile((TypeElement) clazz, fields);
             try {
                 fileContent.writeTo(processingEnv.getFiler());
             } catch (IOException e) {
