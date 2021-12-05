@@ -1,5 +1,5 @@
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = sourceCompatibility
 }
 
@@ -9,6 +9,6 @@ dependencies {
     implementation("com.google.auto.service:auto-service-annotations:1.0.1")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")
 
-    testImplementation("org.mockito:mockito-core:4.0.0")
+    testImplementation("org.mockito:mockito-core:4.1.0")
     testImplementation("com.google.testing.compile:compile-testing:0.19")
 }
