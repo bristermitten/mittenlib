@@ -53,6 +53,11 @@ public class CachingPersistence<I, T> implements Persistence<I, T> {
     }
 
     @Override
+    public @NotNull CompletableFuture<Unit> cleanup() {
+        return saveAll(cache.asMap().values()); // Flush the cache
+    }
+
+    @Override
     public @NotNull CompletableFuture<Unit> save(@NotNull T value) {
         addToCache(value);
         return delegate.save(value);
