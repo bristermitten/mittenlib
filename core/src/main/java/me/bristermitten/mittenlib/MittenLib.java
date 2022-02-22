@@ -53,6 +53,13 @@ public final class MittenLib<T extends Plugin> {
         return this;
     }
 
+    public MittenLib<T> addModules(Module... modules) {
+        for (Module module : modules) {
+            addModule0(module);
+        }
+        return this;
+    }
+
     public @NotNull Injector build() {
         return Guice.createInjector(new MittenLibModule<>(plugin, new HashSet<>(modules.values())));
     }
