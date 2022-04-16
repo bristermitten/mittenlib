@@ -9,6 +9,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates a {@link TypeAdapter} that can serialize elements with just a message to plain
@@ -42,6 +44,15 @@ public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
             public LangMessage read(JsonReader in) throws IOException {
                 if (in.peek() == JsonToken.STRING) {
                     return new LangMessage(in.nextString(), null, null, null, null);
+                }
+                if (in.peek() == JsonToken.BEGIN_ARRAY) {
+                    final List<String> lines = new ArrayList<>();
+                    in.beginArray();
+                    while (in.hasNext()) {
+                        lines.add(in.nextString());
+                    }
+                    in.endArray();
+                    return new LangMessage(String.join("\n", lines), null, null, null, null);
                 }
                 return delegateAdapter.read(in);
             }
