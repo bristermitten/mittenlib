@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultMiniMessageFactory implements AbstractMiniMessageFactory {
     @Override
     public @NotNull MiniMessage create(@Nullable OfflinePlayer player) {
-        return MiniMessage.builder()
-                .build();
+        return MiniMessage.miniMessage();
     }
 }

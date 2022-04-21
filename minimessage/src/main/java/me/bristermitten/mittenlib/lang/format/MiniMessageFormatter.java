@@ -21,7 +21,7 @@ public class MiniMessageFormatter extends AbstractMessageFormatter {
     @Override
     public @NotNull Component format(@NotNull String message, @Nullable OfflinePlayer player) {
         return miniMessageFactory.create(player)
-                .parse(preFormat(message, player));
+                .deserialize(preFormat(message, player));
     }
 
 }
