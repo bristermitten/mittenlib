@@ -4,7 +4,10 @@ import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class LangMessage {
+import java.util.ArrayList;
+import java.util.List;
+
+public class LangMessage {
     private final @Nullable String message;
     private final @Nullable String title;
     private final @Nullable String subtitle;
@@ -37,6 +40,13 @@ public final class LangMessage {
 
     public @Nullable SoundConfig getSound() {
         return sound;
+    }
+
+    public @NotNull LangMessage add(@NotNull LangMessage other){
+        if(this instanceof CompoundLangMessage) {
+            return new CompoundLangMessage(((CompoundLangMessage) this).getComponents(), other);
+        }
+        return new CompoundLangMessage(this, other);
     }
 
     public static class SoundConfig {

@@ -1,22 +1,25 @@
 package me.bristermitten.mittenlib.lang;
 
-import me.bristermitten.mittenlib.lang.format.MessageFormatter;
+import static me.bristermitten.mittenlib.util.Cast.safeCast;
+
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import static me.bristermitten.mittenlib.util.Cast.safeCast;
+import javax.inject.Inject;
+
+import me.bristermitten.mittenlib.lang.format.MessageFormatter;
 
 public class LangService {
 
@@ -44,6 +47,12 @@ public class LangService {
     }
 
     public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @NotNull Map<String, Object> placeholders, @Nullable String messagePrefix) {
+        if (langMessage instanceof CompoundLangMessage) {
+            CompoundLangMessage compound = (CompoundLangMessage) langMessage;
+            for (LangMessage message : compound.getComponents()) {
+                send(receiver, message, placeholders, messagePrefix);
+            }
+        }
         UnaryOperator<String> applyPlaceholders = str -> {
             for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
                 str = str.replace(entry.getKey(), entry.getValue().toString());
