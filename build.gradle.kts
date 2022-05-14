@@ -9,7 +9,7 @@ subprojects {
 
 
     group = "me.bristermitten"
-    version = "1.0.1-SNAPSHOT"
+    version = "1.0.2-SNAPSHOT"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
