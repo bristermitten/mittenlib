@@ -1,10 +1,12 @@
 plugins {
     java
+    `java-library`
     `maven-publish`
 }
 
 subprojects {
     apply<JavaPlugin>()
+    apply<JavaLibraryPlugin>()
     apply<MavenPublishPlugin>()
 
 
