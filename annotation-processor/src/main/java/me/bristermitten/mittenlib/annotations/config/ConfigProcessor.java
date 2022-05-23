@@ -19,6 +19,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.groupingBy;
 
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
+@SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
 public class ConfigProcessor extends AbstractProcessor {
 
