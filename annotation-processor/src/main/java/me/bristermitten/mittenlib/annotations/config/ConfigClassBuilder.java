@@ -44,8 +44,8 @@ public class ConfigClassBuilder {
     private void addInnerClasses(TypeSpec.Builder typeSpecBuilder, TypeElement classType) {
         classType.getEnclosedElements()
                 .stream()
-                .filter(element -> element instanceof TypeElement)
-                .map(element -> (TypeElement) element)
+                .filter(TypeElement.class::isInstance)
+                .map(TypeElement.class::cast)
                 .forEach(typeElement -> {
                     TypeSpec configClass = createConfigClass(typeElement,
                             ElementsUtil.getApplicableVariableElements(typeElement));
@@ -64,7 +64,7 @@ public class ConfigClassBuilder {
             throw new IllegalArgumentException("Unnamed packages are not supported");
         }
         return ConfigClassNameGenerator.generateFullConfigClassName(environment, element)
-                .map(className -> (TypeName) className)
+                .map(TypeName.class::cast)
                 .orElseGet(() -> TypeName.get(typeMirror));
     }
 
@@ -169,7 +169,7 @@ public class ConfigClassBuilder {
         return environment.getElementUtils().getAllMembers(containing)
                 .stream()
                 .filter(it -> it.getKind() == ElementKind.METHOD)
-                .map(it -> (ExecutableElement) it)
+                .map(ExecutableElement.class::cast)
                 .filter(it -> it.getParameters().isEmpty()) // no-args method
                 .filter(it -> it.getSimpleName().toString().equals(getterName) || it.getSimpleName().toString().equals(varName))
                 .findFirst()

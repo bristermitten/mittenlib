@@ -19,7 +19,6 @@ import java.util.Set;
 import static java.util.stream.Collectors.groupingBy;
 
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
 public class ConfigProcessor extends AbstractProcessor {
 
@@ -29,8 +28,8 @@ public class ConfigProcessor extends AbstractProcessor {
                 .stream()
                 .map(roundEnv::getElementsAnnotatedWith)
                 .flatMap(Collection::stream)
-                .filter(element -> element instanceof TypeElement)
-                .map(element -> (TypeElement) element)
+                .filter(TypeElement.class::isInstance)
+                .map(TypeElement.class::cast)
                 .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
                 .map(ElementsUtil::getApplicableVariableElements)
                 .flatMap(Collection::stream)
