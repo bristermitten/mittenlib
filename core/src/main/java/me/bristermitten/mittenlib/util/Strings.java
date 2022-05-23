@@ -70,4 +70,17 @@ public class Strings {
         }
         return stringJoiner.toString();
     }
+
+    /**
+     * Join a collection of elements to a String using a given separator and toString function.
+     *
+     * @see #joinWith(Collection, Function, String)
+     */
+    public static <T> String joinWith(@NotNull T[] collection, @NotNull Function<T, Object> toString, @NotNull String separator) {
+        final StringJoiner stringJoiner = new StringJoiner(separator);
+        for (T t : collection) {
+            stringJoiner.add(toString.apply(t).toString());
+        }
+        return stringJoiner.toString();
+    }
 }
