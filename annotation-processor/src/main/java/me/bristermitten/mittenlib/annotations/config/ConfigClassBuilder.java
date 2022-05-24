@@ -65,7 +65,23 @@ public class ConfigClassBuilder {
         }
         return ConfigClassNameGenerator.generateFullConfigClassName(environment, element)
                 .map(TypeName.class::cast)
-                .orElseGet(() -> TypeName.get(typeMirror));
+                .orElseGet(() -> getStandardTypeName(typeMirror));
+    }
+
+    private TypeName getStandardTypeName(TypeMirror mirror) {
+        if (mirror instanceof DeclaredType declaredType) {
+            TypeElement element = (TypeElement) declaredType.asElement();
+            List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
+            if (typeArguments.isEmpty()) {
+                return TypeName.get(mirror);
+            }
+            List<TypeName> properArguments = typeArguments.stream()
+                    .map(this::getTypeName)
+                    .toList();
+
+            return ParameterizedTypeName.get(ClassName.get(element), properArguments.toArray(new TypeName[0]));
+        }
+        return TypeName.get(mirror);
     }
 
     private TypeSpec createConfigClass(TypeElement classType,
@@ -134,7 +150,8 @@ public class ConfigClassBuilder {
         return JavaFile.builder(className.packageName(), configClass).build();
     }
 
-    private void addAllArgsConstructor(List<VariableElement> variableElements, List<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder) {
+    private void addAllArgsConstructor
+            (List<VariableElement> variableElements, List<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder) {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameters(variableElements.stream()
@@ -146,7 +163,8 @@ public class ConfigClassBuilder {
         typeSpecBuilder.addMethod(constructorBuilder.build());
     }
 
-    private void createConfigurationField(TypeElement classType, ClassName className, TypeSpec.Builder typeSpecBuilder) {
+    private void createConfigurationField(TypeElement classType, ClassName className, TypeSpec.Builder
+            typeSpecBuilder) {
         final Source annotation = classType.getAnnotation(Source.class);
         if (annotation == null) {
             return;
@@ -219,8 +237,8 @@ public class ConfigClassBuilder {
     }
 
     private boolean isConfigType(TypeMirror mirror) {
-        return mirror instanceof DeclaredType &&
-               ((DeclaredType) mirror).asElement().getAnnotation(Config.class) != null;
+        return mirror instanceof DeclaredType declaredType &&
+                declaredType.asElement().getAnnotation(Config.class) != null;
     }
 
     private boolean isNullable(VariableElement element) {
@@ -232,7 +250,8 @@ public class ConfigClassBuilder {
         return false;
     }
 
-    private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder, TypeElement daoType, TypeName className, List<VariableElement> variableElements) {
+    private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder, TypeElement daoType, TypeName
+            className, List<VariableElement> variableElements) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
