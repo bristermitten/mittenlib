@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
@@ -196,14 +197,15 @@ public class ConfigClassBuilder {
     }
 
     private MethodSpec createDeserializeMethodFor(TypeElement daoType, VariableElement element) {
-        final TypeName elementType = getTypeName(element.asType());
+        TypeMirror typeMirror = element.asType();
+        final TypeName elementType = getTypeName(typeMirror);
         final Name variableName = element.getSimpleName();
-        final TypeMirror safeType = TypesUtil.getSafeType(environment.getTypeUtils(), element.asType());
-        final TypeName safeTypeName = getTypeName(safeType);
+        final TypeMirror boxedType = TypesUtil.getBoxedType(environment.getTypeUtils(), typeMirror);
+        final TypeName boxedTypeName = getTypeName(boxedType);
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize_" + variableName)
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, safeTypeName))
+                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, boxedTypeName))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
                 .addParameter(ParameterSpec.builder(ClassName.get(daoType), "dao").build());
 
@@ -221,18 +223,29 @@ public class ConfigClassBuilder {
             builder.endControlFlow();
         }
 
-        builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
-        builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
-        builder.endControlFlow();
+        if (!(elementType instanceof ParameterizedTypeName)) {
+            /*
+             Construct a simple check that does
+               if (fromMap instanceof X) return fromMap; NOSONAR
+             Useful when the type is a primitive or String
+             This is only safe to do with non-parameterized types, type erasure and all
+            */
+            final TypeMirror safeType = TypesUtil.getSafeType(environment.getTypeUtils(), typeMirror);
+            final TypeName safeTypeName = getTypeName(safeType);
+            builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
+            builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
+            builder.endControlFlow();
+        }
 
-        if (isConfigType(element.asType())) {
+        if (isConfigType(typeMirror)) {
             builder.beginControlFlow(String.format("if (%s instanceof $T)", fromMapName), Map.class);
             builder.addStatement(String.format("$1T mapData = ($1T) %s", fromMapName), MAP_STRING_OBJ_NAME);
             builder.addStatement("return $T.deserialize(context.withData(mapData))", elementType);
             builder.endControlFlow();
         }
 
-        builder.addStatement(String.format("return context.getMapper().map(%1$s, $T.class)", fromMapName), safeTypeName);
+        // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
+        builder.addStatement(String.format("return context.getMapper().map(%1$s, new $T<$T>(){})", fromMapName), TypeToken.class, boxedTypeName);
         return builder.build();
     }
 

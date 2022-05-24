@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ public class ConfigReader {
 
     public <T> Result<T> load(Class<T> type, Path source, @Nullable Function<DeserializationContext, Result<T>> deserializeFunction) {
         final Function<DeserializationContext, Result<T>> mappingFunction =
-                deserializeFunction == null ? ctx -> mapper.map(ctx.getData(), type) : deserializeFunction;
+                deserializeFunction == null ? ctx -> mapper.map(ctx.getData(), TypeToken.get(type)) : deserializeFunction;
 
         return loader.load(source)
                 .map(data -> new DeserializationContext(mapper, data))

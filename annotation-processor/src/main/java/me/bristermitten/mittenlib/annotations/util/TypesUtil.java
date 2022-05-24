@@ -12,4 +12,11 @@ public class TypesUtil {
         }
         return types.erasure(typeMirror);
     }
+
+    public static TypeMirror getBoxedType(Types types, TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return types.boxedClass((PrimitiveType) typeMirror).asType();
+        }
+        return typeMirror;
+    }
 }

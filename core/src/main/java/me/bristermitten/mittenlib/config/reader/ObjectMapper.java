@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.util.Result;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface ObjectMapper {
      * @param <T>  The type to map to
      * @return A result containing either a mapped object, or an error
      */
-    <T> Result<T> map(Object data, Class<T> type);
+    <T> Result<T> map(Object data, TypeToken<T> type);
 
     /**
      * Turn a given object into a mapped object

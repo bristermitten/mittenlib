@@ -4,6 +4,8 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
@@ -31,6 +33,13 @@ class CollectionDTOTransformationTest {
                                 """));
 
         assertThat(compilation).succeededWithoutWarnings();
+        compilation.generatedSourceFiles().forEach(c -> {
+            try {
+                System.out.println(c.getCharContent(false));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
 
