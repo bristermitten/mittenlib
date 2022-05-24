@@ -1,10 +1,13 @@
 package me.bristermitten.mittenlib.collections;
 
+import com.google.common.collect.Iterators;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Implementations for immutable sets used in {@link Sets}
@@ -105,6 +108,38 @@ public class SetImpls {
         @Override
         public int size() {
             return 2;
+        }
+    }
+
+    static class ConcatenatingSet<E> extends AbstractSet<E> { //NOSONAR
+        private final @Unmodifiable Set<E> first;
+        private final @Unmodifiable Set<E> second;
+        private final int size;
+
+        ConcatenatingSet(Set<E> first, Set<E> second) {
+            this.first = first;
+            this.second = second;
+            this.size = first.size() + second.size();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return first.contains(o) || second.contains(o);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return !first.isEmpty() && !second.isEmpty();
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public Iterator<E> iterator() {
+            return Iterators.concat(first.iterator(), second.iterator());
         }
     }
 }
