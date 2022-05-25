@@ -47,6 +47,7 @@ public class ConfigClassBuilder {
                 .stream()
                 .filter(TypeElement.class::isInstance)
                 .map(TypeElement.class::cast)
+                .filter(element -> element.getAnnotation(Config.class) != null)
                 .forEach(typeElement -> {
                     TypeSpec configClass = createConfigClass(typeElement,
                             ElementsUtil.getApplicableVariableElements(typeElement));
