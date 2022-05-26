@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LegacyCodeUpdaterHook implements FormattingHook {
-    private static final Pattern LEGACY_CODE_PATTERN = Pattern.compile("§[\\da-fk-or]");
+    private static final Pattern LEGACY_CODE_PATTERN = Pattern.compile("[&§][\\da-fk-or]");
 
     @Override
     public boolean shouldRegister() {
