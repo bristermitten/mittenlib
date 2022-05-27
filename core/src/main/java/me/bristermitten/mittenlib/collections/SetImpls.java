@@ -129,7 +129,7 @@ public class SetImpls {
 
         @Override
         public boolean isEmpty() {
-            return !first.isEmpty() && !second.isEmpty();
+            return first.isEmpty() && second.isEmpty();
         }
 
         @Override
