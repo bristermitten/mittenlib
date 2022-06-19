@@ -248,6 +248,7 @@ public class ConfigClassBuilder {
                 if (isConfigType(listType)) {
                     builder.addStatement("return $T.deserializeList(%s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
                             getTypeName(listType));
+                    return builder.build();
                 }
             }
             if (canonicalName.equals("java.util.Map")) {
@@ -255,9 +256,9 @@ public class ConfigClassBuilder {
                 if (isConfigType(mapType)) {
                     builder.addStatement("return $T.deserializeMap(%s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
                             getTypeName(mapType));
+                    return builder.build();
                 }
             }
-            return builder.build();
         }
 
         if (isConfigType(typeMirror)) {
