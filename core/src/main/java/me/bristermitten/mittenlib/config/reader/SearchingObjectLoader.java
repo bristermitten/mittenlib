@@ -29,4 +29,5 @@ public class SearchingObjectLoader implements ObjectLoader {
         }
         return fail(new IllegalStateException("Could not find a matching file type for path " + source));
     }
+
 }

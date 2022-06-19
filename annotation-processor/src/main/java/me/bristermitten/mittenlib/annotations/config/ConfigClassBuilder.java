@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
+import me.bristermitten.mittenlib.annotations.util.CollectionsUtils;
 import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
@@ -227,7 +228,7 @@ public class ConfigClassBuilder {
         if (!(elementType instanceof ParameterizedTypeName)) {
             /*
              Construct a simple check that does
-               if (fromMap instanceof X) return fromMap; NOSONAR
+               if (fromMap instanceof X) return fromMap; NOSONAR this is not code you stupid program
              Useful when the type is a primitive or String
              This is only safe to do with non-parameterized types, type erasure and all
             */
@@ -236,6 +237,27 @@ public class ConfigClassBuilder {
             builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
             builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
             builder.endControlFlow();
+        } else if (typeMirror instanceof DeclaredType declaredType) {
+            // This is really cursed, but it's the only real way
+            // When the type is a List<T> or Map<_, T> then we need to first load it as a C<Map<String, Object>> then
+            // apply the deserialize function to each element. Otherwise, gson would try to deserialize it without
+            // using the generated deserialization method and produce inconsistent results.
+            String canonicalName = environment.getTypeUtils().erasure(typeMirror).toString();
+            if (canonicalName.equals("java.util.List")) {
+                var listType = declaredType.getTypeArguments().get(0);
+                if (isConfigType(listType)) {
+                    builder.addStatement("return $T.deserializeList(%s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
+                            getTypeName(listType));
+                }
+            }
+            if (canonicalName.equals("java.util.Map")) {
+                var mapType = declaredType.getTypeArguments().get(1);
+                if (isConfigType(mapType)) {
+                    builder.addStatement("return $T.deserializeMap(%s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
+                            getTypeName(mapType));
+                }
+            }
+            return builder.build();
         }
 
         if (isConfigType(typeMirror)) {
@@ -244,6 +266,7 @@ public class ConfigClassBuilder {
             builder.addStatement("return $T.deserialize(context.withData(mapData))", elementType);
             builder.endControlFlow();
         }
+
 
         // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
         builder.addStatement(String.format("return context.getMapper().map(%1$s, new $T<$T>(){})", fromMapName), TypeToken.class, boxedTypeName);

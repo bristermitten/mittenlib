@@ -7,6 +7,7 @@ import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +25,10 @@ public class GsonObjectLoader implements ObjectLoader {
     @Override
     @NotNull
     public Result<Map<String, Object>> load(@NotNull Path source) {
-        return Result.runCatching(() -> gson.fromJson(Files.newBufferedReader(source), MAP_STRING_OBJ_TYPE));
+        return Result.runCatching(() -> {
+            try (BufferedReader reader = Files.newBufferedReader(source)) {
+                return gson.fromJson(reader, MAP_STRING_OBJ_TYPE);
+            }
+        });
     }
 }
