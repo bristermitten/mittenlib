@@ -255,8 +255,8 @@ public class ConfigClassBuilder {
                 var keyType = declaredType.getTypeArguments().get(0);
 
                 if (isConfigType(mapType)) {
-                    builder.addStatement("return $T.deserializeMap($T, %s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
-                            getTypeName(keyType),
+                    builder.addStatement("return $T.deserializeMap($T.class, %s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
+                            getTypeName(TypesUtil.getSafeType(environment.getTypeUtils(), keyType)),
                             getTypeName(mapType));
                     return builder.build();
                 }
