@@ -11,7 +11,7 @@ subprojects {
 
 
     group = "me.bristermitten"
-    version = "1.0.17-SNAPSHOT"
+    version = "1.0.18-SNAPSHOT"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
