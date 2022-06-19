@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
@@ -253,8 +252,11 @@ public class ConfigClassBuilder {
             }
             if (canonicalName.equals("java.util.Map")) {
                 var mapType = declaredType.getTypeArguments().get(1);
+                var keyType = declaredType.getTypeArguments().get(0);
+
                 if (isConfigType(mapType)) {
-                    builder.addStatement("return $T.deserializeMap(%s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
+                    builder.addStatement("return $T.deserializeMap($T, %s, context, $T::deserialize)".formatted(fromMapName), CollectionsUtils.class,
+                            getTypeName(keyType),
                             getTypeName(mapType));
                     return builder.build();
                 }

@@ -2,7 +2,10 @@ package me.bristermitten.mittenlib.config;
 
 import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.util.Result;
+import org.jetbrains.annotations.Contract;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +13,8 @@ import java.util.Map;
 
 public class CollectionsUtils {
     private static final TypeToken<List<Map<String, Object>>> LIST_MAP_STRING_OBJECT_TOKEN = new TypeToken<List<Map<String, Object>>>() {
+    };
+    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT_TOKEN = new TypeToken<Map<String, Object>>() {
     };
 
 
@@ -34,9 +39,12 @@ public class CollectionsUtils {
 
     }
 
-    public static <K, V> Result<Map<K, V>> deserializeMap(Object rawData, DeserializationContext baseContext, DeserializationFunction<V> deserializationFunction) {
-        Result<Map<K, Map<String, Object>>> rawMapRes = baseContext.getMapper().map(rawData, new TypeToken<Map<K, Map<String, Object>>>() {
-        });
+    public static <K, V> Result<Map<K, V>> deserializeMap(Class<K> keyType, Object rawData, DeserializationContext baseContext, DeserializationFunction<V> deserializationFunction) {
+        //noinspection unchecked absolutely evil
+        Result<Map<K, Map<String, Object>>> rawMapRes = baseContext.getMapper().map(rawData,
+                (TypeToken<Map<K, Map<String, Object>>>) TypeToken.get(
+                        new IDKParameterizedType(Map.class, keyType, MAP_STRING_OBJECT_TOKEN.getType())
+                ));
         return rawMapRes.flatMap(rawMap -> {
             // Apply the deserialization function to each value in the map, flattening the result
             Result<Map<K, V>> res = Result.ok(new HashMap<>());
@@ -49,5 +57,31 @@ public class CollectionsUtils {
             }
             return res;
         });
+    }
+
+    static class IDKParameterizedType implements ParameterizedType {
+        private final Class<?> container;
+        private final Type[] wrapped;
+
+        @Contract(pure = true)
+        public IDKParameterizedType(Class<?> container, Type... wrapped) {
+            this.container = container;
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public Type[] getActualTypeArguments() {
+            return this.wrapped;
+        }
+
+        @Override
+        public Type getRawType() {
+            return this.container;
+        }
+
+        @Override
+        public Type getOwnerType() {
+            return null;
+        }
     }
 }
