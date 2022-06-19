@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.annotations.util.CollectionsUtils;
+import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;

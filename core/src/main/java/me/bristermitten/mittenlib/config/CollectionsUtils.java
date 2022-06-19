@@ -1,8 +1,6 @@
-package me.bristermitten.mittenlib.annotations.util;
+package me.bristermitten.mittenlib.config;
 
 import com.google.gson.reflect.TypeToken;
-import me.bristermitten.mittenlib.config.DeserializationContext;
-import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.util.Result;
 
 import java.util.ArrayList;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CollectionsUtils {
-    private static final TypeToken<List<Map<String, Object>>> LIST_MAP_STRING_OBJECT_TOKEN = new TypeToken<>() {
+    private static final TypeToken<List<Map<String, Object>>> LIST_MAP_STRING_OBJECT_TOKEN = new TypeToken<List<Map<String, Object>>>() {
     };
 
 
@@ -37,7 +35,7 @@ public class CollectionsUtils {
     }
 
     public static <K, V> Result<Map<K, V>> deserializeMap(Object rawData, DeserializationContext baseContext, DeserializationFunction<V> deserializationFunction) {
-        Result<Map<K, Map<String, Object>>> rawMapRes = baseContext.getMapper().map(rawData, new TypeToken<>() {
+        Result<Map<K, Map<String, Object>>> rawMapRes = baseContext.getMapper().map(rawData, new TypeToken<Map<K, Map<String, Object>>>() {
         });
         return rawMapRes.flatMap(rawMap -> {
             // Apply the deserialization function to each value in the map, flattening the result
