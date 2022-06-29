@@ -27,7 +27,7 @@ public class ElementsFinder {
     }
 
     private List<Element> getAllEnclosedElements(Element rootElement) {
-        var inElement = new ArrayList<Element>(rootElement.getEnclosedElements());
+        var inElement = new ArrayList<Element>();
         if (rootElement instanceof TypeElement type) {
             TypeMirror superclass = type.getSuperclass();
             if (superclass.getKind() != TypeKind.NONE) {
@@ -38,6 +38,7 @@ public class ElementsFinder {
                 }
             }
         }
+        inElement.addAll(rootElement.getEnclosedElements());
         return inElement;
     }
 
