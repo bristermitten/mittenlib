@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
-import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
+import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -25,6 +25,7 @@ public class ConfigProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        var elementsFinder = new ElementsFinder(processingEnv.getTypeUtils());
         final Map<Element, List<VariableElement>> types = annotations
                 .stream()
                 .map(roundEnv::getElementsAnnotatedWith)
@@ -32,11 +33,11 @@ public class ConfigProcessor extends AbstractProcessor {
                 .filter(TypeElement.class::isInstance)
                 .map(TypeElement.class::cast)
                 .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
-                .map(ElementsUtil::getApplicableVariableElements)
+                .map(elementsFinder::getApplicableVariableElements)
                 .flatMap(Collection::stream)
                 .collect(groupingBy(VariableElement::getEnclosingElement));
 
-        ConfigClassBuilder builder = new ConfigClassBuilder(processingEnv);
+        ConfigClassBuilder builder = new ConfigClassBuilder(processingEnv, elementsFinder);
         types.forEach((clazz, fields) -> {
             JavaFile fileContent = builder.createConfigFile((TypeElement) clazz, fields);
             try {

@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.annotations.util.ElementsUtil;
+import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.util.Result;
@@ -21,9 +21,11 @@ public class ConfigClassBuilder {
     private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     private final ProcessingEnvironment environment;
+    private final ElementsFinder elementsFinder;
 
-    public ConfigClassBuilder(ProcessingEnvironment environment) {
+    public ConfigClassBuilder(ProcessingEnvironment environment, ElementsFinder elementsFinder) {
         this.environment = environment;
+        this.elementsFinder = elementsFinder;
     }
 
     private FieldSpec createFieldSpec(VariableElement element) {
@@ -50,7 +52,7 @@ public class ConfigClassBuilder {
                 .filter(element -> element.getAnnotation(Config.class) != null)
                 .forEach(typeElement -> {
                     TypeSpec configClass = createConfigClass(typeElement,
-                            ElementsUtil.getApplicableVariableElements(typeElement));
+                            elementsFinder.getApplicableVariableElements(typeElement));
                     configClass = configClass.toBuilder().addModifiers(Modifier.STATIC).build();
                     typeSpecBuilder.addType(configClass);
                 });

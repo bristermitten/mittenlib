@@ -14,3 +14,4 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.5.1")
     testImplementation("com.google.testing.compile:compile-testing:0.19")
 }
+
