@@ -7,6 +7,8 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -14,8 +16,11 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -99,6 +104,23 @@ public class ConfigClassBuilder {
         return createConfigClass(classType, variableElements, className);
     }
 
+    private void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
+        var builder = MethodSpec.methodBuilder(field.name)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(field.type)
+                .addStatement("return " + field.name);
+
+        if (isNullable(element)) {
+            builder.addAnnotation(Nullable.class);
+        } else {
+            builder.addAnnotation(NotNull.class);
+        }
+
+        builder.addAnnotation(AnnotationSpec.builder(Contract.class)
+                .addMember("pure", CodeBlock.of("true")).build());
+        typeSpecBuilder.addMethod(builder.build());
+    }
+
     private TypeSpec createConfigClass(TypeElement classType,
                                        List<VariableElement> variableElements,
                                        ClassName className) {
@@ -120,27 +142,22 @@ public class ConfigClassBuilder {
 
         createConfigurationField(classType, className, typeSpecBuilder);
 
-        final List<FieldSpec> fieldSpecs = variableElements.stream()
-                .map(this::createFieldSpec)
-                .toList();
+        final Map<VariableElement, FieldSpec> fieldSpecs = variableElements.stream()
+                .collect(Collectors.toMap(Function.identity(), this::createFieldSpec, (x, y) -> y, LinkedHashMap::new));
 
-        fieldSpecs.forEach(typeSpecBuilder::addField);
+        fieldSpecs.values().forEach(typeSpecBuilder::addField);
         addInnerClasses(typeSpecBuilder, classType);
-        addAllArgsConstructor(variableElements, fieldSpecs, typeSpecBuilder, superClass);
+        addAllArgsConstructor(variableElements, fieldSpecs.values(), typeSpecBuilder, superClass);
 
 
         createDeserializeMethod(typeSpecBuilder, classType, className, variableElements);
 
         // Generate getter methods
-        fieldSpecs.forEach(field ->
-                typeSpecBuilder.addMethod(MethodSpec.methodBuilder(field.name)
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(field.type)
-                        .addStatement("return " + field.name)
-                        .build()));
+        fieldSpecs.forEach((elem, field) -> createGetterMethod(typeSpecBuilder, elem, field));
+
         // Generate copy setter methods
-        fieldSpecs.forEach(field -> {
-            String constructorParams = Strings.joinWith(fieldSpecs,
+        fieldSpecs.values().forEach(field -> {
+            String constructorParams = Strings.joinWith(fieldSpecs.values(),
                     f2 -> {
                         if (f2.equals(field)) {
                             return f2.name; // we'll use the version from the parameter
@@ -171,7 +188,7 @@ public class ConfigClassBuilder {
     }
 
     private void addAllArgsConstructor
-            (List<VariableElement> variableElements, List<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder,
+            (List<VariableElement> variableElements, Collection<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder,
              @Nullable TypeMirror superclass) {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
@@ -320,7 +337,7 @@ public class ConfigClassBuilder {
         }
         return false;
     }
-
+    
     private String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
             return "deserialize" + cn.simpleName();
