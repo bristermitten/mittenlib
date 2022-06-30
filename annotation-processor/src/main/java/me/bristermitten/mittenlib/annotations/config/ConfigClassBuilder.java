@@ -268,6 +268,11 @@ public class ConfigClassBuilder {
             builder.addStatement(String.format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName),
                     Result.class, ConfigMapLoader.class, variableName, element, daoType);
             builder.endControlFlow();
+        } else {
+            // Short circuit the null rather than trying any deserialization
+            builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
+            builder.addStatement("return $T.ok(null)", Result.class);
+            builder.endControlFlow();
         }
 
         if (!(elementType instanceof ParameterizedTypeName)) {
@@ -337,7 +342,7 @@ public class ConfigClassBuilder {
         }
         return false;
     }
-    
+
     private String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
             return "deserialize" + cn.simpleName();
