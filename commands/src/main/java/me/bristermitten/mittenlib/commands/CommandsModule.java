@@ -7,6 +7,7 @@ import com.google.inject.multibindings.Multibinder;
 import me.bristermitten.mittenlib.commands.handlers.ArgumentCondition;
 import me.bristermitten.mittenlib.commands.handlers.ArgumentContext;
 import me.bristermitten.mittenlib.commands.handlers.NamedCondition;
+import me.bristermitten.mittenlib.commands.handlers.TabCompleter;
 
 public class CommandsModule extends AbstractModule {
     @Override
@@ -14,6 +15,7 @@ public class CommandsModule extends AbstractModule {
         // Create empty multibinders so that an error isn't thrown if none are registered
         Multibinder.newSetBinder(binder(), Command.class);
         Multibinder.newSetBinder(binder(), NamedCondition.class);
+        Multibinder.newSetBinder(binder(), TabCompleter.class);
         Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentContext<?>>() {
         });
         Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentCondition<?>>() {

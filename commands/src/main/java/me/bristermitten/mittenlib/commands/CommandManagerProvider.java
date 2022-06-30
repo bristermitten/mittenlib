@@ -11,24 +11,30 @@ import java.util.Set;
 public class CommandManagerProvider implements Provider<PaperCommandManager> {
     private final Plugin plugin;
     private final Set<Command> commands;
-    private final Set<ArgumentCondition<?>> argumentConditions;
+    private final Set<TabCompleter> tabCompleters;
     private final Set<NamedCondition> namedConditions;
+    private final Set<ArgumentCondition<?>> argumentConditions;
     private final Set<ArgumentContext<?>> argumentContexts;
 
 
     @Inject
-    public CommandManagerProvider(Plugin plugin, Set<Command> commands, Set<ArgumentCondition<?>> argumentConditions, Set<NamedCondition> namedConditions, Set<ArgumentContext<?>> argumentContexts) {
+    public CommandManagerProvider(Plugin plugin, Set<Command> commands, Set<TabCompleter> tabCompleters, Set<ArgumentCondition<?>> argumentConditions, Set<NamedCondition> namedConditions, Set<ArgumentContext<?>> argumentContexts) {
         this.plugin = plugin;
         this.commands = commands;
+        this.tabCompleters = tabCompleters;
         this.argumentConditions = argumentConditions;
         this.namedConditions = namedConditions;
         this.argumentContexts = argumentContexts;
     }
 
+    private void registerTabCompleter(PaperCommandManager manager, TabCompleter completer) {
+        manager.getCommandCompletions().registerAsyncCompletion(completer.id(), completer);
+    }
+
     private <T> void registerContext(PaperCommandManager manager, ArgumentContext<T> context) {
         if (context instanceof TabCompleter) {
             TabCompleter completer = (TabCompleter) context;
-            manager.getCommandCompletions().registerAsyncCompletion(completer.id(), completer);
+            registerTabCompleter(manager, completer);
             manager.getCommandCompletions().setDefaultCompletion(completer.id(), context.type());
         }
         if (context instanceof IssuerAwareArgumentContext) {
@@ -53,6 +59,9 @@ public class CommandManagerProvider implements Provider<PaperCommandManager> {
         PaperCommandManager paperCommandManager = new PaperCommandManager(plugin);
         paperCommandManager.enableUnstableAPI("help");
 
+        for (TabCompleter tabCompleter : tabCompleters) {
+            registerTabCompleter(paperCommandManager, tabCompleter);
+        }
         for (ArgumentContext<?> argumentContext : argumentContexts) {
             registerContext(paperCommandManager, argumentContext);
         }
