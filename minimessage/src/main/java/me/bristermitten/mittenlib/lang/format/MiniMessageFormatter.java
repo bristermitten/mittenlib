@@ -12,11 +12,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+
+/**
+ * An {@link AbstractMessageFormatter} that uses MiniMessage to create a {@link Component}
+ * from a String
+ */
 public class MiniMessageFormatter extends AbstractMessageFormatter {
     private final AbstractMiniMessageFactory miniMessageFactory;
 
     @Inject
-    public MiniMessageFormatter(Set<FormattingHook> hooks, AbstractMiniMessageFactory miniMessageFactory) {
+    MiniMessageFormatter(Set<FormattingHook> hooks, AbstractMiniMessageFactory miniMessageFactory) {
         super(hooks);
         this.miniMessageFactory = miniMessageFactory;
     }

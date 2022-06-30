@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A {@link FormattingHook} which applies PlaceholderAPI placeholders to the message.
+ */
 public class PAPIFormattingHook implements FormattingHook {
     @Override
     public boolean shouldRegister() {

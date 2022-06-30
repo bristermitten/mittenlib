@@ -5,6 +5,10 @@ import com.google.inject.multibindings.Multibinder;
 import me.bristermitten.mittenlib.lang.format.hook.FormattingHook;
 import me.bristermitten.mittenlib.lang.hook.PAPIFormattingHook;
 
+
+/**
+ * Binds PAPI related classes
+ */
 public class PAPIModule extends AbstractModule {
     @Override
     protected void configure() {
