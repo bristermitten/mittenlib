@@ -237,7 +237,7 @@ public class ConfigClassBuilder {
                 .filter(it -> it.getKind() == ElementKind.METHOD)
                 .map(ExecutableElement.class::cast)
                 .filter(it -> it.getParameters().isEmpty()) // no-args method
-                .filter(it -> it.getSimpleName().toString().equals(getterName) || it.getSimpleName().toString().equals(varName))
+                .filter(it -> it.getSimpleName().toString().equals(varName) || it.getSimpleName().toString().equals(getterName))
                 .findFirst()
                 .map(getter -> getter.getSimpleName() + "()")
                 .orElse(varName);
