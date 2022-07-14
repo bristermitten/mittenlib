@@ -30,10 +30,12 @@ public class ConfigClassBuilder {
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     private final ProcessingEnvironment environment;
     private final ElementsFinder elementsFinder;
+    private final MethodNames methodNames;
 
-    public ConfigClassBuilder(ProcessingEnvironment environment, ElementsFinder elementsFinder) {
+    public ConfigClassBuilder(ProcessingEnvironment environment, ElementsFinder elementsFinder, MethodNames methodNames) {
         this.environment = environment;
         this.elementsFinder = elementsFinder;
+        this.methodNames = methodNames;
     }
 
     private FieldSpec createFieldSpec(VariableElement element) {
@@ -105,7 +107,9 @@ public class ConfigClassBuilder {
     }
 
     private void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
-        var builder = MethodSpec.methodBuilder(field.name)
+        var safeName = getFieldAccessorName(element);
+
+        var builder = MethodSpec.methodBuilder(safeName)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(field.type)
                 .addStatement("return " + field.name);
@@ -228,19 +232,7 @@ public class ConfigClassBuilder {
     }
 
     private String getFieldAccessorName(VariableElement variableElement) {
-        var containing = ((TypeElement) variableElement.getEnclosingElement());
-        // look for a getter method
-        final String varName = variableElement.getSimpleName().toString();
-        var getterName = "get" + Strings.capitalize(varName);
-        return environment.getElementUtils().getAllMembers(containing)
-                .stream()
-                .filter(it -> it.getKind() == ElementKind.METHOD)
-                .map(ExecutableElement.class::cast)
-                .filter(it -> it.getParameters().isEmpty()) // no-args method
-                .filter(it -> it.getSimpleName().toString().equals(varName) || it.getSimpleName().toString().equals(getterName))
-                .findFirst()
-                .map(getter -> getter.getSimpleName() + "()")
-                .orElse(varName);
+        return methodNames.safeMethodName(variableElement, (TypeElement) variableElement.getEnclosingElement());
     }
 
     private MethodSpec createDeserializeMethodFor(TypeElement daoType, VariableElement element) {
@@ -260,8 +252,8 @@ public class ConfigClassBuilder {
         builder.addStatement(format("$T %s", variableName), elementType);
         final String fromMapName = variableName + "FromMap";
         final String key = FieldClassNameGenerator.getConfigFieldName(element);
-        builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName,
-                getFieldAccessorName(element)), key);
+        var defaultName = element.getSimpleName();
+        builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName, defaultName), key);
 
         if (!isNullable(element)) {
             builder.beginControlFlow(String.format("if (%s == null)", fromMapName));

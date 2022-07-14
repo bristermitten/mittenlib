@@ -25,7 +25,8 @@ public class ConfigProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        var elementsFinder = new ElementsFinder(processingEnv.getTypeUtils());
+        var elementsFinder = new ElementsFinder(processingEnv.getElementUtils());
+        var methodNames = new MethodNames(elementsFinder);
         final Map<Element, List<VariableElement>> types = annotations
                 .stream()
                 .map(roundEnv::getElementsAnnotatedWith)
@@ -37,7 +38,7 @@ public class ConfigProcessor extends AbstractProcessor {
                 .flatMap(Collection::stream)
                 .collect(groupingBy(VariableElement::getEnclosingElement));
 
-        ConfigClassBuilder builder = new ConfigClassBuilder(processingEnv, elementsFinder);
+        ConfigClassBuilder builder = new ConfigClassBuilder(processingEnv, elementsFinder, methodNames);
         types.forEach((clazz, fields) -> {
             JavaFile fileContent = builder.createConfigFile((TypeElement) clazz, fields);
             try {

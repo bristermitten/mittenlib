@@ -4,9 +4,6 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
 
-import javax.tools.JavaFileObject;
-import java.io.IOException;
-
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static javax.tools.StandardLocation.CLASS_OUTPUT;
@@ -14,7 +11,7 @@ import static javax.tools.StandardLocation.CLASS_OUTPUT;
 class DTOSuperclassTransformationTest {
 
     @Test
-    void generateFullConfigClassName() throws IOException {
+    void generateFullConfigClassName() {
         Compilation compilation = javac()
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.SuperclassConfigDTO",
@@ -49,10 +46,6 @@ class DTOSuperclassTransformationTest {
 
         assertThat(compilation).generatedFile(CLASS_OUTPUT, "me/bristermitten/mittenlib/tests/SuperclassConfig.class")
                 .isNotNull();
-
-        for (JavaFileObject generatedSourceFile : compilation.generatedSourceFiles()) {
-            System.out.println(generatedSourceFile.getCharContent(true));
-        }
 
         // TODO figure out a proper way of testing contents -- AST comparison doesn't work as of java 17
 

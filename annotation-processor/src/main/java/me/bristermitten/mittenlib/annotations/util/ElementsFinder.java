@@ -1,23 +1,18 @@
 package me.bristermitten.mittenlib.annotations.util;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
-import java.util.ArrayList;
+import javax.lang.model.element.*;
+import javax.lang.model.util.Elements;
 import java.util.List;
 
 public class ElementsFinder {
-    private final Types types;
 
-    public ElementsFinder(Types types) {
-        this.types = types;
+    private final Elements elements;
+
+    public ElementsFinder(Elements elements) {
+        this.elements = elements;
     }
 
-    public List<VariableElement> getApplicableVariableElements(Element rootElement) {
+    public List<VariableElement> getApplicableVariableElements(TypeElement rootElement) {
         return getAllEnclosedElements(rootElement).stream()
                 .filter(element -> element.getKind().isField())
                 .map(VariableElement.class::cast)
@@ -26,20 +21,15 @@ public class ElementsFinder {
                 .toList();
     }
 
-    private List<Element> getAllEnclosedElements(Element rootElement) {
-        var inElement = new ArrayList<Element>();
-        if (rootElement instanceof TypeElement type) {
-            TypeMirror superclass = type.getSuperclass();
-            if (superclass.getKind() != TypeKind.NONE) {
-                Element superElement = types.asElement(superclass);
-                if (superElement != null) {
-                    List<Element> allEnclosedElements = getAllEnclosedElements(superElement);
-                    inElement.addAll(allEnclosedElements);
-                }
-            }
-        }
-        inElement.addAll(rootElement.getEnclosedElements());
-        return inElement;
+    public List<ExecutableElement> getAllMethods(TypeElement rootElement) {
+        return getAllEnclosedElements(rootElement).stream()
+                .filter(element -> element.getKind() == ElementKind.METHOD)
+                .map(ExecutableElement.class::cast)
+                .toList();
+    }
+
+    private List<? extends Element> getAllEnclosedElements(TypeElement rootElement) {
+        return elements.getAllMembers(rootElement);
     }
 
 
