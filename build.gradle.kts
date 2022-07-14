@@ -11,7 +11,7 @@ subprojects {
 
 
     group = "me.bristermitten"
-    version = "1.0.25-SNAPSHOT"
+    version = "1.0.26-SNAPSHOT"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -45,7 +45,7 @@ subprojects {
         }
     }
 
-    tasks.withType<JavaCompile>() {
+    tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
 
