@@ -161,9 +161,10 @@ public class ConfigClassBuilder {
 
         // Generate copy setter methods
         fieldSpecs.values().forEach(field -> {
+            // Create a string representing the constructor parameters
             String constructorParams = Strings.joinWith(fieldSpecs.values(),
                     f2 -> {
-                        if (f2.equals(field)) {
+                        if (f2.name.equals(field.name)) {
                             return f2.name; // we'll use the version from the parameter
                         }
                         return "this." + f2.name;
