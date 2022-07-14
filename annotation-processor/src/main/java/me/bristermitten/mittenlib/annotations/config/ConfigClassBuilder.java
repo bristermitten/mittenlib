@@ -25,6 +25,10 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
+/**
+ * Does most of the processing for the config annotation processor.
+ * Turns a @Config annotated class into a new config class.
+ */
 public class ConfigClassBuilder {
     private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
