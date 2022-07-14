@@ -55,7 +55,7 @@ public class Strings {
     /**
      * Join a collection of elements to a String using a given separator and toString function.
      * This is useful when wanting to join a collection of complex objects, whilst wanting to avoid the overhead
-     * of Streams ({@link Collectors#joining()}}, and the boilerplate of a for loop
+     * of Streams ({@link Collectors#joining()}), and the boilerplate of a for loop
      *
      * @param collection The collection to join
      * @param toString   A function to transform an element to a String
