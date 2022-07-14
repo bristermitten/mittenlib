@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Responsible for generating proper class names for config classes
+ */
 public class ConfigClassNameGenerator {
     private static final Pattern SUFFIX_PATTERN = Pattern.compile("(.+)(DTO|Config)");
 
@@ -21,7 +24,7 @@ public class ConfigClassNameGenerator {
         this.environment = environment;
     }
 
-    public static Optional<String> generateConfigClassName(TypeElement configDAOType) {
+    private static Optional<String> generateConfigClassName(TypeElement configDAOType) {
         final Config annotation = configDAOType.getAnnotation(Config.class);
         if (annotation != null && !annotation.className().isEmpty()) {
             return Optional.of(annotation.className());

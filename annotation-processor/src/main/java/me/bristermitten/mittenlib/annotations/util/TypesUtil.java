@@ -22,7 +22,7 @@ public class TypesUtil {
      * Examples:
      * <ul>
      * <li>{@code int -> Integer}</li>
-     * <li>{@code Map<String, Integer> -> Map}</code></li>
+     * <li>{@code Map<String, Integer> -> Map}</li>
      * <li>{@code String -> String}</li>
      * </ul>
      */

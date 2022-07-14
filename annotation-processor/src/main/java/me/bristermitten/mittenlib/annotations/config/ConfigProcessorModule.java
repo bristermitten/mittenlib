@@ -6,10 +6,10 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-public class ConfigProcessorModule extends AbstractModule {
+class ConfigProcessorModule extends AbstractModule {
     private final ProcessingEnvironment processingEnvironment;
 
-    public ConfigProcessorModule(ProcessingEnvironment processingEnvironment) {
+    ConfigProcessorModule(ProcessingEnvironment processingEnvironment) {
         this.processingEnvironment = processingEnvironment;
     }
 

@@ -195,12 +195,21 @@ public class ConfigClassBuilder {
         return typeSpecBuilder.build();
     }
 
-    public JavaFile createConfigFile(TypeElement classType,
-                                     List<VariableElement> variableElements) {
+    /**
+     * Create a Java source file that can deserialize data described in a given DTO class
+     *
+     * @param classType The DTO class
+     * @return A {@link JavaFile} representing the generated source file
+     */
+    public JavaFile createConfigFile(TypeElement classType) {
         final ClassName className =
                 classNameGenerator.generateFullConfigClassName(classType)
                         .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
-        final TypeSpec configClass = createConfigClass(classType, variableElements, className);
+
+        var matchingFields =
+                elementsFinder.getApplicableVariableElements(classType);
+
+        final TypeSpec configClass = createConfigClass(classType, matchingFields, className);
 
         return JavaFile.builder(className.packageName(), configClass).build();
     }

@@ -3,22 +3,20 @@ package me.bristermitten.mittenlib.annotations.config;
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
 import com.squareup.javapoet.JavaFile;
-import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
+import me.bristermitten.mittenlib.config.Config;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import static java.util.stream.Collectors.groupingBy;
-
+/**
+ * Annotation processor for generating config classes from DTO classes marked with {@link Config}
+ */
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
@@ -29,21 +27,19 @@ public class ConfigProcessor extends AbstractProcessor {
         var injector = Guice.createInjector(
                 new ConfigProcessorModule(processingEnv)
         );
-        var elementsFinder = injector.getInstance(ElementsFinder.class);
-        final Map<Element, List<VariableElement>> types = annotations
+
+        final List<TypeElement> types = annotations
                 .stream()
                 .map(roundEnv::getElementsAnnotatedWith)
                 .flatMap(Collection::stream)
                 .filter(TypeElement.class::isInstance)
                 .map(TypeElement.class::cast)
                 .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
-                .map(elementsFinder::getApplicableVariableElements)
-                .flatMap(Collection::stream)
-                .collect(groupingBy(VariableElement::getEnclosingElement));
+                .toList();
 
         ConfigClassBuilder builder = injector.getInstance(ConfigClassBuilder.class);
-        types.forEach((clazz, fields) -> {
-            JavaFile fileContent = builder.createConfigFile((TypeElement) clazz, fields);
+        types.forEach(clazz -> {
+            JavaFile fileContent = builder.createConfigFile(clazz);
             try {
                 fileContent.writeTo(processingEnv.getFiler());
             } catch (IOException e) {
