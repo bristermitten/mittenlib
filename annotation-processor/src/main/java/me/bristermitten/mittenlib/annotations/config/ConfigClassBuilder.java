@@ -11,11 +11,13 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.processing.ProcessingEnvironment;
+import javax.inject.Inject;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,14 +34,21 @@ import static java.lang.String.format;
 public class ConfigClassBuilder {
     private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
-    private final ProcessingEnvironment environment;
     private final ElementsFinder elementsFinder;
+    private final Types types;
+    private final Elements elements;
     private final MethodNames methodNames;
+    private final TypesUtil typesUtil;
+    private final ConfigClassNameGenerator classNameGenerator;
 
-    public ConfigClassBuilder(ProcessingEnvironment environment, ElementsFinder elementsFinder, MethodNames methodNames) {
-        this.environment = environment;
+    @Inject
+    ConfigClassBuilder(ElementsFinder elementsFinder, Types types, Elements elements, MethodNames methodNames, TypesUtil typesUtil, ConfigClassNameGenerator classNameGenerator) {
         this.elementsFinder = elementsFinder;
+        this.types = types;
+        this.elements = elements;
         this.methodNames = methodNames;
+        this.typesUtil = typesUtil;
+        this.classNameGenerator = classNameGenerator;
     }
 
     private FieldSpec createFieldSpec(VariableElement element) {
@@ -76,12 +85,12 @@ public class ConfigClassBuilder {
         if (typeMirror.getKind().isPrimitive()) {
             return TypeName.get(typeMirror);
         }
-        final TypeElement element = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
-        final PackageElement packageElement = environment.getElementUtils().getPackageOf(element);
+        final TypeElement element = (TypeElement) types.asElement(typeMirror);
+        final PackageElement packageElement = elements.getPackageOf(element);
         if (packageElement.isUnnamed()) {
             throw new IllegalArgumentException("Unnamed packages are not supported");
         }
-        return ConfigClassNameGenerator.generateFullConfigClassName(environment, element)
+        return classNameGenerator.generateFullConfigClassName(element)
                 .map(TypeName.class::cast)
                 .orElseGet(() -> getStandardTypeName(typeMirror));
     }
@@ -105,7 +114,7 @@ public class ConfigClassBuilder {
     private TypeSpec createConfigClass(TypeElement classType,
                                        List<VariableElement> variableElements) {
         final ClassName className =
-                ConfigClassNameGenerator.generateFullConfigClassName(environment, classType)
+                classNameGenerator.generateFullConfigClassName(classType)
                         .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
         return createConfigClass(classType, variableElements, className);
     }
@@ -189,7 +198,7 @@ public class ConfigClassBuilder {
     public JavaFile createConfigFile(TypeElement classType,
                                      List<VariableElement> variableElements) {
         final ClassName className =
-                ConfigClassNameGenerator.generateFullConfigClassName(environment, classType)
+                classNameGenerator.generateFullConfigClassName(classType)
                         .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
         final TypeSpec configClass = createConfigClass(classType, variableElements, className);
 
@@ -206,7 +215,7 @@ public class ConfigClassBuilder {
                         .toList());
 
         if (superclass != null) {
-            List<? extends Element> superElements = environment.getTypeUtils().asElement(superclass)
+            List<? extends Element> superElements = types.asElement(superclass)
                     .getEnclosedElements();
             constructorBuilder.addStatement("super($L)",
                     variableElements.stream()
@@ -244,7 +253,7 @@ public class ConfigClassBuilder {
         TypeMirror typeMirror = element.asType();
         final TypeName elementType = getTypeName(typeMirror);
         final Name variableName = element.getSimpleName();
-        final TypeMirror boxedType = TypesUtil.getBoxedType(environment.getTypeUtils(), typeMirror);
+        final TypeMirror boxedType = typesUtil.getBoxedType(typeMirror);
         final TypeName boxedTypeName = getTypeName(boxedType);
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize_" + variableName)
@@ -279,17 +288,23 @@ public class ConfigClassBuilder {
              Useful when the type is a primitive or String
              This is only safe to do with non-parameterized types, type erasure and all
             */
-            final TypeMirror safeType = TypesUtil.getSafeType(environment.getTypeUtils(), typeMirror);
+            final TypeMirror safeType = typesUtil.getSafeType(typeMirror);
             final TypeName safeTypeName = getTypeName(safeType);
             builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
             builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
             builder.endControlFlow();
         } else if (typeMirror instanceof DeclaredType declaredType) {
-            // This is really cursed, but it's the only real way
-            // When the type is a List<T> or Map<_, T> then we need to first load it as a C<Map<String, Object>> then
-            // apply the deserialize function to each element. Otherwise, gson would try to deserialize it without
-            // using the generated deserialization method and produce inconsistent results.
-            String canonicalName = environment.getTypeUtils().erasure(typeMirror).toString();
+            /*
+             This is really cursed, but it's the only real way
+             When the type is a List<T> or Map<_, T> then we need to first load it as a C<Map<String, Object>> then
+             apply the deserialize function to each element. Otherwise, gson would try to deserialize it without
+             using the generated deserialization method and produce inconsistent results.
+
+             However, we can't just blindly do this for every type - there's no way of knowing how to convert a
+             Blah<A> into a Blah<B> without some knowledge of the underlying structure.
+             Map and List are the most common collection types, but this could really use some extensibility.
+            */
+            String canonicalName = types.erasure(typeMirror).toString();
             if (canonicalName.equals("java.util.List")) {
                 var listType = declaredType.getTypeArguments().get(0);
                 if (isConfigType(listType)) {
@@ -306,7 +321,7 @@ public class ConfigClassBuilder {
                 if (isConfigType(mapType)) {
                     TypeName mapTypeName = getTypeName(mapType);
                     builder.addStatement("return $T.deserializeMap($T.class, %s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(mapTypeName)), CollectionsUtils.class,
-                            getTypeName(TypesUtil.getSafeType(environment.getTypeUtils(), keyType)),
+                            getTypeName(typesUtil.getSafeType(keyType)),
                             mapTypeName);
                     return builder.build();
                 }

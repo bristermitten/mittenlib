@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import javax.inject.Inject;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import java.util.List;
@@ -8,7 +9,8 @@ public class ElementsFinder {
 
     private final Elements elements;
 
-    public ElementsFinder(Elements elements) {
+    @Inject
+    ElementsFinder(Elements elements) {
         this.elements = elements;
     }
 

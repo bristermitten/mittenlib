@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.auto.service.AutoService;
+import com.google.inject.Guice;
 import com.squareup.javapoet.JavaFile;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 
@@ -25,8 +26,10 @@ public class ConfigProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        var elementsFinder = new ElementsFinder(processingEnv.getElementUtils());
-        var methodNames = new MethodNames(elementsFinder);
+        var injector = Guice.createInjector(
+                new ConfigProcessorModule(processingEnv)
+        );
+        var elementsFinder = injector.getInstance(ElementsFinder.class);
         final Map<Element, List<VariableElement>> types = annotations
                 .stream()
                 .map(roundEnv::getElementsAnnotatedWith)
@@ -38,7 +41,7 @@ public class ConfigProcessor extends AbstractProcessor {
                 .flatMap(Collection::stream)
                 .collect(groupingBy(VariableElement::getEnclosingElement));
 
-        ConfigClassBuilder builder = new ConfigClassBuilder(processingEnv, elementsFinder, methodNames);
+        ConfigClassBuilder builder = injector.getInstance(ConfigClassBuilder.class);
         types.forEach((clazz, fields) -> {
             JavaFile fileContent = builder.createConfigFile((TypeElement) clazz, fields);
             try {

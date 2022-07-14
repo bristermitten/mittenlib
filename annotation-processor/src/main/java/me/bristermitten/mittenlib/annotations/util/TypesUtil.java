@@ -1,14 +1,19 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import javax.inject.Inject;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
 /**
- * Utility class for working with {@link TypeMirror}s
+ * Helper class for working with {@link TypeMirror}s
  */
 public class TypesUtil {
-    private TypesUtil() {
+    private final Types types;
+
+    @Inject
+    TypesUtil(Types types) {
+        this.types = types;
     }
 
     /**
@@ -21,7 +26,7 @@ public class TypesUtil {
      * <li>{@code String -> String}</li>
      * </ul>
      */
-    public static TypeMirror getSafeType(Types types, TypeMirror typeMirror) {
+    public TypeMirror getSafeType(TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return types.boxedClass((PrimitiveType) typeMirror).asType();
         }
@@ -32,7 +37,7 @@ public class TypesUtil {
      * Get a boxed version of a given type, if it is a primitive.
      * Otherwise, the type is returned unchanged
      */
-    public static TypeMirror getBoxedType(Types types, TypeMirror typeMirror) {
+    public TypeMirror getBoxedType(TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return types.boxedClass((PrimitiveType) typeMirror).asType();
         }

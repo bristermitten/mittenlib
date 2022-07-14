@@ -10,7 +10,7 @@ dependencies {
     @Suppress("GradlePackageUpdate") // This is deliberately kept low, so it syncs with the spigot gson version
     implementation("com.google.code.gson:gson:2.3.1")
 
-    
+    implementation("com.google.inject:guice:5.1.0")
 
     implementation("org.jetbrains:annotations:23.0.0")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")

@@ -1,7 +1,9 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import com.google.inject.Singleton;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 
+import javax.inject.Inject;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -10,12 +12,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Singleton
 public class MethodNames {
     private final ElementsFinder elementsFinder;
     private final Map<VariableElement, String> safeNameCache = new HashMap<>();
     private final Map<VariableElement, Set<String>> safeNameCache2 = new HashMap<>();
 
-    public MethodNames(ElementsFinder elementsFinder) {
+    @Inject
+    MethodNames(ElementsFinder elementsFinder) {
         this.elementsFinder = elementsFinder;
     }
 
