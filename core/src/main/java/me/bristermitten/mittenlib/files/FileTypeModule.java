@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.files;
 
 import com.google.gson.Gson;
+import com.google.gson.TypeAdapterFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
@@ -34,5 +35,6 @@ public class FileTypeModule extends AbstractModule {
         // This means Guice won't complain even if there aren't any custom type adapters
         Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {
         });
+        Multibinder.newSetBinder(binder(), TypeAdapterFactory.class);
     }
 }
