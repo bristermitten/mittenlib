@@ -196,7 +196,7 @@ public class ConfigClassBuilder {
                             .build());
         });
 
-        GenerateToString generateToString = classType.getAnnotation(GenerateToString.class);
+        GenerateToString generateToString = typesUtil.getAnnotation(classType, GenerateToString.class);
         if (generateToString != null) {
             var toString = toStringGenerator.generateToString(typeSpecBuilder, className);
             typeSpecBuilder.addMethod(toString);
