@@ -24,6 +24,9 @@ public class ElementsFinder {
      * This does not include fields with the <code>transient</code> or <code>static</code>
      * modifiers.
      * Fields inherited from superclasses will be included as long as they pass the above checks.
+     *
+     * @param rootElement The element to find variables in
+     * @return All the {@link VariableElement}s in the given element that are suitable for config generation
      */
     public List<VariableElement> getApplicableVariableElements(TypeElement rootElement) {
         return elements.getAllMembers(rootElement).stream()
@@ -37,6 +40,9 @@ public class ElementsFinder {
     /**
      * Get all the methods in a given {@link TypeElement}, including inherited ones.
      * This will only return methods, not constructors or initializers.
+     *
+     * @param rootElement The type to search for methods
+     * @return All the methods in the given type
      */
     public List<ExecutableElement> getAllMethods(TypeElement rootElement) {
         return elements.getAllMembers(rootElement).stream()

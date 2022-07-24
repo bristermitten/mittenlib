@@ -41,11 +41,19 @@ public class ConfigClassBuilder {
     private final MethodNames methodNames;
     private final TypesUtil typesUtil;
     private final ConfigClassNameGenerator classNameGenerator;
-
     private final ToStringGenerator toStringGenerator;
 
+    private final FieldClassNameGenerator fieldClassNameGenerator;
+
     @Inject
-    ConfigClassBuilder(ElementsFinder elementsFinder, Types types, Elements elements, MethodNames methodNames, TypesUtil typesUtil, ConfigClassNameGenerator classNameGenerator, ToStringGenerator toStringGenerator) {
+    ConfigClassBuilder(ElementsFinder elementsFinder,
+                       Types types,
+                       Elements elements,
+                       MethodNames methodNames,
+                       TypesUtil typesUtil,
+                       ConfigClassNameGenerator classNameGenerator,
+                       ToStringGenerator toStringGenerator,
+                       FieldClassNameGenerator fieldClassNameGenerator) {
         this.elementsFinder = elementsFinder;
         this.types = types;
         this.elements = elements;
@@ -53,6 +61,7 @@ public class ConfigClassBuilder {
         this.typesUtil = typesUtil;
         this.classNameGenerator = classNameGenerator;
         this.toStringGenerator = toStringGenerator;
+        this.fieldClassNameGenerator = fieldClassNameGenerator;
     }
 
     private FieldSpec createFieldSpec(VariableElement element) {
@@ -284,7 +293,7 @@ public class ConfigClassBuilder {
         builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement(format("$T %s", variableName), elementType);
         final String fromMapName = variableName + "FromMap";
-        final String key = FieldClassNameGenerator.getConfigFieldName(element);
+        final String key = fieldClassNameGenerator.getConfigFieldName(element);
         var defaultName = element.getSimpleName();
         builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName, defaultName), key);
 
