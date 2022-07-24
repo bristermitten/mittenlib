@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.annotations.config;
 import com.squareup.javapoet.*;
 
 import javax.lang.model.element.Modifier;
+import java.util.List;
 
 public class ToStringGenerator {
 
@@ -14,10 +15,15 @@ public class ToStringGenerator {
                 .returns(String.class);
         var code = CodeBlock.builder();
         code.add("return \"$T{\"", className);
-        for (FieldSpec fieldSpec : typeSpecBuilder.fieldSpecs) {
-            code.add(" + \"$L=\" + $N + \",\"", fieldSpec.name, fieldSpec.name);
+        List<FieldSpec> fieldSpecs = typeSpecBuilder.fieldSpecs;
+        for (int i = 0; i < fieldSpecs.size(); i++) {
+            FieldSpec fieldSpec = fieldSpecs.get(i);
+            code.add(" + \"$L=\" + $N ", fieldSpec.name, fieldSpec.name);
+            if (i != fieldSpecs.size() - 1) {
+                code.add("+ \",\"");
+            }
         }
-        code.add(" + \"}\"");
+        code.add("+ \"}\"");
         builder.addStatement(code.build());
         return builder.build();
     }

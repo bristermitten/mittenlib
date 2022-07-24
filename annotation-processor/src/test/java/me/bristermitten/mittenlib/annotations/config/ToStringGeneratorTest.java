@@ -35,7 +35,7 @@ class ToStringGeneratorTest {
                 .contains("""
                           @Override
                           public String toString() {
-                            return "ToStringConfig{" + "x=" + x + "," + "y=" + y + "," + "z=" + z + "," + "}";
+                            return "ToStringConfig{" + "x=" + x + "," + "y=" + y + "," + "z=" + z + "}";
                           }
                         """);
     }
@@ -69,7 +69,7 @@ class ToStringGeneratorTest {
                 .containsMatch("""
                         \\s+@Override
                         \\s+public String toString\\(\\) \\{
-                        \\s+return "Subclass\\{" \\+ "y=" \\+ y \\+ "," \\+ "}";
+                        \\s+return "Subclass\\{" \\+ "y=" \\+ y \\+ "}";
                         \\s+}
                         """);
     }
