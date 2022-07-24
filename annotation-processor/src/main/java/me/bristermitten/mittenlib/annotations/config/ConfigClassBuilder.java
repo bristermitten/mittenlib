@@ -5,6 +5,7 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
+import me.bristermitten.mittenlib.config.generate.GenerateToString;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
@@ -41,14 +42,17 @@ public class ConfigClassBuilder {
     private final TypesUtil typesUtil;
     private final ConfigClassNameGenerator classNameGenerator;
 
+    private final ToStringGenerator toStringGenerator;
+
     @Inject
-    ConfigClassBuilder(ElementsFinder elementsFinder, Types types, Elements elements, MethodNames methodNames, TypesUtil typesUtil, ConfigClassNameGenerator classNameGenerator) {
+    ConfigClassBuilder(ElementsFinder elementsFinder, Types types, Elements elements, MethodNames methodNames, TypesUtil typesUtil, ConfigClassNameGenerator classNameGenerator, ToStringGenerator toStringGenerator) {
         this.elementsFinder = elementsFinder;
         this.types = types;
         this.elements = elements;
         this.methodNames = methodNames;
         this.typesUtil = typesUtil;
         this.classNameGenerator = classNameGenerator;
+        this.toStringGenerator = toStringGenerator;
     }
 
     private FieldSpec createFieldSpec(VariableElement element) {
@@ -191,6 +195,12 @@ public class ConfigClassBuilder {
                             .addStatement("return new $T(" + constructorParams + ")", className)
                             .build());
         });
+
+        GenerateToString generateToString = classType.getAnnotation(GenerateToString.class);
+        if (generateToString != null) {
+            var toString = toStringGenerator.generateToString(typeSpecBuilder, className);
+            typeSpecBuilder.addMethod(toString);
+        }
 
         return typeSpecBuilder.build();
     }
@@ -408,4 +418,5 @@ public class ConfigClassBuilder {
 
         typeSpecBuilder.addMethod(builder.build());
     }
+
 }

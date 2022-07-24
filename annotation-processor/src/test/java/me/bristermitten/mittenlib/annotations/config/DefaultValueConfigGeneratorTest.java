@@ -27,6 +27,7 @@ class DefaultValueConfigGeneratorTest {
                                 """));
 
         assertThat(compilation).succeededWithoutWarnings();
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.DefaultValueConfig");
+        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.DefaultValueConfig")
+                .isNotNull();
     }
 }
