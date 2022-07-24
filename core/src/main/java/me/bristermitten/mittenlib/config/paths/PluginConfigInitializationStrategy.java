@@ -32,7 +32,7 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
 
             final Path inJar = PathUtil.resourceToPath(resource);
 
-            Files.createDirectories(dataFolder);
+            Files.createDirectories(inDataFolder.getParent());
             Files.copy(inJar, inDataFolder);
         } catch (IOException | URISyntaxException e) {
             throw new IllegalArgumentException(e);
