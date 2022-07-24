@@ -21,6 +21,8 @@ public class MittenLibModule<T extends Plugin> extends AbstractModule {
         //noinspection unchecked
         bind((Class<T>) plugin.getClass()).toInstance(plugin);
 
+        bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer(plugin.getName()));
+
         for (Module module : modules) {
             install(module);
         }

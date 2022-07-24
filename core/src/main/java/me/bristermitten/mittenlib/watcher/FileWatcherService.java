@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.watcher;
 
-import org.bukkit.plugin.Plugin;
+import me.bristermitten.mittenlib.MittenLibConsumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,10 +20,10 @@ public class FileWatcherService implements Runnable {
     private final AtomicBoolean watching = new AtomicBoolean(false);
 
     @Inject
-    public FileWatcherService(Plugin plugin) {
+    public FileWatcherService(MittenLibConsumer consumer) {
         service = Executors.newSingleThreadExecutor(r ->
         {
-            final Thread thread = new Thread(r, String.format("%s MittenLib File Watcher", plugin.getName()));
+            final Thread thread = new Thread(r, String.format("%s MittenLib File Watcher", consumer.getName()));
             thread.setDaemon(true);
             return thread;
         });

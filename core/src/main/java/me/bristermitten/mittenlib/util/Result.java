@@ -23,6 +23,20 @@ public interface Result<T> {
         }
     }
 
+    static <T> Result<T> computeCatching(SafeSupplier<Result<T>> supplier) {
+        try {
+            Result<T> tResult = supplier.get();
+            if (tResult instanceof Fail) {
+                // Checking this is probably faster than potentially causing an exception with getOrThrow
+                return tResult;
+            } else {
+                return ok(tResult.getOrThrow());
+            }
+        } catch (Throwable e) {
+            return fail(e);
+        }
+    }
+
 
     Optional<T> toOptional();
 
@@ -37,6 +51,10 @@ public interface Result<T> {
     <R> Result<R> flatMap(Function<T, Result<R>> function); // monad :D
 
     T getOrThrow();
+
+    boolean isSuccess();
+
+    boolean isFailure();
 
     class Fail<T, E extends Throwable> implements Result<T> {
         private final E exception;
@@ -71,6 +89,16 @@ public interface Result<T> {
             Errors.sneakyThrow(exception);
             return null;
         }
+
+        @Override
+        public boolean isSuccess() {
+            return false;
+        }
+
+        @Override
+        public boolean isFailure() {
+            return true;
+        }
     }
 
     class Ok<T> implements Result<T> {
@@ -103,6 +131,16 @@ public interface Result<T> {
         @Override
         public T getOrThrow() {
             return value;
+        }
+
+        @Override
+        public boolean isSuccess() {
+            return true;
+        }
+
+        @Override
+        public boolean isFailure() {
+            return false;
         }
     }
 }

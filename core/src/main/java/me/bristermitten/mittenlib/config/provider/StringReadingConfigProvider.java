@@ -6,25 +6,25 @@ import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class ReadingConfigProvider<T> implements ConfigProvider<T> {
+public class StringReadingConfigProvider<T> implements ConfigProvider<T> {
     private final Configuration<T> config;
     private final ConfigReader reader;
-    private final Path path;
+    private final String data;
 
-    public ReadingConfigProvider(Path path, Configuration<T> config, ConfigReader reader) {
-        this.path = path;
+    public StringReadingConfigProvider(String data, Configuration<T> config, ConfigReader reader) {
+        this.data = data;
         this.config = config;
         this.reader = reader;
     }
 
     @Override
     public T get() {
-        return reader.load(config.getType(), path, config.getDeserializeFunction()).getOrThrow();
+        return reader.load(config.getType(), data, config.getDeserializeFunction()).getOrThrow();
     }
 
     @Override
     public Optional<Path> path() {
-        return Optional.of(path);
+        return Optional.empty();
     }
 }
 

@@ -1,6 +1,8 @@
 package me.bristermitten.mittenlib.config.provider;
 
 import me.bristermitten.mittenlib.config.Configuration;
+import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
+import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
@@ -16,8 +18,8 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
     }
 
     @Inject
-    void initialize(ConfigProviderFactory factory) {
-        this.delegate = factory.createProvider(configuration);
+    void initialize(ConfigProviderFactory factory, ConfigProviderImprover improver) {
+        this.delegate = improver.improve(factory.createProvider(configuration));
     }
 
     @Override

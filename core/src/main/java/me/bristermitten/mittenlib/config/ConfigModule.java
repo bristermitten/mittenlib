@@ -8,9 +8,11 @@ import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
-import me.bristermitten.mittenlib.config.provider.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.DelegatingConfigProvider;
-import me.bristermitten.mittenlib.config.provider.SimpleConfigProviderFactory;
+import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
+import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
+import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProviderFactory;
+import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProviderImprover;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
 import me.bristermitten.mittenlib.util.CompositeType;
@@ -33,6 +35,7 @@ public class ConfigModule extends AbstractModule {
         bind(ConfigInitializationStrategy.class).to(PluginConfigInitializationStrategy.class);
         bind(ConfigPathResolver.class).to(PluginConfigPathResolver.class);
         bind(ConfigProviderFactory.class).to(SimpleConfigProviderFactory.class);
+        bind(ConfigProviderImprover.class).to(SimpleConfigProviderImprover.class);
 
         Multibinder<Configuration<?>> configurationMultibinder = Multibinder.newSetBinder(binder(), new TypeLiteral<Configuration<?>>() {
         });

@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.inject.Inject;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.Reader;
 import java.util.Map;
 
 import static me.bristermitten.mittenlib.util.Result.runCatching;
@@ -21,9 +20,8 @@ public class YamlObjectLoader implements ObjectLoader {
     }
 
     @Override
-    public @NotNull Result<Map<String, Object>> load(@NotNull Path source) {
+    public @NotNull Result<Map<String, Object>> load(@NotNull Reader source) {
         //noinspection unchecked
-        return runCatching(() ->
-                (Map<String, Object>) yaml.load(Files.newBufferedReader(source)));
+        return runCatching(() -> (Map<String, Object>) yaml.load(source));
     }
 }
