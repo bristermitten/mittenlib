@@ -19,7 +19,7 @@ public enum NamingPatterns {
      */
     LOWER_SNAKE_CASE,
     /**
-     * UPPER_SNAKE_CASE
+     * Upper_Snake_Case
      */
     UPPER_SNAKE_CASE,
     /**
