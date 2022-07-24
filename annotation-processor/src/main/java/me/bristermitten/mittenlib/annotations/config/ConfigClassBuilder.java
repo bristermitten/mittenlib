@@ -127,7 +127,7 @@ public class ConfigClassBuilder {
                 .returns(field.type)
                 .addStatement("return " + field.name);
 
-        if (isNullable(element)) {
+        if (typesUtil.isNullable(element)) {
             builder.addAnnotation(Nullable.class);
         } else {
             builder.addAnnotation(NotNull.class);
@@ -278,7 +278,7 @@ public class ConfigClassBuilder {
         var defaultName = element.getSimpleName();
         builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName, defaultName), key);
 
-        if (!isNullable(element)) {
+        if (!typesUtil.isNullable(element)) {
             builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
             builder.addStatement(String.format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName),
                     Result.class, ConfigMapLoader.class, variableName, element, daoType);
@@ -355,14 +355,6 @@ public class ConfigClassBuilder {
                 declaredType.asElement().getAnnotation(Config.class) != null;
     }
 
-    private boolean isNullable(VariableElement element) {
-        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
-            if (ann.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
@@ -372,8 +364,10 @@ public class ConfigClassBuilder {
 
     }
 
-    private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder, TypeElement daoType, ClassName
-            className, List<VariableElement> variableElements) {
+    private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder,
+                                         TypeElement daoType,
+                                         ClassName className,
+                                         List<VariableElement> variableElements) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(className))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
