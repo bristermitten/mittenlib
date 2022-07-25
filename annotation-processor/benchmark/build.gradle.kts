@@ -8,8 +8,9 @@ java {
 }
 
 jmh {
-    warmupIterations.set(1)
+    warmupIterations.set(2)
     iterations.set(2)
+    failOnError.set(true)
     fork.set(2)
 }
 
@@ -26,4 +27,9 @@ tasks.processJmhResources {
 dependencies {
     annotationProcessor(project(":annotation-processor"))
     implementation(project(":core"))
+
+    implementation("com.fasterxml.jackson.core:jackson-core:2.13.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 }
+
+

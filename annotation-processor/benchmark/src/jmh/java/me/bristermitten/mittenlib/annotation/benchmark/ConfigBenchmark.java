@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.annotation.benchmark;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -11,17 +13,17 @@ import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactor
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class ConfigBenchmark {
 
     @Benchmark
@@ -36,6 +38,11 @@ public class ConfigBenchmark {
         bh.consume(res);
     }
 
+    @Benchmark
+    public void benchmarkJacksonJson(BenchState state, Blackhole bh) throws JsonProcessingException {
+        var res = state.jackson.readValue(state.jsonData, TestDataGson.class);
+        bh.consume(res);
+    }
 
     @Benchmark
     public void benchmarkMittenLibYaml(BenchState state, Blackhole bh) {
@@ -60,12 +67,13 @@ public class ConfigBenchmark {
 
     @State(Scope.Benchmark)
     public static class BenchState {
-        private String yamlData;
-        private String jsonData;
         public Gson gson = new Gson();
         public Yaml yaml = new Yaml();
+        public ObjectMapper jackson = new ObjectMapper();
         public ConfigProvider<TestData> configProviderJson;
         public ConfigProvider<TestData> configProviderYaml;
+        private String yamlData;
+        private String jsonData;
 
         @Setup
         public void setup() {
