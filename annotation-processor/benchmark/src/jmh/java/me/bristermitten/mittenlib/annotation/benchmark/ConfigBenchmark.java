@@ -13,6 +13,7 @@ import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 import org.yaml.snakeyaml.Yaml;
@@ -59,15 +60,15 @@ public class ConfigBenchmark {
 
     @State(Scope.Benchmark)
     public static class BenchState {
-        private final String yamlData;
-        private final String jsonData;
+        private String yamlData;
+        private String jsonData;
         public Gson gson = new Gson();
         public Yaml yaml = new Yaml();
         public ConfigProvider<TestData> configProviderJson;
         public ConfigProvider<TestData> configProviderYaml;
 
-
-        public BenchState() {
+        @Setup
+        public void setup() {
             this.yamlData = getYamlFile();
             this.jsonData = getJSONFile();
 
@@ -84,7 +85,7 @@ public class ConfigBenchmark {
 
             var config2 = new Configuration<>("data.yaml", TestData.class, TestData::deserializeTestData);
             var yamlType = injector.getInstance(YamlFileType.class);
-            this.configProviderYaml = configProviderFactory.createStringReaderProvider(yamlType, yamlData, config);
+            this.configProviderYaml = configProviderFactory.createStringReaderProvider(yamlType, yamlData, config2);
         }
 
         public String getJSONFile() {
