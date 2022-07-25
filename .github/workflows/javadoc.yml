@@ -36,8 +36,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: built-docs
+          path: docs
 
       - name: Deploy to Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build/docs/javadoc
+          folder: docs
