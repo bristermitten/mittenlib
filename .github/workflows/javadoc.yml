@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-javadoc:
+  build-and-publish-javadoc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,24 +21,7 @@ jobs:
       - name: Build Javadocs with Gradle
         run: ./gradlew aggregateJavadoc
 
-      - name: Upload Javadocs
-        uses: actions/upload-artifact@v3
-        with:
-          name: built-docs
-          path: build/docs/javadoc/
-
-
-  publish-javadoc-to-pages:
-    needs: build-javadoc
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Javadocs
-        uses: actions/download-artifact@v3
-        with:
-          name: built-docs
-          path: docs
-
       - name: Deploy to Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: docs
+          folder: build/docs/javadoc
