@@ -21,6 +21,13 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class ConfigProcessor extends AbstractProcessor {
 
+    /**
+     * Public constructor for the compiler
+     */
+    public ConfigProcessor() {
+        super();
+    }
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         var injector = Guice.createInjector(

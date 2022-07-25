@@ -11,12 +11,15 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+/**
+ * An {@link ObjectLoader} that uses Gson to parse a JSON string
+ */
 public class GsonObjectLoader implements ObjectLoader {
     private static final Type MAP_STRING_OBJ_TYPE = new CompositeType(Map.class, String.class, Object.class);
     private final Gson gson;
 
     @Inject
-    public GsonObjectLoader(Gson gson) {
+    GsonObjectLoader(Gson gson) {
         this.gson = gson;
     }
 

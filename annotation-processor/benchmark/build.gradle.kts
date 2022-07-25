@@ -13,6 +13,11 @@ jmh {
     fork.set(2)
 }
 
+tasks.javadoc {
+    // This module doesn't need to be documented so disable the annoying warnings
+    (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
+}
+
 tasks.processJmhResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
