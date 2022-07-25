@@ -18,10 +18,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -124,6 +121,21 @@ public class ConfigClassBuilder {
         return createConfigClass(classType, variableElements, className);
     }
 
+    private TypeMirror getDTOSuperclass(TypeElement dtoType) {
+        var superClass = dtoType.getSuperclass();
+        if (superClass.getKind() == TypeKind.NONE || superClass.toString().equals("java.lang.Object")) {
+            superClass = null;
+        }
+        if (superClass != null && !isConfigType(superClass)) {
+            throw new IllegalArgumentException("Superclass of @Config class must be a @Config class, was " + superClass);
+        }
+        return superClass;
+    }
+
+    private String getSuperFieldName(TypeMirror superClass) {
+        return "parent_" + typesUtil.getSimpleName(superClass);
+    }
+
     private TypeSpec createConfigClass(TypeElement classType,
                                        List<VariableElement> variableElements,
                                        ClassName className) {
@@ -132,15 +144,17 @@ public class ConfigClassBuilder {
                 .addModifiers(Modifier.PUBLIC);
 
 
-        var superClass = classType.getSuperclass();
-        if (superClass.getKind() == TypeKind.NONE) {
-            superClass = null;
-        }
-        if (superClass != null && !superClass.toString().equals("java.lang.Object")) {
-            if (!isConfigType(superClass)) {
-                throw new IllegalArgumentException("Superclass of @Config class must be a @Config class, was " + superClass);
-            }
+        var superClass = getDTOSuperclass(classType);
+        if (superClass != null) {
             typeSpecBuilder.superclass(getConfigClassName(superClass));
+
+            // Store the super instance
+            var superclassName = getConfigClassName(superClass);
+            var superParamName = getSuperFieldName(superClass);
+            typeSpecBuilder.addField(FieldSpec.builder(superclassName, superParamName)
+                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                    .build()
+            );
         }
 
         createConfigurationField(classType, className, typeSpecBuilder);
@@ -169,6 +183,14 @@ public class ConfigClassBuilder {
                         return "this." + f2.name;
                     }, ", ");
 
+            if (superClass != null) {
+                var joiner = new StringJoiner(",")
+                        .add(getSuperFieldName(superClass));
+                if (!constructorParams.isEmpty()) {
+                    joiner.add(constructorParams);
+                }
+                constructorParams = joiner.toString();
+            }
             typeSpecBuilder.addMethod(
                     MethodSpec.methodBuilder("with" + Strings.capitalize(field.name))
                             .addModifiers(Modifier.PUBLIC)
@@ -210,20 +232,30 @@ public class ConfigClassBuilder {
             (List<VariableElement> variableElements, Collection<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder,
              @Nullable TypeMirror superclass) {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addParameters(variableElements.stream()
-                        .map(this::createParameterSpec)
-                        .toList());
+                .addModifiers(Modifier.PUBLIC);
 
         if (superclass != null) {
-            List<? extends Element> superElements = types.asElement(superclass)
-                    .getEnclosedElements();
+            var superclassName = getConfigClassName(superclass);
+            var superParamName = getSuperFieldName(superclass);
+            var parameter = ParameterSpec.builder(superclassName, superParamName)
+                    .addModifiers(Modifier.FINAL)
+                    .build();
+            constructorBuilder.addParameter(parameter);
+
+
+            List<? extends Element> superElements = elementsFinder.getApplicableVariableElements(superclass);
             constructorBuilder.addStatement("super($L)",
-                    variableElements.stream()
-                            .filter(superElements::contains)
-                            .map(variableElement -> variableElement.getSimpleName().toString())
+                    superElements.stream()
+                            .map(VariableElement.class::cast)
+                            .map(variableElement -> superParamName + "." + getFieldAccessorName(variableElement) + "()")
                             .collect(Collectors.joining(", ")));
+
+            constructorBuilder.addStatement("this.$L = $L", superParamName, superParamName);
         }
+
+        constructorBuilder.addParameters(variableElements.stream()
+                .map(this::createParameterSpec)
+                .toList());
 
         fieldSpecs.forEach(field ->
                 constructorBuilder.addStatement(format("this.%1$s = %1$s", field.name)));
@@ -356,7 +388,7 @@ public class ConfigClassBuilder {
     }
 
     private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder,
-                                         TypeElement daoType,
+                                         TypeElement dtoType,
                                          ClassName className,
                                          List<VariableElement> variableElements) {
 
@@ -365,10 +397,10 @@ public class ConfigClassBuilder {
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, className))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
 
-        builder.addStatement("$1T dao = new $1T()", (daoType.asType()));
+        builder.addStatement("$1T dto = new $1T()", (dtoType.asType()));
 
         final List<MethodSpec> deserializeMethods = variableElements.stream()
-                .map(variableElement -> createDeserializeMethodFor(daoType, variableElement))
+                .map(variableElement -> createDeserializeMethodFor(dtoType, variableElement))
                 .toList();
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
@@ -376,9 +408,21 @@ public class ConfigClassBuilder {
         final StringBuilder expressionBuilder = new StringBuilder();
         expressionBuilder.append("return ");
         int i = 0;
+        var superClass = getDTOSuperclass(dtoType);
+
+        // Add the superclass deserialization first, if it exists
+        if (superClass != null) {
+            var superConfigName = getConfigClassName(superClass);
+            expressionBuilder.append(CodeBlock.of("$T.$L", superConfigName, getDeserializeMethodName(superConfigName)));
+            expressionBuilder
+                    .append("(context)")
+                    .append(".flatMap(var")
+                    .append(i++)
+                    .append("->\n");
+        }
         for (MethodSpec deserializeMethod : deserializeMethods) {
             expressionBuilder.append(deserializeMethod.name)
-                    .append("(context, dao)")
+                    .append("(context, dto)")
                     .append(".flatMap(var")
                     .append(i++)
                     .append("->\n");

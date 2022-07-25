@@ -140,4 +140,19 @@ public class TypesUtil {
 
         return ParameterizedTypeName.get(ClassName.get(element), properArguments.toArray(new TypeName[0]));
     }
+
+    /**
+     * Gets the simple name of a {@link TypeMirror}, i.e. the name without a package
+     * For primitives, the unchanged name is returned.
+     *
+     * @param typeMirror The type to get the name of
+     * @return The simple name of the type
+     */
+    public String getSimpleName(TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return typeMirror.toString();
+        }
+        final TypeElement element = (TypeElement) types.asElement(typeMirror);
+        return element.getSimpleName().toString();
+    }
 }
