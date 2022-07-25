@@ -1,26 +1,36 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import me.bristermitten.mittenlib.annotations.config.ConfigurationClassNameGenerator;
 import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Helper class for working with {@link TypeMirror}s
  */
 public class TypesUtil {
     private final Types types;
+    private final Elements elements;
+
+    private final ConfigurationClassNameGenerator classNameGenerator;
 
     @Inject
-    TypesUtil(Types types) {
+    TypesUtil(Types types, Elements elements, ConfigurationClassNameGenerator classNameGenerator) {
         this.types = types;
+        this.elements = elements;
+        this.classNameGenerator = classNameGenerator;
     }
 
     /**
@@ -92,5 +102,42 @@ public class TypesUtil {
             return getAnnotation(enclosing, type);
         }
         return null;
+    }
+
+    public TypeName getConfigClassName(TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return TypeName.get(typeMirror);
+        }
+        final TypeElement element = (TypeElement) types.asElement(typeMirror);
+        final PackageElement packageElement = elements.getPackageOf(element);
+        if (packageElement.isUnnamed()) {
+            throw new IllegalArgumentException("Unnamed packages are not supported");
+        }
+        return classNameGenerator.generateConfigurationClassName(element)
+                .map(TypeName.class::cast) // Safe upcast
+                .orElseGet(() -> translateDTOParameters(typeMirror));
+    }
+
+    /**
+     * Recursively turns any DTO types into their non-DTO counterparts,
+     * i.e. {@code List<BlahDTO> -> List<Blah>}
+     *
+     * @param mirror The type to convert
+     * @return The converted type
+     */
+    public TypeName translateDTOParameters(TypeMirror mirror) {
+        if (!(mirror instanceof DeclaredType declaredType)) {
+            return TypeName.get(mirror);
+        }
+        TypeElement element = (TypeElement) declaredType.asElement();
+        List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
+        if (typeArguments.isEmpty()) {
+            return TypeName.get(mirror);
+        }
+        List<TypeName> properArguments = typeArguments.stream()
+                .map(this::getConfigClassName)
+                .toList();
+
+        return ParameterizedTypeName.get(ClassName.get(element), properArguments.toArray(new TypeName[0]));
     }
 }

@@ -47,6 +47,8 @@ It provides a range of general purpose utilities such as:
 
 ### `annotation-processor`
 
+[Full documentation](./annotation-processor/README.md)
+
 #### Runtime Dependencies:
 
 None

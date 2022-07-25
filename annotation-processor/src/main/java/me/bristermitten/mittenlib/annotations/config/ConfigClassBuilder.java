@@ -17,7 +17,6 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -37,10 +36,10 @@ public class ConfigClassBuilder {
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     private final ElementsFinder elementsFinder;
     private final Types types;
-    private final Elements elements;
+
     private final MethodNames methodNames;
     private final TypesUtil typesUtil;
-    private final ConfigClassNameGenerator classNameGenerator;
+    private final ConfigurationClassNameGenerator classNameGenerator;
     private final ToStringGenerator toStringGenerator;
 
     private final FieldClassNameGenerator fieldClassNameGenerator;
@@ -48,15 +47,13 @@ public class ConfigClassBuilder {
     @Inject
     ConfigClassBuilder(ElementsFinder elementsFinder,
                        Types types,
-                       Elements elements,
                        MethodNames methodNames,
                        TypesUtil typesUtil,
-                       ConfigClassNameGenerator classNameGenerator,
+                       ConfigurationClassNameGenerator classNameGenerator,
                        ToStringGenerator toStringGenerator,
                        FieldClassNameGenerator fieldClassNameGenerator) {
         this.elementsFinder = elementsFinder;
         this.types = types;
-        this.elements = elements;
         this.methodNames = methodNames;
         this.typesUtil = typesUtil;
         this.classNameGenerator = classNameGenerator;
@@ -66,7 +63,7 @@ public class ConfigClassBuilder {
 
     private FieldSpec createFieldSpec(VariableElement element) {
         return FieldSpec.builder(
-                        getTypeName(element.asType()),
+                        getConfigClassName(element.asType()),
                         element.getSimpleName().toString()
                 ).addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                 .build();
@@ -74,7 +71,7 @@ public class ConfigClassBuilder {
 
     private ParameterSpec createParameterSpec(VariableElement element) {
         return ParameterSpec.builder(
-                        getTypeName(element.asType()),
+                        getConfigClassName(element.asType()),
                         element.getSimpleName().toString()
                 ).addModifiers(Modifier.FINAL)
                 .build();
@@ -94,43 +91,10 @@ public class ConfigClassBuilder {
                 });
     }
 
-    private TypeName getTypeName(TypeMirror typeMirror) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return TypeName.get(typeMirror);
-        }
-        final TypeElement element = (TypeElement) types.asElement(typeMirror);
-        final PackageElement packageElement = elements.getPackageOf(element);
-        if (packageElement.isUnnamed()) {
-            throw new IllegalArgumentException("Unnamed packages are not supported");
-        }
-        return classNameGenerator.generateFullConfigClassName(element)
-                .map(TypeName.class::cast)
-                .orElseGet(() -> getStandardTypeName(typeMirror));
+    private TypeName getConfigClassName(TypeMirror typeMirror) {
+        return typesUtil.getConfigClassName(typeMirror);
     }
 
-    private TypeName getStandardTypeName(TypeMirror mirror) {
-        if (mirror instanceof DeclaredType declaredType) {
-            TypeElement element = (TypeElement) declaredType.asElement();
-            List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
-            if (typeArguments.isEmpty()) {
-                return TypeName.get(mirror);
-            }
-            List<TypeName> properArguments = typeArguments.stream()
-                    .map(this::getTypeName)
-                    .toList();
-
-            return ParameterizedTypeName.get(ClassName.get(element), properArguments.toArray(new TypeName[0]));
-        }
-        return TypeName.get(mirror);
-    }
-
-    private TypeSpec createConfigClass(TypeElement classType,
-                                       List<VariableElement> variableElements) {
-        final ClassName className =
-                classNameGenerator.generateFullConfigClassName(classType)
-                        .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
-        return createConfigClass(classType, variableElements, className);
-    }
 
     private void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
         var safeName = getFieldAccessorName(element);
@@ -152,10 +116,19 @@ public class ConfigClassBuilder {
     }
 
     private TypeSpec createConfigClass(TypeElement classType,
+                                       List<VariableElement> variableElements) {
+        final ClassName className =
+                classNameGenerator.generateConfigurationClassName(classType)
+                        .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
+
+        return createConfigClass(classType, variableElements, className);
+    }
+
+    private TypeSpec createConfigClass(TypeElement classType,
                                        List<VariableElement> variableElements,
                                        ClassName className) {
 
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(className)
+        var typeSpecBuilder = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC);
 
 
@@ -167,7 +140,7 @@ public class ConfigClassBuilder {
             if (!isConfigType(superClass)) {
                 throw new IllegalArgumentException("Superclass of @Config class must be a @Config class, was " + superClass);
             }
-            typeSpecBuilder.superclass(getTypeName(superClass));
+            typeSpecBuilder.superclass(getConfigClassName(superClass));
         }
 
         createConfigurationField(classType, className, typeSpecBuilder);
@@ -222,7 +195,7 @@ public class ConfigClassBuilder {
      */
     public JavaFile createConfigFile(TypeElement classType) {
         final ClassName className =
-                classNameGenerator.generateFullConfigClassName(classType)
+                classNameGenerator.generateConfigurationClassName(classType)
                         .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
 
         var matchingFields =
@@ -279,10 +252,10 @@ public class ConfigClassBuilder {
 
     private MethodSpec createDeserializeMethodFor(TypeElement daoType, VariableElement element) {
         TypeMirror typeMirror = element.asType();
-        final TypeName elementType = getTypeName(typeMirror);
+        final TypeName elementType = getConfigClassName(typeMirror);
         final Name variableName = element.getSimpleName();
         final TypeMirror boxedType = typesUtil.getBoxedType(typeMirror);
-        final TypeName boxedTypeName = getTypeName(boxedType);
+        final TypeName boxedTypeName = getConfigClassName(boxedType);
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize_" + variableName)
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
@@ -317,7 +290,7 @@ public class ConfigClassBuilder {
              This is only safe to do with non-parameterized types, type erasure and all
             */
             final TypeMirror safeType = typesUtil.getSafeType(typeMirror);
-            final TypeName safeTypeName = getTypeName(safeType);
+            final TypeName safeTypeName = getConfigClassName(safeType);
             builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
             builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
             builder.endControlFlow();
@@ -336,7 +309,7 @@ public class ConfigClassBuilder {
             if (canonicalName.equals("java.util.List")) {
                 var listType = declaredType.getTypeArguments().get(0);
                 if (isConfigType(listType)) {
-                    TypeName listTypeName = getTypeName(listType);
+                    TypeName listTypeName = getConfigClassName(listType);
                     builder.addStatement("return $T.deserializeList(%s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(listTypeName)), CollectionsUtils.class,
                             listTypeName);
                     return builder.build();
@@ -347,9 +320,9 @@ public class ConfigClassBuilder {
                 var keyType = declaredType.getTypeArguments().get(0);
 
                 if (isConfigType(mapType)) {
-                    TypeName mapTypeName = getTypeName(mapType);
+                    TypeName mapTypeName = getConfigClassName(mapType);
                     builder.addStatement("return $T.deserializeMap($T.class, %s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(mapTypeName)), CollectionsUtils.class,
-                            getTypeName(typesUtil.getSafeType(keyType)),
+                            getConfigClassName(typesUtil.getSafeType(keyType)),
                             mapTypeName);
                     return builder.build();
                 }
@@ -380,7 +353,6 @@ public class ConfigClassBuilder {
             return "deserialize" + cn.simpleName();
         }
         return "deserialize" + name;
-
     }
 
     private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder,

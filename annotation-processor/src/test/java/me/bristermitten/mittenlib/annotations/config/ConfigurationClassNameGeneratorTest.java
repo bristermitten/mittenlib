@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-class ConfigClassNameGeneratorTest {
+class ConfigurationClassNameGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {

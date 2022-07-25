@@ -9,7 +9,6 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -42,8 +41,8 @@ public class ConfigProcessor extends AbstractProcessor {
             JavaFile fileContent = builder.createConfigFile(clazz);
             try {
                 fileContent.writeTo(processingEnv.getFiler());
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new ConfigProcessingException("Could not create config file", e);
             }
         });
         return true;
