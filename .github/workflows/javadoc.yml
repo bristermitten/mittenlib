@@ -27,3 +27,16 @@ jobs:
           name: built-docs
           path: build/docs/javadoc/
 
+
+  publish-javadoc-to-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Javadocs
+        uses: actions/download-artifact@v3
+        with:
+          name: built-docs
+
+      - name: Deploy to Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/docs/javadoc
