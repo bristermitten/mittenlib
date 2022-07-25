@@ -29,6 +29,7 @@ jobs:
 
 
   publish-javadoc-to-pages:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download Javadocs
