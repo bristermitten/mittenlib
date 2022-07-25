@@ -124,6 +124,11 @@ class DTOSuperclassTransformationTest {
 
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
                 .isNotNull();
+
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
+                .contentsAsUtf8String()
+                .contains("super(type,");
         // TODO figure out a proper way of testing contents -- AST comparison doesn't work as of java 17
 
     }
