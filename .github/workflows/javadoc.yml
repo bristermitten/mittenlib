@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-doc:
+  build-javadoc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,6 +24,6 @@ jobs:
       - name: Upload Javadocs
         uses: actions/upload-artifact@v3
         with:
-          name: build/docs/javadoc
-          path: build/docs/
+          name: built-docs
+          path: build/docs/javadoc/
 
