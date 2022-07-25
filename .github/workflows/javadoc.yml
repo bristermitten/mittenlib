@@ -4,16 +4,26 @@ on:
   push:
     branches:
       - master
-      - main
 
 jobs:
-  publish:
+  build-doc:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy JavaDoc 🚀
-        uses: MathieuSoysal/Javadoc-publisher.yml@v2.0.4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          javadoc-branch: javadoc
+          distribution: adopt
           java-version: 17
-          target-folder: javadoc
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build Javadocs with Gradle
+        run: ./gradlew aggregateJavadoc
+
+      - name: Upload Javadocs
+        uses: actions/upload-artifact@v3
+        with:
+          name: build/docs/javadoc
+          path: build/docs/
+

@@ -2,6 +2,7 @@ plugins {
     java
     `java-library`
     `maven-publish`
+    id("io.freefair.aggregate-javadoc") version "6.3.0"
 }
 
 subprojects {
@@ -43,6 +44,7 @@ subprojects {
         if (JavaVersion.current().isJava9Compatible) {
             (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
         }
+
     }
 
     tasks.withType<JavaCompile> {
