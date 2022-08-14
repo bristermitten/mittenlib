@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.exception;
 
 /**
  * General exception thrown when the config annotation processor fails

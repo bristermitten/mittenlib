@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.annotations.config;
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
 import com.squareup.javapoet.JavaFile;
+import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.config.Config;
 
 import javax.annotation.processing.*;

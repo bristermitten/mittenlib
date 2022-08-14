@@ -68,14 +68,11 @@ public class ConfigurationClassNameGenerator {
              */
 
             final var enclosingElement = configDTOType.getEnclosingElement();
-            // Sometimes this doesn't seem to be the case, I'm not entirely sure why but I think it's if we're referencing a DTO type that hasn't been generated yet.
-            // Hopefully this fix is ok
-            if (enclosingElement instanceof TypeElement typeElement) {
-                return generateConfigurationClassName(typeElement)
-                        .flatMap(className ->
-                                findConfigClassName(configDTOType)
-                                        .map(className::nestedClass));
-            }
+            return generateConfigurationClassName((TypeElement) enclosingElement)
+                    .flatMap(className ->
+                            findConfigClassName(configDTOType)
+                                    .map(className::nestedClass));
+
         }
 
         final String packageName = environment.getElementUtils().getPackageOf(configDTOType).getQualifiedName().toString();

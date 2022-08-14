@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.annotations.config;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
+import me.bristermitten.mittenlib.annotations.util.Stringify;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.config.generate.GenerateToString;
@@ -41,6 +42,8 @@ public class ConfigClassBuilder {
 
     private final FieldClassNameGenerator fieldClassNameGenerator;
 
+    private final GeneratedTypeCache generatedTypeCache;
+
     @Inject
     ConfigClassBuilder(ElementsFinder elementsFinder,
                        Types types,
@@ -48,7 +51,7 @@ public class ConfigClassBuilder {
                        TypesUtil typesUtil,
                        ConfigurationClassNameGenerator classNameGenerator,
                        ToStringGenerator toStringGenerator,
-                       FieldClassNameGenerator fieldClassNameGenerator) {
+                       FieldClassNameGenerator fieldClassNameGenerator, GeneratedTypeCache generatedTypeCache) {
         this.elementsFinder = elementsFinder;
         this.types = types;
         this.methodNames = methodNames;
@@ -56,11 +59,12 @@ public class ConfigClassBuilder {
         this.classNameGenerator = classNameGenerator;
         this.toStringGenerator = toStringGenerator;
         this.fieldClassNameGenerator = fieldClassNameGenerator;
+        this.generatedTypeCache = generatedTypeCache;
     }
 
     private FieldSpec createFieldSpec(VariableElement element) {
         return FieldSpec.builder(
-                        getConfigClassName(element.asType()),
+                        getConfigClassName(element.asType(), element),
                         element.getSimpleName().toString()
                 ).addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                 .build();
@@ -68,7 +72,7 @@ public class ConfigClassBuilder {
 
     private ParameterSpec createParameterSpec(VariableElement element) {
         return ParameterSpec.builder(
-                        getConfigClassName(element.asType()),
+                        getConfigClassName(element.asType(), element),
                         element.getSimpleName().toString()
                 ).addModifiers(Modifier.FINAL)
                 .build();
@@ -88,8 +92,8 @@ public class ConfigClassBuilder {
                 });
     }
 
-    private TypeName getConfigClassName(TypeMirror typeMirror) {
-        return typesUtil.getConfigClassName(typeMirror);
+    private TypeName getConfigClassName(TypeMirror typeMirror, @Nullable Element source) {
+        return typesUtil.getConfigClassName(typeMirror, source);
     }
 
 
@@ -141,15 +145,19 @@ public class ConfigClassBuilder {
                                        ClassName className) {
 
         var typeSpecBuilder = TypeSpec.classBuilder(className)
-                .addModifiers(Modifier.PUBLIC);
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(
+                        AnnotationSpec.builder(GeneratedConfig.class)
+                                .addMember("source", "$T.class", ClassName.get(classType))
+                                .build());
 
 
         var superClass = getDTOSuperclass(classType);
         if (superClass != null) {
-            typeSpecBuilder.superclass(getConfigClassName(superClass));
-
             // Store the super instance
-            var superclassName = getConfigClassName(superClass);
+            var superclassName = getConfigClassName(superClass, classType);
+            typeSpecBuilder.superclass(superclassName);
+
             var superParamName = getSuperFieldName(superClass);
             typeSpecBuilder.addField(FieldSpec.builder(superclassName, superParamName)
                     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
@@ -224,8 +232,9 @@ public class ConfigClassBuilder {
                 elementsFinder.getApplicableVariableElements(classType);
 
         final TypeSpec configClass = createConfigClass(classType, matchingFields, className);
-
-        return JavaFile.builder(className.packageName(), configClass).build();
+        var file = JavaFile.builder(className.packageName(), configClass).build();
+        generatedTypeCache.getGeneratedSpecs().put(classType, Stringify.stringify(file));
+        return file;
     }
 
     private void addAllArgsConstructor
@@ -235,7 +244,7 @@ public class ConfigClassBuilder {
                 .addModifiers(Modifier.PUBLIC);
 
         if (superclass != null) {
-            var superclassName = getConfigClassName(superclass);
+            var superclassName = getConfigClassName(superclass, variableElements.stream().findFirst().map(VariableElement::getEnclosingElement).orElse(null));
             var superParamName = getSuperFieldName(superclass);
             var parameter = ParameterSpec.builder(superclassName, superParamName)
                     .addModifiers(Modifier.FINAL)
@@ -282,18 +291,18 @@ public class ConfigClassBuilder {
         return methodNames.safeMethodName(variableElement, (TypeElement) variableElement.getEnclosingElement());
     }
 
-    private MethodSpec createDeserializeMethodFor(TypeElement daoType, VariableElement element) {
+    private MethodSpec createDeserializeMethodFor(TypeElement dtoType, VariableElement element) {
         TypeMirror typeMirror = element.asType();
-        final TypeName elementType = getConfigClassName(typeMirror);
+        final TypeName elementType = getConfigClassName(typeMirror, dtoType);
         final Name variableName = element.getSimpleName();
         final TypeMirror boxedType = typesUtil.getBoxedType(typeMirror);
-        final TypeName boxedTypeName = getConfigClassName(boxedType);
+        final TypeName boxedTypeName = getConfigClassName(boxedType, dtoType);
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize_" + variableName)
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, boxedTypeName))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
-                .addParameter(ParameterSpec.builder(ClassName.get(daoType), "dao").build());
+                .addParameter(ParameterSpec.builder(ClassName.get(dtoType), "dao").build());
 
         builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement(format("$T %s", variableName), elementType);
@@ -305,7 +314,7 @@ public class ConfigClassBuilder {
         if (!typesUtil.isNullable(element)) {
             builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
             builder.addStatement(String.format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName),
-                    Result.class, ConfigMapLoader.class, variableName, element, daoType);
+                    Result.class, ConfigMapLoader.class, variableName, element, dtoType);
             builder.endControlFlow();
         } else {
             // Short circuit the null rather than trying any deserialization
@@ -322,7 +331,7 @@ public class ConfigClassBuilder {
              This is only safe to do with non-parameterized types, type erasure and all
             */
             final TypeMirror safeType = typesUtil.getSafeType(typeMirror);
-            final TypeName safeTypeName = getConfigClassName(safeType);
+            final TypeName safeTypeName = getConfigClassName(safeType, dtoType);
             builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
             builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
             builder.endControlFlow();
@@ -341,7 +350,7 @@ public class ConfigClassBuilder {
             if (canonicalName.equals("java.util.List")) {
                 var listType = declaredType.getTypeArguments().get(0);
                 if (isConfigType(listType)) {
-                    TypeName listTypeName = getConfigClassName(listType);
+                    TypeName listTypeName = getConfigClassName(listType, null);
                     builder.addStatement("return $T.deserializeList(%s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(listTypeName)), CollectionsUtils.class,
                             listTypeName);
                     return builder.build();
@@ -352,9 +361,9 @@ public class ConfigClassBuilder {
                 var keyType = declaredType.getTypeArguments().get(0);
 
                 if (isConfigType(mapType)) {
-                    TypeName mapTypeName = getConfigClassName(mapType);
+                    TypeName mapTypeName = getConfigClassName(mapType, null);
                     builder.addStatement("return $T.deserializeMap($T.class, %s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(mapTypeName)), CollectionsUtils.class,
-                            getConfigClassName(typesUtil.getSafeType(keyType)),
+                            getConfigClassName(typesUtil.getSafeType(keyType), null),
                             mapTypeName);
                     return builder.build();
                 }
@@ -412,7 +421,7 @@ public class ConfigClassBuilder {
 
         // Add the superclass deserialization first, if it exists
         if (superClass != null) {
-            var superConfigName = getConfigClassName(superClass);
+            var superConfigName = getConfigClassName(superClass, dtoType);
             expressionBuilder.append(CodeBlock.of("$T.$L", superConfigName, getDeserializeMethodName(superConfigName)));
             expressionBuilder
                     .append("(context)")
