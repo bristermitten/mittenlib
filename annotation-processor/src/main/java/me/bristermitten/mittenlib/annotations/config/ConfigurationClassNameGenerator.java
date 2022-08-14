@@ -66,11 +66,16 @@ public class ConfigurationClassNameGenerator {
             If the type is a nested class, then we first translate the enclosing class name (which may do nothing),
             then create a nested class name.
              */
+
             final var enclosingElement = configDTOType.getEnclosingElement();
-            return generateConfigurationClassName((TypeElement) enclosingElement)
-                    .flatMap(className ->
-                            findConfigClassName(configDTOType)
-                                    .map(className::nestedClass));
+            // Sometimes this doesn't seem to be the case, I'm not entirely sure why but I think it's if we're referencing a DTO type that hasn't been generated yet.
+            // Hopefully this fix is ok
+            if (enclosingElement instanceof TypeElement typeElement) {
+                return generateConfigurationClassName(typeElement)
+                        .flatMap(className ->
+                                findConfigClassName(configDTOType)
+                                        .map(className::nestedClass));
+            }
         }
 
         final String packageName = environment.getElementUtils().getPackageOf(configDTOType).getQualifiedName().toString();

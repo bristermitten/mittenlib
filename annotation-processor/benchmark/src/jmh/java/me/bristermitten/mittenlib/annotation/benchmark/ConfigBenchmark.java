@@ -14,7 +14,6 @@ import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.infra.Blackhole;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -27,41 +26,36 @@ import java.util.concurrent.TimeUnit;
 public class ConfigBenchmark {
 
     @Benchmark
-    public void benchmarkMittenLibJson(BenchState state, Blackhole bh) {
-        var res = state.configProviderJson.get();
-        bh.consume(res);
+    public TestData benchmarkMittenLibJson(BenchState state) {
+        return state.configProviderJson.get();
     }
 
     @Benchmark
-    public void benchmarkGsonJson(BenchState state, Blackhole bh) {
-        var res = state.gson.fromJson(state.jsonData, TestDataGson.class);
-        bh.consume(res);
+    public TestDataGson benchmarkGsonJson(BenchState state) {
+        return state.gson.fromJson(state.jsonData, TestDataGson.class);
     }
 
     @Benchmark
-    public void benchmarkJacksonJson(BenchState state, Blackhole bh) throws JsonProcessingException {
-        var res = state.jackson.readValue(state.jsonData, TestDataGson.class);
-        bh.consume(res);
+    public TestDataGson benchmarkJacksonJson(BenchState state) throws JsonProcessingException {
+        return state.jackson.readValue(state.jsonData, TestDataGson.class);
+
     }
 
     @Benchmark
-    public void benchmarkMittenLibYaml(BenchState state, Blackhole bh) {
-        var res = state.configProviderYaml.get();
-        bh.consume(res);
+    public TestData benchmarkMittenLibYaml(BenchState state) {
+        return state.configProviderYaml.get();
     }
 
     @Benchmark
-    public void benchmarkGsonYaml(BenchState state, Blackhole bh) {
+    public TestDataGson benchmarkGsonYaml(BenchState state) {
         var yaml = state.yaml.load(state.yamlData);
         var tree = state.gson.toJsonTree(yaml);
-        var res = state.gson.fromJson(tree, TestDataGson.class);
-        bh.consume(res);
+        return state.gson.fromJson(tree, TestDataGson.class);
     }
 
     @Benchmark
-    public void benchmarkSnakeYaml(BenchState state, Blackhole bh) {
-        var res = state.yaml.loadAs(state.yamlData, TestDataGson.class);
-        bh.consume(res);
+    public TestDataGson benchmarkSnakeYaml(BenchState state) {
+        return state.yaml.loadAs(state.yamlData, TestDataGson.class);
     }
 
 
