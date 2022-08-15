@@ -1,6 +1,7 @@
 me.bristermitten.mittenlib
 me.bristermitten.mittenlib.annotation.benchmark
 me.bristermitten.mittenlib.annotations.config
+me.bristermitten.mittenlib.annotations.exception
 me.bristermitten.mittenlib.annotations.util
 me.bristermitten.mittenlib.collections
 me.bristermitten.mittenlib.commands
