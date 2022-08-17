@@ -76,7 +76,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/files/FileTypes.html#addType(java.lang.Class)" class="member-name-link">addType(Class&lt;? extends FileType&gt;)</a> - Method in class me.bristermitten.mittenlib.files.<a href="me/bristermitten/mittenlib/files/FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#addWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">addWatcher(FileWatcher)</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Add a watcher to the service.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/AdventureAudienceProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.lang">AdventureAudienceProvider</a> - Class in <a href="me/bristermitten/mittenlib/lang/package-summary.html">me.bristermitten.mittenlib.lang</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/AdventureAudienceProvider.html#%3Cinit%3E(org.bukkit.plugin.Plugin)" class="member-name-link">AdventureAudienceProvider(Plugin)</a> - Constructor for class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/AdventureAudienceProvider.html" title="class in me.bristermitten.mittenlib.lang">AdventureAudienceProvider</a></dt>
@@ -409,8 +411,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" class="type-name-link" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a> - Class in <a href="me/bristermitten/mittenlib/watcher/package-summary.html">me.bristermitten.mittenlib.watcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#%3Cinit%3E(me.bristermitten.mittenlib.MittenLibConsumer)" class="member-name-link">FileWatcherService(MittenLibConsumer)</a> - Constructor for class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/FileWatchingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">FileWatchingConfigProvider</a>&lt;<a href="me/bristermitten/mittenlib/config/provider/FileWatchingConfigProvider.html" title="type parameter in FileWatchingConfigProvider">T</a>&gt; - Class in <a href="me/bristermitten/mittenlib/config/provider/package-summary.html">me.bristermitten.mittenlib.config.provider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/FileWatchingConfigProvider.html#%3Cinit%3E(me.bristermitten.mittenlib.config.provider.CachingConfigProvider,me.bristermitten.mittenlib.watcher.FileWatcherService)" class="member-name-link">FileWatchingConfigProvider(CachingConfigProvider&lt;T&gt;, FileWatcherService)</a> - Constructor for class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/FileWatchingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">FileWatchingConfigProvider</a></dt>
@@ -490,6 +490,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/Cached.html#get()" class="member-name-link">get()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Cached.html" title="class in me.bristermitten.mittenlib.util">Cached</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeSupplier.html#get()" class="member-name-link">get()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html#get()" class="member-name-link">get()</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html" title="class in me.bristermitten.mittenlib.watcher">WatchServiceProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getActionBar()" class="member-name-link">getActionBar()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
 <dd>&nbsp;</dd>
@@ -1053,8 +1055,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html#run()" class="member-name-link">run()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#run()" class="member-name-link">run()</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html#runCatching()" class="member-name-link">runCatching()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#runCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">runCatching(SafeSupplier&lt;T&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
@@ -1400,6 +1400,10 @@ the order they are declared.</div>
 </dl>
 <h2 class="title" id="I:W">W</h2>
 <dl class="index">
+<dt><a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.watcher">WatchServiceProvider</a> - Class in <a href="me/bristermitten/mittenlib/watcher/package-summary.html">me.bristermitten.mittenlib.watcher</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html#%3Cinit%3E()" class="member-name-link">WatchServiceProvider()</a> - Constructor for class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html" title="class in me.bristermitten.mittenlib.watcher">WatchServiceProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/DeserializationContext.html#withData(java.util.Map)" class="member-name-link">withData(Map&lt;String, Object&gt;)</a> - Method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/MittenLib.html#withDefaults(T)" class="member-name-link">withDefaults(T)</a> - Static method in class me.bristermitten.mittenlib.<a href="me/bristermitten/mittenlib/MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a></dt>
