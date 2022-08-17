@@ -17,11 +17,12 @@ public class MittenLibModule<T extends Plugin> extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Plugin.class).toInstance(plugin);
-        //noinspection unchecked
-        bind((Class<T>) plugin.getClass()).toInstance(plugin);
-
-        bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer(plugin.getName()));
+        if (plugin != null) {
+            bind(Plugin.class).toInstance(plugin);
+            //noinspection unchecked
+            bind((Class<T>) plugin.getClass()).toInstance(plugin);
+            bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer(plugin.getName()));
+        }
 
         for (Module module : modules) {
             install(module);

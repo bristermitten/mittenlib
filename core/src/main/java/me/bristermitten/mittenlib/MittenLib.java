@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public final class MittenLib<T extends Plugin> {
+public class MittenLib<T extends Plugin> {
 
     private final T plugin;
     private final Map<Class<? extends Module>, Module> modules = new HashMap<>();

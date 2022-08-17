@@ -1,26 +1,30 @@
 package me.bristermitten.mittenlib.watcher;
 
 import me.bristermitten.mittenlib.MittenLibConsumer;
+import me.bristermitten.mittenlib.util.Unit;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Singleton
-public class FileWatcherService implements Runnable {
+public class FileWatcherService {
     private final Map<Path, Set<FileWatcher>> watchers = new ConcurrentHashMap<>();
+    private final Set<FileWatcher> registeredWatchers = ConcurrentHashMap.newKeySet();
+    private final Provider<WatchService> watchServiceProvider;
     private final ExecutorService service;
     private final AtomicBoolean watching = new AtomicBoolean(false);
 
     @Inject
-    public FileWatcherService(MittenLibConsumer consumer) {
+    FileWatcherService(Provider<WatchService> watchServiceProvider, MittenLibConsumer consumer) {
+        this.watchServiceProvider = watchServiceProvider;
+
         service = Executors.newSingleThreadExecutor(r ->
         {
             final Thread thread = new Thread(r, String.format("%s MittenLib File Watcher", consumer.getName()));
@@ -29,13 +33,35 @@ public class FileWatcherService implements Runnable {
         });
     }
 
-    public void addWatcher(FileWatcher fileWatcher) {
-        if(!watching.get()){
-            startWatching();
+    private void registerWatcher(WatchService watchService, FileWatcher fileWatcher) throws IOException {
+        if (registeredWatchers.contains(fileWatcher)) {
+            return;
         }
+        Path toWatch = fileWatcher.getWatching();
+        if (!Files.isDirectory(toWatch)) {
+            toWatch = toWatch.getParent();
+        }
+
+        toWatch.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.OVERFLOW);
+        registeredWatchers.add(fileWatcher);
+    }
+
+    /**
+     * Add a watcher to the service.
+     *
+     * @param fileWatcher The watcher to add.
+     * @return A future that will be completed once the service is ready to use - some delay may be required for the thread to startup.
+     * File changes that occur before this future is completed may not be handled.
+     */
+    public Future<Unit> addWatcher(FileWatcher fileWatcher) {
         final Set<FileWatcher> fileWatchers =
                 watchers.computeIfAbsent(fileWatcher.getWatching(), path -> ConcurrentHashMap.newKeySet());
         fileWatchers.add(fileWatcher);
+
+        if (!watching.get()) {
+            return startWatching();
+        }
+        return Unit.unitFuture();
     }
 
     public void removeWatcher(FileWatcher fileWatcher) {
@@ -44,13 +70,19 @@ public class FileWatcherService implements Runnable {
             return; // not in the map, nothing to do
         }
         watcherSet.remove(fileWatcher);
+        if (watcherSet.isEmpty()) {
+            stopWatching();
+        }
     }
 
-    public void startWatching() {
+    public Future<Unit> startWatching() {
         if (watching.getAndSet(true)) {
             throw new IllegalStateException("Already watching");
         }
-        service.execute(this);
+
+        CompletableFuture<Unit> future = new CompletableFuture<>();
+        service.submit(() -> run(future));
+        return future;
     }
 
     public void stopWatching() {
@@ -60,27 +92,27 @@ public class FileWatcherService implements Runnable {
         service.shutdownNow();
     }
 
-    @Override
-    public void run() {
-        try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-            for (Set<FileWatcher> fileWatchers : watchers.values()) {
-                for (FileWatcher fileWatcher : fileWatchers) {
-                    Path toWatch = fileWatcher.getWatching();
-                    if (!Files.isDirectory(toWatch)) {
-                        toWatch = toWatch.getParent();
-                    }
-
-                    toWatch.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
-                }
-            }
+    private void run(CompletableFuture<Unit> whenReady) {
+        try (WatchService watchService = watchServiceProvider.get()) {
+            registerFileWatchers(watchService);
 
             boolean poll = true;
+            whenReady.complete(Unit.UNIT);
             while (watching.get() && poll) {
+                registerFileWatchers(watchService);
                 poll = pollEvents(watchService);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private void registerFileWatchers(WatchService watchService) throws IOException {
+        for (Set<FileWatcher> fileWatchers : watchers.values()) {
+            for (FileWatcher fileWatcher : fileWatchers) {
+                registerWatcher(watchService, fileWatcher);
+            }
         }
     }
 
