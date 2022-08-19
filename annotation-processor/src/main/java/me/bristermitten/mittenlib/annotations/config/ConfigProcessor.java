@@ -18,7 +18,7 @@ import java.util.Set;
  * Annotation processor for generating config classes from DTO classes marked with {@link Config}
  */
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
-@SupportedSourceVersion(SourceVersion.RELEASE_18)
+@SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor.class)
 public class ConfigProcessor extends AbstractProcessor {
 

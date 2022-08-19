@@ -1,6 +1,5 @@
 java {
-    @Suppress("UnstableApiUsage")
-    sourceCompatibility = JavaVersion.VERSION_18
+    sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = sourceCompatibility
 }
 
