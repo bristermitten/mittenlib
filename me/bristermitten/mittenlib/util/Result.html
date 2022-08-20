@@ -173,9 +173,17 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Safely runs a <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a>, encapsulating the returned value or any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toOptional()" class="member-name-link">toOptional</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#sequence(java.util.Collection)" class="member-name-link">sequence</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;results)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Turns a collection of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>s into a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> of a collection of the same type
+ If any of the results are <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>s, the whole result will be <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
+ Otherwise, the result will be <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a> with the collection of values
+ The returned collection is not guaranteed to be the same type as the input collection</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toOptional()" class="member-name-link">toOptional</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -246,6 +254,30 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <dd><code>supplier</code> - The <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a> to execute</dd>
 <dt>Returns:</dt>
 <dd>A <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> wrapping the returned <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value or any thrown exception</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="sequence(java.util.Collection)">
+<h3>sequence</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">sequence</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;results)</span></div>
+<div class="block">Turns a collection of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>s into a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> of a collection of the same type
+ If any of the results are <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>s, the whole result will be <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
+ Otherwise, the result will be <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a> with the collection of values
+ The returned collection is not guaranteed to be the same type as the input collection</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value</dd>
+<dt>Parameters:</dt>
+<dd><code>results</code> - The collection of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>s</dd>
+<dt>Returns:</dt>
+<dd>A <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> holding all the values from the input collection or an exception if any of the results are <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>s</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="Futures.html#sequence(java.util.Collection)"><code>for the same functionality but with java.util.concurrent.CompletableFutures</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
