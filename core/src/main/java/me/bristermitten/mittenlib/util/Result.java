@@ -3,6 +3,9 @@ package me.bristermitten.mittenlib.util;
 import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -72,6 +75,31 @@ public interface Result<T> {
     }
 
 
+    /**
+     * Turns a collection of {@link Result}s into a {@link Result} of a collection of the same type
+     * If any of the results are {@link Fail}s, the whole result will be {@link Fail}
+     * Otherwise, the result will be {@link Ok} with the collection of values
+     * The returned collection is not guaranteed to be the same type as the input collection
+     *
+     * @param results The collection of {@link Result}s
+     * @param <T>     The type of the {@link Result}'s value
+     * @return A {@link Result} holding all the values from the input collection or an exception if any of the results are {@link Fail}s
+     * @see Futures#sequence(Collection) for the same functionality but with {@link java.util.concurrent.CompletableFuture}s
+     */
+    static <T> Result<Collection<T>> sequence(Collection<Result<T>> results) {
+        if (results.isEmpty()) {
+            return ok(Collections.emptySet());
+        }
+        Result<Collection<T>> accumulator = ok(new ArrayList<>());
+        for (Result<T> result : results) {
+            accumulator = accumulator.flatMap(collection -> result.map(t -> {
+                collection.add(t);
+                return collection;
+            }));
+        }
+        return accumulator;
+    }
+
     Optional<T> toOptional();
 
     Optional<Exception> error();
@@ -89,6 +117,7 @@ public interface Result<T> {
     boolean isSuccess();
 
     boolean isFailure();
+
 
     class Fail<T, E extends Exception> implements Result<T> {
         private final E exception;
