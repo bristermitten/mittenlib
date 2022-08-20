@@ -177,7 +177,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/lang/CompoundLangMessage.html#%3Cinit%3E(me.bristermitten.mittenlib.lang.LangMessage...)" class="member-name-link">CompoundLangMessage(LangMessage...)</a> - Constructor for class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/CompoundLangMessage.html" title="class in me.bristermitten.mittenlib.lang">CompoundLangMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#computeCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">computeCatching(SafeSupplier&lt;Result&lt;T&gt;&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Safely executes a <a href="me/bristermitten/mittenlib/util/lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a> that returns another <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>,
+ wrapping the returned <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value or any thrown exception in a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#concat(java.util.Set,java.util.Set)" class="member-name-link">concat(Set&lt;E&gt;, Set&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
 <dd>
 <div class="block">Returns a new set containing the elements of 2 given sets
@@ -374,6 +377,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Errors.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Errors</a> - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#execCatching(me.bristermitten.mittenlib.util.lambda.SafeRunnable)" class="member-name-link">execCatching(SafeRunnable)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Safely executes a <a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeRunnable</code></a>, ignoring the result and wrapping any thrown exception in a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/files/json/ExtraTypeAdapter.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.json">ExtraTypeAdapter</a>&lt;<a href="me/bristermitten/mittenlib/files/json/ExtraTypeAdapter.html" title="type parameter in ExtraTypeAdapter">T</a>&gt; - Class in <a href="me/bristermitten/mittenlib/files/json/package-summary.html">me.bristermitten.mittenlib.files.json</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/json/ExtraTypeAdapter.html#%3Cinit%3E()" class="member-name-link">ExtraTypeAdapter()</a> - Constructor for class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json">ExtraTypeAdapter</a></dt>
@@ -1051,7 +1058,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="me/bristermitten/mittenlib/util/Result.html" title="type parameter in Result">T</a>&gt; - Interface in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Result.Fail</a>&lt;<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="type parameter in Result.Fail">T</a>,<wbr><a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="type parameter in Result.Fail">E</a> extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt; - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Result.Fail</a>&lt;<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="type parameter in Result.Fail">T</a>,<wbr><a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="type parameter in Result.Fail">E</a> extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt; - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Result.Ok</a>&lt;<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="type parameter in Result.Ok">T</a>&gt; - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>&nbsp;</dd>
@@ -1060,7 +1067,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html#runCatching()" class="member-name-link">runCatching()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#runCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">runCatching(SafeSupplier&lt;T&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Safely runs a <a href="me/bristermitten/mittenlib/util/lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a>, encapsulating the returned value or any thrown exception in a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
+</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
