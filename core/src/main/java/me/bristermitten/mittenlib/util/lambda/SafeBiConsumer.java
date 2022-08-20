@@ -6,13 +6,13 @@ import java.util.function.BiConsumer;
 
 @FunctionalInterface
 public interface SafeBiConsumer<T, T2> {
-    void consume(T t, T2 t2) throws Throwable;
+    void consume(T t, T2 t2) throws Exception;
 
     default BiConsumer<T, T2> asBiConsumer() {
         return (t, t2) -> {
             try {
                 consume(t, t2);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Errors.sneakyThrow(e);
             }
         };

@@ -13,7 +13,7 @@ public interface SafeFunction<T, R> {
         return unused -> r;
     }
 
-    R apply(T t) throws Throwable;
+    R apply(T t) throws Exception;
 
     default Result<R> applyCatching(T t) {
         return runCatching(() -> apply(t));
@@ -23,7 +23,7 @@ public interface SafeFunction<T, R> {
         return t -> {
             try {
                 return apply(t);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Errors.sneakyThrow(e);
                 return null;
             }

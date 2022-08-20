@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.util;
 
+import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 
 import java.util.Optional;
@@ -11,17 +12,50 @@ public interface Result<T> {
         return new Ok<>(t);
     }
 
-    static <T, E extends Throwable> Result<T> fail(E e) {
+    static <T, E extends Exception> Result<T> fail(E e) {
         return new Fail<>(e);
     }
 
+    /**
+     * Safely runs a {@link SafeSupplier}, encapsulating the returned value or any thrown exception in a {@link Result}
+     *
+     * @param supplier the supplier to run
+     * @param <T>      the type of the returned value
+     * @return a {@link Result} containing the returned value or any thrown exception
+     */
     static <T> Result<T> runCatching(SafeSupplier<T> supplier) {
         try {
             return ok(supplier.get());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return fail(e);
         }
     }
+
+    /**
+     * Safely executes a {@link SafeRunnable}, ignoring the result and wrapping any thrown exception in a {@link Result}
+     *
+     * @param runnable The {@link SafeRunnable} to execute
+     * @return A {@link Result} wrapping the exception, if any
+     */
+    static Result<Unit> execCatching(SafeRunnable runnable) {
+        try {
+            runnable.run();
+            return ok(Unit.UNIT);
+        } catch (Exception e) {
+            return fail(e);
+        }
+    }
+
+    /**
+     * Safely executes a {@link SafeSupplier} that returns another {@link Result},
+     * wrapping the returned {@link Result}'s value or any thrown exception in a {@link Result}
+     * <p>
+     * This is roughly equivalent to doing {@code runCatching(supplier).flatMap(Function.identity())}
+     *
+     * @param supplier The {@link SafeSupplier} to execute
+     * @param <T>      The type of the returned {@link Result}'s value
+     * @return A {@link Result} wrapping the returned {@link Result}'s value or any thrown exception
+     */
 
     static <T> Result<T> computeCatching(SafeSupplier<Result<T>> supplier) {
         try {
@@ -32,7 +66,7 @@ public interface Result<T> {
             } else {
                 return ok(tResult.getOrThrow());
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return fail(e);
         }
     }
@@ -40,7 +74,7 @@ public interface Result<T> {
 
     Optional<T> toOptional();
 
-    Optional<Throwable> error();
+    Optional<Exception> error();
 
     default <R> Result<R> map(Function<T, R> function) {
         return flatMap(t -> ok(function.apply(t)));
@@ -56,7 +90,7 @@ public interface Result<T> {
 
     boolean isFailure();
 
-    class Fail<T, E extends Throwable> implements Result<T> {
+    class Fail<T, E extends Exception> implements Result<T> {
         private final E exception;
 
         public Fail(E exception) {
@@ -69,7 +103,7 @@ public interface Result<T> {
         }
 
         @Override
-        public Optional<Throwable> error() {
+        public Optional<Exception> error() {
             return Optional.of(exception);
         }
 
@@ -114,7 +148,7 @@ public interface Result<T> {
         }
 
         @Override
-        public Optional<Throwable> error() {
+        public Optional<Exception> error() {
             return Optional.empty();
         }
 

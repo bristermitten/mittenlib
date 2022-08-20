@@ -9,7 +9,7 @@ import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 @FunctionalInterface
 public interface SafeSupplier<T> {
-    T get() throws Throwable;
+    T get() throws Exception;
 
     default Result<T> getCatching() {
         return runCatching(this);
@@ -19,7 +19,7 @@ public interface SafeSupplier<T> {
         return () -> {
             try {
                 return get();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Errors.sneakyThrow(e);
                 return null;
             }

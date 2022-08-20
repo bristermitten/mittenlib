@@ -6,7 +6,7 @@ import me.bristermitten.mittenlib.util.Unit;
 
 @FunctionalInterface
 public interface SafeRunnable {
-    void run() throws Throwable;
+    void run() throws Exception;
 
     default Result<Unit> runCatching() {
         return Result.runCatching(() -> {
@@ -19,7 +19,7 @@ public interface SafeRunnable {
         return () -> {
             try {
                 run();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Errors.sneakyThrow(e);
             }
         };

@@ -9,7 +9,7 @@ import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 @FunctionalInterface
 public interface SafeFunction2<T, R1, R2> {
-    R2 apply(T t, R1 r1) throws Throwable;
+    R2 apply(T t, R1 r1) throws Exception;
 
     default SafeFunction<R1, R2> curry(T t) {
         return r1 -> apply(t, r1);
@@ -23,7 +23,7 @@ public interface SafeFunction2<T, R1, R2> {
         return (t, r1) -> {
             try {
                 return apply(t, r1);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Errors.sneakyThrow(e);
                 return null;
             }
