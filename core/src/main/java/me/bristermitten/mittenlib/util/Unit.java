@@ -16,6 +16,10 @@ public class Unit {
         return CompletableFuture.completedFuture(UNIT);
     }
 
+    public static Result<Unit> unitResult() {
+        return Result.ok(UNIT);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Unit;
