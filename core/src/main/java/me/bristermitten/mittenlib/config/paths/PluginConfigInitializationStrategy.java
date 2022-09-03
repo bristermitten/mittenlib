@@ -31,7 +31,7 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
             final URL resource = plugin.getClass().getClassLoader().getResource(filePath);
             if (resource == null) {
                 return Result.fail(
-                        new IllegalArgumentException("Could not find resource " + filePath + " in plugin " + plugin.getName())
+                        new UnknownResourceException("Could not find resource " + filePath + " in plugin " + plugin.getName())
                 );
             }
             final Path inJar = PathUtil.resourceToPath(resource);
@@ -42,5 +42,11 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
             return Result.fail(e);
         }
         return Unit.unitResult();
+    }
+
+    public static class UnknownResourceException extends RuntimeException {
+        public UnknownResourceException(String message) {
+            super(message);
+        }
     }
 }
