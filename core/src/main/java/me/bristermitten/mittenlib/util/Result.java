@@ -43,7 +43,7 @@ public interface Result<T> {
     static Result<Unit> execCatching(SafeRunnable runnable) {
         try {
             runnable.run();
-            return ok(Unit.UNIT);
+            return Unit.unitResult();
         } catch (Exception e) {
             return fail(e);
         }

@@ -28,7 +28,8 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
 
     @Override
     public <T> @NotNull ConfigProvider<T> createProvider(Configuration<T> configuration) {
-        initializationStrategy.initializeConfig(configuration.getFileName());
+        initializationStrategy.initializeConfig(configuration.getFileName())
+                .getOrThrow();
         final Path configPath = pathResolver.getConfigPath(configuration.getFileName());
         return new ReadingConfigProvider<>(configPath, configuration, reader);
     }

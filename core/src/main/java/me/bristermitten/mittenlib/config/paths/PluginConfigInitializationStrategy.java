@@ -1,6 +1,8 @@
 package me.bristermitten.mittenlib.config.paths;
 
 import me.bristermitten.mittenlib.util.PathUtil;
+import me.bristermitten.mittenlib.util.Result;
+import me.bristermitten.mittenlib.util.Unit;
 import org.bukkit.plugin.Plugin;
 
 import javax.inject.Inject;
@@ -9,7 +11,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 public class PluginConfigInitializationStrategy implements ConfigInitializationStrategy {
     private final Plugin plugin;
@@ -20,22 +21,26 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
     }
 
     @Override
-    public void initializeConfig(String filePath) {
+    public Result<Unit> initializeConfig(String filePath) {
         final Path dataFolder = plugin.getDataFolder().toPath();
         final Path inDataFolder = dataFolder.resolve(filePath);
         if (Files.exists(inDataFolder)) {
-            return; // nothing to do
+            return Unit.unitResult();
         }
         try {
             final URL resource = plugin.getClass().getClassLoader().getResource(filePath);
-            Objects.requireNonNull(resource, "Could not find " + filePath + " in jar for " + plugin);
-
+            if (resource == null) {
+                return Result.fail(
+                        new IllegalArgumentException("Could not find resource " + filePath + " in plugin " + plugin.getName())
+                );
+            }
             final Path inJar = PathUtil.resourceToPath(resource);
 
             Files.createDirectories(inDataFolder.getParent());
             Files.copy(inJar, inDataFolder);
         } catch (IOException | URISyntaxException e) {
-            throw new IllegalArgumentException(e);
+            return Result.fail(e);
         }
+        return Unit.unitResult();
     }
 }
