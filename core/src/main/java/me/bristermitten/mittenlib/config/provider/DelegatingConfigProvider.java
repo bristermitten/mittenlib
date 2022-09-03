@@ -19,7 +19,7 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
 
     @Inject
     void initialize(ConfigProviderFactory factory, ConfigProviderImprover improver) {
-        this.delegate = improver.improve(factory.createProvider(configuration));
+        this.delegate = improver.improve(factory.createProvider(configuration).getOrThrow());
     }
 
     @Override

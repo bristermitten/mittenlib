@@ -8,6 +8,7 @@ import me.bristermitten.mittenlib.config.provider.ReadingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.StringReadingConfigProvider;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.files.FileType;
+import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -27,22 +28,24 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
     }
 
     @Override
-    public <T> @NotNull ConfigProvider<T> createProvider(Configuration<T> configuration) {
-        initializationStrategy.initializeConfig(configuration.getFileName())
-                .getOrThrow();
-        final Path configPath = pathResolver.getConfigPath(configuration.getFileName());
-        return new ReadingConfigProvider<>(configPath, configuration, reader);
+    public <T> @NotNull Result<ConfigProvider<T>> createProvider(Configuration<T> configuration) {
+        return initializationStrategy.initializeConfig(configuration.getFileName())
+                .map(unit -> {
+                    final Path configPath = pathResolver.getConfigPath(configuration.getFileName());
+                    return new ReadingConfigProvider<>(configPath, configuration, reader);
+                });
+
     }
 
 
     @Override
-    public @NotNull <T> ConfigProvider<T> createStringReaderProvider(String data, Configuration<T> configuration) {
-        return new StringReadingConfigProvider<>(data, configuration, reader);
+    public @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(String data, Configuration<T> configuration) {
+        return Result.ok(new StringReadingConfigProvider<>(data, configuration, reader));
     }
 
     @Override
     @NotNull
-    public <T> ConfigProvider<T> createStringReaderProvider(FileType type, String data, Configuration<T> configuration) {
-        return new StringReadingConfigProvider<>(data, configuration, reader.withLoader(type.loader()));
+    public <T> Result<ConfigProvider<T>> createStringReaderProvider(FileType type, String data, Configuration<T> configuration) {
+        return Result.ok(new StringReadingConfigProvider<>(data, configuration, reader.withLoader(type.loader())));
     }
 }

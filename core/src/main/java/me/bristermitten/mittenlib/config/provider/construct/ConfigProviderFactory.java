@@ -4,6 +4,7 @@ import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
 import me.bristermitten.mittenlib.files.FileType;
+import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,7 +20,7 @@ public interface ConfigProviderFactory {
      * @param <T>           the type of the configuration
      * @return the created provider
      */
-    @NotNull <T> ConfigProvider<T> createProvider(Configuration<T> configuration);
+    @NotNull <T> Result<ConfigProvider<T>> createProvider(Configuration<T> configuration);
 
 
     /**
@@ -31,11 +32,11 @@ public interface ConfigProviderFactory {
      * @param configuration the configuration to create a provider for
      * @param <T>           the type of the configuration
      * @return the created provider
-     * @deprecated This method may use of {@link SearchingObjectLoader}, which cannot efficiently process Strings.
+     * @deprecated This method makes use of {@link SearchingObjectLoader}, which cannot efficiently process Strings.
      * Use {@link #createStringReaderProvider(FileType, String, Configuration)} instead to manually specify a file type
      */
     @Deprecated
-    @NotNull <T> ConfigProvider<T> createStringReaderProvider(String data, Configuration<T> configuration);
+    @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(String data, Configuration<T> configuration);
 
     /**
      * Creates a {@link ConfigProvider} that reads a given String for its data, rather than a file.
@@ -52,5 +53,5 @@ public interface ConfigProviderFactory {
      * @param <T>           the type of the configuration
      * @return the created provider
      */
-    @NotNull <T> ConfigProvider<T> createStringReaderProvider(FileType type, String data, Configuration<T> configuration);
+    @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(FileType type, String data, Configuration<T> configuration);
 }
