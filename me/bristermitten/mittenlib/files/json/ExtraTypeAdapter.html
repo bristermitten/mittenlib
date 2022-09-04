@@ -96,9 +96,16 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the TypeAdapter</dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">ExtraTypeAdapter&lt;T&gt;</span>
 <span class="extends-implements">extends com.google.gson.TypeAdapter&lt;T&gt;</span></div>
+<div class="block">A thin wrapper over a <code>TypeAdapter</code> that also stores the type it is for.
+ This is necessary for dynamic binding as Gson does not provide a way to get the type of a TypeAdapter,
+ but requires it for registering (<code>GsonBuilder.registerTypeAdapter(Type, Object)</code>).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -129,7 +136,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json">ExtraTypeAdapter</a>&lt;T&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.reflect.Type,com.google.gson.TypeAdapter)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a>&nbsp;type,
  com.google.gson.TypeAdapter&lt;T&gt;&nbsp;adapter)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates an <a href="ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json"><code>ExtraTypeAdapter</code></a> from an existing <code>TypeAdapter</code>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
@@ -172,12 +181,26 @@ loadScripts(document, 'script');</script>
 <h3>of</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json">ExtraTypeAdapter</a>&lt;T&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a>&nbsp;type,
  com.google.gson.TypeAdapter&lt;T&gt;&nbsp;adapter)</span></div>
+<div class="block">Creates an <a href="ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json"><code>ExtraTypeAdapter</code></a> from an existing <code>TypeAdapter</code>.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the TypeAdapter</dd>
+<dt>Parameters:</dt>
+<dd><code>type</code> - the type of the TypeAdapter</dd>
+<dd><code>adapter</code> - the TypeAdapter</dd>
+<dt>Returns:</dt>
+<dd>the ExtraTypeAdapter</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="type()">
 <h3>type</h3>
 <div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a></span>&nbsp;<span class="element-name">type</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The type that this <a href="ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json"><code>ExtraTypeAdapter</code></a> is for.</dd>
+</dl>
 </section>
 </li>
 </ul>

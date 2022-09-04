@@ -95,9 +95,21 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="annotations">@Singleton
+<div class="type-signature"><span class="annotations">@Beta
+@Singleton
 </span><span class="modifiers">public class </span><span class="element-name type-name-label">GeneratedTypeCache</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block"><b>This class should not be treated as a public API, and is subject to change at any time.</b>
+ <p>
+ A cache of generated types.
+ This class is a pretty big hack to be honest, but it allows us to generate pretty error messages
+ when people accidentally use the generated type names in a DTO class.
+ This class maintains a <code>BiMap</code> between the DTO <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>TypeElement</code></a>s and the fully qualified name
+ of the configuration class, which means that we can easily get the DTO class from the configuration class
+ to generate a nice error message.
+ <p>
+ Unfortunately, because the referenced class might not exist as an actual class yet, we can't always
+ use the <a href="../../config/GeneratedConfig.html#source()"><code>GeneratedConfig.source()</code></a> property, so this class exists as a workaround.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -127,7 +139,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getByName(java.lang.String)" class="member-name-link">getByName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets all the known DTO classes which generate a configuration class with the given qualified name</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.google.common.collect.BiMap&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGeneratedSpecs()" class="member-name-link">getGeneratedSpecs</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -166,12 +180,24 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getGeneratedSpecs()">
 <h3>getGeneratedSpecs</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.google.common.collect.BiMap&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getGeneratedSpecs</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the underlying mapping of source type to generated type's qualified name
+ This type is mutable and should be modified with care</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getByName(java.lang.String)">
 <h3>getByName</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&gt;</span>&nbsp;<span class="element-name">getByName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="block">Gets all the known DTO classes which generate a configuration class with the given qualified name</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the qualified name of the configuration class</dd>
+<dt>Returns:</dt>
+<dd>a set of all the DTO classes which generate the given configuration class</dd>
+</dl>
 </section>
 </li>
 </ul>

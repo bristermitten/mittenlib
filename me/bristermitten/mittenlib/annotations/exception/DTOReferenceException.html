@@ -107,6 +107,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DTOReferenceException</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></span></div>
+<div class="block">Thrown when a DTO class references an invalid type</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -130,7 +131,9 @@ loadScripts(document, 'script');</script>
  <a href="../config/GeneratedTypeCache.html" title="class in me.bristermitten.mittenlib.annotations.config">GeneratedTypeCache</a>&nbsp;typeCache,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;replaceWith,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;source)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new DTOReferenceException</div>
+</div>
 </div>
 </section>
 </li>
@@ -177,6 +180,14 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;replaceWith,
  @Nullable
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;source)</span></div>
+<div class="block">Create a new DTOReferenceException</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>typeUsed</code> - The invalid type that was uses</dd>
+<dd><code>typeCache</code> - The type cache, used for generating the error message</dd>
+<dd><code>replaceWith</code> - The type to replace the invalid type with, if known</dd>
+<dd><code>source</code> - The source element (i.e. the element referencing the invalid type), if known</dd>
+</dl>
 </section>
 </li>
 </ul>

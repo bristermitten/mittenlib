@@ -97,6 +97,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FileTypes</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Stores all the known <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes,
+ used for registration in the <a href="FileTypeModule.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypeModule</code></a></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -109,7 +111,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Set)" class="member-name-link">FileTypes</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&gt;&nbsp;types)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new FileTypes instance</div>
+</div>
 </div>
 </section>
 </li>
@@ -126,7 +130,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addType(java.lang.Class)" class="member-name-link">addType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Register a new <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> class</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#defaultTypes()" class="member-name-link">defaultTypes</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
@@ -154,6 +160,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="&lt;init&gt;(java.util.Set)">
 <h3>FileTypes</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FileTypes</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&gt;&nbsp;types)</span></div>
+<div class="block">Create a new FileTypes instance</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>types</code> - the types to register</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -168,18 +179,34 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="defaultTypes()">
 <h3>defaultTypes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></span>&nbsp;<span class="element-name">defaultTypes</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> containing all the default <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a>s.
+ These are currently <a href="json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json"><code>JSONFileType</code></a> and <a href="yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml"><code>YamlFileType</code></a></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="addType(java.lang.Class)">
 <h3>addType</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></span>&nbsp;<span class="element-name">addType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&nbsp;type)</span></div>
+<div class="block">Register a new <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> class</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>type</code> - the class to register</dd>
+<dt>Returns:</dt>
+<dd>this</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getTypes()">
 <h3>getTypes</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&gt;</span>&nbsp;<span class="element-name">getTypes</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the set of <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes registered</dd>
+</dl>
 </section>
 </li>
 </ul>

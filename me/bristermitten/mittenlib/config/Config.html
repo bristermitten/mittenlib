@@ -87,6 +87,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/ElementType.html#TYPE" title="class or interface in java.lang.annotation" class="external-link">TYPE</a>)
 <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Retention.html" title="class or interface in java.lang.annotation" class="external-link">@Retention</a>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/RetentionPolicy.html#RUNTIME" title="class or interface in java.lang.annotation" class="external-link">RUNTIME</a>)
 </span><span class="modifiers">public @interface </span><span class="element-name type-name-label">Config</span></div>
+<div class="block">Marks a type as a <a href="https://github.com/knightzmc/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
+ that will be processed by the annotation processor, if present.
+ Without the annotation processor, this annotation has no effect.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -101,7 +104,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#className()" class="member-name-link">className</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The class name of the generated class.</div>
+</div>
 </div>
 </section>
 </li>
@@ -118,6 +123,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="className()">
 <h3>className</h3>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">className</span></div>
+<div class="block">The class name of the generated class.
+ If empty, the name will be generated from the DTO type's name</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The class name of the generated class</dd>
+</dl>
 <dl class="notes">
 <dt>Default:</dt>
 <dd>""</dd>

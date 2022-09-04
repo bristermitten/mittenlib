@@ -134,7 +134,9 @@ implements <a href="../FileType.html" title="interface in me.bristermitten.mitte
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#matches(java.nio.file.Path)" class="member-name-link">matches</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">If the given path matches this file type.</div>
+</div>
 </div>
 </div>
 </div>
@@ -171,9 +173,16 @@ implements <a href="../FileType.html" title="interface in me.bristermitten.mitte
 <section class="detail" id="matches(java.nio.file.Path)">
 <h3>matches</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../FileType.html#matches(java.nio.file.Path)">FileType</a></code></span></div>
+<div class="block">If the given path matches this file type.
+ This is generally done by the file extension, but this is not a requirement.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../FileType.html#matches(java.nio.file.Path)">matches</a></code>&nbsp;in interface&nbsp;<code><a href="../FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>path</code> - the path to check</dd>
+<dt>Returns:</dt>
+<dd>if the path matches this file type</dd>
 </dl>
 </section>
 </li>
@@ -187,7 +196,7 @@ implements <a href="../FileType.html" title="interface in me.bristermitten.mitte
 <dd><code><a href="../FileType.html#loader()">loader</a></code>&nbsp;in interface&nbsp;<code><a href="../FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a></code></dd>
 <dt>Returns:</dt>
 <dd>an Object Loader for this file type
- It is assumed that the loader will only work (i.e not produce an error)
+ It is assumed that the loader will only work (i.e. not produce an <a href="../../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a>)
  for paths for which <a href="../FileType.html#matches(java.nio.file.Path)"><code>FileType.matches(Path)</code></a> returns true</dd>
 </dl>
 </section>

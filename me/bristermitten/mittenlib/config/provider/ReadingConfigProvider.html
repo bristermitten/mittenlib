@@ -138,7 +138,7 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#path()" class="member-name-link">path</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The path of the source for the config, if available
- This is not always required - if the config came from a URL, for example, then this would be expected
+ This is not always required - if the config came from a URL or String, for example, then this would be expected
  to return an empty Optional</div>
 </div>
 </div>
@@ -190,10 +190,10 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">path</span>()</div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="ConfigProvider.html#path()">ConfigProvider</a></code></span></div>
 <div class="block">The path of the source for the config, if available
- This is not always required - if the config came from a URL, for example, then this would be expected
+ This is not always required - if the config came from a URL or String, for example, then this would be expected
  to return an empty Optional
  <p>
- However if it is coming from the File System (in most cases, it will), then a filled optional should
+ However, if it is coming from the Filesystem (in most cases, it will), then a filled optional should
  be returned to allow things like <a href="FileWatchingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider"><code>FileWatchingConfigProvider</code></a></div>
 <dl class="notes">
 <dt>Specified by:</dt>

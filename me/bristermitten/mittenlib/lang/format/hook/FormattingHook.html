@@ -97,6 +97,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">FormattingHook</span></div>
+<div class="block">A hook for formatting a String. This is generally called by a <a href="../MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format"><code>MessageFormatter</code></a> as part of a larger formatting
+ process.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -111,13 +113,17 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#format(java.lang.String,org.bukkit.OfflinePlayer)" class="member-name-link">format</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#format(java.lang.String,org.bukkit.OfflinePlayer)" class="member-name-link">format</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  @Nullable org.bukkit.OfflinePlayer&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Format a String, returning the formatted String.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#shouldRegister()" class="member-name-link">shouldRegister</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">If the hook should be used.</div>
+</div>
 </div>
 </div>
 </div>
@@ -136,14 +142,36 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="shouldRegister()">
 <h3>shouldRegister</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldRegister</span>()</div>
+<div class="block">If the hook should be used. This should generally be called once per format process.
+ Note that this method does not accept any parameters. It should be used as a pre-check to determine if the hook
+ should be used at all, rather than conditional based on the input.
+ For example, checking if an API (e.g. PlaceholderAPI) is present on the server before running any formatting
+ to avoid <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/ClassNotFoundException.html" title="class or interface in java.lang" class="external-link"><code>ClassNotFoundException</code></a>s, or checking the server version.
+ If conditional formatting is desired, do this in <a href="#format(java.lang.String,org.bukkit.OfflinePlayer)"><code>format(String, OfflinePlayer)</code></a>, and return the unchanged
+ input if the hook should not be used.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>if the hook should be used for this format process</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="format(java.lang.String,org.bukkit.OfflinePlayer)">
 <h3>format</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">format</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  @Nullable
  @Nullable org.bukkit.OfflinePlayer&nbsp;player)</span></div>
+<div class="block">Format a String, returning the formatted String.
+ This method should generally be idempotent, and should not be called if <a href="#shouldRegister()"><code>shouldRegister()</code></a> returns false.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>message</code> - the message to format</dd>
+<dd><code>player</code> - the player to format for. This can be used for player-specific formatting, such as PlaceholderAPI</dd>
+<dt>Returns:</dt>
+<dd>the formatted String</dd>
+</dl>
 </section>
 </li>
 </ul>

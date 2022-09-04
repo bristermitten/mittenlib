@@ -131,7 +131,9 @@ implements <a href="ConfigPathResolver.html" title="interface in me.bristermitte
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConfigPath(java.lang.String)" class="member-name-link">getConfigPath</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;configFileName)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Resolve a file name to a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a></div>
+</div>
 </div>
 </div>
 </div>
@@ -168,9 +170,15 @@ implements <a href="ConfigPathResolver.html" title="interface in me.bristermitte
 <section class="detail" id="getConfigPath(java.lang.String)">
 <h3>getConfigPath</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">getConfigPath</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;configFileName)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="ConfigPathResolver.html#getConfigPath(java.lang.String)">ConfigPathResolver</a></code></span></div>
+<div class="block">Resolve a file name to a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a></div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="ConfigPathResolver.html#getConfigPath(java.lang.String)">getConfigPath</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigPathResolver.html" title="interface in me.bristermitten.mittenlib.config.paths">ConfigPathResolver</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>configFileName</code> - the file name to resolve</dd>
+<dt>Returns:</dt>
+<dd>the resolved path, which may not exist</dd>
 </dl>
 </section>
 </li>

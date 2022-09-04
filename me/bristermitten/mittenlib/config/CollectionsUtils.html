@@ -97,6 +97,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CollectionsUtils</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Utility for deserializing collections using the MittenLib config system.
+ This is used by generated config classes.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,14 +117,18 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deserializeList(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">deserializeList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;rawData,
  <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a>&nbsp;baseContext,
  <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializationFunction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Attempt to deserialize a list using the MittenLib config system.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;K,<wbr>
 V&gt;&nbsp;<a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;K,<wbr>V&gt;&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deserializeMap(java.lang.Class,java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">deserializeMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;K&gt;&nbsp;keyType,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;rawData,
  <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a>&nbsp;baseContext,
  <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;V&gt;&nbsp;deserializationFunction)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Attempt to deserialize a map using the MittenLib config system.</div>
+</div>
 </div>
 </div>
 </div>
@@ -146,6 +152,17 @@ V&gt;&nbsp;<a href="../util/Result.html" title="interface in me.bristermitten.mi
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">deserializeList</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;rawData,
  <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a>&nbsp;baseContext,
  <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializationFunction)</span></div>
+<div class="block">Attempt to deserialize a list using the MittenLib config system.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type to deserialize to</dd>
+<dt>Parameters:</dt>
+<dd><code>rawData</code> - the raw data to deserialize, which should represent a <code>List&lt;Map&lt;String, Object&gt;&gt;</code></dd>
+<dd><code>baseContext</code> - the base context to use for deserialization</dd>
+<dd><code>deserializationFunction</code> - the function to use for turning a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a> into an <a href="CollectionsUtils.html" title="class in me.bristermitten.mittenlib.config"><code>CollectionsUtils</code></a></dd>
+<dt>Returns:</dt>
+<dd>a <a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> containing the deserialized list, or a <a href="../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a> if deserialization failed</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -156,6 +173,19 @@ V&gt;</span>&nbsp;<span class="return-type"><a href="../util/Result.html" title=
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;rawData,
  <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a>&nbsp;baseContext,
  <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;V&gt;&nbsp;deserializationFunction)</span></div>
+<div class="block">Attempt to deserialize a map using the MittenLib config system.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>K</code> - the type of the keys in the map</dd>
+<dd><code>V</code> - the type to deserialize to</dd>
+<dt>Parameters:</dt>
+<dd><code>keyType</code> - the type of the keys in the map</dd>
+<dd><code>rawData</code> - the raw data to deserialize, which should represent a <code>Map&lt;String, Object&gt;</code></dd>
+<dd><code>baseContext</code> - the base context to use for deserialization</dd>
+<dd><code>deserializationFunction</code> - the function to use for turning a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a> into an <a href="CollectionsUtils.html" title="class in me.bristermitten.mittenlib.config"><code>CollectionsUtils</code></a></dd>
+<dt>Returns:</dt>
+<dd>a <a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> containing the deserialized map, or a <a href="../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a> if deserialization failed</dd>
+</dl>
 </section>
 </li>
 </ul>

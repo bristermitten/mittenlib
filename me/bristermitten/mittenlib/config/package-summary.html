@@ -105,27 +105,42 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="CollectionsUtils.html" title="class in me.bristermitten.mittenlib.config">CollectionsUtils</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Utility for deserializing collections using the MittenLib config system.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab6"><a href="Config.html" title="annotation interface in me.bristermitten.mittenlib.config">Config</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab6">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab6">
+<div class="block">Marks a type as a <a href="https://github.com/knightzmc/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
+ that will be processed by the annotation processor, if present.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="ConfigMapLoader.html" title="class in me.bristermitten.mittenlib.config">ConfigMapLoader</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Used in generated code to help with the loading of config maps</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ConfigModule.html" title="class in me.bristermitten.mittenlib.config">ConfigModule</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Guice module for config handling
+ Responsible for quite a lot (probably too much) of the config handling,
+ registering <a href="Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a>s, <a href="reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a>s, <a href="provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>s, etc.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Deserializable.html" title="interface in me.bristermitten.mittenlib.config">Deserializable</a>&lt;T&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab6"><a href="GeneratedConfig.html" title="annotation interface in me.bristermitten.mittenlib.config">GeneratedConfig</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab6">
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Represents a loadable configuration which will deserialize to an object of type <a href="Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a></div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Context for deserializing a config, making it easier to pass around</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">A function that deserializes a config, taking a <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config"><code>DeserializationContext</code></a> and returning a <a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> of type <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config"><code>DeserializationFunction</code></a></div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab6"><a href="GeneratedConfig.html" title="annotation interface in me.bristermitten.mittenlib.config">GeneratedConfig</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab6">
 <div class="block">Marks a class as being generated from a config DTO.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab6"><a href="Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab6">&nbsp;</div>
+<div class="col-first even-row-color class-summary class-summary-tab6"><a href="Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab6">&nbsp;</div>
 </div>
 </div>
 </div>

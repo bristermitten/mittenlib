@@ -97,6 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DeserializationContext</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Context for deserializing a config, making it easier to pass around</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,7 +111,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.reader.ObjectMapper,java.util.Map)" class="member-name-link">DeserializationContext</a><wbr>(<a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;data)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new DeserializationContext</div>
+</div>
 </div>
 </section>
 </li>
@@ -156,6 +159,12 @@ loadScripts(document, 'script');</script>
 <h3>DeserializationContext</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DeserializationContext</span><wbr><span class="parameters">(<a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;data)</span></div>
+<div class="block">Create a new DeserializationContext</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>mapper</code> - the mapper to use</dd>
+<dd><code>data</code> - the data to deserialize</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -170,12 +179,20 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getMapper()">
 <h3>getMapper</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a></span>&nbsp;<span class="element-name">getMapper</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the mapper to use</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getData()">
 <h3>getData</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="element-name">getData</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the data to deserialize</dd>
+</dl>
 </section>
 </li>
 <li>

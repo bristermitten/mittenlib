@@ -86,6 +86,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/annotation/ElementType.html#FIELD" title="class or interface in java.lang.annotation" class="external-link">FIELD</a>)
 </span><span class="modifiers">public @interface </span><span class="element-name type-name-label">ConfigName</span></div>
+<div class="block">Marks an expected name for a field in a config file.
+ If this annotation is present, the <a href="#value()"><code>value()</code></a> will be used instead of the generated name from the
+ <a href="NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names"><code>NamingPattern</code></a>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -117,6 +120,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="value()">
 <h3>value</h3>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">value</span></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The expected name of the field / key in the config file</dd>
+</dl>
 </section>
 </li>
 </ul>

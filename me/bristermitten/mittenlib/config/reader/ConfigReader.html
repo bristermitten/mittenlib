@@ -45,7 +45,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li>Nested</li>
 <li>Field</li>
-<li><a href="#constructor-summary">Constr</a></li>
+<li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 </li>
@@ -53,7 +53,7 @@ loadScripts(document, 'script');</script>
 <p>Detail:</p>
 <ul>
 <li>Field</li>
-<li><a href="#constructor-detail">Constr</a></li>
+<li>Constr</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </li>
@@ -65,13 +65,13 @@ loadScripts(document, 'script');</script>
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
@@ -97,23 +97,11 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ConfigReader</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Responsible for both reading and mapping data,
+ delegating to <a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a>s and <a href="ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a>s</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<li>
-<section class="constructor-summary" id="constructor-summary">
-<h2>Constructor Summary</h2>
-<div class="caption"><span>Constructors</span></div>
-<div class="summary-table two-column-summary">
-<div class="table-header col-first">Constructor</div>
-<div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.reader.ObjectLoader,me.bristermitten.mittenlib.config.reader.ObjectMapper)" class="member-name-link">ConfigReader</a><wbr>(<a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a>&nbsp;loader,
- <a href="ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -129,20 +117,28 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#load(java.lang.Class,java.io.Reader,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">load</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link">Reader</a>&nbsp;source,
  @Nullable <a href="../DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializeFunction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Read the data from the given reader, and map it to the given type</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;<a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#load(java.lang.Class,java.lang.String,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">load</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;source,
  @Nullable <a href="../DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializeFunction)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Read the data from the given string, and map it to the given type</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;<a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#load(java.lang.Class,java.nio.file.Path,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">load</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;source,
  @Nullable <a href="../DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializeFunction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Read the data from the given path, and map it to the given type</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withLoader(me.bristermitten.mittenlib.config.reader.ObjectLoader)" class="member-name-link">withLoader</a><wbr>(<a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a>&nbsp;loader)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Create a new <a href="ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader"><code>ConfigReader</code></a> with the given <a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a> instead of the existing one</div>
+</div>
 </div>
 </div>
 </div>
@@ -155,22 +151,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<li>
-<section class="constructor-details" id="constructor-detail">
-<h2>Constructor Details</h2>
-<ul class="member-list">
-<li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.reader.ObjectLoader,me.bristermitten.mittenlib.config.reader.ObjectMapper)">
-<h3>ConfigReader</h3>
-<div class="member-signature"><span class="annotations">@Inject
-</span><span class="modifiers">public</span>&nbsp;<span class="element-name">ConfigReader</span><wbr><span class="parameters">(<a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a>&nbsp;loader,
- <a href="ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper)</span></div>
-</section>
-</li>
-</ul>
-</section>
-</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -183,6 +163,17 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;source,
  @Nullable
  @Nullable <a href="../DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializeFunction)</span></div>
+<div class="block">Read the data from the given path, and map it to the given type</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type to map to</dd>
+<dt>Parameters:</dt>
+<dd><code>type</code> - the type to map to</dd>
+<dd><code>source</code> - the path to read from</dd>
+<dd><code>deserializeFunction</code> - the function to use to deserialize the data</dd>
+<dt>Returns:</dt>
+<dd>the result of the mapping</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -192,6 +183,17 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;source,
  @Nullable
  @Nullable <a href="../DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializeFunction)</span></div>
+<div class="block">Read the data from the given string, and map it to the given type</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type to map to</dd>
+<dt>Parameters:</dt>
+<dd><code>type</code> - the type to map to</dd>
+<dd><code>source</code> - the string to read from</dd>
+<dd><code>deserializeFunction</code> - the function to use to deserialize the data</dd>
+<dt>Returns:</dt>
+<dd>the result of the mapping</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -201,12 +203,30 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/io/Reader.html" title="class or interface in java.io" class="external-link">Reader</a>&nbsp;source,
  @Nullable
  @Nullable <a href="../DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializeFunction)</span></div>
+<div class="block">Read the data from the given reader, and map it to the given type</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type to map to</dd>
+<dt>Parameters:</dt>
+<dd><code>type</code> - the type to map to</dd>
+<dd><code>source</code> - the reader to read from</dd>
+<dd><code>deserializeFunction</code> - the function to use to deserialize the data</dd>
+<dt>Returns:</dt>
+<dd>the result of the mapping</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="withLoader(me.bristermitten.mittenlib.config.reader.ObjectLoader)">
 <h3>withLoader</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a></span>&nbsp;<span class="element-name">withLoader</span><wbr><span class="parameters">(<a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a>&nbsp;loader)</span></div>
+<div class="block">Create a new <a href="ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader"><code>ConfigReader</code></a> with the given <a href="ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a> instead of the existing one</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>loader</code> - the loader to use</dd>
+<dt>Returns:</dt>
+<dd>the new ConfigReader</dd>
+</dl>
 </section>
 </li>
 </ul>

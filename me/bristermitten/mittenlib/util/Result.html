@@ -129,61 +129,87 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#computeCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">computeCatching</a><wbr>(<a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;supplier)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#computeCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">computeCatching</a><wbr>(@NotNull <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;supplier)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Safely executes a <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a> that returns another <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>,
  wrapping the returned <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value or any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#error()" class="member-name-link">error</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">If this <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>, returns the exception.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#execCatching(me.bristermitten.mittenlib.util.lambda.SafeRunnable)" class="member-name-link">execCatching</a><wbr>(<a href="lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a>&nbsp;runnable)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Safely executes a <a href="lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeRunnable</code></a>, ignoring the result and wrapping any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T,<wbr>
-E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;<br><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
+E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;<br>@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#fail(E)" class="member-name-link">fail</a><wbr>(E&nbsp;e)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;R&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;R&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#flatMap(java.util.function.Function)" class="member-name-link">flatMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;&gt;&nbsp;function)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Applies a function to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, passing through the exception if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
+ This allows the composition of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>-ful functions, making <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> a monad.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Result.html" title="type parameter in Result">T</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOrThrow()" class="member-name-link">getOrThrow</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Returns the value if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, otherwise throws the exception</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;R&gt;&nbsp;R</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#handle(java.util.function.Function,java.util.function.Function)" class="member-name-link">handle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;successHandler,
+ <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>,<wbr>R&gt;&nbsp;exceptionHandler)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Handle the 2 cases of the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> separately with 2 functions
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the first function is applied to the value.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isFailure()" class="member-name-link">isFailure</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isFailure()" class="member-name-link">isFailure</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSuccess()" class="member-name-link">isSuccess</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSuccess()" class="member-name-link">isSuccess</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;function)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#ok(T)" class="member-name-link">ok</a><wbr>(T&nbsp;t)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#orElse(java.util.function.Supplier)" class="member-name-link">orElse</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;&gt;&nbsp;supplier)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#runCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">runCatching</a><wbr>(<a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;T&gt;&nbsp;supplier)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;function)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Applies a given function to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, passing through the exception if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the function is applied to the value and the result is returned in a new <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a></div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#ok(T)" class="member-name-link">ok</a><wbr>(T&nbsp;t)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#orElse(java.util.function.Supplier)" class="member-name-link">orElse</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;&gt;&nbsp;supplier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Applies an "or" operation to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Result.html" title="type parameter in Result">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#recover(java.util.function.Function)" class="member-name-link">recover</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>,<wbr><a href="Result.html" title="type parameter in Result">T</a>&gt;&nbsp;exceptionHandler)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Handles the exception case of the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with a function.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#runCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)" class="member-name-link">runCatching</a><wbr>(@NotNull <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;T&gt;&nbsp;supplier)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Safely runs a <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a>, encapsulating the returned value or any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#sequence(java.util.Collection)" class="member-name-link">sequence</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;results)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#sequence(java.util.Collection)" class="member-name-link">sequence</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;results)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Turns a collection of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>s into a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> of a collection of the same type
  If any of the results are <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>s, the whole result will be <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
  Otherwise, the result will be <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a> with the collection of values
  The returned collection is not guaranteed to be the same type as the input collection</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toOptional()" class="member-name-link">toOptional</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Turns the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> into an <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -201,20 +227,31 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <li>
 <section class="detail" id="ok(T)">
 <h3 id="ok(java.lang.Object)">ok</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">ok</span><wbr><span class="parameters">(T&nbsp;t)</span></div>
+<div class="member-signature"><span class="annotations">@Contract(pure=true,
+          value="_ -&gt; new")
+@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">ok</span><wbr><span class="parameters">(@NotNull
+ T&nbsp;t)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="fail(E)">
 <h3 id="fail(java.lang.Exception)">fail</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T,<wbr>
-E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">fail</span><wbr><span class="parameters">(E&nbsp;e)</span></div>
+<div class="member-signature"><span class="annotations">@Contract(pure=true,
+          value="_ -&gt; new")
+@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T,<wbr>
+E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">fail</span><wbr><span class="parameters">(@NotNull
+ E&nbsp;e)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="runCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)">
 <h3>runCatching</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">runCatching</span><wbr><span class="parameters">(<a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;T&gt;&nbsp;supplier)</span></div>
+<div class="member-signature"><span class="annotations">@Contract("_ -&gt; new")
+@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">runCatching</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;T&gt;&nbsp;supplier)</span></div>
 <div class="block">Safely runs a <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a>, encapsulating the returned value or any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
@@ -229,7 +266,9 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <li>
 <section class="detail" id="execCatching(me.bristermitten.mittenlib.util.lambda.SafeRunnable)">
 <h3>execCatching</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</span>&nbsp;<span class="element-name">execCatching</span><wbr><span class="parameters">(<a href="lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a>&nbsp;runnable)</span></div>
+<div class="member-signature"><span class="annotations">@Contract("_ -&gt; new")
+@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</span>&nbsp;<span class="element-name">execCatching</span><wbr><span class="parameters">(<a href="lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a>&nbsp;runnable)</span></div>
 <div class="block">Safely executes a <a href="lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeRunnable</code></a>, ignoring the result and wrapping any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -242,7 +281,10 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <li>
 <section class="detail" id="computeCatching(me.bristermitten.mittenlib.util.lambda.SafeSupplier)">
 <h3>computeCatching</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">computeCatching</span><wbr><span class="parameters">(<a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;supplier)</span></div>
+<div class="member-signature"><span class="annotations">@Contract("_ -&gt; new")
+@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">computeCatching</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;supplier)</span></div>
 <div class="block">Safely executes a <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a> that returns another <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>,
  wrapping the returned <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value or any thrown exception in a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>
  <p>
@@ -260,7 +302,10 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <li>
 <section class="detail" id="sequence(java.util.Collection)">
 <h3>sequence</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">sequence</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;results)</span></div>
+<div class="member-signature"><span class="annotations">@Contract("_ -&gt; new")
+@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">sequence</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;results)</span></div>
 <div class="block">Turns a collection of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>s into a <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> of a collection of the same type
  If any of the results are <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>s, the whole result will be <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
  Otherwise, the result will be <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a> with the collection of values
@@ -284,49 +329,158 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <li>
 <section class="detail" id="toOptional()">
 <h3>toOptional</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</span>&nbsp;<span class="element-name">toOptional</span>()</div>
+<div class="member-signature"><span class="annotations">@NotNull
+@Contract(pure=true)
+</span><span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</span>&nbsp;<span class="element-name">toOptional</span>()</div>
+<div class="block">Turns the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> into an <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>.
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a> will contain the value.
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>, the <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a> will be empty.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The value, if present, in an <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="error()">
 <h3>error</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span>&nbsp;<span class="element-name">error</span>()</div>
+<div class="member-signature"><span class="annotations">@NotNull
+@Contract(pure=true)
+</span><span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</span>&nbsp;<span class="element-name">error</span>()</div>
+<div class="block">If this <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>, returns the exception.
+ Otherwise, returns an empty <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The exception, if present, in an <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="map(java.util.function.Function)">
 <h3>map</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;function)</span></div>
+<div class="member-signature"><span class="annotations">@Contract(pure=true)
+@NotNull
+</span><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;function)</span></div>
+<div class="block">Applies a given function to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, passing through the exception if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the function is applied to the value and the result is returned in a new <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of the result of the function</dd>
+<dt>Parameters:</dt>
+<dd><code>function</code> - The function to apply</dd>
+<dt>Returns:</dt>
+<dd>A new <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> containing the result of the function or the exception from this <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="orElse(java.util.function.Supplier)">
 <h3>orElse</h3>
-<div class="member-signature"><span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;&gt;&nbsp;supplier)</span></div>
+<div class="member-signature"><span class="annotations">@Contract(pure=true)
+@NotNull
+</span><span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;&gt;&nbsp;supplier)</span></div>
+<div class="block">Applies an "or" operation to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>.
+ If either <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a> is returned, prioritizing the left <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>.
+ Otherwise, the exception from the left <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is returned in a <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>supplier</code> - A supplier for the right <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></dd>
+<dt>Returns:</dt>
+<dd>The result of the "or" operation</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="flatMap(java.util.function.Function)">
 <h3>flatMap</h3>
-<div class="member-signature"><span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</span>&nbsp;<span class="element-name">flatMap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;&gt;&nbsp;function)</span></div>
+<div class="member-signature"><span class="annotations">@Contract(pure=true)
+@NotNull
+</span><span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;</span>&nbsp;<span class="element-name">flatMap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;R&gt;&gt;&nbsp;function)</span></div>
+<div class="block">Applies a function to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, passing through the exception if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
+ This allows the composition of <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>-ful functions, making <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> a monad.
+ <p>
+ If the left <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the function is applied to the value and the result is returned.
+ Otherwise, the exception from the left <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is returned in a <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of the result of the function</dd>
+<dt>Parameters:</dt>
+<dd><code>function</code> - The function to apply</dd>
+<dt>Returns:</dt>
+<dd>A new <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> containing the result of the function or the exception from this <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getOrThrow()">
 <h3>getOrThrow</h3>
-<div class="member-signature"><span class="return-type"><a href="Result.html" title="type parameter in Result">T</a></span>&nbsp;<span class="element-name">getOrThrow</span>()</div>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type"><a href="Result.html" title="type parameter in Result">T</a></span>&nbsp;<span class="element-name">getOrThrow</span>()
+      throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></span></div>
+<div class="block">Returns the value if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, otherwise throws the exception</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The value</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></code> - The exception. Note that if the exception is a checked exception,
+                          it will <b>not</b> be wrapped in a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link"><code>RuntimeException</code></a>.
+                          However, <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link"><code>RuntimeException</code></a> is used in the method signature to
+                          avoid manual try/catch blocks</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="handle(java.util.function.Function,java.util.function.Function)">
+<h3>handle</h3>
+<div class="member-signature"><span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type">R</span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;successHandler,
+ <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>,<wbr>R&gt;&nbsp;exceptionHandler)</span></div>
+<div class="block">Handle the 2 cases of the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> separately with 2 functions
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the first function is applied to the value.
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>, the second function is applied to the exception.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of the result of the function</dd>
+<dt>Parameters:</dt>
+<dd><code>successHandler</code> - The function to apply if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a></dd>
+<dd><code>exceptionHandler</code> - The function to apply if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a></dd>
+<dt>Returns:</dt>
+<dd>The result of the function applied to the value or exception</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="recover(java.util.function.Function)">
+<h3>recover</h3>
+<div class="member-signature"><span class="return-type"><a href="Result.html" title="type parameter in Result">T</a></span>&nbsp;<span class="element-name">recover</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>,<wbr><a href="Result.html" title="type parameter in Result">T</a>&gt;&nbsp;exceptionHandler)</span></div>
+<div class="block">Handles the exception case of the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with a function.
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the value is returned.
+ If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>, the function is applied to the exception.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>exceptionHandler</code> - The function to apply if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a></dd>
+<dt>Returns:</dt>
+<dd>The value or the result of the function applied to the exception</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="isSuccess()">
 <h3>isSuccess</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isSuccess</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>. This should be equivalent to <code>!isFail()</code></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="isFailure()">
 <h3>isFailure</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isFailure</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>. This should be equivalent to <code>!isSuccess()</code></dd>
+</dl>
 </section>
 </li>
 </ul>

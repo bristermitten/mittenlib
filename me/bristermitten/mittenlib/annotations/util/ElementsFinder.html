@@ -165,6 +165,10 @@ loadScripts(document, 'script');</script>
 <h3>getApplicableVariableElements</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&gt;</span>&nbsp;<span class="element-name">getApplicableVariableElements</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;rootElement)</span></div>
 <dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>rootElement</code> - The element to find variables in</dd>
+<dt>Returns:</dt>
+<dd>All the <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>VariableElement</code></a>s in the given element that are suitable for config generation</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list-long">

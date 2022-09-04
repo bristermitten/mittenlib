@@ -106,6 +106,10 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">AbstractMessageFormatter</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a></span></div>
+<div class="block">An abstract implementation of <a href="MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format"><code>MessageFormatter</code></a> that provides a default implementation of <a href="#preFormat(java.lang.String,org.bukkit.OfflinePlayer)"><code>preFormat(String, OfflinePlayer)</code></a>.
+ This implementation keeps a set of <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s, and calls them sequentially.
+ This implementation does not implement <a href="MessageFormatter.html#format(java.lang.String,org.bukkit.OfflinePlayer)"><code>MessageFormatter.format(String, OfflinePlayer)</code></a>, leaving the <code>Component</code>
+ creation to the subclasses.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -120,7 +124,9 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected final @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook">FormattingHook</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#hooks" class="member-name-link">hooks</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The set of <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to use.</div>
+</div>
 </div>
 </section>
 </li>
@@ -135,7 +141,9 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected </code></div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Set)" class="member-name-link">AbstractMessageFormatter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook">FormattingHook</a>&gt;&nbsp;hooks)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new <a href="AbstractMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format"><code>AbstractMessageFormatter</code></a> with the given <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s.</div>
+</div>
 </div>
 </section>
 </li>
@@ -153,7 +161,9 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#preFormat(java.lang.String,org.bukkit.OfflinePlayer)" class="member-name-link">preFormat</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  @Nullable org.bukkit.OfflinePlayer&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Apply all <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to a String, returning the formatted String.</div>
+</div>
 </div>
 </div>
 </div>
@@ -178,6 +188,7 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 <section class="detail" id="hooks">
 <h3>hooks</h3>
 <div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">@Unmodifiable <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook">FormattingHook</a>&gt;</span>&nbsp;<span class="element-name">hooks</span></div>
+<div class="block">The set of <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to use.</div>
 </section>
 </li>
 </ul>
@@ -193,6 +204,11 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 <h3>AbstractMessageFormatter</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">protected</span>&nbsp;<span class="element-name">AbstractMessageFormatter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook">FormattingHook</a>&gt;&nbsp;hooks)</span></div>
+<div class="block">Create a new <a href="AbstractMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format"><code>AbstractMessageFormatter</code></a> with the given <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>hooks</code> - the hooks to use</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -211,9 +227,18 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
  @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  @Nullable
  @Nullable org.bukkit.OfflinePlayer&nbsp;player)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="MessageFormatter.html#preFormat(java.lang.String,org.bukkit.OfflinePlayer)">MessageFormatter</a></code></span></div>
+<div class="block">Apply all <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to a String, returning the formatted String.
+ This method is handy when <code>Component</code>s cannot be used but may leave the String not completely formatted,
+ for example preserving legacy formatting codes (<code>&amp;c</code>)</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="MessageFormatter.html#preFormat(java.lang.String,org.bukkit.OfflinePlayer)">preFormat</a></code>&nbsp;in interface&nbsp;<code><a href="MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>message</code> - the message to format</dd>
+<dd><code>player</code> - the player to format for. This can be used for player-specific formatting, such as PlaceholderAPI</dd>
+<dt>Returns:</dt>
+<dd>the formatted String</dd>
 </dl>
 </section>
 </li>

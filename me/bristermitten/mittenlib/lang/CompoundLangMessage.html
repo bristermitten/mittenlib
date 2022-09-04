@@ -99,6 +99,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CompoundLangMessage</span>
 <span class="extends-implements">extends <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></span></div>
+<div class="block">A message that is composed of multiple <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang"><code>LangMessage</code></a>s
+ This allows <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang"><code>LangMessage</code></a>s to be easily "concatenated", allowing for more complex messages to be created</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -120,12 +122,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.List)" class="member-name-link">CompoundLangMessage</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>&gt;&nbsp;components)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new CompoundLangMessage</div>
+</div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.util.List,me.bristermitten.mittenlib.lang.LangMessage...)" class="member-name-link">CompoundLangMessage</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>&gt;&nbsp;components,
  @NotNull <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>...&nbsp;others)</code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Create a new CompoundLangMessage, concatenating the 2 inputs.</div>
+</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.lang.LangMessage...)" class="member-name-link">CompoundLangMessage</a><wbr>(@NotNull <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>...&nbsp;components)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new CompoundLangMessage</div>
+</div>
 </div>
 </section>
 </li>
@@ -168,6 +176,11 @@ loadScripts(document, 'script');</script>
 <h3>CompoundLangMessage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CompoundLangMessage</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>&gt;&nbsp;components)</span></div>
+<div class="block">Create a new CompoundLangMessage</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>components</code> - the components of this message</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -175,6 +188,11 @@ loadScripts(document, 'script');</script>
 <h3>CompoundLangMessage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CompoundLangMessage</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>...&nbsp;components)</span></div>
+<div class="block">Create a new CompoundLangMessage</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>components</code> - the components of this message</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -184,6 +202,13 @@ loadScripts(document, 'script');</script>
  @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>&gt;&nbsp;components,
  @NotNull
  @NotNull <a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>...&nbsp;others)</span></div>
+<div class="block">Create a new CompoundLangMessage, concatenating the 2 inputs.
+ This is used to provide slightly more efficient concatenation in (<a href="LangMessage.html#add(me.bristermitten.mittenlib.lang.LangMessage)"><code>LangMessage.add(LangMessage)</code></a>)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>components</code> - the components of this message</dd>
+<dd><code>others</code> - extra components to add</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -198,6 +223,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getComponents()">
 <h3>getComponents</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Unmodifiable <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a>&gt;</span>&nbsp;<span class="element-name">getComponents</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the components of this message</dd>
+</dl>
 </section>
 </li>
 </ul>

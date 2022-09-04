@@ -115,7 +115,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#improve(me.bristermitten.mittenlib.config.provider.ConfigProvider)" class="member-name-link">improve</a><wbr>(<a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;&nbsp;provider)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Improve a <a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> by wrapping it with (possible) extra functionality.</div>
+</div>
 </div>
 </div>
 </div>
@@ -134,6 +136,17 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="improve(me.bristermitten.mittenlib.config.provider.ConfigProvider)">
 <h3>improve</h3>
 <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</span>&nbsp;<span class="element-name">improve</span><wbr><span class="parameters">(<a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;&nbsp;provider)</span></div>
+<div class="block">Improve a <a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> by wrapping it with (possible) extra functionality.
+ This method should be idempotent, and should not modify the original <a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>
+ If there are no improvements to be made, the original <a href="../ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> should be returned</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the config</dd>
+<dt>Parameters:</dt>
+<dd><code>provider</code> - the provider to improve</dd>
+<dt>Returns:</dt>
+<dd>the improved provider</dd>
+</dl>
 </section>
 </li>
 </ul>

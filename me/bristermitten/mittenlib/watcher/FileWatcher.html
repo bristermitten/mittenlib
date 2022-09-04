@@ -97,6 +97,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FileWatcher</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">A watcher for a file. This contains a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a> to watch,
+ and a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link"><code>Consumer</code></a> to call when the file changes.
+ This will generally be processed by <a href="FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher"><code>FileWatcherService</code></a></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,7 +113,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.nio.file.Path,java.util.function.Consumer)" class="member-name-link">FileWatcher</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;watching,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/WatchEvent.html" title="class or interface in java.nio.file" class="external-link">WatchEvent</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&gt;&nbsp;onModify)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new FileWatcher</div>
+</div>
 </div>
 </section>
 </li>
@@ -153,6 +158,12 @@ loadScripts(document, 'script');</script>
 <h3>FileWatcher</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FileWatcher</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;watching,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/WatchEvent.html" title="class or interface in java.nio.file" class="external-link">WatchEvent</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&gt;&nbsp;onModify)</span></div>
+<div class="block">Create a new FileWatcher</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>watching</code> - the path to watch. This can either be a file or a directory.</dd>
+<dd><code>onModify</code> - the consumer to call when the file changes</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -167,12 +178,20 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getWatching()">
 <h3>getWatching</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">getWatching</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the path being watched</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getOnModify()">
 <h3>getOnModify</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/WatchEvent.html" title="class or interface in java.nio.file" class="external-link">WatchEvent</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;&gt;</span>&nbsp;<span class="element-name">getOnModify</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the consumer to call when the file changes</dd>
+</dl>
 </section>
 </li>
 </ul>

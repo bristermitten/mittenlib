@@ -171,6 +171,12 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">sequence</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;T&gt;&gt;&nbsp;futures)</span></div>
 <div class="block">Transform a collection of <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a>s into a single <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a> holding a <code>Collection&lt;T&gt;</code></div>
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the future</dd>
+<dt>Parameters:</dt>
+<dd><code>futures</code> - A collection of futures</dd>
+<dt>Returns:</dt>
+<dd>A single future that will be completed when all the arguments have completed, containing all the argument results in a List.</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list">
@@ -186,6 +192,12 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">sequence</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;T&gt;&gt;&nbsp;futures)</span></div>
 <div class="block">Transform an <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link"><code>Iterable</code></a> of <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a>s into a single <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a> holding a <code>Collection&lt;T&gt;</code></div>
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the futures</dd>
+<dt>Parameters:</dt>
+<dd><code>futures</code> - An iterable of futures</dd>
+<dt>Returns:</dt>
+<dd>A single future that will be completed when all the arguments have completed, containing all the argument results in a List.</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list">

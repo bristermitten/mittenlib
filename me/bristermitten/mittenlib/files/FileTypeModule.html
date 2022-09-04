@@ -103,6 +103,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FileTypeModule</span>
 <span class="extends-implements">extends com.google.inject.AbstractModule</span></div>
+<div class="block">Module handling registration of an <a href="../config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a>, <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a>s,
+ and a <code>Gson</code> instance.
+ TODO move the Gson instance to a separate module</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,10 +118,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">FileTypeModule</a>()</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Create a new FileTypeModule, using <a href="FileTypes.html#defaultTypes()"><code>FileTypes.defaultTypes()</code></a> and <a href="json/GsonObjectMapper.html" title="class in me.bristermitten.mittenlib.files.json"><code>GsonObjectMapper</code></a></div>
+</div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.files.FileTypes,java.lang.Class)" class="member-name-link">FileTypeModule</a><wbr>(<a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a>&nbsp;types,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="../config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&gt;&nbsp;objectMapper)</code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Create a new FileTypeModule, using a provided <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> and <a href="../config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a> class</div>
+</div>
 </div>
 </section>
 </li>
@@ -160,6 +167,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="&lt;init&gt;()">
 <h3>FileTypeModule</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FileTypeModule</span>()</div>
+<div class="block">Create a new FileTypeModule, using <a href="FileTypes.html#defaultTypes()"><code>FileTypes.defaultTypes()</code></a> and <a href="json/GsonObjectMapper.html" title="class in me.bristermitten.mittenlib.files.json"><code>GsonObjectMapper</code></a></div>
 </section>
 </li>
 <li>
@@ -167,6 +175,12 @@ loadScripts(document, 'script');</script>
 <h3>FileTypeModule</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FileTypeModule</span><wbr><span class="parameters">(<a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a>&nbsp;types,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="../config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&gt;&nbsp;objectMapper)</span></div>
+<div class="block">Create a new FileTypeModule, using a provided <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> and <a href="../config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a> class</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>types</code> - the <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> to register</dd>
+<dd><code>objectMapper</code> - the <a href="../config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a> class to register</dd>
+</dl>
 </section>
 </li>
 </ul>

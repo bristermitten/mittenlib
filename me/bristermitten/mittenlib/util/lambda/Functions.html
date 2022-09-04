@@ -97,6 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Functions</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Utility class for dealing with <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a>s</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -114,7 +115,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;A,<wbr>
 R&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#constant(R)" class="member-name-link">constant</a><wbr>(R&nbsp;r)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A function that always returns the same value, ignoring the input</div>
+</div>
 </div>
 </div>
 </div>
@@ -137,6 +140,16 @@ R&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base
 <h3 id="constant(java.lang.Object)">constant</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
 R&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>R&gt;</span>&nbsp;<span class="element-name">constant</span><wbr><span class="parameters">(R&nbsp;r)</span></div>
+<div class="block">A function that always returns the same value, ignoring the input</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>A</code> - the input type</dd>
+<dd><code>R</code> - the return type</dd>
+<dt>Parameters:</dt>
+<dd><code>r</code> - the value to return</dd>
+<dt>Returns:</dt>
+<dd>a function that always returns the input value</dd>
+</dl>
 </section>
 </li>
 </ul>
