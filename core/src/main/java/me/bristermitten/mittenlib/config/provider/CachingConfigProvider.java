@@ -5,10 +5,20 @@ import me.bristermitten.mittenlib.util.Cached;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/**
+ * A ConfigProvider which caches the config to avoid repeated file reads.
+ *
+ * @param <T> The type of the config
+ */
 public class CachingConfigProvider<T> implements ConfigProvider<T> {
     private final ConfigProvider<T> delegate;
-    private Cached<T> cached;
+    private final Cached<T> cached;
 
+    /**
+     * Create a new CachingConfigProvider, lazily computing the config.
+     *
+     * @param delegate The delegate to use to load the config
+     */
     public CachingConfigProvider(ConfigProvider<T> delegate) {
         this.cached = new Cached<>(delegate::get);
         this.delegate = delegate;
@@ -19,6 +29,11 @@ public class CachingConfigProvider<T> implements ConfigProvider<T> {
         return cached.get();
     }
 
+    /**
+     * Invalidate the cached config, causing it to be recomputed on the next call to {@link #get()}.
+     *
+     * @see Cached#invalidate()
+     */
     public void invalidate() {
         cached.invalidate();
     }

@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.lang.format.hook;
 
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
@@ -21,7 +22,7 @@ public class LegacyCodeUpdaterHook implements FormattingHook {
     }
 
     @Override
-    public String format(String message, @Nullable OfflinePlayer player) {
+    public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         Matcher matcher = LEGACY_CODE_PATTERN.matcher(message);
         StringBuffer builder = new StringBuffer();
         while (matcher.find()) {

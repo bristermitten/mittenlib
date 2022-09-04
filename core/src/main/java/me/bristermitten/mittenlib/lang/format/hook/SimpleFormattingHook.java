@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
@@ -21,7 +22,7 @@ public class SimpleFormattingHook implements FormattingHook {
     }
 
     @Override
-    public String format(String message, @Nullable OfflinePlayer player) {
+    public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         return formatter.apply(message, player);
     }
 }

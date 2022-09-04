@@ -6,11 +6,14 @@ import org.bukkit.plugin.Plugin;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+/**
+ * A provider for {@link BukkitAudiences} that uses the {@link Plugin}
+ */
 public class AdventureAudienceProvider implements Provider<BukkitAudiences> {
     private final Plugin plugin;
 
     @Inject
-    public AdventureAudienceProvider(Plugin plugin) {
+    AdventureAudienceProvider(Plugin plugin) {
         this.plugin = plugin;
     }
 

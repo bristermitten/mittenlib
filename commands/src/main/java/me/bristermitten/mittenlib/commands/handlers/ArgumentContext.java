@@ -10,5 +10,8 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> The type of the argument
  */
 public interface ArgumentContext<T> extends ContextResolver<T, BukkitCommandExecutionContext> {
+    /**
+     * @return The type that this context applies to.
+     */
     @NotNull Class<T> type();
 }

@@ -9,10 +9,22 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
+
+/**
+ * A {@link ConfigProvider} which delegates to another {@link ConfigProvider}, improving it with a {@link ConfigProviderImprover}
+ * This is basically just used to resolve some circular stuff in Guice ({@link #initialize(ConfigProviderFactory, ConfigProviderImprover)}
+ *
+ * @param <T> the type of the config
+ */
 public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
     private final Configuration<T> configuration;
     private ConfigProvider<T> delegate;
 
+    /**
+     * Create a new DelegatingConfigProvider
+     *
+     * @param configuration the configuration to delegate to
+     */
     public DelegatingConfigProvider(Configuration<T> configuration) {
         this.configuration = configuration;
     }

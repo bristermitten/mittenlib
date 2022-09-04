@@ -9,6 +9,9 @@ import me.bristermitten.mittenlib.commands.handlers.ArgumentContext;
 import me.bristermitten.mittenlib.commands.handlers.NamedCondition;
 import me.bristermitten.mittenlib.commands.handlers.TabCompleter;
 
+/**
+ * A Guice module for registering commands.
+ */
 public class CommandsModule extends AbstractModule {
     @Override
     protected void configure() {

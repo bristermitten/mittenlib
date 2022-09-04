@@ -13,6 +13,10 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
+/**
+ * Handles file watching operations.
+ */
 @Singleton
 public class FileWatcherService {
     private final Map<Path, Set<FileWatcher>> watchers = new ConcurrentHashMap<>();
@@ -64,6 +68,14 @@ public class FileWatcherService {
         return Unit.unitFuture();
     }
 
+    /**
+     * Removes a watcher from the service.
+     * Note that the watcher will not be removed from the underlying watch service until the service is restarted -
+     * the file will still be watched, but the watcher will not be notified of changes.
+     * If is operation leaves no watchers, the service will be stopped.
+     *
+     * @param fileWatcher The watcher to remove.
+     */
     public void removeWatcher(FileWatcher fileWatcher) {
         final Set<FileWatcher> watcherSet = watchers.get(fileWatcher.getWatching());
         if (watcherSet == null) {
@@ -75,6 +87,12 @@ public class FileWatcherService {
         }
     }
 
+    /**
+     * Start watching for file changes.
+     *
+     * @return A future that will be completed once the service is ready to use - some delay may be required for the thread to startup.
+     * @throws IllegalStateException if the service is already watching (see {@link #isWatching()}
+     */
     public Future<Unit> startWatching() {
         if (watching.getAndSet(true)) {
             throw new IllegalStateException("Already watching");
@@ -85,6 +103,20 @@ public class FileWatcherService {
         return future;
     }
 
+    /**
+     * @return whether the service is currently watching for file changes.
+     * Note that this may return true even if the service is not currently watching, if the service is in the process of starting up.
+     * @see #startWatching()
+     */
+    public boolean isWatching() {
+        return watching.get();
+    }
+
+    /**
+     * Stop watching for file changes.
+     *
+     * @throws IllegalStateException if the service is not currently watching (see {@link #isWatching()}
+     */
     public void stopWatching() {
         if (!watching.getAndSet(false)) {
             throw new IllegalStateException("Not watching");

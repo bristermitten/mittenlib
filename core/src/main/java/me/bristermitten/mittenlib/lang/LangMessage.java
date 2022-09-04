@@ -4,9 +4,6 @@ import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class LangMessage {
     private final @Nullable String message;
     private final @Nullable String title;

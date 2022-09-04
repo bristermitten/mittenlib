@@ -8,6 +8,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
 import java.util.Optional;
 
+/**
+ * Thrown when a DTO class references an invalid type
+ */
 public class DTOReferenceException extends RuntimeException {
     private final transient TypeMirror typeUsed;
     private final transient GeneratedTypeCache typeCache;
@@ -16,6 +19,14 @@ public class DTOReferenceException extends RuntimeException {
     @Nullable
     private final transient Element source;
 
+    /**
+     * Create a new DTOReferenceException
+     *
+     * @param typeUsed    The invalid type that was uses
+     * @param typeCache   The type cache, used for generating the error message
+     * @param replaceWith The type to replace the invalid type with, if known
+     * @param source      The source element (i.e. the element referencing the invalid type), if known
+     */
     public DTOReferenceException(TypeMirror typeUsed, GeneratedTypeCache typeCache, @Nullable Class<?> replaceWith, @Nullable Element source) {
         this.typeUsed = typeUsed;
         this.typeCache = typeCache;

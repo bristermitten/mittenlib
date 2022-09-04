@@ -8,6 +8,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Set;
 
+/**
+ * A provider for {@link PaperCommandManager}.
+ * This handles registration of {@link Command}, {@link TabCompleter}, {@link NamedCondition}, {@link ArgumentContext} and {@link ArgumentCondition} instances.
+ */
 public class CommandManagerProvider implements Provider<PaperCommandManager> {
     private final Plugin plugin;
     private final Set<Command> commands;
@@ -18,7 +22,7 @@ public class CommandManagerProvider implements Provider<PaperCommandManager> {
 
 
     @Inject
-    public CommandManagerProvider(Plugin plugin, Set<Command> commands, Set<TabCompleter> tabCompleters, Set<ArgumentCondition<?>> argumentConditions, Set<NamedCondition> namedConditions, Set<ArgumentContext<?>> argumentContexts) {
+    CommandManagerProvider(Plugin plugin, Set<Command> commands, Set<TabCompleter> tabCompleters, Set<ArgumentCondition<?>> argumentConditions, Set<NamedCondition> namedConditions, Set<ArgumentContext<?>> argumentContexts) {
         this.plugin = plugin;
         this.commands = commands;
         this.tabCompleters = tabCompleters;

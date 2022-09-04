@@ -4,6 +4,7 @@ import me.bristermitten.mittenlib.lang.format.hook.FormattingHook;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -16,7 +17,7 @@ public class PAPIFormattingHook implements FormattingHook {
     }
 
     @Override
-    public String format(String message, @Nullable OfflinePlayer player) {
+    public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         return PlaceholderAPI.setPlaceholders(player, message);
     }
 }

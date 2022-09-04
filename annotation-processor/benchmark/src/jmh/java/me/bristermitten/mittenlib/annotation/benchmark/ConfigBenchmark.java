@@ -83,11 +83,11 @@ public class ConfigBenchmark {
 
             var config = new Configuration<>("data.json", TestData.class, TestData::deserializeTestData);
             var jsonType = injector.getInstance(JSONFileType.class);
-            this.configProviderJson = configProviderFactory.createStringReaderProvider(jsonType, jsonData, config);
+            this.configProviderJson = configProviderFactory.createStringReaderProvider(jsonType, jsonData, config).getOrThrow();
 
             var config2 = new Configuration<>("data.yaml", TestData.class, TestData::deserializeTestData);
             var yamlType = injector.getInstance(YamlFileType.class);
-            this.configProviderYaml = configProviderFactory.createStringReaderProvider(yamlType, yamlData, config2);
+            this.configProviderYaml = configProviderFactory.createStringReaderProvider(yamlType, yamlData, config2).getOrThrow();
         }
 
         public String getJSONFile() {

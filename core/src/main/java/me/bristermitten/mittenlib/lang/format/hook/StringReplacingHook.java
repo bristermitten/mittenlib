@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -36,7 +37,7 @@ public class StringReplacingHook implements FormattingHook {
     }
 
     @Override
-    public String format(String message, @Nullable OfflinePlayer player) {
+    public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         for (Map.Entry<String, Object> replacement : replacements) {
             if (message.contains(replacement.getKey())) {
                 message = message.replace(replacement.getKey(), getStringValue(replacement.getValue()));

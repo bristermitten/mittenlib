@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Utility for deserializing collections using the MittenLib config system.
+ * This is used by generated config classes.
+ */
 public class CollectionsUtils {
     private static final TypeToken<List<Map<String, Object>>> LIST_MAP_STRING_OBJECT_TOKEN = new TypeToken<List<Map<String, Object>>>() {
     };
@@ -22,6 +27,15 @@ public class CollectionsUtils {
 
     }
 
+    /**
+     * Attempt to deserialize a list using the MittenLib config system.
+     *
+     * @param rawData                 the raw data to deserialize, which should represent a {@code List<Map<String, Object>>}
+     * @param baseContext             the base context to use for deserialization
+     * @param deserializationFunction the function to use for turning a {@link Map} into an {@link T}
+     * @param <T>                     the type to deserialize to
+     * @return a {@link Result} containing the deserialized list, or a {@link Result#fail(Exception)} if deserialization failed
+     */
     public static <T> Result<List<T>> deserializeList(Object rawData, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
         Result<List<Map<String, Object>>> rawListRes = baseContext.getMapper().map(rawData, LIST_MAP_STRING_OBJECT_TOKEN);
         return rawListRes.flatMap(rawList -> {
@@ -39,6 +53,17 @@ public class CollectionsUtils {
 
     }
 
+    /**
+     * Attempt to deserialize a map using the MittenLib config system.
+     *
+     * @param keyType                 the type of the keys in the map
+     * @param rawData                 the raw data to deserialize, which should represent a {@code Map<String, Object>}
+     * @param baseContext             the base context to use for deserialization
+     * @param deserializationFunction the function to use for turning a {@link Map} into an {@link V}
+     * @param <K>                     the type of the keys in the map
+     * @param <V>                     the type to deserialize to
+     * @return a {@link Result} containing the deserialized map, or a {@link Result#fail(Exception)} if deserialization failed
+     */
     public static <K, V> Result<Map<K, V>> deserializeMap(Class<K> keyType, Object rawData, DeserializationContext baseContext, DeserializationFunction<V> deserializationFunction) {
         //noinspection unchecked absolutely evil
         Result<Map<K, Map<String, Object>>> rawMapRes = baseContext.getMapper().map(rawData,

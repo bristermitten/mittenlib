@@ -8,11 +8,14 @@ import me.bristermitten.mittenlib.util.Result;
 
 import javax.inject.Inject;
 
+/**
+ * An {@link ObjectMapper} implementation using {@link Gson}.
+ */
 public class GsonObjectMapper implements ObjectMapper {
     private final Gson gson;
 
     @Inject
-    public GsonObjectMapper(Gson gson) {
+    GsonObjectMapper(Gson gson) {
         this.gson = gson;
     }
 

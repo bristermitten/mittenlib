@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.lang.format.hook;
 
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SimpleColorCodeHook implements FormattingHook {
@@ -11,7 +12,7 @@ public class SimpleColorCodeHook implements FormattingHook {
     }
 
     @Override
-    public String format(String message, @Nullable OfflinePlayer player) {
+    public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 }

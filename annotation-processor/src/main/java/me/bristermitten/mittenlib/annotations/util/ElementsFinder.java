@@ -44,6 +44,8 @@ public class ElementsFinder {
     }
 
     /**
+     * @param rootElement The element to find variables in
+     * @return All the {@link VariableElement}s in the given element that are suitable for config generation
      * @see #getApplicableVariableElements(TypeElement)
      */
     public List<VariableElement> getApplicableVariableElements(TypeMirror rootElement) {

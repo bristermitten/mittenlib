@@ -42,6 +42,9 @@ public class Futures {
     /**
      * Transform a collection of {@link CompletableFuture}s into a single {@link CompletableFuture} holding a <code>Collection&lt;T&gt;</code>
      *
+     * @param futures A collection of futures
+     * @param <T>     The type of the future
+     * @return A single future that will be completed when all the arguments have completed, containing all the argument results in a List.
      * @see Futures#sequence(CompletableFuture[])
      */
     public static <T> CompletableFuture<Collection<T>> sequence(Collection<CompletableFuture<T>> futures) {
@@ -52,6 +55,9 @@ public class Futures {
     /**
      * Transform an {@link Iterable} of {@link CompletableFuture}s into a single {@link CompletableFuture} holding a <code>Collection&lt;T&gt;</code>
      *
+     * @param futures An iterable of futures
+     * @param <T>     The type of the futures
+     * @return A single future that will be completed when all the arguments have completed, containing all the argument results in a List.
      * @see Futures#sequence(CompletableFuture[])
      */
     public static <T> CompletableFuture<Collection<T>> sequence(Iterable<CompletableFuture<T>> futures) {

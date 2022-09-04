@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.lang.format.hook;
 import me.bristermitten.mittenlib.util.Version;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
@@ -24,7 +25,7 @@ public class HexColorFixerHook implements FormattingHook {
     }
 
     @Override
-    public String format(String message, @Nullable OfflinePlayer player) {
+    public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         final Matcher matcher = HEX_PATTERN.matcher(message);
 
 

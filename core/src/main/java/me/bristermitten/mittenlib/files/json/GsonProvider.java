@@ -8,12 +8,16 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Set;
 
+/**
+ * Standard provider for {@link Gson} instances.
+ * This class will automatically register all {@link TypeAdapterFactory} and {@link ExtraTypeAdapter} instances in the Guice context.
+ */
 public class GsonProvider implements Provider<Gson> {
     private final Set<TypeAdapterFactory> typeAdapterFactories;
     private final Set<ExtraTypeAdapter<?>> extraTypeAdapters;
 
     @Inject
-    public GsonProvider(Set<TypeAdapterFactory> typeAdapterFactories, Set<ExtraTypeAdapter<?>> extraTypeAdapters) {
+    GsonProvider(Set<TypeAdapterFactory> typeAdapterFactories, Set<ExtraTypeAdapter<?>> extraTypeAdapters) {
         this.typeAdapterFactories = typeAdapterFactories;
         this.extraTypeAdapters = extraTypeAdapters;
     }

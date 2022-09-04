@@ -21,9 +21,20 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Guice module for config handling
+ * Responsible for quite a lot (probably too much) of the config handling,
+ * registering {@link Configuration}s, {@link ObjectLoader}s, {@link ConfigProvider}s, etc.
+ */
+
 public class ConfigModule extends AbstractModule {
     private final Set<Configuration<?>> configurations;
 
+    /**
+     * Create a new ConfigModule
+     *
+     * @param configurations the configurations to register
+     */
     public ConfigModule(Set<Configuration<?>> configurations) {
         this.configurations = configurations;
     }
