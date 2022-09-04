@@ -39,6 +39,10 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform()
+        maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+        setForkEvery(100)
+        reports.html.required.set(false)
+        reports.junitXml.required.set(false)
     }
 
     tasks.javadoc {
@@ -50,6 +54,7 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.isFork = true
     }
 
     publishing {
