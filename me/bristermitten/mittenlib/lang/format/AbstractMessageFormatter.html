@@ -108,7 +108,7 @@ loadScripts(document, 'script');</script>
 implements <a href="MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a></span></div>
 <div class="block">An abstract implementation of <a href="MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format"><code>MessageFormatter</code></a> that provides a default implementation of <a href="#preFormat(java.lang.String,org.bukkit.OfflinePlayer)"><code>preFormat(String, OfflinePlayer)</code></a>.
  This implementation keeps a set of <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s, and calls them sequentially.
- This implementation does not implement <a href="MessageFormatter.html#format(java.lang.String,org.bukkit.OfflinePlayer)"><code>MessageFormatter.format(String, OfflinePlayer)</code></a>, leaving the <code>Component</code>
+ This implementation does not implement <a href="MessageFormatter.html#format(java.lang.String,org.bukkit.OfflinePlayer)"><code>MessageFormatter.format(String, OfflinePlayer)</code></a>, leaving the <a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a>
  creation to the subclasses.</div>
 </section>
 <section class="summary">
@@ -160,7 +160,7 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#preFormat(java.lang.String,org.bukkit.OfflinePlayer)" class="member-name-link">preFormat</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
- @Nullable org.bukkit.OfflinePlayer&nbsp;player)</code></div>
+ @Nullable <a href="https://helpch.at/docs/1.8.8/org/bukkit/OfflinePlayer.html" title="class or interface in org.bukkit" class="external-link">OfflinePlayer</a>&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Apply all <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to a String, returning the formatted String.</div>
 </div>
@@ -226,10 +226,10 @@ implements <a href="MessageFormatter.html" title="interface in me.bristermitten.
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">preFormat</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  @Nullable
- @Nullable org.bukkit.OfflinePlayer&nbsp;player)</span></div>
+ @Nullable <a href="https://helpch.at/docs/1.8.8/org/bukkit/OfflinePlayer.html" title="class or interface in org.bukkit" class="external-link">OfflinePlayer</a>&nbsp;player)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="MessageFormatter.html#preFormat(java.lang.String,org.bukkit.OfflinePlayer)">MessageFormatter</a></code></span></div>
 <div class="block">Apply all <a href="hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to a String, returning the formatted String.
- This method is handy when <code>Component</code>s cannot be used but may leave the String not completely formatted,
+ This method is handy when <a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a>s cannot be used but may leave the String not completely formatted,
  for example preserving legacy formatting codes (<code>&amp;c</code>)</div>
 <dl class="notes">
 <dt>Specified by:</dt>
