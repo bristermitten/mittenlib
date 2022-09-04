@@ -3,6 +3,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("io.freefair.aggregate-javadoc") version "6.3.0"
+
 }
 
 subprojects {
@@ -46,10 +47,13 @@ subprojects {
     }
 
     tasks.javadoc {
+        val options = options as StandardJavadocDocletOptions
         if (JavaVersion.current().isJava9Compatible) {
-            (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+            options.addBooleanOption("html5", true)
         }
-
+        options.links("https://helpch.at/docs/1.8.8/")
+        options.links("https://javadoc.io/doc/net.kyori/adventure-api/latest/")
+        options.links("https://google.github.io/guice/api-docs/latest/javadoc/")
     }
 
     tasks.withType<JavaCompile> {
