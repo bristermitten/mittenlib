@@ -23,13 +23,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-
 /**
  * Does most of the processing for the config annotation processor.
  * Turns a @Config annotated class into a new config class.
  */
 public class ConfigClassBuilder {
+    public static final String DESERIALIZE = "deserialize";
     private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     private final ElementsFinder elementsFinder;
@@ -125,7 +124,7 @@ public class ConfigClassBuilder {
         return createConfigClass(classType, variableElements, className);
     }
 
-    private TypeMirror getDTOSuperclass(TypeElement dtoType) {
+    private @Nullable TypeMirror getDTOSuperclass(TypeElement dtoType) {
         var superClass = dtoType.getSuperclass();
         if (superClass.getKind() == TypeKind.NONE || superClass.toString().equals("java.lang.Object")) {
             superClass = null;
@@ -137,7 +136,9 @@ public class ConfigClassBuilder {
     }
 
     private String getSuperFieldName(TypeMirror superClass) {
-        return "parent_" + typesUtil.getSimpleName(superClass);
+        var configName = typesUtil.getConfigClassName(superClass);
+
+        return "parent" + Strings.capitalize(typesUtil.getSimpleName(configName));
     }
 
     private TypeSpec createConfigClass(TypeElement classType,
@@ -237,9 +238,10 @@ public class ConfigClassBuilder {
         return file;
     }
 
-    private void addAllArgsConstructor
-            (List<VariableElement> variableElements, Collection<FieldSpec> fieldSpecs, TypeSpec.Builder typeSpecBuilder,
-             @Nullable TypeMirror superclass) {
+    private void addAllArgsConstructor(List<VariableElement> variableElements,
+                                       Collection<FieldSpec> fieldSpecs,
+                                       TypeSpec.Builder typeSpecBuilder,
+                                       @Nullable TypeMirror superclass) {
         final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
@@ -252,12 +254,19 @@ public class ConfigClassBuilder {
             constructorBuilder.addParameter(parameter);
 
 
-            List<? extends Element> superElements = elementsFinder.getApplicableVariableElements(superclass);
-            constructorBuilder.addStatement("super($L)",
-                    superElements.stream()
-                            .map(VariableElement.class::cast)
-                            .map(variableElement -> superParamName + "." + getFieldAccessorName(variableElement) + "()")
-                            .collect(Collectors.joining(", ")));
+            var superElements = elementsFinder.getApplicableVariableElements(superclass);
+            List<String> collect = superElements.stream()
+                    .map(VariableElement.class::cast)
+                    .map(variableElement -> superParamName + "." + getFieldAccessorName(variableElement) + "()")
+                    .toList();
+
+            if (getDTOSuperclass((TypeElement) types.asElement(superclass)) != null) {
+                var newCollect = new ArrayList<>(collect);
+                newCollect.add(0, superParamName);
+                collect = newCollect;
+            }
+
+            constructorBuilder.addStatement("super($L)", String.join(", ", collect));
 
             constructorBuilder.addStatement("this.$L = $L", superParamName, superParamName);
         }
@@ -267,7 +276,7 @@ public class ConfigClassBuilder {
                 .toList());
 
         fieldSpecs.forEach(field ->
-                constructorBuilder.addStatement(format("this.%1$s = %1$s", field.name)));
+                constructorBuilder.addStatement("this.$N = $N", field, field.name));
         typeSpecBuilder.addMethod(constructorBuilder.build());
     }
 
@@ -282,7 +291,7 @@ public class ConfigClassBuilder {
         final TypeName type = ParameterizedTypeName.get(ClassName.get(Configuration.class), className);
         final FieldSpec configField = FieldSpec.builder(type, "CONFIG")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .initializer("new $T<>($S, $T.class, $T::%s)".formatted(getDeserializeMethodName(className)), Configuration.class, annotation.value(), className, className)
+                .initializer("new $T<>($S, $T.class, $T::$L)", Configuration.class, annotation.value(), className, className, getDeserializeMethodName(className))
                 .build();
         typeSpecBuilder.addField(configField);
     }
@@ -298,28 +307,28 @@ public class ConfigClassBuilder {
         final TypeMirror boxedType = typesUtil.getBoxedType(typeMirror);
         final TypeName boxedTypeName = getConfigClassName(boxedType, dtoType);
 
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder("deserialize_" + variableName)
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE + Strings.capitalize(variableName.toString()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, boxedTypeName))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
                 .addParameter(ParameterSpec.builder(ClassName.get(dtoType), "dao").build());
 
         builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
-        builder.addStatement(format("$T %s", variableName), elementType);
+        builder.addStatement("$T $L", elementType, variableName);
         final String fromMapName = variableName + "FromMap";
         final String key = fieldClassNameGenerator.getConfigFieldName(element);
         var defaultName = element.getSimpleName();
-        builder.addStatement(format("Object %s = $$data.getOrDefault($S, dao.%s)", fromMapName, defaultName), key);
+        builder.addStatement("Object $L = $$data.getOrDefault($S, dao.$L)", fromMapName, key, defaultName);
 
-        if (!typesUtil.isNullable(element)) {
-            builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
-            builder.addStatement(String.format("return $T.fail($T.throwNotFound($S, $S, $T.class, %s))", fromMapName),
-                    Result.class, ConfigMapLoader.class, variableName, element, dtoType);
+        if (typesUtil.isNullable(element)) {
+            // Short circuit the null rather than trying any deserialization
+            builder.beginControlFlow("if ($L == null)", fromMapName);
+            builder.addStatement("return $T.ok(null)", Result.class);
             builder.endControlFlow();
         } else {
-            // Short circuit the null rather than trying any deserialization
-            builder.beginControlFlow(String.format("if (%s == null)", fromMapName));
-            builder.addStatement("return $T.ok(null)", Result.class);
+            builder.beginControlFlow("if ($L == null)", fromMapName);
+            builder.addStatement("return $T.fail($T.throwNotFound($S, $S, $T.class, $L))",
+                    Result.class, ConfigMapLoader.class, variableName, element, dtoType, fromMapName);
             builder.endControlFlow();
         }
 
@@ -332,8 +341,8 @@ public class ConfigClassBuilder {
             */
             final TypeMirror safeType = typesUtil.getSafeType(typeMirror);
             final TypeName safeTypeName = getConfigClassName(safeType, dtoType);
-            builder.beginControlFlow(format("if (%s instanceof $T)", fromMapName), safeTypeName);
-            builder.addStatement(format("return $T.ok(($T) %s)", fromMapName), Result.class, elementType);
+            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeTypeName);
+            builder.addStatement("return $T.ok(($T) $L)", Result.class, elementType, fromMapName);
             builder.endControlFlow();
         } else if (typeMirror instanceof DeclaredType declaredType) {
             /*
@@ -351,8 +360,10 @@ public class ConfigClassBuilder {
                 var listType = declaredType.getTypeArguments().get(0);
                 if (isConfigType(listType)) {
                     TypeName listTypeName = getConfigClassName(listType, null);
-                    builder.addStatement("return $T.deserializeList(%s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(listTypeName)), CollectionsUtils.class,
-                            listTypeName);
+                    builder.addStatement("return $T.deserializeList($L, context, $T::$L)", CollectionsUtils.class,
+                            fromMapName,
+                            listTypeName,
+                            getDeserializeMethodName(listTypeName));
                     return builder.build();
                 }
             }
@@ -362,24 +373,27 @@ public class ConfigClassBuilder {
 
                 if (isConfigType(mapType)) {
                     TypeName mapTypeName = getConfigClassName(mapType, null);
-                    builder.addStatement("return $T.deserializeMap($T.class, %s, context, $T::%s)".formatted(fromMapName, getDeserializeMethodName(mapTypeName)), CollectionsUtils.class,
+                    builder.addStatement("return $T.deserializeMap($T.class, $L, context, $T::$L)",
+                            CollectionsUtils.class,
                             getConfigClassName(typesUtil.getSafeType(keyType), null),
-                            mapTypeName);
+                            fromMapName,
+                            mapTypeName,
+                            getDeserializeMethodName(mapTypeName));
                     return builder.build();
                 }
             }
         }
 
         if (isConfigType(typeMirror)) {
-            builder.beginControlFlow(String.format("if (%s instanceof $T)", fromMapName), Map.class);
-            builder.addStatement(String.format("$1T mapData = ($1T) %s", fromMapName), MAP_STRING_OBJ_NAME);
-            builder.addStatement("return $T.%s(context.withData(mapData))".formatted(getDeserializeMethodName(elementType)), elementType);
+            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, Map.class);
+            builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);
+            builder.addStatement("return $T.$L(context.withData(mapData))", elementType, getDeserializeMethodName(elementType));
             builder.endControlFlow();
         }
 
 
         // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
-        builder.addStatement(String.format("return context.getMapper().map(%1$s, new $T<$T>(){})", fromMapName), TypeToken.class, boxedTypeName);
+        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class, boxedTypeName);
         return builder.build();
     }
 
@@ -391,9 +405,9 @@ public class ConfigClassBuilder {
 
     private String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
-            return "deserialize" + cn.simpleName();
+            return DESERIALIZE + cn.simpleName();
         }
-        return "deserialize" + name;
+        return DESERIALIZE + name;
     }
 
     private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder,
@@ -414,41 +428,33 @@ public class ConfigClassBuilder {
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
 
-        final StringBuilder expressionBuilder = new StringBuilder();
-        expressionBuilder.append("return ");
+        final CodeBlock.Builder expressionBuilder = CodeBlock.builder();
+
+        expressionBuilder.add("return ");
         int i = 0;
         var superClass = getDTOSuperclass(dtoType);
 
         // Add the superclass deserialization first, if it exists
         if (superClass != null) {
             var superConfigName = getConfigClassName(superClass, dtoType);
-            expressionBuilder.append(CodeBlock.of("$T.$L", superConfigName, getDeserializeMethodName(superConfigName)));
-            expressionBuilder
-                    .append("(context)")
-                    .append(".flatMap(var")
-                    .append(i++)
-                    .append("->\n");
+            expressionBuilder.add("$T.$L", superConfigName, getDeserializeMethodName(superConfigName));
+            expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
         }
         for (MethodSpec deserializeMethod : deserializeMethods) {
-            expressionBuilder.append(deserializeMethod.name)
-                    .append("(context, dto)")
-                    .append(".flatMap(var")
-                    .append(i++)
-                    .append("->\n");
+            expressionBuilder.add("$N(context, dto).flatMap(var$L -> \n", deserializeMethod, i++);
         }
-        expressionBuilder.append("$T.ok(new $T(");
+        expressionBuilder.add("$T.ok(new $T(", Result.class, className);
         for (int i1 = 0; i1 < i; i1++) {
-            expressionBuilder.append("var")
-                    .append(i1);
+            expressionBuilder.add("var$L", i1);
             if (i1 != i - 1) {
-                expressionBuilder.append(", ");
+                expressionBuilder.add(", ");
             }
         }
-        expressionBuilder.append("))"); // Close ok and new parens
-        expressionBuilder.append(")".repeat(Math.max(0, i))); // close all the flatMap parens
+        expressionBuilder.add("))"); // Close ok and new parens
+        expressionBuilder.add(")".repeat(Math.max(0, i))); // close all the flatMap parens
 
 
-        builder.addStatement(expressionBuilder.toString(), Result.class, className);
+        builder.addStatement(expressionBuilder.build());
 
         typeSpecBuilder.addMethod(builder.build());
     }

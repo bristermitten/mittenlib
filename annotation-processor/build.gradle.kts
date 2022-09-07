@@ -18,6 +18,6 @@ dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")
 
-    testImplementation("org.mockito:mockito-core:4.6.1")
+    testImplementation("org.mockito:mockito-core:4.7.0")
     testImplementation("com.google.testing.compile:compile-testing:0.19")
 }

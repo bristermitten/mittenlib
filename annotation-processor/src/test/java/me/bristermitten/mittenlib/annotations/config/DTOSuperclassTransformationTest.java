@@ -45,7 +45,56 @@ class DTOSuperclassTransformationTest {
 
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
                 .isNotNull();
-        // TODO figure out a proper way of testing contents -- AST comparison doesn't work as of java 17
+
+    }
+
+    @Test
+    void testSuperSuperClassConfig() {
+        Compilation compilation = javac()
+                .withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.SuperclassConfigDTO",
+                        """
+                                package me.bristermitten.mittenlib.tests;
+                                                                
+                                import java.util.Map;
+                                                                
+                                import me.bristermitten.mittenlib.config.*;
+                                import me.bristermitten.mittenlib.config.names.*;
+                                                                
+                                @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
+                                @Source(value = "lang.yml")
+                                @Config
+                                public final class SuperclassConfigDTO {
+                                    public Child1DTO child1;
+                                    public Child2DTO child2;
+                                    public Child3DTO child3;
+                                    public Child4DTO child4;
+                                                                
+                                    @Config
+                                    static class Child1DTO {
+                                        int a;
+                                    }
+                                                                
+                                    @Config
+                                    static class Child2DTO extends Child1DTO {
+                                        int b;
+                                    }
+                                    
+                                    @Config
+                                    static class Child3DTO extends Child2DTO {
+                                        int c;
+                                    }
+                                    @Config
+                                    static class Child4DTO extends Child3DTO {
+                                        int d;
+                                    }
+                                }
+                                """));
+
+        assertThat(compilation).succeededWithoutWarnings();
+
+        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
+                .isNotNull();
 
     }
 
@@ -128,8 +177,7 @@ class DTOSuperclassTransformationTest {
         assertThat(compilation)
                 .generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
                 .contentsAsUtf8String()
-                .contains("super(parent_");
-        // TODO figure out a proper way of testing contents -- AST comparison doesn't work as of java 17
+                .contains("super(parent");
 
     }
 }
