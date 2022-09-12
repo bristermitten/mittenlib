@@ -136,9 +136,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Get a "safe" version of a type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSimpleName(javax.lang.model.type.TypeMirror)" class="member-name-link">getSimpleName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSimpleName(com.squareup.javapoet.TypeName)" class="member-name-link">getSimpleName</a><wbr>(com.squareup.javapoet.TypeName&nbsp;typeMirror)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the simple name of a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link"><code>TypeMirror</code></a>, i.e.</div>
+<div class="block">Gets the simple name of a <code>TypeName</code>, i.e.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.VariableElement)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element)</code></div>
@@ -255,10 +255,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getSimpleName(javax.lang.model.type.TypeMirror)">
+<section class="detail" id="getSimpleName(com.squareup.javapoet.TypeName)">
 <h3>getSimpleName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSimpleName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</span></div>
-<div class="block">Gets the simple name of a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link"><code>TypeMirror</code></a>, i.e. the name without a package
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSimpleName</span><wbr><span class="parameters">(com.squareup.javapoet.TypeName&nbsp;typeMirror)</span></div>
+<div class="block">Gets the simple name of a <code>TypeName</code>, i.e. the name without a package
  For primitives, the unchanged name is returned.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
