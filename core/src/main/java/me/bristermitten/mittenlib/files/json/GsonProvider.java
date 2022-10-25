@@ -15,16 +15,18 @@ import java.util.Set;
 public class GsonProvider implements Provider<Gson> {
     private final Set<TypeAdapterFactory> typeAdapterFactories;
     private final Set<ExtraTypeAdapter<?>> extraTypeAdapters;
+    private final Provider<GsonBuilder> gsonBuilderProvider;
 
     @Inject
-    GsonProvider(Set<TypeAdapterFactory> typeAdapterFactories, Set<ExtraTypeAdapter<?>> extraTypeAdapters) {
+    GsonProvider(Set<TypeAdapterFactory> typeAdapterFactories, Set<ExtraTypeAdapter<?>> extraTypeAdapters, Provider<GsonBuilder> gsonBuilderProvider) {
         this.typeAdapterFactories = typeAdapterFactories;
         this.extraTypeAdapters = extraTypeAdapters;
+        this.gsonBuilderProvider = gsonBuilderProvider;
     }
 
     @Override
     public Gson get() {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final GsonBuilder gsonBuilder = gsonBuilderProvider.get();
         typeAdapterFactories.forEach(gsonBuilder::registerTypeAdapterFactory);
         extraTypeAdapters.forEach(eta -> gsonBuilder.registerTypeAdapter(eta.type(), eta));
         return gsonBuilder.create();
