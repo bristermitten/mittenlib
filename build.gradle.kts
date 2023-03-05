@@ -64,8 +64,8 @@ subprojects {
     publishing {
         repositories {
             maven {
-                val releasesRepoUrl = "https://repo.bristermitten.me/repository/maven-releases"
-                val snapshotsRepoUrl = "https://repo.bristermitten.me/repository/maven-snapshots"
+                val releasesRepoUrl = "https://repo.bristermitten.me/releases"
+                val snapshotsRepoUrl = "https://repo.bristermitten.me/snapshots"
                 url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
 
                 credentials {
