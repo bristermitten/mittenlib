@@ -223,8 +223,9 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#concat(java.util.Set,java.util.Set)" class="member-name-link">concat(Set&lt;E&gt;, Set&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
 <dd>
-<div class="block">Returns a new set containing the elements of 2 given sets
- The returned set is immutable.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="me/bristermitten/mittenlib/collections/Sets.html#union(java.util.Set,java.util.Set)"><code>Sets.union(Set, Set)</code></a></div>
+</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/Config.html" class="type-name-link" title="annotation interface in me.bristermitten.mittenlib.config">Config</a> - Annotation Interface in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
 <dd>
@@ -419,6 +420,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/config/CollectionsUtils.html#deserializeMap(java.lang.Class,java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">deserializeMap(Class&lt;K&gt;, Object, DeserializationContext, DeserializationFunction&lt;V&gt;)</a> - Static method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/CollectionsUtils.html" title="class in me.bristermitten.mittenlib.config">CollectionsUtils</a></dt>
 <dd>
 <div class="block">Attempt to deserialize a map using the MittenLib config system.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/collections/Sets.html#difference(java.util.Set,java.util.Set)" class="member-name-link">difference(Set&lt;E&gt;, Set&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
+<dd>
+<div class="block">Return a new set containing the difference of 2 sets, i.e.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/exception/DTOReferenceException.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.exception">DTOReferenceException</a> - Exception Class in <a href="me/bristermitten/mittenlib/annotations/exception/package-summary.html">me.bristermitten.mittenlib.annotations.exception</a></dt>
 <dd>
@@ -1154,6 +1159,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Interface for mapping objects
  It should hold that <code>map(map(t), T.class).getOrThrow().equals(t)</code>, i.e both map functions are inverses</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/collections/Sets.html#of()" class="member-name-link">of()</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#of(E)" class="member-name-link">of(E)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#of(E,E)" class="member-name-link">of(E, E)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
@@ -1165,6 +1172,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of(K,V)" class="member-name-link">of(K, V)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of(K,V,K,V)" class="member-name-link">of(K, V, K, V)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/collections/Sets.html#ofAll(java.util.Collection)" class="member-name-link">ofAll(Collection&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#ok(T)" class="member-name-link">ok(T)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>&nbsp;</dd>
@@ -1374,8 +1383,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html" class="type-name-link" title="class in me.bristermitten.mittenlib.collections">Sets</a> - Class in <a href="me/bristermitten/mittenlib/collections/package-summary.html">me.bristermitten.mittenlib.collections</a></dt>
 <dd>
-<div class="block">Utility functions for creating immutable sets
- Unnecessary in Java 9+</div>
+<div class="block">Utility functions for creating immutable sets</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessageBuilder.html#setSound(me.bristermitten.mittenlib.lang.LangMessage.SoundConfig)" class="member-name-link">setSound(LangMessage.SoundConfig)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessageBuilder.html" title="class in me.bristermitten.mittenlib.lang">LangMessageBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -1526,6 +1534,11 @@ loadScripts(document, 'script');</script>
  "Hello" → "hello"
  "HEllo" → "hEllo"
  </div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/collections/Sets.html#union(java.util.Set,java.util.Set)" class="member-name-link">union(Set&lt;E&gt;, Set&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
+<dd>
+<div class="block">Returns a new set containing the elements of 2 given sets
+ The returned set is immutable.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/Unit.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Unit</a> - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>
