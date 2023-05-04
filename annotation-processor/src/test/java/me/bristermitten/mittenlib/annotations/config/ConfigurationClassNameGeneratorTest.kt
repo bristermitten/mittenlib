@@ -1,20 +1,19 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.config
 
-import com.google.testing.compile.Compilation;
-import com.google.testing.compile.JavaFileObjects;
-import org.junit.jupiter.api.Test;
+import com.google.testing.compile.CompilationSubject
+import com.google.testing.compile.Compiler
+import com.google.testing.compile.JavaFileObjects
+import org.junit.jupiter.api.Test
 
-import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.Compiler.javac;
-
-class ConfigurationClassNameGeneratorTest {
-
+internal class ConfigurationClassNameGeneratorTest {
     @Test
-    void generateFullConfigClassName() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.LangConfigDTO",
-                        """
+    fun generateFullConfigClassName() {
+        val compilation = Compiler.javac()
+            .withProcessors(ConfigProcessor())
+            .compile(
+                JavaFileObjects.forSourceString(
+                    "me.bristermitten.mittenlib.tests.LangConfigDTO",
+                    """
                                 package me.bristermitten.mittenlib.tests;
                                 @me.bristermitten.mittenlib.config.names.NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
                                 @me.bristermitten.mittenlib.config.Source(value = "lang.yml")
@@ -47,8 +46,10 @@ class ConfigurationClassNameGeneratorTest {
                                         }
                                     }
                                 }
-                                """));
-
-        assertThat(compilation).succeededWithoutWarnings();
+                                
+                                """.trimIndent()
+                )
+            )
+        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
     }
 }

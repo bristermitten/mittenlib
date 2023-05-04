@@ -1,9 +1,5 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.config
 
-import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ClassName
 
-public record ConfigClassBuildSettings(
-        ClassName generatedClassName,
-        boolean generateRecord
-) {
-}
+data class ConfigClassBuildSettings(val generatedClassName: ClassName, val generateRecord: Boolean)

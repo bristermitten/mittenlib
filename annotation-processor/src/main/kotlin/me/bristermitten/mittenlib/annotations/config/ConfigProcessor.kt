@@ -1,58 +1,44 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.config
 
-import com.google.auto.service.AutoService;
-import com.google.inject.Guice;
-import com.squareup.javapoet.JavaFile;
-import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
-import me.bristermitten.mittenlib.config.Config;
-
-import javax.annotation.processing.*;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.NestingKind;
-import javax.lang.model.element.TypeElement;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import com.google.auto.service.AutoService
+import com.google.inject.Guice
+import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException
+import java.util.function.Consumer
+import javax.annotation.processing.*
+import javax.lang.model.SourceVersion
+import javax.lang.model.element.*
 
 /**
- * Annotation processor for generating config classes from DTO classes marked with {@link Config}
+ * Annotation processor for generating config classes from DTO classes marked with [Config]
  */
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@AutoService(Processor.class)
-public class ConfigProcessor extends AbstractProcessor {
-
-    /**
-     * Public constructor for the compiler
-     */
-    public ConfigProcessor() {
-        super();
-    }
-
-    @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        var injector = Guice.createInjector(
-                new ConfigProcessorModule(processingEnv)
-        );
-
-        final List<TypeElement> types = annotations
-                .stream()
-                .map(roundEnv::getElementsAnnotatedWith)
-                .flatMap(Collection::stream)
-                .filter(TypeElement.class::isInstance)
-                .map(TypeElement.class::cast)
-                .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
-                .toList();
-
-        ConfigClassBuilder builder = injector.getInstance(ConfigClassBuilder.class);
-        types.forEach(clazz -> {
-            JavaFile fileContent = builder.createConfigFile(clazz);
+@AutoService(
+    Processor::class
+)
+class ConfigProcessor
+/**
+ * Public constructor for the compiler
+ */
+    : AbstractProcessor() {
+    override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        val injector = Guice.createInjector(
+            ConfigProcessorModule(processingEnv)
+        )
+        val types = annotations
+            .flatMap { a: TypeElement? -> roundEnv.getElementsAnnotatedWith(a) }
+            .filterIsInstance<TypeElement>()
+            .filter { element: TypeElement -> element.nestingKind == NestingKind.TOP_LEVEL }
+            .toList()
+        val builder = injector.getInstance(ConfigClassBuilder::class.java)
+        types.forEach(Consumer { clazz: TypeElement ->
+            val fileContent = builder.createConfigFile(clazz)
             try {
-                fileContent.writeTo(processingEnv.getFiler());
-            } catch (Exception e) {
-                throw new ConfigProcessingException("Could not create config file", e);
+                fileContent.writeTo(processingEnv.filer)
+            } catch (e: Exception) {
+                throw ConfigProcessingException("Could not create config file", e)
             }
-        });
-        return true;
+        })
+        return true
     }
 }

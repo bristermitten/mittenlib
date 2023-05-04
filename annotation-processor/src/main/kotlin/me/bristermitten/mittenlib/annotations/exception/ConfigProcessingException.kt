@@ -1,18 +1,16 @@
-package me.bristermitten.mittenlib.annotations.exception;
+package me.bristermitten.mittenlib.annotations.exception
+
+import java.lang.RuntimeException
 
 /**
  * General exception thrown when the config annotation processor fails
  */
-public class ConfigProcessingException extends RuntimeException {
-
-    /**
-     * Create a new ConfigProcessingException with the given message and cause
-     *
-     * @param message the message
-     * @param cause   the cause
-     * @see RuntimeException#RuntimeException(String, Throwable)
-     */
-    public ConfigProcessingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-}
+class ConfigProcessingException
+/**
+ * Create a new ConfigProcessingException with the given message and cause
+ *
+ * @param message the message
+ * @param cause   the cause
+ * @see RuntimeException.RuntimeException
+ */
+    (message: String?, cause: Throwable?) : RuntimeException(message, cause)

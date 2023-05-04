@@ -1,24 +1,18 @@
-package me.bristermitten.mittenlib.annotations.util;
+package me.bristermitten.mittenlib.annotations.util
 
-import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.JavaFile
+import javax.lang.model.element.Element
+import javax.lang.model.element.VariableElement
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
-
-public class Stringify {
-    private Stringify() {
-    
+object Stringify {
+    fun stringify(javaFile: JavaFile): String {
+        return javaFile.packageName + "." + javaFile.typeSpec.name
     }
+}
 
-    public static String stringify(JavaFile javaFile) {
-        return javaFile.packageName + "." + javaFile.typeSpec.name;
-    }
+fun Element.toPrettyString(): String {
+    if (this !is VariableElement) return this.toString()
 
-    public static String stringify(Element element) {
-        if (element instanceof VariableElement variableElement) {
-            return variableElement.asType() + " " + variableElement.getSimpleName() + " in class " + stringify(variableElement.getEnclosingElement());
-        }
+    return "${this.asType()} $simpleName in class ${enclosingElement.toPrettyString()}"
 
-        return element.toString();
-    }
 }
