@@ -162,7 +162,7 @@ configuration.
 
 ```kotlin
 repositories {
-    maven("https://repo.bristermitten.me/repository/maven-public/")
+    maven("https://repo.bristermitten.me/public/")
 }
 
 dependencies {
