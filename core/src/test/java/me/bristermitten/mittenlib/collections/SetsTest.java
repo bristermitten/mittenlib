@@ -39,6 +39,13 @@ class SetsTest {
     }
 
     @Test
+    void assertThat_set2_respectsEquality() {
+        final Set<String> hello = Sets.of("hello", "hello");
+        assertEquals(1, hello.size());
+        assertEquals(Sets.of("hello"), hello);
+    }
+
+    @Test
     void assertThat_set2_equalityWorks() {
         final Set<String> sets = Sets.of("hello", "world");
         final Set<String> hashSet = new HashSet<>();
@@ -57,26 +64,48 @@ class SetsTest {
     }
 
     @Test
-    void assertThat_SetConcatenation_works() {
+    void assertThat_SetUnion_works() {
         final Set<String> setA = Sets.of("hello");
         final Set<String> setB = Sets.of("world");
-        Set<String> concat = Sets.concat(setA, setB);
-        assertEquals(2, concat.size());
-        assertTrue(concat.contains("hello"));
-        assertTrue(concat.contains("world"));
-        assertEquals(Sets.of("hello", "world"), concat);
+        Set<String> union = Sets.union(setA, setB);
+        assertEquals(2, union.size());
+        assertTrue(union.contains("hello"));
+        assertTrue(union.contains("world"));
+        assertEquals(Sets.of("hello", "world"), union);
     }
 
     @Test
-    void assertThat_SetConcatenationTwice_works() {
+    void assertThat_SetUnionTwice_works() {
         final Set<String> setA = Sets.of("hello");
         final Set<String> setB = Sets.of("world");
-        Set<String> concatA = Sets.concat(setA, setB);
-        Set<String> concatB = Sets.concat(concatA,  Sets.of("!"));
-        assertEquals(3, concatB.size());
-        assertTrue(concatB.contains("hello"));
-        assertTrue(concatB.contains("world"));
-        assertTrue(concatB.contains("!"));
-        assertEquals(new HashSet<>(Arrays.asList("hello", "world", "!")), concatB);
+        Set<String> unionA = Sets.union(setA, setB);
+        Set<String> unionB = Sets.union(unionA, Sets.of("!"));
+        assertEquals(3, unionB.size());
+        assertTrue(unionB.contains("hello"));
+        assertTrue(unionB.contains("world"));
+        assertTrue(unionB.contains("!"));
+        assertEquals(new HashSet<>(Arrays.asList("hello", "world", "!")), unionB);
+    }
+
+    @Test
+    void assertThat_SetDifference_works() {
+        final Set<String> setA = Sets.of("hello", "world");
+        final Set<String> setB = Sets.of("world");
+        Set<String> difference = Sets.difference(setA, setB);
+        assertEquals(1, difference.size());
+        assertTrue(difference.contains("hello"));
+        assertFalse(difference.contains("world"));
+        assertEquals(Sets.of("hello"), difference);
+    }
+
+    @Test
+    void assertThat_SetDifference_isIdempotent() {
+        final Set<String> setA = Sets.of("hello", "world");
+        final Set<String> setB = Sets.of("world");
+        Set<String> difference = Sets.difference(Sets.difference(setA, setB), setB);
+        assertEquals(1, difference.size());
+        assertTrue(difference.contains("hello"));
+        assertFalse(difference.contains("world"));
+        assertEquals(Sets.of("hello"), difference);
     }
 }

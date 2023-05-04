@@ -16,7 +16,11 @@ public class SetImpls {
     private SetImpls() {
     }
 
-    static class Set1<E> extends AbstractSet<E> { //NOSONAR
+
+    abstract static class MLImmutableSet<E> extends AbstractSet<E> {
+    }
+
+    static class Set1<E> extends MLImmutableSet<E> { //NOSONAR
         private final E e;
 
         Set1(E e) {
@@ -111,12 +115,15 @@ public class SetImpls {
         }
     }
 
-    static class ConcatenatingSet<E> extends AbstractSet<E> { //NOSONAR
+    /**
+     * Union of 2 sets
+     */
+    static class UnionOf<E> extends AbstractSet<E> { //NOSONAR
         private final @Unmodifiable Set<E> first;
         private final @Unmodifiable Set<E> second;
         private final int size;
 
-        ConcatenatingSet(Set<E> first, Set<E> second) {
+        UnionOf(Set<E> first, Set<E> second) {
             this.first = first;
             this.second = second;
             this.size = first.size() + second.size();

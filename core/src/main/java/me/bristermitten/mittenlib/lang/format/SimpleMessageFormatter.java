@@ -28,7 +28,7 @@ public class SimpleMessageFormatter extends AbstractMessageFormatter {
     @Override
     public @NotNull MessageFormatter withExtraHooks(@NotNull FormattingHook... hooks) {
         return new SimpleMessageFormatter(
-                Sets.concat(this.hooks, new HashSet<>(Arrays.asList(hooks)))
+                Sets.union(this.hooks, new HashSet<>(Arrays.asList(hooks)))
         );
     }
 }
