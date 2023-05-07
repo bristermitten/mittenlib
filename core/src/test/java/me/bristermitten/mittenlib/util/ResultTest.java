@@ -1,8 +1,10 @@
 package me.bristermitten.mittenlib.util;
 
+import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,6 +85,62 @@ class ResultTest {
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
         assertEquals(IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+    }
+
+    @Test
+    void tryWithResources() {
+        AtomicBoolean closed = new AtomicBoolean(false);
+        AutoCloseable i = () -> closed.set(true);
+        Result<String> result = Result.tryWithResources(i, ignored -> Result.ok("Hello"));
+        assertTrue(result.isSuccess());
+        assertFalse(result.isFailure());
+        assertEquals("Hello", result.getOrThrow());
+        assertTrue(closed.get());
+    }
+
+    @Test
+    void tryWithResourcesWithFail() {
+        AtomicBoolean closed = new AtomicBoolean(false);
+        AutoCloseable i = () -> closed.set(true);
+        Result<String> result = Result.tryWithResources(i, ignored -> {
+            throw new RuntimeException();
+        });
+        assertFalse(result.isSuccess());
+        assertTrue(result.isFailure());
+        assertThrows(RuntimeException.class, result::getOrThrow);
+        assertTrue(closed.get());
+    }
+
+    @Test
+    void tryWithResourcesWithFailInSupplier() {
+        AtomicBoolean closed = new AtomicBoolean(false);
+        AutoCloseable i = () -> closed.set(true);
+        SafeSupplier<AutoCloseable> supplier = () -> {
+            throw new RuntimeException();
+        };
+        Result<String> result = Result.tryWithResources(supplier, ignored -> Result.ok("Hello"));
+        assertFalse(result.isSuccess());
+        assertTrue(result.isFailure());
+        assertThrows(RuntimeException.class, result::getOrThrow);
+        assertFalse(closed.get()); // should not be closed, as the supplier failed
+    }
+
+    @Test
+    void tryWithResourcesWithFailInBoth() {
+        AtomicBoolean closed = new AtomicBoolean(false);
+        AutoCloseable i = () -> closed.set(true);
+        SafeSupplier<AutoCloseable> supplier = () -> {
+            throw new RuntimeException("1");
+        };
+        Result<String> result = Result.tryWithResources(supplier, ignored -> {
+            throw new RuntimeException("2");
+        });
+        assertFalse(result.isSuccess());
+        assertTrue(result.isFailure());
+        assertThrows(RuntimeException.class, result::getOrThrow);
+        assertFalse(closed.get()); // should not be closed, as the supplier failed
+        // the supplier exception should be the one that is thrown
+        assertEquals("1", result.error().map(Throwable::getMessage).orElse(null));
     }
 
     @Test

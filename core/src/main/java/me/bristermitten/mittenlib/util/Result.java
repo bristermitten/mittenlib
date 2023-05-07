@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.util;
 
+import me.bristermitten.mittenlib.util.lambda.SafeFunction;
 import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.jetbrains.annotations.Contract;
@@ -80,6 +81,42 @@ public interface Result<T> {
 
 
     /**
+     * Executes a function with a lazily generated resource, closing the resource afterwards, and handling any exceptions.
+     * Unlike {@link #tryWithResources(AutoCloseable, SafeFunction)}, this method handles exceptions thrown in the resource supplier.
+     *
+     * @param resourceSupplier The supplier to generate the resource
+     * @param function         The function to execute
+     * @param <T>              The type of the returned {@link Result}'s value
+     * @param <R>              The type of the resource
+     * @return A {@link Result}, which is either the result of the function or an exception
+     */
+    static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(@NotNull SafeSupplier<R> resourceSupplier, SafeFunction<R, Result<T>> function) {
+        try (R resource = resourceSupplier.get()) {
+            return tryWithResources(resource, function);
+        } catch (Exception e) {
+            return fail(e);
+        }
+    }
+
+    /**
+     * Executes a function with a resource, closing the resource afterwards, and handling any exceptions
+     *
+     * @param resource The resource to use
+     * @param function The function to execute
+     * @param <T>      The type of the returned {@link Result}'s value
+     * @param <R>      The type of the resource
+     * @return A {@link Result}, which is either the result of the function or an exception
+     */
+    static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(@NotNull R resource, SafeFunction<R, Result<T>> function) {
+        try (R r = resource) {
+            return function.apply(r);
+        } catch (Exception e) {
+            return fail(e);
+        }
+    }
+
+
+    /**
      * Turns a collection of {@link Result}s into a {@link Result} of a collection of the same type
      * If any of the results are {@link Fail}s, the whole result will be {@link Fail}
      * Otherwise, the result will be {@link Ok} with the collection of values
@@ -95,14 +132,18 @@ public interface Result<T> {
         if (results.isEmpty()) {
             return ok(Collections.emptySet());
         }
-        Result<Collection<T>> accumulator = ok(new ArrayList<>());
+
+        // We could use a more functional approach here, but it would be less efficient
+        List<T> collection = new ArrayList<>(results.size());
         for (Result<T> result : results) {
-            accumulator = accumulator.flatMap(collection -> result.map(t -> {
-                collection.add(t);
-                return collection;
-            }));
+            if (result instanceof Fail) {
+                //noinspection unchecked
+                return (Result<Collection<T>>) result;
+            } else if (result instanceof Ok) {
+                collection.add(result.getOrThrow());
+            }
         }
-        return accumulator;
+        return ok(collection);
     }
 
     /**
