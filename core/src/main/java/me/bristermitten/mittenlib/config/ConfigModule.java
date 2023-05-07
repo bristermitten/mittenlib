@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  *     <li>{@link ConfigProviderImprover}</li>
  *     <li>{@link ConfigProvider}s (as a {@link Set}). This can be used to create a reload command, for example, if the file watcher isn't being used.</li>
  *     <li>{@link Configuration}s (as a {@link Set})</li>
+ * </ul>
  */
 
 public class ConfigModule extends AbstractModule {
