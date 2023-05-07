@@ -36,15 +36,24 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
         this.delegate = improver.improve(factory.createProvider(configuration).getOrThrow());
     }
 
+    private void requireInitialized() {
+        Objects.requireNonNull(delegate, "Not initialized!");
+    }
+
     @Override
     public Optional<Path> path() {
-        Objects.requireNonNull(delegate, "Not initialized!");
+        requireInitialized();
         return delegate.path();
     }
 
     @Override
     public T get() {
-        Objects.requireNonNull(delegate, "Not initialized!");
+        requireInitialized();
         return delegate.get();
+    }
+
+    public ConfigProvider<T> getDelegate() {
+        requireInitialized();
+        return delegate;
     }
 }
