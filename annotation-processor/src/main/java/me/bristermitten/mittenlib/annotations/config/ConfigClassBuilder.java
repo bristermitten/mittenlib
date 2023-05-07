@@ -31,8 +31,6 @@ public class ConfigClassBuilder {
     public static final String DESERIALIZE = "deserialize";
     private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
-    public static final String JAVA_UTIL_LIST = "java.util.List";
-    public static final String JAVA_UTIL_MAP = "java.util.Map";
     private final ElementsFinder elementsFinder;
     private final Types types;
 
@@ -358,7 +356,7 @@ public class ConfigClassBuilder {
              Map and List are the most common collection types, but this could really use some extensibility.
             */
             String canonicalName = types.erasure(typeMirror).toString();
-            if (canonicalName.equals(JAVA_UTIL_LIST)) {
+            if (canonicalName.equals("java.util.List")) {
                 var listType = declaredType.getTypeArguments().get(0);
                 if (isConfigType(listType)) {
                     TypeName listTypeName = getConfigClassName(listType, null);
@@ -369,7 +367,7 @@ public class ConfigClassBuilder {
                     return builder.build();
                 }
             }
-            if (canonicalName.equals(JAVA_UTIL_MAP)) {
+            if (canonicalName.equals("java.util.Map")) {
                 var mapType = declaredType.getTypeArguments().get(1);
                 var keyType = declaredType.getTypeArguments().get(0);
 
@@ -387,11 +385,10 @@ public class ConfigClassBuilder {
         }
 
         if (isConfigType(typeMirror)) {
-            builder
-                    .beginControlFlow("if ($L instanceof $T)", fromMapName, Map.class)
-                    .addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName)
-                    .addStatement("return $T.$L(context.withData(mapData))", elementType, getDeserializeMethodName(elementType))
-                    .endControlFlow();
+            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, Map.class);
+            builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);
+            builder.addStatement("return $T.$L(context.withData(mapData))", elementType, getDeserializeMethodName(elementType));
+            builder.endControlFlow();
         }
 
 
