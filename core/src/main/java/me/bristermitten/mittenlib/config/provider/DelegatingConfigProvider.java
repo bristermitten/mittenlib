@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.config.provider;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
@@ -18,7 +19,7 @@ import java.util.Optional;
  *
  * @param <T> the type of the config
  */
-public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
+public class DelegatingConfigProvider<T> implements ConfigProvider<T>, WrappingConfigProvider<T> {
     private final Configuration<T> configuration;
     private ConfigProvider<T> delegate;
 
@@ -55,5 +56,11 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T> {
     public ConfigProvider<T> getDelegate() {
         requireInitialized();
         return delegate;
+    }
+
+    @Override
+    @NotNull
+    public ConfigProvider<T> getWrapped() {
+        return getDelegate();
     }
 }

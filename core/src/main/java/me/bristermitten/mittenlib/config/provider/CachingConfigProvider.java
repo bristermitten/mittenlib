@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.config.provider;
 
 import me.bristermitten.mittenlib.util.Cached;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.Optional;
  *
  * @param <T> The type of the config
  */
-public class CachingConfigProvider<T> implements ConfigProvider<T> {
+public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConfigProvider<T> {
     private final ConfigProvider<T> delegate;
     private final Cached<T> cached;
 
@@ -41,5 +42,11 @@ public class CachingConfigProvider<T> implements ConfigProvider<T> {
     @Override
     public Optional<Path> path() {
         return delegate.path();
+    }
+
+    @Override
+    @NotNull
+    public ConfigProvider<T> getWrapped() {
+        return delegate;
     }
 }

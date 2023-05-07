@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.config.provider;
 
 import me.bristermitten.mittenlib.watcher.FileWatcher;
 import me.bristermitten.mittenlib.watcher.FileWatcherService;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.Optional;
  *
  * @param <T> the type of the config
  */
-public class FileWatchingConfigProvider<T> implements ConfigProvider<T> {
+public class FileWatchingConfigProvider<T> implements ConfigProvider<T>, WrappingConfigProvider<T> {
     private final CachingConfigProvider<T> delegate;
 
     /**
@@ -42,5 +43,11 @@ public class FileWatchingConfigProvider<T> implements ConfigProvider<T> {
     @Override
     public Optional<Path> path() {
         return delegate.path();
+    }
+
+    @Override
+    @NotNull
+    public ConfigProvider<T> getWrapped() {
+        return delegate;
     }
 }
