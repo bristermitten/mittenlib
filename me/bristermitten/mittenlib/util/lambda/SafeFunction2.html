@@ -92,12 +92,19 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the first argument</dd>
+<dd><code>R1</code> - the type of the second argument</dd>
+<dd><code>R2</code> - the type of the result</dd>
+</dl>
+<dl class="notes">
 <dt>Functional Interface:</dt>
 <dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/FunctionalInterface.html" title="class or interface in java.lang" class="external-link">@FunctionalInterface</a>
 </span><span class="modifiers">public interface </span><span class="element-name type-name-label">SafeFunction2&lt;T,<wbr>R1,<wbr>R2&gt;</span></div>
+<div class="block">A <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link"><code>BiFunction</code></a> that can throw a checked exception.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,17 +122,25 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#apply(T,R1)" class="member-name-link">apply</a><wbr>(<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>&nbsp;t,
  <a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>&nbsp;r1)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Apply the function, possibly throwing an exception.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="../Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#applyCatching(T,R1)" class="member-name-link">applyCatching</a><wbr>(<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>&nbsp;t,
  <a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>&nbsp;r1)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Apply the function, catching any exceptions and wrapping them in a <a href="../Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>,<wbr><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>,<wbr><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#asBiFunction()" class="member-name-link">asBiFunction</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Turn this <a href="SafeFunction2.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction2</code></a> into a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link"><code>BiFunction</code></a> that sneaky throws any exceptions.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;<a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>,<wbr><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#curry(T)" class="member-name-link">curry</a><wbr>(<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>&nbsp;t)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Curry the first argument of this function, returning a <a href="SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a> that takes only the second argument.</div>
+</div>
 </div>
 </div>
 </div>
@@ -146,7 +161,13 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="return-type"><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a></span>&nbsp;<span class="element-name">apply</span><wbr><span class="parameters">(<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>&nbsp;t,
  <a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>&nbsp;r1)</span>
   throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></span></div>
+<div class="block">Apply the function, possibly throwing an exception.</div>
 <dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>t</code> - the first argument</dd>
+<dd><code>r1</code> - the second argument</dd>
+<dt>Returns:</dt>
+<dd>the result</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></code></dd>
 </dl>
@@ -156,6 +177,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="curry(T)">
 <h3 id="curry(java.lang.Object)">curry</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;<a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>,<wbr><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a>&gt;</span>&nbsp;<span class="element-name">curry</span><wbr><span class="parameters">(<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>&nbsp;t)</span></div>
+<div class="block">Curry the first argument of this function, returning a <a href="SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a> that takes only the second argument.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>t</code> - the first argument</dd>
+<dt>Returns:</dt>
+<dd>a curried <a href="SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a></dd>
+</dl>
 </section>
 </li>
 <li>
@@ -163,12 +191,25 @@ loadScripts(document, 'script');</script>
 <h3 id="applyCatching(java.lang.Object,java.lang.Object)">applyCatching</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a>&gt;</span>&nbsp;<span class="element-name">applyCatching</span><wbr><span class="parameters">(<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>&nbsp;t,
  <a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>&nbsp;r1)</span></div>
+<div class="block">Apply the function, catching any exceptions and wrapping them in a <a href="../Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>t</code> - the first argument</dd>
+<dd><code>r1</code> - the second argument</dd>
+<dt>Returns:</dt>
+<dd>the result</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="asBiFunction()">
 <h3>asBiFunction</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="SafeFunction2.html" title="type parameter in SafeFunction2">T</a>,<wbr><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R1</a>,<wbr><a href="SafeFunction2.html" title="type parameter in SafeFunction2">R2</a>&gt;</span>&nbsp;<span class="element-name">asBiFunction</span>()</div>
+<div class="block">Turn this <a href="SafeFunction2.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction2</code></a> into a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link"><code>BiFunction</code></a> that sneaky throws any exceptions.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link"><code>BiFunction</code></a> that sneaky throws any exceptions</dd>
+</dl>
 </section>
 </li>
 </ul>

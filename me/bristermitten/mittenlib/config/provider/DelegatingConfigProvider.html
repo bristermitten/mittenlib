@@ -100,12 +100,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code>javax.inject.Provider&lt;T&gt;</code>, <code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</code></dd>
+<dd><code>javax.inject.Provider&lt;T&gt;</code>, <code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</code>, <code><a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DelegatingConfigProvider&lt;T&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</span></div>
+implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, <a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</span></div>
 <div class="block">A <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> which delegates to another <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>, improving it with a <a href="construct/ConfigProviderImprover.html" title="interface in me.bristermitten.mittenlib.config.provider.construct"><code>ConfigProviderImprover</code></a>
  <p>
  This is used to resolve some circular stuff in Guice (<code>initialize(ConfigProviderFactory, ConfigProviderImprover)</code>
@@ -139,18 +139,24 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get()" class="member-name-link">get</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearCache()" class="member-name-link">clearCache</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Clear any and all cached config, if applicable.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get()" class="member-name-link">get</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDelegate()" class="member-name-link">getDelegate</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDelegate()" class="member-name-link">getDelegate</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getWrapped()" class="member-name-link">getWrapped</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#path()" class="member-name-link">path</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The path of the source for the config, if available
- This is not always required - if the config came from a URL or String, for example, then this would be expected
- to return an empty Optional</div>
+<div class="block">The path of the source for the config, if available</div>
 </div>
 </div>
 </div>
@@ -194,6 +200,7 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">path</span>()</div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="ConfigProvider.html#path()">ConfigProvider</a></code></span></div>
 <div class="block">The path of the source for the config, if available
+ <p>
  This is not always required - if the config came from a URL or String, for example, then this would be expected
  to return an empty Optional
  <p>
@@ -204,6 +211,21 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <dd><code><a href="ConfigProvider.html#path()">path</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>The path for of the config's source</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="clearCache()">
+<h3>clearCache</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCache</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="ConfigProvider.html#clearCache()">ConfigProvider</a></code></span></div>
+<div class="block">Clear any and all cached config, if applicable.
+ If this is a <a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>WrappingConfigProvider</code></a>, then this method should also be called on the result of <a href="WrappingConfigProvider.html#getWrapped()"><code>WrappingConfigProvider.getWrapped()</code></a>.
+ <p>
+ This may be a no-op if the config is not cached.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="ConfigProvider.html#clearCache()">clearCache</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</code></dd>
 </dl>
 </section>
 </li>
@@ -221,6 +243,19 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <section class="detail" id="getDelegate()">
 <h3>getDelegate</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</span>&nbsp;<span class="element-name">getDelegate</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getWrapped()">
+<h3>getWrapped</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</span>&nbsp;<span class="element-name">getWrapped</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="WrappingConfigProvider.html#getWrapped()">getWrapped</a></code>&nbsp;in interface&nbsp;<code><a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;<a href="DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>the wrapped <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a></dd>
+</dl>
 </section>
 </li>
 </ul>

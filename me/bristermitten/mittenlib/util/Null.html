@@ -97,6 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Null</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Utility class for working with nullable values without having to use <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,15 +116,21 @@ loadScripts(document, 'script');</script>
 B&gt;&nbsp;B</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#map(A,java.util.function.Function)" class="member-name-link">map</a><wbr>(A&nbsp;a,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>@NotNull B&gt;&nbsp;function)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Applies the given function to the given value if it is not null, or returns null if it is.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;T</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,java.util.function.Supplier)" class="member-name-link">orElse</a><wbr>(T&nbsp;t,
  @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@NotNull T&gt;&nbsp;other)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the given value if it is not null, or the value returned by the given <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a> if it is.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;T</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,T)" class="member-name-link">orElse</a><wbr>(T&nbsp;t,
  T&nbsp;other)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the given value if it is not null, or the given other value if it is.</div>
+</div>
 </div>
 </div>
 </div>
@@ -148,16 +155,39 @@ B&gt;&nbsp;B</code></div>
 </span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(@Nullable
  T&nbsp;t,
  T&nbsp;other)</span></div>
+<div class="block">Returns the given value if it is not null, or the given other value if it is.
+ Analogous to <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html#orElse(T)" title="class or interface in java.util" class="external-link"><code>Optional.orElse(Object)</code></a> or Kotlin's Elvis operator.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the value</dd>
+<dt>Parameters:</dt>
+<dd><code>t</code> - the value to check</dd>
+<dd><code>other</code> - the value to return if t is null</dd>
+<dt>Returns:</dt>
+<dd><code>t</code> if it is not null, or <code>other</code> if it is</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="orElse(T,java.util.function.Supplier)">
 <h3 id="orElse(java.lang.Object,java.util.function.Supplier)">orElse</h3>
-<div class="member-signature"><span class="annotations">@NotNull
+<div class="member-signature"><span class="annotations">@Contract("_, _ -&gt; !null")
+@NotNull
 </span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(@Nullable
  T&nbsp;t,
  @NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@NotNull T&gt;&nbsp;other)</span></div>
+<div class="block">Returns the given value if it is not null, or the value returned by the given <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a> if it is.
+ Analogous to <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html#orElseGet(java.util.function.Supplier)" title="class or interface in java.util" class="external-link"><code>Optional.orElseGet(Supplier)</code></a></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the value</dd>
+<dt>Parameters:</dt>
+<dd><code>t</code> - the value to check</dd>
+<dd><code>other</code> - the supplier to use if t is null</dd>
+<dt>Returns:</dt>
+<dd><code>t</code> if it is not null, or the value returned by <code>other</code> if it is</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -169,6 +199,18 @@ B&gt;&nbsp;B</code></div>
 B&gt;</span>&nbsp;<span class="return-type">B</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(@Nullable
  A&nbsp;a,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>@NotNull B&gt;&nbsp;function)</span></div>
+<div class="block">Applies the given function to the given value if it is not null, or returns null if it is.
+ Analogous to <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html#map(java.util.function.Function)" title="class or interface in java.util" class="external-link"><code>Optional.map(Function)</code></a> or Kotlin's <code>?.</code> operator.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>A</code> - the type of the nullable value</dd>
+<dd><code>B</code> - the type of the mapped value</dd>
+<dt>Parameters:</dt>
+<dd><code>a</code> - the nullable value to map</dd>
+<dd><code>function</code> - the function to apply</dd>
+<dt>Returns:</dt>
+<dd>the result of applying the function to the value, or null if the value is null</dd>
+</dl>
 </section>
 </li>
 </ul>

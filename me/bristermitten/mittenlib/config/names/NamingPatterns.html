@@ -103,6 +103,12 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">NamingPatterns</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names">NamingPatterns</a>&gt;</span></div>
+<div class="block">Patterns for naming fields in a config.
+ This defines how the field name is transformed into a key for the config data.
+ For example, in Java we write <code>String helloWorld;</code> but our data may be stored as
+ <code>"hello_world": "Hello World!"</code>, or <code>"hello-world": "Hello World!"</code>, or <code>"helloWorld": "Hello World!"</code>.
+ Writing these in the source is often impossible, and doing it manually with <a href="ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names"><code>ConfigName</code></a> is tedious, so
+ we can use <a href="NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names"><code>NamingPattern</code></a> to automatically transform the field name into the key.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
