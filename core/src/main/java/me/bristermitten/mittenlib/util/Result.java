@@ -10,12 +10,33 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * A {@link Result} encapsulates a computation that may fail, throwing an exception.
+ * It either holds a value of type {@link T} or an exception.
+ *
+ * @param <T> the type of the value
+ */
 public interface Result<T> {
+    /**
+     * Create a {@link Result} from a given value. This will always be an {@link Ok}.
+     *
+     * @param t   the value
+     * @param <T> the type of the value
+     * @return a {@link Result} containing the given value
+     */
     @Contract(pure = true, value = "_ -> new")
     static <T> @NotNull Result<T> ok(@NotNull T t) {
         return new Ok<>(t);
     }
 
+    /**
+     * Create a {@link Result} from a given exception. This will always be a {@link Fail}.
+     *
+     * @param e   the exception
+     * @param <T> the type of the value
+     * @param <E> the type of the exception
+     * @return a {@link Result} containing the given exception
+     */
     @Contract(pure = true, value = "_ -> new")
     static <T, E extends Exception> @NotNull Result<T> fail(@NotNull E e) {
         return new Fail<>(e);

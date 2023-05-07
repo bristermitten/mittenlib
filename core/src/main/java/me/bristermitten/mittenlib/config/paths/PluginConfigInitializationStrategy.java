@@ -12,6 +12,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * A {@link ConfigInitializationStrategy} that copies a resource from a plugin's jar to its data folder if it does not exist
+ */
 public class PluginConfigInitializationStrategy implements ConfigInitializationStrategy {
     private final Plugin plugin;
 
@@ -44,7 +47,13 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
         return Unit.unitResult();
     }
 
+    /**
+     * Thrown when a resource could not be found in a plugin
+     */
     public static class UnknownResourceException extends RuntimeException {
+        /**
+         * @param message the message
+         */
         public UnknownResourceException(String message) {
             super(message);
         }

@@ -1,28 +1,36 @@
 package me.bristermitten.mittenlib.config.reader;
 
 import me.bristermitten.mittenlib.util.Result;
+import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * Responsible for parsing a tree-like file (JSON, YAML, etc) into a Map of {@link String} keys and {@link Object} values.
+ */
 public interface ObjectLoader {
+    /**
+     * Loads an object from the given {@link Path}.
+     * Implementations may want to provide a more efficient implementation of this method.
+     *
+     * @param source the source to load from
+     * @return the loaded object
+     */
     @NotNull
     default Result<Map<String, Object>> load(@NotNull final Path source) {
-        return Result.computeCatching(() -> {
-            try (BufferedReader reader = Files.newBufferedReader(source)) {
-                return load(reader);
-            }
-        });
+        return Result.tryWithResources(
+                (SafeSupplier<Reader>) () -> Files.newBufferedReader(source),
+                this::load);
     }
 
     /**
      * Loads an object from the given source.
-     * This method is not required to close the reader.
+     * This method should not close the given {@link Reader}, but may exhaust it.
      *
      * @param source the source to load from
      * @return the loaded object
@@ -31,8 +39,8 @@ public interface ObjectLoader {
 
     @NotNull
     default Result<Map<String, Object>> load(@NotNull final String source) {
-        try (StringReader stringReader = new StringReader(source)) {
-            return load(stringReader);
-        }
+        return Result.tryWithResources(
+                (SafeSupplier<Reader>) () -> new StringReader(source),
+                this::load);
     }
 }

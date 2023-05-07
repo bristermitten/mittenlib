@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
+/**
+ * Transforms strings into different formats based on a {@link NamingPatterns}
+ */
 public class NamingPatternTransformer {
     // https://stackoverflow.com/questions/1097901/regular-expression-split-string-by-capital-letter-but-ignore-tla
     private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(?=(?<=[a-z])[A-Z]|[A-Z](?=[a-z]))");
@@ -15,6 +18,13 @@ public class NamingPatternTransformer {
     private NamingPatternTransformer() {
     }
 
+    /**
+     * Format a given input string into a different format based on a {@link NamingPatterns}
+     *
+     * @param input   the input string
+     * @param pattern the pattern to format to
+     * @return the formatted string
+     */
     public static String format(@NotNull String input, @NotNull NamingPatterns pattern) {
         if (pattern == NamingPatterns.DEFAULT) {
             return input;

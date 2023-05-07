@@ -13,11 +13,17 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Utility class for working with {@link Path}s
+ */
 public class PathUtil {
     private PathUtil() {
     }
 
-    //Credit https://stackoverflow.com/questions/15713119/java-nio-file-path-for-a-classpath-resource
+    /**
+     * Converts a {@link URL} to a {@link Path}.
+     * <a href="https://stackoverflow.com/questions/15713119/java-nio-file-path-for-a-classpath-resource">Credit</a>
+     */
     public static @NotNull Path resourceToPath(@NotNull URL resource)
             throws IOException,
             URISyntaxException {
@@ -26,8 +32,9 @@ public class PathUtil {
         URI uri = resource.toURI();
 
         String scheme = uri.getScheme();
+        Path path = Paths.get(uri);
         if (scheme.equals("file")) {
-            return Paths.get(uri);
+            return path;
         }
 
         if (!scheme.equals("jar")) {
@@ -40,10 +47,11 @@ public class PathUtil {
                     provider.getFileSystem(uri);
                 } catch (FileSystemNotFoundException e) {
                     // in this case we need to initialize it first:
+                    //noinspection resource i assume this is safe
                     provider.newFileSystem(uri, Collections.emptyMap());
                 }
             }
         }
-        return Paths.get(uri);
+        return path;
     }
 }

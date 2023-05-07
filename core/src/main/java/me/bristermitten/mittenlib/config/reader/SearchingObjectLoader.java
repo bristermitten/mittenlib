@@ -42,7 +42,7 @@ public class SearchingObjectLoader implements ObjectLoader {
                 "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
 
         for (FileType fileType : loaders) {
-            Result<Map<String, Object>> res = fileType.loader().load(source);
+            Result<Map<String, Object>> res = fileType.loader().load(source); // TODO this won't actually work as the reader is already consumed
             if (res.isSuccess()) {
                 return res;
             }

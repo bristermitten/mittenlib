@@ -5,8 +5,15 @@ import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
+/**
+ * Defines a naming pattern for a class or field.
+ * See {@link NamingPatterns} for the available patterns and why they are useful.
+ */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @CascadeToInnerClasses
 public @interface NamingPattern {
+    /**
+     * @return the naming pattern to use
+     */
     NamingPatterns value() default NamingPatterns.DEFAULT;
 }

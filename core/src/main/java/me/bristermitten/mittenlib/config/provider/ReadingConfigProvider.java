@@ -6,11 +6,23 @@ import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/**
+ * A {@link ConfigProvider} that reads from a file, using a {@link ConfigReader}
+ *
+ * @param <T> the type of the config
+ */
 public class ReadingConfigProvider<T> implements ConfigProvider<T> {
     private final Configuration<T> config;
     private final ConfigReader reader;
     private final Path path;
 
+    /**
+     * Create a new ReadingConfigProvider
+     *
+     * @param path   the path to read from
+     * @param config the configuration to read
+     * @param reader the reader to use
+     */
     public ReadingConfigProvider(Path path, Configuration<T> config, ConfigReader reader) {
         this.path = path;
         this.config = config;
