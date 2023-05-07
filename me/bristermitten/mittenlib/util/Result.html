@@ -210,6 +210,20 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Turns the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> into an <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T,<wbr>
+R extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a>&gt;<br>@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#tryWithResources(me.bristermitten.mittenlib.util.lambda.SafeSupplier,me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">tryWithResources</a><wbr>(@NotNull <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;R&gt;&nbsp;resourceSupplier,
+ <a href="lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;R,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;function)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Executes a function with a lazily generated resource, closing the resource afterwards, and handling any exceptions.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T,<wbr>
+R extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a>&gt;<br>@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#tryWithResources(R,me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">tryWithResources</a><wbr>(R&nbsp;resource,
+ <a href="lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;R,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;function)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Executes a function with a resource, closing the resource afterwards, and handling any exceptions</div>
+</div>
 </div>
 </div>
 </div>
@@ -296,6 +310,51 @@ E extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/
 <dd><code>supplier</code> - The <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeSupplier</code></a> to execute</dd>
 <dt>Returns:</dt>
 <dd>A <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> wrapping the returned <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value or any thrown exception</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryWithResources(me.bristermitten.mittenlib.util.lambda.SafeSupplier,me.bristermitten.mittenlib.util.lambda.SafeFunction)">
+<h3>tryWithResources</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T,<wbr>
+R extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a>&gt;</span>
+<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">tryWithResources</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="lambda/SafeSupplier.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeSupplier</a>&lt;R&gt;&nbsp;resourceSupplier,
+ <a href="lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;R,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;function)</span></div>
+<div class="block">Executes a function with a lazily generated resource, closing the resource afterwards, and handling any exceptions.
+ Unlike <a href="#tryWithResources(R,me.bristermitten.mittenlib.util.lambda.SafeFunction)"><code>tryWithResources(AutoCloseable, SafeFunction)</code></a>, this method handles exceptions thrown in the resource supplier.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the returned <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value</dd>
+<dd><code>R</code> - The type of the resource</dd>
+<dt>Parameters:</dt>
+<dd><code>resourceSupplier</code> - The supplier to generate the resource</dd>
+<dd><code>function</code> - The function to execute</dd>
+<dt>Returns:</dt>
+<dd>A <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, which is either the result of the function or an exception</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryWithResources(R,me.bristermitten.mittenlib.util.lambda.SafeFunction)">
+<h3 id="tryWithResources(java.lang.AutoCloseable,me.bristermitten.mittenlib.util.lambda.SafeFunction)">tryWithResources</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T,<wbr>
+R extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a>&gt;</span>
+<span class="return-type">@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</span>&nbsp;<span class="element-name">tryWithResources</span><wbr><span class="parameters">(@NotNull
+ R&nbsp;resource,
+ <a href="lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;R,<wbr><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;&gt;&nbsp;function)</span></div>
+<div class="block">Executes a function with a resource, closing the resource afterwards, and handling any exceptions</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the returned <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>'s value</dd>
+<dd><code>R</code> - The type of the resource</dd>
+<dt>Parameters:</dt>
+<dd><code>resource</code> - The resource to use</dd>
+<dd><code>function</code> - The function to execute</dd>
+<dt>Returns:</dt>
+<dd>A <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, which is either the result of the function or an exception</dd>
 </dl>
 </section>
 </li>

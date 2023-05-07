@@ -246,9 +246,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/ConfigModule.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config">ConfigModule</a> - Class in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
 <dd>
-<div class="block">Guice module for config handling
- Responsible for quite a lot (probably too much) of the config handling,
- registering <a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a>s, <a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a>s, <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>s, etc.</div>
+<div class="block">Guice module for config handling</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/ConfigModule.html#%3Cinit%3E(java.util.Set)" class="member-name-link">ConfigModule(Set&lt;Configuration&lt;?&gt;&gt;)</a> - Constructor for class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/ConfigModule.html" title="class in me.bristermitten.mittenlib.config">ConfigModule</a></dt>
 <dd>
@@ -392,8 +390,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/DelegatingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">DelegatingConfigProvider</a>&lt;<a href="me/bristermitten/mittenlib/config/provider/DelegatingConfigProvider.html" title="type parameter in DelegatingConfigProvider">T</a>&gt; - Class in <a href="me/bristermitten/mittenlib/config/provider/package-summary.html">me.bristermitten.mittenlib.config.provider</a></dt>
 <dd>
-<div class="block">A <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> which delegates to another <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>, improving it with a <a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderImprover.html" title="interface in me.bristermitten.mittenlib.config.provider.construct"><code>ConfigProviderImprover</code></a>
- This is basically just used to resolve some circular stuff in Guice (<code>DelegatingConfigProvider.initialize(ConfigProviderFactory, ConfigProviderImprover)</code></div>
+<div class="block">A <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> which delegates to another <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>, improving it with a <a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderImprover.html" title="interface in me.bristermitten.mittenlib.config.provider.construct"><code>ConfigProviderImprover</code></a></div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/DelegatingConfigProvider.html#%3Cinit%3E(me.bristermitten.mittenlib.config.Configuration)" class="member-name-link">DelegatingConfigProvider(Configuration&lt;T&gt;)</a> - Constructor for class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/DelegatingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">DelegatingConfigProvider</a></dt>
 <dd>
@@ -1512,6 +1509,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Recursively turns any DTO types into their non-DTO counterparts,
  i.e.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#tryWithResources(me.bristermitten.mittenlib.util.lambda.SafeSupplier,me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">tryWithResources(SafeSupplier&lt;R&gt;, SafeFunction&lt;R, Result&lt;T&gt;&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Executes a function with a lazily generated resource, closing the resource afterwards, and handling any exceptions.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#tryWithResources(R,me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">tryWithResources(R, SafeFunction&lt;R, Result&lt;T&gt;&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Executes a function with a resource, closing the resource afterwards, and handling any exceptions</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/commands/handlers/ArgumentCondition.html#type()" class="member-name-link">type()</a> - Method in interface me.bristermitten.mittenlib.commands.handlers.<a href="me/bristermitten/mittenlib/commands/handlers/ArgumentCondition.html" title="interface in me.bristermitten.mittenlib.commands.handlers">ArgumentCondition</a></dt>
 <dd>&nbsp;</dd>

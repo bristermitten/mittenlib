@@ -104,8 +104,17 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ConfigModule</span>
 <span class="extends-implements">extends <a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/AbstractModule.html" title="class or interface in com.google.inject" class="external-link">AbstractModule</a></span></div>
 <div class="block">Guice module for config handling
- Responsible for quite a lot (probably too much) of the config handling,
- registering <a href="Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a>s, <a href="reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a>s, <a href="provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>s, etc.</div>
+ <p>
+ Responsible for quite a lot (probably too much) of the config handling, binding / registering:
+ <ul>
+     <li><a href="reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a></li>
+     <li><a href="paths/ConfigInitializationStrategy.html" title="interface in me.bristermitten.mittenlib.config.paths"><code>ConfigInitializationStrategy</code></a></li>
+     <li><a href="paths/ConfigPathResolver.html" title="interface in me.bristermitten.mittenlib.config.paths"><code>ConfigPathResolver</code></a></li>
+     <li><a href="provider/construct/ConfigProviderFactory.html" title="interface in me.bristermitten.mittenlib.config.provider.construct"><code>ConfigProviderFactory</code></a></li>
+     <li><a href="provider/construct/ConfigProviderImprover.html" title="interface in me.bristermitten.mittenlib.config.provider.construct"><code>ConfigProviderImprover</code></a></li>
+     <li><a href="provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a>s (as a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link"><code>Set</code></a>). This can be used to create a reload command, for example, if the file watcher isn't being used.</li>
+     <li><a href="Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a>s (as a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link"><code>Set</code></a>)</li>
+ </ul></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
