@@ -48,6 +48,12 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T>, WrappingC
     }
 
     @Override
+    public void clearCache() {
+        requireInitialized();
+        delegate.clearCache();
+    }
+
+    @Override
     public T get() {
         requireInitialized();
         return delegate.get();

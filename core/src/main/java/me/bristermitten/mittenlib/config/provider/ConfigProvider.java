@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface ConfigProvider<T> extends Provider<T> {
     /**
      * The path of the source for the config, if available
+     * <p>
      * This is not always required - if the config came from a URL or String, for example, then this would be expected
      * to return an empty Optional
      * <p>
@@ -22,4 +23,12 @@ public interface ConfigProvider<T> extends Provider<T> {
      * @return The path for of the config's source
      */
     Optional<Path> path();
+
+    /**
+     * Clear any and all cached config, if applicable.
+     * If this is a {@link WrappingConfigProvider}, then this method should also be called on the result of {@link WrappingConfigProvider#getWrapped()}.
+     * <p>
+     * This may be a no-op if the config is not cached.
+     */
+    void clearCache();
 }

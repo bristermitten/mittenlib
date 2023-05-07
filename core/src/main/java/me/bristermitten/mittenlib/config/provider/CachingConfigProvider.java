@@ -45,6 +45,12 @@ public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConf
     }
 
     @Override
+    public void clearCache() {
+        invalidate();
+        delegate.clearCache();
+    }
+
+    @Override
     @NotNull
     public ConfigProvider<T> getWrapped() {
         return delegate;

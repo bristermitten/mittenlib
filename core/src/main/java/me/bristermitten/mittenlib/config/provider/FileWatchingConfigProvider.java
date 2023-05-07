@@ -46,6 +46,11 @@ public class FileWatchingConfigProvider<T> implements ConfigProvider<T>, Wrappin
     }
 
     @Override
+    public void clearCache() {
+        delegate.clearCache();
+    }
+
+    @Override
     @NotNull
     public ConfigProvider<T> getWrapped() {
         return delegate;

@@ -38,5 +38,10 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
     public Optional<Path> path() {
         return Optional.of(path);
     }
+
+    @Override
+    public void clearCache() {
+        //no-op
+    }
 }
 
