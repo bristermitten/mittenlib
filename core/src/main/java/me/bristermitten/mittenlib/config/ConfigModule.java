@@ -23,8 +23,16 @@ import java.util.stream.Collectors;
 
 /**
  * Guice module for config handling
- * Responsible for quite a lot (probably too much) of the config handling,
- * registering {@link Configuration}s, {@link ObjectLoader}s, {@link ConfigProvider}s, etc.
+ * <p>
+ * Responsible for quite a lot (probably too much) of the config handling, binding / registering:
+ * <ul>
+ *     <li>{@link ObjectLoader}</li>
+ *     <li>{@link ConfigInitializationStrategy}</li>
+ *     <li>{@link ConfigPathResolver}</li>
+ *     <li>{@link ConfigProviderFactory}</li>
+ *     <li>{@link ConfigProviderImprover}</li>
+ *     <li>{@link ConfigProvider}s (as a {@link Set}). This can be used to create a reload command, for example, if the file watcher isn't being used.</li>
+ *     <li>{@link Configuration}s (as a {@link Set})</li>
  */
 
 public class ConfigModule extends AbstractModule {
@@ -50,9 +58,15 @@ public class ConfigModule extends AbstractModule {
 
         Multibinder<Configuration<?>> configurationMultibinder = Multibinder.newSetBinder(binder(), new TypeLiteral<Configuration<?>>() {
         });
+
+        Multibinder<ConfigProvider<?>> configProviderMultibinder = Multibinder.newSetBinder(binder(), new TypeLiteral<ConfigProvider<?>>() {
+        });
+
         configurations.stream()
                 .collect(Collectors.toMap(Function.identity(), DelegatingConfigProvider::new))
                 .forEach((configuration, provider) -> {
+                    configProviderMultibinder.addBinding().toInstance(provider);
+
                     final Class<?> key = configuration.getType();
                     // beware of evil generic type erasure hell
                     bind((Class<? super Object>) key).toProvider(provider); // bind the type itself, T to Provider<T>
