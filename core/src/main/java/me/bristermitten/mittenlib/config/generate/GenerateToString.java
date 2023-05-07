@@ -6,7 +6,6 @@ import java.lang.annotation.Target;
 
 /**
  * Instructs the annotation processor to generate a toString method for a generated config class.
- * <p>
  * This behaviour will cascade to inner classes (see {@link CascadeToInnerClasses})
  */
 @Target(ElementType.TYPE)
