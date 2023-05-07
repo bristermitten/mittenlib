@@ -81,7 +81,7 @@ class TypesUtil @Inject internal constructor(
      * @param <A>  The annotation type
      * @return The annotation value, if present, else null
     </A> */
-    fun <A : Annotation?> getAnnotation(e: Element, type: Class<A>): A? {
+    fun <A : Annotation> getAnnotation(e: Element, type: Class<A>): A? {
         val onElem = e.getAnnotation(type)
         if (onElem != null) {
             return onElem
@@ -91,6 +91,10 @@ class TypesUtil @Inject internal constructor(
             return getAnnotation(enclosing, type)
         }
         return null
+    }
+
+    inline fun <reified A : Annotation> getAnnotation(e: Element): A? {
+        return getAnnotation(e, A::class.java)
     }
 
     fun getConfigClassName(typeMirror: TypeMirror?): TypeName {
