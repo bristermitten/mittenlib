@@ -5,6 +5,6 @@ import javax.lang.model.element.VariableElement
 
 data class ConfigClassBuildSettings(
     val generatedClassName: ClassName,
-    val generateRecord: Boolean,
+    val generateRecords: Boolean,
     val fields: List<VariableElement>
 )

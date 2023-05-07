@@ -8,7 +8,7 @@ import me.bristermitten.mittenlib.config.generate.GenerateRecord
 import javax.inject.Inject
 import javax.lang.model.element.TypeElement
 
-class ExtractSettingsBuildStage @Inject internal constructor(
+class ExtractSettingsStage @Inject internal constructor(
     private val classNameGenerator: ConfigurationClassNameGenerator,
     private val typesUtil: TypesUtil,
     private val elementsFinder: ElementsFinder

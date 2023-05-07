@@ -6,11 +6,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+repositories {
+    maven("https://jitpack.io")
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("com.squareup:javapoet:1.13.0")
+    implementation("com.github.liachmodded:javapoet:feature~record-SNAPSHOT")
     implementation("com.google.auto.service:auto-service-annotations:1.0.1")
 
     @Suppress(

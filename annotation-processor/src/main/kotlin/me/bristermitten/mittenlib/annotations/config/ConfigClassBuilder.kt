@@ -20,7 +20,6 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Types
 
@@ -37,13 +36,7 @@ class ConfigClassBuilder @Inject internal constructor(
     private val toStringGenerator: ToStringGenerator,
     private val fieldClassNameGenerator: FieldClassNameGenerator, private val generatedTypeCache: GeneratedTypeCache
 ) {
-    private fun createFieldSpec(element: VariableElement?): FieldSpec {
-        return FieldSpec.builder(
-            getConfigClassName(element!!.asType(), element),
-            element.simpleName.toString()
-        ).addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-            .build()
-    }
+
 
     private fun createParameterSpec(element: VariableElement?): ParameterSpec {
         return ParameterSpec.builder(
@@ -102,19 +95,7 @@ class ConfigClassBuilder @Inject internal constructor(
         return createConfigClass(classType, variableElements, className)
     }
 
-    private fun getDTOSuperclass(dtoType: TypeElement): TypeMirror? {
-        var superClass = dtoType.superclass
-        if (superClass!!.kind == TypeKind.NONE || superClass.toString() == "java.lang.Object") {
-            superClass = null
-        }
-        require(!(superClass != null && !isConfigType(superClass))) { "Superclass of @Config class must be a @Config class, was $superClass" }
-        return superClass
-    }
 
-    private fun getSuperFieldName(superClass: TypeMirror): String {
-        val configName = typesUtil.getConfigClassName(superClass)
-        return "parent" + Strings.capitalize(typesUtil.getSimpleName(configName))
-    }
 
     private fun createConfigClass(
         classType: TypeElement,
@@ -128,20 +109,9 @@ class ConfigClassBuilder @Inject internal constructor(
                     .addMember("source", "\$T.class", ClassName.get(classType))
                     .build()
             )
-        val superClass = getDTOSuperclass(classType)
-        if (superClass != null) {
-            // Store the super instance
-            val superclassName = getConfigClassName(superClass, classType)
-            typeSpecBuilder.superclass(superclassName)
-            val superParamName = getSuperFieldName(superClass)
-            typeSpecBuilder.addField(
-                FieldSpec.builder(superclassName, superParamName)
-                    .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                    .build()
-            )
-        }
-        createConfigurationField(classType, className, typeSpecBuilder)
-        val fieldSpecs: Map<VariableElement, FieldSpec> = variableElements.associateWith { createFieldSpec(it) }
+
+
+        val fieldSpecs = variableElements.associateWith { createFieldSpec(it) }
 
         fieldSpecs.values.forEach(Consumer { fieldSpec: FieldSpec? -> typeSpecBuilder.addField(fieldSpec) })
         addInnerClasses(typeSpecBuilder, classType)
@@ -260,24 +230,7 @@ class ConfigClassBuilder @Inject internal constructor(
         className: ClassName?,
         typeSpecBuilder: TypeSpec.Builder
     ) {
-        val annotation = classType.getAnnotation(
-            Source::class.java
-        ) ?: return
 
-        // Create Configuration type
-        val type: TypeName = ParameterizedTypeName.get(ClassName.get(Configuration::class.java), className)
-        val configField = FieldSpec.builder(type, "CONFIG")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-            .initializer(
-                "new \$T<>(\$S, \$T.class, \$T::\$L)",
-                Configuration::class.java,
-                annotation.value,
-                className,
-                className,
-                getDeserializeMethodName(className)
-            )
-            .build()
-        typeSpecBuilder.addField(configField)
     }
 
     private fun getFieldAccessorName(variableElement: VariableElement): String {
@@ -394,12 +347,6 @@ class ConfigClassBuilder @Inject internal constructor(
     private fun isConfigType(mirror: TypeMirror): Boolean {
         return mirror is DeclaredType &&
                 mirror.asElement().getAnnotation(Config::class.java) != null
-    }
-
-    private fun getDeserializeMethodName(name: TypeName?): String {
-        return if (name is ClassName) {
-            DESERIALIZE + name.simpleName()
-        } else DESERIALIZE + name
     }
 
     private fun createDeserializeMethod(
