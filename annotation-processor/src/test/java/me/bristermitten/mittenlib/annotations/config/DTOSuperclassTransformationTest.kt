@@ -1,19 +1,20 @@
-package me.bristermitten.mittenlib.annotations.config
+package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.testing.compile.CompilationSubject
-import com.google.testing.compile.Compiler
-import com.google.testing.compile.JavaFileObjects
-import org.junit.jupiter.api.Test
+import com.google.testing.compile.Compilation;
+import com.google.testing.compile.JavaFileObjects;
+import org.junit.jupiter.api.Test;
 
-internal class DTOSuperclassTransformationTest {
+import static com.google.testing.compile.CompilationSubject.assertThat;
+import static com.google.testing.compile.Compiler.javac;
+
+class DTOSuperclassTransformationTest {
+
     @Test
-    fun testSimpleSuperClassConfig() {
-        val compilation = Compiler.javac()
-            .withProcessors(ConfigProcessor())
-            .compile(
-                JavaFileObjects.forSourceString(
-                    "me.bristermitten.mittenlib.tests.SuperclassConfigDTO",
-                    """
+    void testSimpleSuperClassConfig() {
+        Compilation compilation = javac()
+                .withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.SuperclassConfigDTO",
+                        """
                                 package me.bristermitten.mittenlib.tests;
                                                                 
                                 import java.util.Map;
@@ -38,24 +39,21 @@ internal class DTOSuperclassTransformationTest {
                                         int b;
                                     }
                                 }
-                                
-                                """.trimIndent()
-                )
-            )
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
-        CompilationSubject.assertThat(compilation)
-            .generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
-            .isNotNull()
+                                """));
+
+        assertThat(compilation).succeededWithoutWarnings();
+
+        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
+                .isNotNull();
+
     }
 
     @Test
-    fun testSuperSuperClassConfig() {
-        val compilation = Compiler.javac()
-            .withProcessors(ConfigProcessor())
-            .compile(
-                JavaFileObjects.forSourceString(
-                    "me.bristermitten.mittenlib.tests.SuperclassConfigDTO",
-                    """
+    void testSuperSuperClassConfig() {
+        Compilation compilation = javac()
+                .withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.SuperclassConfigDTO",
+                        """
                                 package me.bristermitten.mittenlib.tests;
                                                                 
                                 import java.util.Map;
@@ -91,24 +89,21 @@ internal class DTOSuperclassTransformationTest {
                                         int d;
                                     }
                                 }
-                                
-                                """.trimIndent()
-                )
-            )
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
-        CompilationSubject.assertThat(compilation)
-            .generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
-            .isNotNull()
+                                """));
+
+        assertThat(compilation).succeededWithoutWarnings();
+
+        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
+                .isNotNull();
+
     }
 
     @Test
-    fun testMoreAdvancedClassConfig() {
-        val compilation = Compiler.javac()
-            .withProcessors(ConfigProcessor())
-            .compile(
-                JavaFileObjects.forSourceString(
-                    "me.bristermitten.mittenlib.tests.ShopConfigDTO",
-                    """
+    void testMoreAdvancedClassConfig() {
+        Compilation compilation = javac()
+                .withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.ShopConfigDTO",
+                                """
                                         package me.bristermitten.mittenlib.tests;
                                                                                 
                                         import java.util.Map;
@@ -132,12 +127,9 @@ internal class DTOSuperclassTransformationTest {
                                                 int medianStock;
                                                 @Nullable Integer slot;
                                             }
-                                        }
-                                        """.trimIndent()
-                ),
-                JavaFileObjects.forSourceString(
-                    "me.bristermitten.mittenlib.tests.ItemConfigDTO",
-                    """
+                                        }"""),
+                        JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.ItemConfigDTO",
+                                """
                                         package me.bristermitten.mittenlib.tests;
                                                                                 
                                         import java.util.List;
@@ -175,16 +167,18 @@ internal class DTOSuperclassTransformationTest {
                                                 int level = 1;
                                             }
                                         }
-                                        
-                                        """.trimIndent()
-                )
-            )
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
-        CompilationSubject.assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
-            .isNotNull()
-        CompilationSubject.assertThat(compilation)
-            .generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
-            .contentsAsUtf8String()
-            .contains("super(parent")
+                                        """));
+
+        assertThat(compilation).succeededWithoutWarnings();
+
+        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
+                .isNotNull();
+
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
+                .contentsAsUtf8String()
+                .contains("super(parent");
+
     }
 }
+

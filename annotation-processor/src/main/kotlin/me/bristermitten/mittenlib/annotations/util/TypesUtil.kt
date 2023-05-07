@@ -1,155 +1,175 @@
-package me.bristermitten.mittenlib.annotations.util
+package me.bristermitten.mittenlib.annotations.util;
 
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.ParameterizedTypeName
-import com.squareup.javapoet.TypeName
-import me.bristermitten.mittenlib.annotations.config.ConfigurationClassNameGenerator
-import me.bristermitten.mittenlib.annotations.config.GeneratedTypeCache
-import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException
-import me.bristermitten.mittenlib.config.GeneratedConfig
-import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses
-import javax.inject.Inject
-import javax.lang.model.element.Element
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
-import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.PrimitiveType
-import javax.lang.model.type.TypeKind
-import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import me.bristermitten.mittenlib.annotations.config.ConfigurationClassNameGenerator;
+import me.bristermitten.mittenlib.annotations.config.GeneratedTypeCache;
+import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
+import me.bristermitten.mittenlib.config.GeneratedConfig;
+import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
+import me.bristermitten.mittenlib.util.Null;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
- * Helper class for working with [TypeMirror]s
+ * Helper class for working with {@link TypeMirror}s
  */
-class TypesUtil @Inject internal constructor(
-    private val types: Types,
-    private val elements: Elements,
-    private val classNameGenerator: ConfigurationClassNameGenerator,
-    private val generatedTypeCache: GeneratedTypeCache
-) {
+public class TypesUtil {
+    private final Types types;
+    private final Elements elements;
+
+    private final ConfigurationClassNameGenerator classNameGenerator;
+    private final GeneratedTypeCache generatedTypeCache;
+
+    @Inject
+    TypesUtil(Types types, Elements elements, ConfigurationClassNameGenerator classNameGenerator, GeneratedTypeCache generatedTypeCache) {
+        this.types = types;
+        this.elements = elements;
+        this.classNameGenerator = classNameGenerator;
+        this.generatedTypeCache = generatedTypeCache;
+    }
+
     /**
      * Get a "safe" version of a type.
      * This is defined as the boxed type for primitives, the erasure for parameterized types, otherwise simply the type itself
      * Examples:
-     *
-     *  * `int -> Integer`
-     *  * `Map<String, Integer> -> Map`
-     *  * `String -> String`
-     *
+     * <ul>
+     * <li>{@code int -> Integer}</li>
+     * <li>{@code Map<String, Integer> -> Map}</li>
+     * <li>{@code String -> String}</li>
+     * </ul>
      */
-    fun getSafeType(typeMirror: TypeMirror): TypeMirror {
-        return if (typeMirror.kind.isPrimitive) {
-            types.boxedClass(typeMirror as PrimitiveType).asType()
-        } else types.erasure(typeMirror)
+    public TypeMirror getSafeType(TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return types.boxedClass((PrimitiveType) typeMirror).asType();
+        }
+        return types.erasure(typeMirror);
     }
 
     /**
      * Get a boxed version of a given type, if it is a primitive.
      * Otherwise, the type is returned unchanged
      */
-    fun getBoxedType(typeMirror: TypeMirror): TypeMirror {
-        return if (typeMirror.kind.isPrimitive) {
-            types.boxedClass(typeMirror as PrimitiveType).asType()
-        } else typeMirror
+    public TypeMirror getBoxedType(TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return types.boxedClass((PrimitiveType) typeMirror).asType();
+        }
+        return typeMirror;
     }
 
     /**
-     * Return if a [VariableElement] should be considered nullable or not
+     * Return if a {@link VariableElement} should be considered nullable or not
      * Everything is considered non-nullable unless it is specifically annotated as nullable.
      * Any annotation named "Nullable" is supported, i.e. jetbrains or javax
      *
      * @param element The element to check
      * @return True if the element is nullable, false otherwise
      */
-    fun isNullable(element: VariableElement): Boolean {
-        for (ann in element.annotationMirrors) {
-            if (ann.annotationType.asElement().simpleName.toString() == "Nullable") {
-                return true
+    public boolean isNullable(VariableElement element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            if (ann.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
+                return true;
             }
         }
-        return false
+        return false;
     }
 
     /**
-     * Gets an [Annotation] present on an [Element], if present.
-     * This method is slightly different to [Element.getAnnotation],
-     * in that it respects the semantics described in [CascadeToInnerClasses]
+     * Gets an {@link Annotation} present on an {@link Element}, if present.
+     * This method is slightly different to {@link Element#getAnnotation(Class)},
+     * in that it respects the semantics described in {@link CascadeToInnerClasses}
      *
      * @param e    The element
      * @param type The class of the annotation
      * @param <A>  The annotation type
      * @return The annotation value, if present, else null
-    </A> */
-    fun <A : Annotation?> getAnnotation(e: Element, type: Class<A>): A? {
-        val onElem = e.getAnnotation(type)
+     */
+    public <A extends Annotation> @Nullable A getAnnotation(Element e, Class<A> type) {
+        A onElem = e.getAnnotation(type);
         if (onElem != null) {
-            return onElem
+            return onElem;
         }
-        if (type.getAnnotation(CascadeToInnerClasses::class.java) != null) {
-            val enclosing = e.enclosingElement ?: return null
-            return getAnnotation(enclosing, type)
+
+        if (type.getAnnotation(CascadeToInnerClasses.class) != null) {
+            var enclosing = e.getEnclosingElement();
+            if (enclosing == null) {
+                return null;
+            }
+            return getAnnotation(enclosing, type);
         }
-        return null
+        return null;
     }
 
-    fun getConfigClassName(typeMirror: TypeMirror?): TypeName {
-        return getConfigClassName(typeMirror, null)
+    public TypeName getConfigClassName(TypeMirror typeMirror) {
+        return getConfigClassName(typeMirror, null);
     }
 
-    fun getConfigClassName(typeMirror: TypeMirror?, source: Element?): TypeName {
-        if (typeMirror!!.kind.isPrimitive) {
-            return TypeName.get(typeMirror)
+    public TypeName getConfigClassName(TypeMirror typeMirror, @Nullable Element source) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return TypeName.get(typeMirror);
         }
-        val annotation = typeMirror.getAnnotation(GeneratedConfig::class.java) // if the type is already generated by us
-        if (typeMirror.kind == TypeKind.ERROR || annotation != null) {
-            throw DTOReferenceException(
-                typeMirror,
-                generatedTypeCache,
-                annotation?.source?.java,
-                source
-            )
+        GeneratedConfig annotation = typeMirror.getAnnotation(GeneratedConfig.class); // if the type is already generated by us
+        if (typeMirror.getKind() == TypeKind.ERROR || annotation != null) {
+            throw new DTOReferenceException(typeMirror, generatedTypeCache,
+                    Null.map(annotation, GeneratedConfig::source), source);
         }
-        val element = types.asElement(typeMirror) as TypeElement
-        val packageElement = elements.getPackageOf(element)
-        require(!packageElement.isUnnamed) { "Unnamed packages are not supported" }
-        return classNameGenerator.generateConfigurationClassName(element) ?: translateDTOParameters(typeMirror)
+
+        final TypeElement element = (TypeElement) types.asElement(typeMirror);
+        final PackageElement packageElement = elements.getPackageOf(element);
+        if (packageElement.isUnnamed()) {
+            throw new IllegalArgumentException("Unnamed packages are not supported");
+        }
+        return classNameGenerator.generateConfigurationClassName(element)
+                .map(TypeName.class::cast) // Safe upcast
+                .orElseGet(() -> translateDTOParameters(typeMirror));
     }
 
     /**
      * Recursively turns any DTO types into their non-DTO counterparts,
-     * i.e. `List<BlahDTO> -> List<Blah>`
+     * i.e. {@code List<BlahDTO> -> List<Blah>}
      *
      * @param mirror The type to convert
      * @return The converted type
      */
-    fun translateDTOParameters(mirror: TypeMirror): TypeName {
-        if (mirror !is DeclaredType) {
-            return TypeName.get(mirror)
+    public TypeName translateDTOParameters(TypeMirror mirror) {
+        if (!(mirror instanceof DeclaredType declaredType)) {
+            return TypeName.get(mirror);
         }
-        val element = mirror.asElement() as TypeElement
-        val typeArguments = mirror.typeArguments
+        TypeElement element = (TypeElement) declaredType.asElement();
+        List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
         if (typeArguments.isEmpty()) {
-            return TypeName.get(mirror)
+            return TypeName.get(mirror);
         }
-        val properArguments = typeArguments.stream()
-            .map { typeMirror -> this.getConfigClassName(typeMirror) }
-            .toList()
-        return ParameterizedTypeName.get(ClassName.get(element), *properArguments.toTypedArray<TypeName>())
+        List<TypeName> properArguments = typeArguments.stream()
+                .map(this::getConfigClassName)
+                .toList();
+
+        return ParameterizedTypeName.get(ClassName.get(element), properArguments.toArray(new TypeName[0]));
     }
 
     /**
-     * Gets the simple name of a [TypeName], i.e. the name without a package
+     * Gets the simple name of a {@link TypeName}, i.e. the name without a package
      * For primitives, the unchanged name is returned.
      *
      * @param typeMirror The type to get the name of
      * @return The simple name of the type
      */
-    fun getSimpleName(typeMirror: TypeName?): String {
-        if (typeMirror!!.isPrimitive) {
-            return typeMirror.toString()
+    public String getSimpleName(TypeName typeMirror) {
+        if (typeMirror.isPrimitive()) {
+            return typeMirror.toString();
         }
-        val className = typeMirror as ClassName?
-        return className!!.simpleName()
+        final ClassName className = (ClassName) typeMirror;
+        return className.simpleName();
     }
 }

@@ -1,16 +1,22 @@
-package me.bristermitten.mittenlib.annotations.config
+package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.inject.AbstractModule
-import javax.annotation.processing.ProcessingEnvironment
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
+import com.google.inject.AbstractModule;
 
-internal class ConfigProcessorModule(private val processingEnvironment: ProcessingEnvironment) : AbstractModule() {
-    override fun configure() {
-        bind(ProcessingEnvironment::class.java).toInstance(processingEnvironment)
-        bind(Elements::class.java).toInstance(
-            processingEnvironment.elementUtils
-        )
-        bind(Types::class.java).toInstance(processingEnvironment.typeUtils)
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
+
+class ConfigProcessorModule extends AbstractModule {
+    private final ProcessingEnvironment processingEnvironment;
+
+    ConfigProcessorModule(ProcessingEnvironment processingEnvironment) {
+        this.processingEnvironment = processingEnvironment;
+    }
+
+    @Override
+    protected void configure() {
+        bind(ProcessingEnvironment.class).toInstance(processingEnvironment);
+        bind(Elements.class).toInstance(processingEnvironment.getElementUtils());
+        bind(Types.class).toInstance(processingEnvironment.getTypeUtils());
     }
 }

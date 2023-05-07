@@ -1,21 +1,32 @@
-package me.bristermitten.mittenlib.annotations.config.stage
+package me.bristermitten.mittenlib.annotations.config.stage;
 
-import com.squareup.javapoet.TypeSpec
-import me.bristermitten.mittenlib.annotations.config.ConfigClassBuildSettings
-import me.bristermitten.mittenlib.annotations.config.ConfigurationClassNameGenerator
-import javax.inject.Inject
-import javax.lang.model.element.TypeElement
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeSpec;
+import me.bristermitten.mittenlib.annotations.config.ConfigClassBuildSettings;
+import me.bristermitten.mittenlib.annotations.config.ConfigurationClassNameGenerator;
 
-class ExtractSettingsBuildStage @Inject internal constructor(private val classNameGenerator: ConfigurationClassNameGenerator) :
-    BuildStage<Unit, ConfigClassBuildSettings> {
-    override fun name(): String {
-        return "extract-settings"
+import javax.inject.Inject;
+import javax.lang.model.element.TypeElement;
+
+public class ExtractSettingsBuildStage implements BuildStage<Void, ConfigClassBuildSettings> {
+    private final ConfigurationClassNameGenerator classNameGenerator;
+
+    @Inject
+    ExtractSettingsBuildStage(ConfigurationClassNameGenerator classNameGenerator) {
+        this.classNameGenerator = classNameGenerator;
     }
 
-    override fun apply(generateFrom: TypeElement, builder: TypeSpec.Builder?, input: Unit): ConfigClassBuildSettings {
-        val className = classNameGenerator.generateConfigurationClassName(generateFrom)
-            ?: throw IllegalArgumentException("Cannot determine name for @Config class " + generateFrom.qualifiedName)
+    @Override
+    public String name() {
+        return "extract-settings";
+    }
 
-        TODO()
+    @Override
+    public ConfigClassBuildSettings apply(TypeElement generateFrom, TypeSpec.Builder builder, Void input) {
+        final ClassName className =
+                classNameGenerator.generateConfigurationClassName(generateFrom)
+                        .orElseThrow(() -> new IllegalArgumentException("Cannot determine name for @Config class " + classType.getQualifiedName()));
+
+
     }
 }
