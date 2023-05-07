@@ -12,7 +12,9 @@ import java.util.Optional;
 
 /**
  * A {@link ConfigProvider} which delegates to another {@link ConfigProvider}, improving it with a {@link ConfigProviderImprover}
- * This is basically just used to resolve some circular stuff in Guice ({@link #initialize(ConfigProviderFactory, ConfigProviderImprover)}
+ * <p>
+ * This is used to resolve some circular stuff in Guice ({@link #initialize(ConfigProviderFactory, ConfigProviderImprover)}
+ * as the values might not be available at construction time.
  *
  * @param <T> the type of the config
  */
