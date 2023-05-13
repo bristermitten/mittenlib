@@ -28,6 +28,18 @@ public interface SafeFunction<T, R> {
     }
 
     /**
+     * Wrap a {@link Function} in a {@link SafeFunction}
+     *
+     * @param function the function to wrap
+     * @param <T>      the type of the input
+     * @param <R>      the type of the result
+     * @return a {@link SafeFunction} that delegates to the given function
+     */
+    static <T, R> SafeFunction<T, R> of(Function<T, R> function) {
+        return function::apply;
+    }
+
+    /**
      * Apply the function, possibly throwing an exception.
      *
      * @param t the input
