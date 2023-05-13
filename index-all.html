@@ -576,15 +576,19 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a new FileWatchingConfigProvider</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#flatMap(java.util.function.Function)" class="member-name-link">flatMap(Function&lt;T, Result&lt;R&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">flatMap(SafeFunction&lt;T, Result&lt;R&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/util/Result.html#flatMap(java.util.function.Function)" class="member-name-link">flatMap(Function&lt;T, Result&lt;R&gt;&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">flatMap(SafeFunction&lt;T, Result&lt;R&gt;&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
 <div class="block">Applies a function to the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, passing through the exception if the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
- This allows the composition of <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>-ful functions, making <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> a monad.</div>
+ This allows the composition of <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>-ful functions, making <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> a monad (technically not a lawful monad because the function can throw exceptions)</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#flatMap(java.util.function.Function)" class="member-name-link">flatMap(Function&lt;T, Result&lt;R&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">flatMap(SafeFunction&lt;T, Result&lt;R&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#flatMapPure(java.util.function.Function)" class="member-name-link">flatMapPure(Function&lt;T, Result&lt;R&gt;&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Like <a href="me/bristermitten/mittenlib/util/Result.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)"><code>Result.flatMap(SafeFunction)</code></a>, but the function cannot throw checked exceptions</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/NamingPatternTransformer.html#format(java.lang.String,me.bristermitten.mittenlib.config.names.NamingPatterns)" class="member-name-link">format(String, NamingPatterns)</a> - Static method in class me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/NamingPatternTransformer.html" title="class in me.bristermitten.mittenlib.config.names">NamingPatternTransformer</a></dt>
 <dd>
 <div class="block">Format a given input string into a different format based on a <a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names"><code>NamingPatterns</code></a></div>
@@ -893,6 +897,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/commands/handlers/TabCompleter.html#id()" class="member-name-link">id()</a> - Method in interface me.bristermitten.mittenlib.commands.handlers.<a href="me/bristermitten/mittenlib/commands/handlers/TabCompleter.html" title="interface in me.bristermitten.mittenlib.commands.handlers">TabCompleter</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#ifOk(me.bristermitten.mittenlib.util.lambda.SafeConsumer)" class="member-name-link">ifOk(SafeConsumer&lt;T&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Applies the given <a href="me/bristermitten/mittenlib/util/lambda/SafeConsumer.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeConsumer</code></a> if the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderImprover.html#improve(me.bristermitten.mittenlib.config.provider.ConfigProvider)" class="member-name-link">improve(ConfigProvider&lt;T&gt;)</a> - Method in interface me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderImprover.html" title="interface in me.bristermitten.mittenlib.config.provider.construct">ConfigProviderImprover</a></dt>
 <dd>
 <div class="block">Improve a <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> by wrapping it with (possible) extra functionality.</div>
@@ -1079,11 +1087,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/files/json/GsonObjectMapper.html#map(java.lang.Object,com.google.gson.reflect.TypeToken)" class="member-name-link">map(Object, TypeToken&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/GsonObjectMapper.html" title="class in me.bristermitten.mittenlib.files.json">GsonObjectMapper</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/util/Result.html#map(java.util.function.Function)" class="member-name-link">map(Function&lt;T, R&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#map(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">map(SafeFunction&lt;T, R&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#map(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">map(SafeFunction&lt;T, R&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
-<div class="block">Applies a given function to the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, passing through the exception if the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>
- If the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the function is applied to the value and the result is returned in a new <a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a></div>
+<div class="block">Applies a given function to the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, threading through the exception if the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#map(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">map(SafeFunction&lt;T, R&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/MapImpls.html" class="type-name-link" title="class in me.bristermitten.mittenlib.collections">MapImpls</a> - Class in <a href="me/bristermitten/mittenlib/collections/package-summary.html">me.bristermitten.mittenlib.collections</a></dt>
 <dd>
 <div class="block">Implementations for immutable Maps used in <a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections"><code>Maps</code></a></div>
@@ -1246,6 +1257,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an <a href="me/bristermitten/mittenlib/files/json/ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json"><code>ExtraTypeAdapter</code></a> from an existing <code>TypeAdapter</code>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html#of(java.util.function.Function)" class="member-name-link">of(Function&lt;T, R&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a></dt>
+<dd>
+<div class="block">Wrap a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> in a <a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a></div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of(K,V)" class="member-name-link">of(K, V)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of(K,V,K,V)" class="member-name-link">of(K, V, K, V)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
@@ -1355,6 +1370,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#removeWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">removeWatcher(FileWatcher)</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
 <dd>
 <div class="block">Removes a watcher from the service.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#replace(R)" class="member-name-link">replace(R)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Replaces the value of the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with a new value.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/PathUtil.html#resourceToPath(java.net.URL)" class="member-name-link">resourceToPath(URL)</a> - Static method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/PathUtil.html" title="class in me.bristermitten.mittenlib.util">PathUtil</a></dt>
 <dd>
@@ -1781,6 +1800,10 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Version.html#%3Cinit%3E(int,int,int)" class="member-name-link">Version(int, int, int)</a> - Constructor for class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#void_()" class="member-name-link">void_()</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Replaces the value of the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with the <a href="me/bristermitten/mittenlib/util/Unit.html" title="class in me.bristermitten.mittenlib.util"><code>Unit</code></a> value.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:W">W</h2>
 <dl class="index">
