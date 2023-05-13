@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.util;
 
+import me.bristermitten.mittenlib.util.lambda.SafeConsumer;
 import me.bristermitten.mittenlib.util.lambda.SafeFunction;
 import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
@@ -190,8 +191,14 @@ public interface Result<T> {
     Optional<Exception> error();
 
     /**
-     * Applies a given function to the {@link Result}, passing through the exception if the {@link Result} is {@link Fail}
-     * If the {@link Result} is {@link Ok}, the function is applied to the value and the result is returned in a new {@link Ok}
+     * Applies a given function to the {@link Result}, threading through the exception if the {@link Result} is {@link Fail}.
+     * This would make {@link Result} a functor if it were not for the fact that the function can throw an exception.
+     * <p>
+     * <ul>
+     * <li>If the {@link Result} is {@link Ok}, the function is applied to the value and the result is returned in a new {@link Ok}.</li>
+     * <li>If the function throws an exception, the exception is returned in a new {@link Fail}.</li>
+     * <li>If the {@link Result} is {@link Fail}, the exception is returned in a new {@link Fail}.</li>
+     * </ul>
      *
      * @param function The function to apply
      * @param <R>      The type of the result of the function
@@ -199,8 +206,24 @@ public interface Result<T> {
      */
     @Contract(pure = true)
     @NotNull
-    default <R> Result<R> map(Function<T, R> function) {
+    default <R> Result<R> map(SafeFunction<T, R> function) {
         return flatMap(t -> ok(function.apply(t)));
+    }
+
+    /**
+     * Applies the given {@link SafeConsumer} if the {@link Result} is {@link Ok}.
+     * If the {@link Result} is {@link Fail}, the result is returned unchanged.
+     *
+     * @param t The {@link SafeConsumer} to apply
+     * @return The {@link Result} after the {@link SafeConsumer} has been applied
+     */
+    @Contract(pure = true)
+    @NotNull
+    default Result<Unit> ifOk(SafeConsumer<T> t) {
+        return flatMap(t1 -> {
+            t.consume(t1);
+            return ok(Unit.UNIT);
+        });
     }
 
     /**
@@ -216,17 +239,58 @@ public interface Result<T> {
 
     /**
      * Applies a function to the {@link Result}, passing through the exception if the {@link Result} is {@link Fail}
-     * This allows the composition of {@link Result}-ful functions, making {@link Result} a monad.
+     * This allows the composition of {@link Result}-ful functions, making {@link Result} a monad (technically not a lawful monad because the function can throw exceptions)
      * <p>
      * If the left {@link Result} is {@link Ok}, the function is applied to the value and the result is returned.
+     * If the function throws an exception, it is caught and returned in a {@link Fail}
      * Otherwise, the exception from the left {@link Result} is returned in a {@link Fail}
      *
      * @param function The function to apply
      * @param <R>      The type of the result of the function
      * @return A new {@link Result} containing the result of the function or the exception from this {@link Result}
+     * @see #flatMapPure(Function) for a version that cannot throw checked exceptions
      */
     @Contract(pure = true)
-    @NotNull <R> Result<R> flatMap(Function<T, Result<R>> function);
+    @NotNull <R> Result<R> flatMap(SafeFunction<T, Result<R>> function);
+
+    /**
+     * Like {@link #flatMap(SafeFunction)}, but the function cannot throw checked exceptions
+     *
+     * @param function The function to apply
+     * @param <R>      The type of the result of the function
+     * @return A new {@link Result} containing the result of the function or the exception from this {@link Result}
+     * @see #flatMap(SafeFunction) for a version that can throw checked exceptions
+     */
+    @Contract(pure = true)
+    @NotNull
+    default <R> Result<R> flatMapPure(Function<T, Result<R>> function) {
+        return flatMap(function::apply);
+    }
+
+    /**
+     * Replaces the value of the {@link Result} with a new value.
+     * If the {@link Result} is {@link Ok}, the new value is returned in a new {@link Ok}.
+     * Otherwise, the result is returned unchanged.
+     *
+     * @param r   The new value
+     * @param <R> The type of the new value
+     * @return A new {@link Result} containing the new value or the exception from this {@link Result}
+     */
+    default <R> Result<R> replace(R r) {
+        return map(SafeFunction.constant(r));
+    }
+
+    /**
+     * Replaces the value of the {@link Result} with the {@link Unit} value.
+     * If the {@link Result} is {@link Ok}, {@link Unit#UNIT} is returned in a new {@link Ok}.
+     * Otherwise, the result is returned unchanged.
+     *
+     * @return A new {@link Result} containing {@link Unit#UNIT} or the exception from this {@link Result}
+     */
+    default Result<Unit> void_() {
+        return map(t -> Unit.UNIT);
+    }
+
 
     /**
      * Returns the value if the {@link Result} is {@link Ok}, otherwise throws the exception
@@ -294,7 +358,13 @@ public interface Result<T> {
         }
 
         @Override
-        public <R> @NotNull Result<R> flatMap(Function<T, Result<R>> function) {
+        public <R> @NotNull Result<R> flatMap(SafeFunction<T, Result<R>> function) {
+            //noinspection unchecked
+            return (Result<R>) this;
+        }
+
+        @Override
+        public @NotNull <R> Result<R> map(SafeFunction<T, R> function) {
             //noinspection unchecked
             return (Result<R>) this;
         }
@@ -369,8 +439,13 @@ public interface Result<T> {
         }
 
         @Override
-        public <R> @NotNull Result<R> flatMap(Function<T, Result<R>> function) {
-            return function.apply(value);
+        public <R> @NotNull Result<R> flatMap(SafeFunction<T, Result<R>> function) {
+            return computeCatching(() -> function.apply(value));
+        }
+
+        @Override
+        public @NotNull <R> Result<R> map(SafeFunction<T, R> function) {
+            return runCatching(() -> function.apply(value));
         }
 
         @Override

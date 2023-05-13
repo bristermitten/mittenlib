@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.util.Result;
+import me.bristermitten.mittenlib.util.lambda.SafeFunction;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -73,7 +74,7 @@ public class ConfigReader {
 
         return rawData
                 .map(data -> new DeserializationContext(mapper, data))
-                .flatMap(mappingFunction);
+                .flatMap(SafeFunction.of(mappingFunction));
     }
 
     /**

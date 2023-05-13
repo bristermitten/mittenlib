@@ -229,6 +229,40 @@ class ResultTest {
     }
 
     @Test
+    void ifOk() {
+        AtomicBoolean ran = new AtomicBoolean(false);
+        Result<String> result = Result.ok("Hello");
+        var result2 = result.ifOk(s -> ran.set(true));
+        assertTrue(result2.isSuccess());
+        assertFalse(result2.isFailure());
+        assertEquals(Unit.UNIT, result2.getOrThrow());
+        assertTrue(ran.get());
+
+        AtomicBoolean ran2 = new AtomicBoolean(false);
+        Result<String> result3 = Result.fail(new IllegalArgumentException());
+        var result4 = result3.ifOk(s -> ran2.set(true));
+        assertFalse(result4.isSuccess());
+        assertTrue(result4.isFailure());
+        assertThrows(IllegalArgumentException.class, result3::getOrThrow);
+        assertFalse(ran2.get());
+    }
+
+    @Test
+    void replace() {
+        Result<String> result = Result.ok("Hello");
+        var result2 = result.replace("World");
+        assertTrue(result2.isSuccess());
+        assertFalse(result2.isFailure());
+        assertEquals("World", result2.getOrThrow());
+
+        Result<String> result3 = Result.fail(new IllegalArgumentException());
+        var result4 = result3.replace("World");
+        assertFalse(result4.isSuccess());
+        assertTrue(result4.isFailure());
+        assertThrows(IllegalArgumentException.class, result3::getOrThrow);
+    }
+
+    @Test
     void getOrThrow() {
         Result<String> result = Result.ok("Hello");
         assertEquals("Hello", result.getOrThrow());
@@ -276,4 +310,5 @@ class ResultTest {
         Result<String> result2 = Result.fail(new IllegalArgumentException());
         assertTrue(result2.isFailure());
     }
+
 }
