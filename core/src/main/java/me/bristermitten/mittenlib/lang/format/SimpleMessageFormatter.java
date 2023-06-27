@@ -13,16 +13,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Default implementation of {@link MessageFormatter} that uses {@link LegacyComponentSerializer} to create {@link Component}s.
+ */
 public class SimpleMessageFormatter extends AbstractMessageFormatter {
     @Inject
-    protected SimpleMessageFormatter(Set<FormattingHook> hooks) {
+    SimpleMessageFormatter(Set<FormattingHook> hooks) {
         super(hooks);
     }
 
     @Override
     public @NotNull Component format(@NotNull String message, @Nullable OfflinePlayer player) {
-        return LegacyComponentSerializer.legacySection().deserialize(
-                preFormat(message, player));
+        return LegacyComponentSerializer.legacySection().deserialize(preFormat(message, player));
     }
 
     @Override

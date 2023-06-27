@@ -234,7 +234,7 @@ public class ConfigClassBuilder {
 
         final TypeSpec configClass = createConfigClass(classType, matchingFields, className);
         var file = JavaFile.builder(className.packageName(), configClass).build();
-        generatedTypeCache.getGeneratedSpecs().put(classType, Stringify.stringify(file));
+        generatedTypeCache.getGeneratedSpecs().put(classType, Stringify.fullyQualifiedName(file));
         return file;
     }
 

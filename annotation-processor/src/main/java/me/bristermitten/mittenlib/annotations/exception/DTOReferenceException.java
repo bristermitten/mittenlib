@@ -46,8 +46,8 @@ public class DTOReferenceException extends RuntimeException {
             }
 
             typesReplaceWith = types.size() == 1
-                    ? Stringify.stringify(types.iterator().next())
-                    : "any of " + types.stream().map(Stringify::stringify).toList();
+                    ? Stringify.prettyStringify(types.iterator().next())
+                    : "any of " + types.stream().map(Stringify::prettyStringify).toList();
         }
 
 
@@ -57,7 +57,7 @@ public class DTOReferenceException extends RuntimeException {
                 You should replace %s with %s.
                 This issue occurred in %s.
                 """
-                .formatted(typeUsed, typesReplaceWith, Optional.ofNullable(source).map(Stringify::stringify).orElse("Unknown Location"));
+                .formatted(typeUsed, typesReplaceWith, Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
     }
 
 }

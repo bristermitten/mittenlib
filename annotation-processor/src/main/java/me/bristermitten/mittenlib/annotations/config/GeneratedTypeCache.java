@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  * A cache of generated types.
  * This class is a pretty big hack to be honest, but it allows us to generate pretty error messages
  * when people accidentally use the generated type names in a DTO class.
+ * <p>
  * This class maintains a {@link com.google.common.collect.BiMap} between the DTO {@link javax.lang.model.element.TypeElement}s and the fully qualified name
  * of the configuration class, which means that we can easily get the DTO class from the configuration class
  * to generate a nice error message.
@@ -36,6 +37,7 @@ public class GeneratedTypeCache {
 
     /**
      * @return the underlying mapping of source type to generated type's qualified name
+     * <p>
      * This type is mutable and should be modified with care
      */
     public BiMap<TypeElement, String> getGeneratedSpecs() {
