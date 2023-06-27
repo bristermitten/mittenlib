@@ -12,6 +12,13 @@ import java.util.function.BiFunction;
 public class SimpleFormattingHook implements FormattingHook {
     private final BiFunction<String, @Nullable OfflinePlayer, String> formatter;
 
+    /**
+     * Creates a SimpleFormattingHook configured with supplied BiFunction.
+     *
+     * @param formatter a BiFunction that provides an implementation for {@link #format(String, OfflinePlayer)}.
+     * @throws NullPointerException if formatter is null
+     * @see #format(String, OfflinePlayer) for documentation on the function's behaviour
+     */
     public SimpleFormattingHook(BiFunction<String, @Nullable OfflinePlayer, String> formatter) {
         this.formatter = formatter;
     }

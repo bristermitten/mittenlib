@@ -193,7 +193,6 @@ public interface Result<T> {
     /**
      * Applies a given function to the {@link Result}, threading through the exception if the {@link Result} is {@link Fail}.
      * This would make {@link Result} a functor if it were not for the fact that the function can throw an exception.
-     * <p>
      * <ul>
      * <li>If the {@link Result} is {@link Ok}, the function is applied to the value and the result is returned in a new {@link Ok}.</li>
      * <li>If the function throws an exception, the exception is returned in a new {@link Fail}.</li>
@@ -336,6 +335,9 @@ public interface Result<T> {
     boolean isFailure();
 
     class Fail<T, E extends Exception> implements Result<T> {
+        /**
+         * The underlying exception
+         */
         private final @NotNull E exception;
 
         private Fail(@NotNull E exception) {
@@ -417,6 +419,9 @@ public interface Result<T> {
     }
 
     class Ok<T> implements Result<T> {
+        /**
+         * The underlying value of the {@link Result}
+         */
         private final @NotNull T value;
 
         private Ok(@NotNull T value) {

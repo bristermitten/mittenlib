@@ -28,7 +28,11 @@ import java.util.stream.Collectors;
  * Turns a @Config annotated class into a new config class.
  */
 public class ConfigClassBuilder {
-    public static final String DESERIALIZE = "deserialize";
+    /**
+     * The prefix for all generated deserialization methods.
+     * For example, a method to deserialize a field called "test" would be called deserializeTest
+     */
+    public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
     private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     private final ElementsFinder elementsFinder;
@@ -307,7 +311,7 @@ public class ConfigClassBuilder {
         final TypeMirror boxedType = typesUtil.getBoxedType(typeMirror);
         final TypeName boxedTypeName = getConfigClassName(boxedType, dtoType);
 
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE + Strings.capitalize(variableName.toString()))
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(variableName.toString()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, boxedTypeName))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
@@ -405,9 +409,9 @@ public class ConfigClassBuilder {
 
     private String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
-            return DESERIALIZE + cn.simpleName();
+            return DESERIALIZE_METHOD_PREFIX + cn.simpleName();
         }
-        return DESERIALIZE + name;
+        return DESERIALIZE_METHOD_PREFIX + name;
     }
 
     private void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder,
