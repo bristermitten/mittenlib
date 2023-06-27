@@ -3,6 +3,9 @@
 This module defines an Annotation Processor for easy generation of
 `Configuration` types.
 
+**No code in this module is public API!** Breaking changes may happen at any point without
+respecting the Semantic Versioning in other modules.
+
 ## Quick Start
 
 Let's say we want to define a Configuration for loading SQL database settings.
