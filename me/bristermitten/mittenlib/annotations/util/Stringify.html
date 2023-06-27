@@ -97,6 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Stringify</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Generic utilities for converting objects to strings.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -112,11 +113,15 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#stringify(com.squareup.javapoet.JavaFile)" class="member-name-link">stringify</a><wbr>(com.squareup.javapoet.JavaFile&nbsp;javaFile)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fullyQualifiedName(com.squareup.javapoet.JavaFile)" class="member-name-link">fullyQualifiedName</a><wbr>(com.squareup.javapoet.JavaFile&nbsp;javaFile)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a string value representing the fully qualified name of the Java class file.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#stringify(javax.lang.model.element.Element)" class="member-name-link">stringify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prettyStringify(javax.lang.model.element.Element)" class="member-name-link">prettyStringify</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a generic pretty string representation of the given <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link"><code>Element</code></a> object.</div>
+</div>
 </div>
 </div>
 </div>
@@ -135,15 +140,32 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="stringify(com.squareup.javapoet.JavaFile)">
-<h3>stringify</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">stringify</span><wbr><span class="parameters">(com.squareup.javapoet.JavaFile&nbsp;javaFile)</span></div>
+<section class="detail" id="fullyQualifiedName(com.squareup.javapoet.JavaFile)">
+<h3>fullyQualifiedName</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">fullyQualifiedName</span><wbr><span class="parameters">(com.squareup.javapoet.JavaFile&nbsp;javaFile)</span></div>
+<div class="block">Returns a string value representing the fully qualified name of the Java class file.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>javaFile</code> - the JavaFile object representing the class file</dd>
+<dt>Returns:</dt>
+<dd>a string value representing the fully qualified name of the class,
+ consisting of the package name and the class name separated by a dot (.)</dd>
+</dl>
 </section>
 </li>
 <li>
-<section class="detail" id="stringify(javax.lang.model.element.Element)">
-<h3>stringify</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">stringify</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</span></div>
+<section class="detail" id="prettyStringify(javax.lang.model.element.Element)">
+<h3>prettyStringify</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">prettyStringify</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</span></div>
+<div class="block">Returns a generic pretty string representation of the given <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link"><code>Element</code></a> object.
+ <p>
+ For a VariableElement, the format is "{type} {name} in class {enclosingClass}",</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>element</code> - the Element object to generate the string representation of</dd>
+<dt>Returns:</dt>
+<dd>a string representation of the given Element object</dd>
+</dl>
 </section>
 </li>
 </ul>

@@ -115,7 +115,9 @@ implements <a href="FormattingHook.html" title="interface in me.bristermitten.mi
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.function.BiFunction)" class="member-name-link">SimpleFormattingHook</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>@Nullable <a href="https://helpch.at/docs/1.8.8/org/bukkit/OfflinePlayer.html" title="class or interface in org.bukkit" class="external-link">OfflinePlayer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;formatter)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Creates a SimpleFormattingHook configured with supplied BiFunction.</div>
+</div>
 </div>
 </section>
 </li>
@@ -162,6 +164,19 @@ implements <a href="FormattingHook.html" title="interface in me.bristermitten.mi
 <section class="detail" id="&lt;init&gt;(java.util.function.BiFunction)">
 <h3>SimpleFormattingHook</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SimpleFormattingHook</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>@Nullable <a href="https://helpch.at/docs/1.8.8/org/bukkit/OfflinePlayer.html" title="class or interface in org.bukkit" class="external-link">OfflinePlayer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;formatter)</span></div>
+<div class="block">Creates a SimpleFormattingHook configured with supplied BiFunction.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>formatter</code> - a BiFunction that provides an implementation for <a href="#format(java.lang.String,org.bukkit.OfflinePlayer)"><code>format(String, OfflinePlayer)</code></a>.</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if formatter is null</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="#format(java.lang.String,org.bukkit.OfflinePlayer)"><code>for documentation on the function's behaviour</code></a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 </ul>

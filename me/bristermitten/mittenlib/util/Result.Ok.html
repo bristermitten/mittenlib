@@ -297,7 +297,6 @@ implements <a href="Result.html" title="interface in me.bristermitten.mittenlib.
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Result.html#map(me.bristermitten.mittenlib.util.lambda.SafeFunction)">Result</a></code></span></div>
 <div class="block">Applies a given function to the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a>, threading through the exception if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>.
  This would make <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> a functor if it were not for the fact that the function can throw an exception.
- <p>
  <ul>
  <li>If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>, the function is applied to the value and the result is returned in a new <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>.</li>
  <li>If the function throws an exception, the exception is returned in a new <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>.</li>

@@ -112,8 +112,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#DESERIALIZE" class="member-name-link">DESERIALIZE</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-second even-row-color"><code><a href="#DESERIALIZE_METHOD_PREFIX" class="member-name-link">DESERIALIZE_METHOD_PREFIX</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The prefix for all generated deserialization methods.</div>
+</div>
 </div>
 </section>
 </li>
@@ -151,14 +153,16 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="DESERIALIZE">
-<h3>DESERIALIZE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">DESERIALIZE</span></div>
+<section class="detail" id="DESERIALIZE_METHOD_PREFIX">
+<h3>DESERIALIZE_METHOD_PREFIX</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">DESERIALIZE_METHOD_PREFIX</span></div>
+<div class="block">The prefix for all generated deserialization methods.
+ For example, a method to deserialize a field called "test" would be called deserializeTest</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list">
-<li><a href="../../../../../constant-values.html#me.bristermitten.mittenlib.annotations.config.ConfigClassBuilder.DESERIALIZE">Constant Field Values</a></li>
+<li><a href="../../../../../constant-values.html#me.bristermitten.mittenlib.annotations.config.ConfigClassBuilder.DESERIALIZE_METHOD_PREFIX">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
