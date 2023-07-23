@@ -70,6 +70,10 @@ loadScripts(document, 'script');</script>
 <div class="deprecation-comment">This method makes use of <a href="me/bristermitten/mittenlib/config/reader/SearchingObjectLoader.html" title="class in me.bristermitten.mittenlib.config.reader"><code>SearchingObjectLoader</code></a>, which cannot efficiently process Strings.
  Use <a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderFactory.html#createStringReaderProvider(me.bristermitten.mittenlib.files.FileType,java.lang.String,me.bristermitten.mittenlib.config.Configuration)"><code>ConfigProviderFactory.createStringReaderProvider(FileType, String, Configuration)</code></a> instead to manually specify a file type</div>
 </div>
+<div class="col-summary-item-name even-row-color"><a href="me/bristermitten/mittenlib/util/PathUtil.html#resourceToPath(java.net.URL)">me.bristermitten.mittenlib.util.PathUtil.resourceToPath<wbr>(URL)</a></div>
+<div class="col-last even-row-color">
+<div class="deprecation-comment">Resource leak, use <a href="me/bristermitten/mittenlib/util/PathUtil.html#resourceToPath(java.net.URL,me.bristermitten.mittenlib.util.lambda.IOFunction)"><code>PathUtil.resourceToPath(URL, IOFunction)</code></a> instead</div>
+</div>
 </div>
 </div>
 </li>

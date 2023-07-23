@@ -89,6 +89,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A provider for <code>BukkitAudiences</code> that uses the <a href="https://helpch.at/docs/1.8.8/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link"><code>Plugin</code></a></div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html#apply(T)" class="member-name-link">apply(T)</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a></dt>
+<dd>
+<div class="block">Apply the function, possibly throwing an exception.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html#apply(T)" class="member-name-link">apply(T)</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a></dt>
 <dd>
 <div class="block">Apply the function, possibly throwing an exception.</div>
@@ -96,6 +100,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction2.html#apply(T,R1)" class="member-name-link">apply(T, R1)</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction2.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction2</a></dt>
 <dd>
 <div class="block">Apply the function, possibly throwing an exception.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html#applyCatching(T)" class="member-name-link">applyCatching(T)</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a></dt>
+<dd>
+<div class="block">Apply the function, catching any exceptions and wrapping them in a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html#applyCatching(T)" class="member-name-link">applyCatching(T)</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a></dt>
 <dd>
@@ -124,6 +132,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeConsumer.html#asConsumer()" class="member-name-link">asConsumer()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeConsumer.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeConsumer</a></dt>
 <dd>
 <div class="block">Turn this <a href="me/bristermitten/mittenlib/util/lambda/SafeConsumer.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeConsumer</code></a> into a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link"><code>Consumer</code></a> that sneaky throws any exceptions.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html#asFunction()" class="member-name-link">asFunction()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a></dt>
+<dd>
+<div class="block">Turn this <a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>IOFunction</code></a> into a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> that sneaky throws any exceptions.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html#asFunction()" class="member-name-link">asFunction()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a></dt>
 <dd>
@@ -359,6 +371,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/Functions.html#constant(R)" class="member-name-link">constant(R)</a> - Static method in class me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/Functions.html" title="class in me.bristermitten.mittenlib.util.lambda">Functions</a></dt>
 <dd>
 <div class="block">A function that always returns the same value, ignoring the input</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html#constant(R)" class="member-name-link">constant(R)</a> - Static method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a></dt>
+<dd>
+<div class="block">A <a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>IOFunction</code></a> that always returns the same value, ignoring the input.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html#constant(R)" class="member-name-link">constant(R)</a> - Static method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a></dt>
 <dd>
@@ -929,6 +945,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Invalidate the cached value, causing it to be recomputed on the next call to <a href="me/bristermitten/mittenlib/util/Cached.html#get()"><code>Cached.get()</code></a>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a>&lt;<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="type parameter in IOFunction">T</a>,<wbr><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="type parameter in IOFunction">R</a>&gt; - Interface in <a href="me/bristermitten/mittenlib/util/lambda/package-summary.html">me.bristermitten.mittenlib.util.lambda</a></dt>
+<dd>
+<div class="block">Like <a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a> but only for <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link"><code>IOException</code></a></div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#isA()" class="member-name-link">isA()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#isFailure()" class="member-name-link">isFailure()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
@@ -1263,6 +1283,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an <a href="me/bristermitten/mittenlib/files/json/ExtraTypeAdapter.html" title="class in me.bristermitten.mittenlib.files.json"><code>ExtraTypeAdapter</code></a> from an existing <code>TypeAdapter</code>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html#of(java.util.function.Function)" class="member-name-link">of(Function&lt;T, R&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a></dt>
+<dd>
+<div class="block">Wrap a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> in a <a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>IOFunction</code></a></div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html#of(java.util.function.Function)" class="member-name-link">of(Function&lt;T, R&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a></dt>
 <dd>
 <div class="block">Wrap a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> in a <a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a></div>
@@ -1389,8 +1413,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/PathUtil.html#resourceToPath(java.net.URL)" class="member-name-link">resourceToPath(URL)</a> - Static method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/PathUtil.html" title="class in me.bristermitten.mittenlib.util">PathUtil</a></dt>
 <dd>
-<div class="block">Converts a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link"><code>URL</code></a> to a <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a>.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Resource leak, use <a href="me/bristermitten/mittenlib/util/PathUtil.html#resourceToPath(java.net.URL,me.bristermitten.mittenlib.util.lambda.IOFunction)"><code>PathUtil.resourceToPath(URL, IOFunction)</code></a> instead</div>
+</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/util/PathUtil.html#resourceToPath(java.net.URL,me.bristermitten.mittenlib.util.lambda.IOFunction)" class="member-name-link">resourceToPath(URL, IOFunction&lt;Path, T&gt;)</a> - Static method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/PathUtil.html" title="class in me.bristermitten.mittenlib.util">PathUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="me/bristermitten/mittenlib/util/Result.html" title="type parameter in Result">T</a>&gt; - Interface in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>
 <div class="block">A <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> encapsulates a computation that may fail, throwing an exception.</div>
