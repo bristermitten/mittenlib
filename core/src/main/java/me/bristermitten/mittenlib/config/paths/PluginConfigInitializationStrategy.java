@@ -37,10 +37,13 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
                         new UnknownResourceException("Could not find resource " + filePath + " in plugin " + plugin.getName())
                 );
             }
-            final Path inJar = PathUtil.resourceToPath(resource);
 
             Files.createDirectories(inDataFolder.getParent());
-            Files.copy(inJar, inDataFolder);
+            PathUtil.resourceToPath(resource, inJar -> {
+                Files.copy(inJar, inDataFolder);
+                return null;
+            });
+
         } catch (IOException | URISyntaxException e) {
             return Result.fail(e);
         }
