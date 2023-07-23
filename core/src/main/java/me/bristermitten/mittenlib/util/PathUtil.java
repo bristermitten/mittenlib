@@ -83,7 +83,7 @@ public class PathUtil {
                 } catch (FileSystemNotFoundException e) {
                     // in this case we need to initialize it first:
                     try (FileSystem fileSystem = provider.newFileSystem(uri, Collections.emptyMap())) {
-                        return function.apply(fileSystem.getPath(uri.getPath()));
+                        return function.apply(fileSystem.provider().getPath(uri));
                     }
                 }
             }
