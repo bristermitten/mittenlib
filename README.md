@@ -1,6 +1,6 @@
 # MittenLib
 
-![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo.bristermitten.me%2Frepository%2Fmaven-public%2Fme%2Fbristermitten%2Fmittenlib-core%2Fmaven-metadata.xml)
+![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo.bristermitten.me%2Fpublic%2Fme%2Fbristermitten%2Fmittenlib-core%2Fmaven-metadata.xml)
 
 A library I use in many of my plugins which provides a wide range of utilities.
 
