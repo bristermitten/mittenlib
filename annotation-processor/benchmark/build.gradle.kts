@@ -1,5 +1,5 @@
 plugins {
-    id("me.champeau.jmh") version "0.6.6"
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 java {
@@ -28,8 +28,8 @@ dependencies {
     annotationProcessor(project(":annotation-processor"))
     implementation(project(":core"))
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.13.3")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.19.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.0")
 }
 
 
