@@ -20,6 +20,10 @@ subprojects {
         targetCompatibility = sourceCompatibility
         withSourcesJar()
         withJavadocJar()
+
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
 
     repositories {
