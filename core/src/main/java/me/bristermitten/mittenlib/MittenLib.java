@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
+import me.bristermitten.mittenlib.collections.Sets;
 import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.files.FileTypeModule;
@@ -21,6 +22,7 @@ public class MittenLib<T extends Plugin> {
 
     public MittenLib(T plugin) {
         this.plugin = plugin;
+        addModule(new MittenLibModule<>(plugin, Sets.of()));
     }
 
     public static <T extends Plugin> MittenLib<T> withDefaults(@NotNull T plugin) {
@@ -61,7 +63,7 @@ public class MittenLib<T extends Plugin> {
     }
 
     public @NotNull Injector build() {
-        return Guice.createInjector(new MittenLibModule<>(plugin, new HashSet<>(modules.values())));
+        return Guice.createInjector(new HashSet<>(modules.values()));
     }
 
     private void addModule0(Module module) {
