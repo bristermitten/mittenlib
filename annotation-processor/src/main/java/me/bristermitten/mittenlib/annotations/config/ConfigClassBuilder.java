@@ -262,13 +262,12 @@ public class ConfigClassBuilder {
 
             var superElements = elementsFinder.getApplicableVariableElements(superclass);
             List<String> collect = superElements.stream()
-                    .map(VariableElement.class::cast)
                     .map(variableElement -> superParamName + "." + getFieldAccessorName(variableElement) + "()")
                     .toList();
 
             if (getDTOSuperclass((TypeElement) types.asElement(superclass)) != null) {
                 var newCollect = new ArrayList<>(collect);
-                newCollect.add(0, superParamName);
+                newCollect.addFirst(superParamName);
                 collect = newCollect;
             }
 
@@ -363,7 +362,7 @@ public class ConfigClassBuilder {
             */
             String canonicalName = types.erasure(typeMirror).toString();
             if (canonicalName.equals("java.util.List")) {
-                var listType = declaredType.getTypeArguments().get(0);
+                var listType = declaredType.getTypeArguments().getFirst();
                 if (isConfigType(listType)) {
                     TypeName listTypeName = getConfigClassName(listType, null);
                     builder.addStatement("return $T.deserializeList($L, context, $T::$L)", CollectionsUtils.class,
