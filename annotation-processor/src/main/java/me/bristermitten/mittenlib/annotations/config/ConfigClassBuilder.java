@@ -174,33 +174,13 @@ public class ConfigClassBuilder {
         // Generate getter methods
         fieldSpecs.forEach((elem, field) -> accessorGenerator.createGetterMethod(typeSpecBuilder, elem, field));
 
-        // Generate copy setter methods
-        fieldSpecs.values().forEach(field -> {
-            // Create a string representing the constructor parameters
-            String constructorParams = Strings.joinWith(fieldSpecs.values(),
-                    f2 -> {
-                        if (f2.name.equals(field.name)) {
-                            return f2.name; // we'll use the version from the parameter
-                        }
-                        return "this." + f2.name;
-                    }, ", ");
-
-            if (superClass != null) {
-                var joiner = new StringJoiner(",")
-                        .add(constructorGenerator.getSuperFieldName(superClass));
-                if (!constructorParams.isEmpty()) {
-                    joiner.add(constructorParams);
-                }
-                constructorParams = joiner.toString();
-            }
-            typeSpecBuilder.addMethod(
-                    MethodSpec.methodBuilder("with" + Strings.capitalize(field.name))
-                            .addModifiers(Modifier.PUBLIC)
-                            .returns(className)
-                            .addParameter(ParameterSpec.builder(field.type, field.name).addModifiers(Modifier.FINAL).build())
-                            .addStatement("return new $T(" + constructorParams + ")", className)
-                            .build());
-        });
+        accessorGenerator.createWithMethods(
+                typeSpecBuilder,
+                className,
+                fieldSpecs,
+                superClass,
+                constructorGenerator::getSuperFieldName
+        );
 
         GenerateToString generateToString = typesUtil.getAnnotation(classType, GenerateToString.class);
         if (generateToString != null) {
