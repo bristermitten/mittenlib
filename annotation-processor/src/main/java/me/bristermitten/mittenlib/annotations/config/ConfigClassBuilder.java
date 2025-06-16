@@ -9,8 +9,6 @@ import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.generate.GenerateToString;
-import me.bristermitten.mittenlib.util.Result;
-import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -20,8 +18,10 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,22 +30,12 @@ import java.util.stream.Collectors;
  * Turns a @Config annotated class into a new config class.
  */
 public class ConfigClassBuilder {
-    /**
-     * The prefix for all generated deserialization methods.
-     * For example, a method to deserialize a field called "test" would be called deserializeTest
-     */
-    public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
-    private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
-    private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     private final ElementsFinder elementsFinder;
-    private final Types types;
 
     private final MethodNames methodNames;
     private final TypesUtil typesUtil;
     private final ConfigurationClassNameGenerator classNameGenerator;
     private final ToStringGenerator toStringGenerator;
-
-    private final FieldClassNameGenerator fieldClassNameGenerator;
 
     private final GeneratedTypeCache generatedTypeCache;
 
@@ -55,23 +45,19 @@ public class ConfigClassBuilder {
 
     @Inject
     ConfigClassBuilder(ElementsFinder elementsFinder,
-                       Types types,
                        MethodNames methodNames,
                        TypesUtil typesUtil,
                        ConfigurationClassNameGenerator classNameGenerator,
                        ToStringGenerator toStringGenerator,
-                       FieldClassNameGenerator fieldClassNameGenerator,
                        GeneratedTypeCache generatedTypeCache,
                        DeserializationCodeGenerator deserializationCodeGenerator,
                        ConstructorGenerator constructorGenerator,
                        AccessorGenerator accessorGenerator) {
         this.elementsFinder = elementsFinder;
-        this.types = types;
         this.methodNames = methodNames;
         this.typesUtil = typesUtil;
         this.classNameGenerator = classNameGenerator;
         this.toStringGenerator = toStringGenerator;
-        this.fieldClassNameGenerator = fieldClassNameGenerator;
         this.generatedTypeCache = generatedTypeCache;
         this.deserializationCodeGenerator = deserializationCodeGenerator;
         this.constructorGenerator = constructorGenerator;
@@ -83,14 +69,6 @@ public class ConfigClassBuilder {
                         getConfigClassName(element.asType(), element),
                         element.getSimpleName().toString()
                 ).addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                .build();
-    }
-
-    private ParameterSpec createParameterSpec(VariableElement element) {
-        return ParameterSpec.builder(
-                        getConfigClassName(element.asType(), element),
-                        element.getSimpleName().toString()
-                ).addModifiers(Modifier.FINAL)
                 .build();
     }
 
@@ -244,10 +222,6 @@ public class ConfigClassBuilder {
 
     private String getFieldAccessorName(VariableElement variableElement) {
         return methodNames.safeMethodName(variableElement, (TypeElement) variableElement.getEnclosingElement());
-    }
-
-    private MethodSpec createDeserializeMethodFor(TypeElement dtoType, VariableElement element) {
-        return deserializationCodeGenerator.createDeserializeMethodFor(dtoType, element);
     }
 
     private boolean isConfigType(TypeMirror mirror) {

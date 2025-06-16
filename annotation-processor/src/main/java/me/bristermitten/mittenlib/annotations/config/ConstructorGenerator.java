@@ -1,14 +1,10 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.util.Strings;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
@@ -21,38 +17,33 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
  * Generates constructors for configuration classes.
  */
 public class ConstructorGenerator {
     private final ElementsFinder elementsFinder;
     private final Types types;
-    private final MethodNames methodNames;
     private final TypesUtil typesUtil;
 
     @Inject
     public ConstructorGenerator(
             ElementsFinder elementsFinder,
             Types types,
-            MethodNames methodNames,
             TypesUtil typesUtil) {
         this.elementsFinder = elementsFinder;
         this.types = types;
-        this.methodNames = methodNames;
         this.typesUtil = typesUtil;
     }
 
     /**
      * Adds an all-args constructor to the given type spec builder.
      *
-     * @param variableElements The variable elements to include in the constructor
-     * @param fieldSpecs The field specs to initialize in the constructor
-     * @param typeSpecBuilder The type spec builder to add the constructor to
-     * @param superclass The superclass of the type, if any
-     * @param getConfigClassName A function to get the config class name for a type
-     * @param getDTOSuperclass A function to get the superclass of a DTO type
+     * @param variableElements     The variable elements to include in the constructor
+     * @param fieldSpecs           The field specs to initialize in the constructor
+     * @param typeSpecBuilder      The type spec builder to add the constructor to
+     * @param superclass           The superclass of the type, if any
+     * @param getConfigClassName   A function to get the config class name for a type
+     * @param getDTOSuperclass     A function to get the superclass of a DTO type
      * @param getFieldAccessorName A function to get the accessor name for a field
      */
     public void addAllArgsConstructor(
@@ -103,7 +94,7 @@ public class ConstructorGenerator {
     /**
      * Creates a parameter spec for a variable element.
      *
-     * @param element The variable element
+     * @param element            The variable element
      * @param getConfigClassName A function to get the config class name for a type
      * @return The parameter spec
      */

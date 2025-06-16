@@ -147,7 +147,7 @@ public class TypesUtil {
             return TypeName.get(mirror);
         }
         TypeElement element = (TypeElement) declaredType.asElement();
-        List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
+        List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
         if (typeArguments.isEmpty()) {
             return TypeName.get(mirror);
         }

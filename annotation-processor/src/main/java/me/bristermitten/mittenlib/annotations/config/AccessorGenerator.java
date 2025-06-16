@@ -1,15 +1,11 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.util.Strings;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
@@ -19,10 +15,6 @@ import javax.lang.model.type.TypeMirror;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Function;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Generates accessor methods (getters and setters) for configuration classes.
@@ -43,8 +35,8 @@ public class AccessorGenerator {
      * Creates a getter method for a field.
      *
      * @param typeSpecBuilder The builder for the type spec
-     * @param element The variable element
-     * @param field The field spec
+     * @param element         The variable element
+     * @param field           The field spec
      */
     public void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
         var safeName = getFieldAccessorName(element);
@@ -68,10 +60,10 @@ public class AccessorGenerator {
     /**
      * Creates "with" methods (immutable setters) for each field.
      *
-     * @param typeSpecBuilder The builder for the type spec
-     * @param className The class name
-     * @param fieldSpecs The field specs
-     * @param superClass The superclass, if any
+     * @param typeSpecBuilder   The builder for the type spec
+     * @param className         The class name
+     * @param fieldSpecs        The field specs
+     * @param superClass        The superclass, if any
      * @param getSuperFieldName A function to get the field name for a superclass
      */
     public void createWithMethods(
@@ -80,7 +72,7 @@ public class AccessorGenerator {
             Map<VariableElement, FieldSpec> fieldSpecs,
             @Nullable TypeMirror superClass,
             Function<TypeMirror, String> getSuperFieldName) {
-        
+
         fieldSpecs.values().forEach(field -> {
             // Create a string representing the constructor parameters
             String constructorParams = Strings.joinWith(fieldSpecs.values(),

@@ -181,6 +181,18 @@ public interface Result<T> {
     Optional<T> toOptional();
 
     /**
+     * Retrieves the value wrapped in an {@code Optional}, if present.
+     *
+     * @return an {@code Optional} containing the value, or an empty {@code Optional} if no value is present
+     * @apiNote Synonymous with {@link #toOptional()}
+     */
+    @NotNull
+    @Contract(pure = true)
+    default Optional<T> value() {
+        return toOptional();
+    }
+
+    /**
      * If this {@link Result} is {@link Fail}, returns the exception.
      * Otherwise, returns an empty {@link Optional}
      *
@@ -189,6 +201,7 @@ public interface Result<T> {
     @NotNull
     @Contract(pure = true)
     Optional<Exception> error();
+
 
     /**
      * Applies a given function to the {@link Result}, threading through the exception if the {@link Result} is {@link Fail}.

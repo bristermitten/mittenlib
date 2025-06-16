@@ -38,7 +38,7 @@ class PrimitiveTypesDeserializationTest {
                                     public char charValue = 'A';
                                     public byte byteValue = 127;
                                     public short shortValue = 32767;
-                                    
+                                
                                     // Boxed primitive types
                                     public Integer boxedIntValue = 42;
                                     public Long boxedLongValue = 1234567890L;

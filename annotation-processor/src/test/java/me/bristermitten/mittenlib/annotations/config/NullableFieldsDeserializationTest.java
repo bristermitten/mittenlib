@@ -36,20 +36,20 @@ class NullableFieldsDeserializationTest {
                                     // Required fields (not nullable)
                                     public int requiredInt = 42;
                                     public String requiredString = "Required";
-                                    
+                                
                                     // Nullable primitive wrappers
                                     @Nullable public Integer nullableInt = null;
                                     @Nullable public Double nullableDouble = null;
                                     @Nullable public Boolean nullableBoolean = null;
-                                    
+                                
                                     // Nullable objects
                                     @Nullable public String nullableString = null;
                                     @Nullable public List<String> nullableList = null;
                                     @Nullable public Map<String, Integer> nullableMap = null;
-                                    
+                                
                                     // Nullable nested config
                                     @Nullable public NestedConfigDTO nullableNestedConfig = null;
-                                    
+                                
                                     @Config
                                     public static class NestedConfigDTO {
                                         public int value = 100;
