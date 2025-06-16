@@ -76,7 +76,7 @@ public class FileWatcherService {
      * Removes a watcher from the service.
      * Note that the watcher will not be removed from the underlying watch service until the service is restarted -
      * the file will still be watched, but the watcher will not be notified of changes.
-     * If is operation leaves no watchers, the service will be stopped.
+     * If this operation leaves no watchers, the service will be stopped.
      *
      * @param fileWatcher The watcher to remove.
      */
