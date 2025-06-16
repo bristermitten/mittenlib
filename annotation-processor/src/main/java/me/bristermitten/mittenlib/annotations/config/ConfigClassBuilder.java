@@ -88,9 +88,11 @@ public class ConfigClassBuilder {
                 .map(TypeElement.class::cast)
                 .filter(element -> element.getAnnotation(Config.class) != null)
                 .forEach(typeElement -> {
-                    TypeSpec configClass = createConfigClass(typeElement,
-                            elementsFinder.getApplicableVariableElements(typeElement));
-                    configClass = configClass.toBuilder().addModifiers(Modifier.STATIC).build();
+                    final TypeSpec configClass = createConfigClass(typeElement,
+                            elementsFinder.getApplicableVariableElements(typeElement))
+                            .toBuilder()
+                            .addModifiers(Modifier.STATIC)
+                            .build();
                     typeSpecBuilder.addType(configClass);
                 });
     }
