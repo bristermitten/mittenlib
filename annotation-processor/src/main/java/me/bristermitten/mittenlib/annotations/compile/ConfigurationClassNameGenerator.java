@@ -27,7 +27,6 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -126,29 +125,6 @@ public class ConfigurationClassNameGenerator {
             case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
             case ConfigTypeSource.InterfaceConfigTypeSource ignored -> createConfigImplClassName(ast);
         };
-    }
-
-    /**
-     * Attempts to find the configuration class name for a given type mirror.
-     * This method handles declared types and their enclosing types.
-     *
-     * @param mirror The type mirror to find the configuration class name for
-     * @return An Optional containing the configuration class name if the type is declared,
-     *         or empty if the type is not declared
-     */
-    public static @NotNull Optional<ClassName> findConfigClassName(@NotNull TypeMirror mirror) {
-        TypeMirrorWrapper wrap = TypeMirrorWrapper.wrap(mirror);
-        if (!wrap.isDeclared()) {
-            return Optional.empty();
-        }
-        DeclaredType declaredType = wrap.getDeclaredType();
-
-        ClassName nameFor = createConfigImplClassName(ClassName.bestGuess(wrap.getQualifiedName()));
-        return Optional.of(findConfigClassName(declaredType.getEnclosingType())
-                .map(enclosing ->
-                        enclosing.peerClass(nameFor.simpleName())
-                )
-                .orElse(nameFor));
     }
 
     /**

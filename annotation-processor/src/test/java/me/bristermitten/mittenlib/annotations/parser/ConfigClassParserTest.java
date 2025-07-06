@@ -176,6 +176,7 @@ class ConfigClassParserTest {
                 .executeTest();
     }
 
+    @SuppressWarnings("unused")
     @Config
     @PassIn
     private interface TestInterfaceConfig {

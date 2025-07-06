@@ -23,7 +23,7 @@ class FieldNameGeneratorTest {
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO", """
                         package me.bristermitten.mittenlib.tests;
                         import java.util.Map;
-                                                
+
                         import me.bristermitten.mittenlib.config.*;
                         import me.bristermitten.mittenlib.config.names.*;
                         @Config
