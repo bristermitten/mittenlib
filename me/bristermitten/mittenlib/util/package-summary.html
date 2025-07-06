@@ -86,7 +86,7 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab5" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab5', 2)" class="table-tab">Exception Classes</button></div>
 <div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
@@ -115,30 +115,34 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for working with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link"><code>Future</code></a>s and <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a>s</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Null.html" title="class in me.bristermitten.mittenlib.util">Null</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab5"><a href="MultipleFailuresException.html" title="class in me.bristermitten.mittenlib.util">MultipleFailuresException</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab5">
+<div class="block">Exception representing multiple failures that occur simultaneously.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Null.html" title="class in me.bristermitten.mittenlib.util">Null</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for working with nullable values without having to use <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PathUtil.html" title="class in me.bristermitten.mittenlib.util">PathUtil</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PathUtil.html" title="class in me.bristermitten.mittenlib.util">PathUtil</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for working with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a>s</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">A <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> encapsulates a computation that may fail, throwing an exception.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a>&lt;T,<wbr>E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a>&lt;T&gt;</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a>&lt;T,<wbr>E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Strings.html" title="class in me.bristermitten.mittenlib.util">Strings</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a>&lt;T&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Strings.html" title="class in me.bristermitten.mittenlib.util">Strings</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Unit value</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Minecraft versions "enum"</div>
 </div>
 </div>

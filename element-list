@@ -1,12 +1,16 @@
 me.bristermitten.mittenlib
 me.bristermitten.mittenlib.annotation.benchmark
+me.bristermitten.mittenlib.annotations.ast
+me.bristermitten.mittenlib.annotations.compile
 me.bristermitten.mittenlib.annotations.config
 me.bristermitten.mittenlib.annotations.exception
+me.bristermitten.mittenlib.annotations.parser
 me.bristermitten.mittenlib.annotations.util
 me.bristermitten.mittenlib.collections
 me.bristermitten.mittenlib.commands
 me.bristermitten.mittenlib.commands.handlers
 me.bristermitten.mittenlib.config
+me.bristermitten.mittenlib.config.exception
 me.bristermitten.mittenlib.config.generate
 me.bristermitten.mittenlib.config.names
 me.bristermitten.mittenlib.config.paths

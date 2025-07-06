@@ -108,44 +108,38 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;A extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;<br>A</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAnnotation(javax.lang.model.element.Element,java.lang.Class)" class="member-name-link">getAnnotation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;e,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;type)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAnnotation(javax.lang.model.element.Element,java.lang.Class)" class="member-name-link">getAnnotation</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;e,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link"><code>Annotation</code></a> present on an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link"><code>Element</code></a>, if present.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBoxedType(javax.lang.model.type.TypeMirror)" class="member-name-link">getBoxedType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBoxedType(javax.lang.model.type.TypeMirror)" class="member-name-link">getBoxedType</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get a boxed version of a given type, if it is a primitive.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.TypeName</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConfigClassName(javax.lang.model.type.TypeMirror)" class="member-name-link">getConfigClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.TypeName</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConfigClassName(javax.lang.model.type.TypeMirror,javax.lang.model.element.Element)" class="member-name-link">getConfigClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;source)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSafeType(javax.lang.model.type.TypeMirror)" class="member-name-link">getSafeType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSafeType(javax.lang.model.type.TypeMirror)" class="member-name-link">getSafeType</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Get a "safe" version of a type.</div>
+<div class="block">Get a "safe" version of a type, where "safe" refers to being able to use it as the target of a <code>instanceof</code> check without compilation errors
+ This is defined as the boxed type for primitives, the erasure for parameterized types, otherwise simply the type itself
+ Examples:
+ 
+ <code>int -&gt; Integer</code>
+ <code>Map&lt;String, Integer&gt; -&gt; Map</code>
+ <code>String -&gt; String</code>
+ </div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSimpleName(com.squareup.javapoet.TypeName)" class="member-name-link">getSimpleName</a><wbr>(com.squareup.javapoet.TypeName&nbsp;typeMirror)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isConfigType(javax.lang.model.type.TypeMirror)" class="member-name-link">isConfigType</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the simple name of a <code>TypeName</code>, i.e.</div>
+<div class="block">Checks if a type is a config type (annotated with @Config).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.VariableElement)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.Element)" class="member-name-link">isNullable</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Return if a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>VariableElement</code></a> should be considered nullable or not
  Everything is considered non-nullable unless it is specifically annotated as nullable.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.TypeName</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#translateDTOParameters(javax.lang.model.type.TypeMirror)" class="member-name-link">translateDTOParameters</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Recursively turns any DTO types into their non-DTO counterparts,
- i.e.</div>
 </div>
 </div>
 </div>
@@ -167,8 +161,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getSafeType(javax.lang.model.type.TypeMirror)">
 <h3>getSafeType</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></span>&nbsp;<span class="element-name">getSafeType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</span></div>
-<div class="block">Get a "safe" version of a type.
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></span>&nbsp;<span class="element-name">getSafeType</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</span></div>
+<div class="block">Get a "safe" version of a type, where "safe" refers to being able to use it as the target of a <code>instanceof</code> check without compilation errors
  This is defined as the boxed type for primitives, the erasure for parameterized types, otherwise simply the type itself
  Examples:
  <ul>
@@ -181,15 +176,17 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getBoxedType(javax.lang.model.type.TypeMirror)">
 <h3>getBoxedType</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></span>&nbsp;<span class="element-name">getBoxedType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></span>&nbsp;<span class="element-name">getBoxedType</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</span></div>
 <div class="block">Get a boxed version of a given type, if it is a primitive.
  Otherwise, the type is returned unchanged</div>
 </section>
 </li>
 <li>
-<section class="detail" id="isNullable(javax.lang.model.element.VariableElement)">
+<section class="detail" id="isNullable(javax.lang.model.element.Element)">
 <h3>isNullable</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isNullable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isNullable</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</span></div>
 <div class="block">Return if a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>VariableElement</code></a> should be considered nullable or not
  Everything is considered non-nullable unless it is specifically annotated as nullable.
  Any annotation named "Nullable" is supported, i.e. jetbrains or javax</div>
@@ -205,8 +202,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getAnnotation(javax.lang.model.element.Element,java.lang.Class)">
 <h3>getAnnotation</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;A extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;</span>&nbsp;<span class="return-type">A</span>&nbsp;<span class="element-name">getAnnotation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;e,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;type)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;A extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>&gt;</span>&nbsp;<span class="return-type">A</span>&nbsp;<span class="element-name">getAnnotation</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;e,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;A&gt;&nbsp;type)</span></div>
 <div class="block">Gets an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link"><code>Annotation</code></a> present on an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link"><code>Element</code></a>, if present.
  This method is slightly different to <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html#getAnnotation(java.lang.Class)" title="class or interface in javax.lang.model.element" class="external-link"><code>Element.getAnnotation(Class)</code></a>,
  in that it respects the semantics described in <a href="../../config/generate/CascadeToInnerClasses.html" title="annotation interface in me.bristermitten.mittenlib.config.generate"><code>CascadeToInnerClasses</code></a></div>
@@ -222,44 +221,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getConfigClassName(javax.lang.model.type.TypeMirror)">
-<h3>getConfigClassName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">getConfigClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="getConfigClassName(javax.lang.model.type.TypeMirror,javax.lang.model.element.Element)">
-<h3>getConfigClassName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">getConfigClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror,
- @Nullable
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;source)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="translateDTOParameters(javax.lang.model.type.TypeMirror)">
-<h3>translateDTOParameters</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">translateDTOParameters</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
-<div class="block">Recursively turns any DTO types into their non-DTO counterparts,
- i.e. <code>List&lt;BlahDTO&gt; -&gt; List&lt;Blah&gt;</code></div>
+<section class="detail" id="isConfigType(javax.lang.model.type.TypeMirror)">
+<h3>isConfigType</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isConfigType</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
+<div class="block">Checks if a type is a config type (annotated with @Config).</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>mirror</code> - The type to convert</dd>
+<dd><code>mirror</code> - The type to check</dd>
 <dt>Returns:</dt>
-<dd>The converted type</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSimpleName(com.squareup.javapoet.TypeName)">
-<h3>getSimpleName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSimpleName</span><wbr><span class="parameters">(com.squareup.javapoet.TypeName&nbsp;typeMirror)</span></div>
-<div class="block">Gets the simple name of a <code>TypeName</code>, i.e. the name without a package
- For primitives, the unchanged name is returned.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>typeMirror</code> - The type to get the name of</dd>
-<dt>Returns:</dt>
-<dd>The simple name of the type</dd>
+<dd>true if the type is a config type, false otherwise</dd>
 </dl>
 </section>
 </li>

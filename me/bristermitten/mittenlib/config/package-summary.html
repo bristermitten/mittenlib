@@ -79,16 +79,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><a href="../package-summary.html">me.bristermitten.mittenlib</a></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><a href="generate/package-summary.html">me.bristermitten.mittenlib.config.generate</a></div>
+<div class="col-first odd-row-color"><a href="exception/package-summary.html">me.bristermitten.mittenlib.config.exception</a></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><a href="names/package-summary.html">me.bristermitten.mittenlib.config.names</a></div>
+<div class="col-first even-row-color"><a href="generate/package-summary.html">me.bristermitten.mittenlib.config.generate</a></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><a href="paths/package-summary.html">me.bristermitten.mittenlib.config.paths</a></div>
+<div class="col-first odd-row-color"><a href="names/package-summary.html">me.bristermitten.mittenlib.config.names</a></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><a href="provider/package-summary.html">me.bristermitten.mittenlib.config.provider</a></div>
+<div class="col-first even-row-color"><a href="paths/package-summary.html">me.bristermitten.mittenlib.config.paths</a></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><a href="reader/package-summary.html">me.bristermitten.mittenlib.config.reader</a></div>
+<div class="col-first odd-row-color"><a href="provider/package-summary.html">me.bristermitten.mittenlib.config.provider</a></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><a href="reader/package-summary.html">me.bristermitten.mittenlib.config.reader</a></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </div>
 </li>
@@ -105,7 +107,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab6"><a href="Config.html" title="annotation interface in me.bristermitten.mittenlib.config">Config</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab6">
-<div class="block">Marks a type as a <a href="https://github.com/knightzmc/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
+<div class="block">Marks a type as a <a href="https://github.com/bristermitten/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
  that will be processed by the annotation processor, if present.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="ConfigMapLoader.html" title="class in me.bristermitten.mittenlib.config">ConfigMapLoader</a></div>
@@ -116,22 +118,28 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Guice module for config handling</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab6"><a href="ConfigUnion.html" title="annotation interface in me.bristermitten.mittenlib.config">ConfigUnion</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab6">
+<div class="block">Denotes a type as the root of a union</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Represents a loadable configuration which will deserialize to an object of type <a href="Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a></div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Context for deserializing a config, making it easier to pass around</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">A function that deserializes a config, taking a <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config"><code>DeserializationContext</code></a> and returning a <a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> of type <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config"><code>DeserializationFunction</code></a></div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab6"><a href="GeneratedConfig.html" title="annotation interface in me.bristermitten.mittenlib.config">GeneratedConfig</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab6">
+<div class="col-first even-row-color class-summary class-summary-tab6"><a href="GeneratedConfig.html" title="annotation interface in me.bristermitten.mittenlib.config">GeneratedConfig</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab6">
 <div class="block">Marks a class as being generated from a config DTO.</div>
 </div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PluginConfigModule.html" title="class in me.bristermitten.mittenlib.config">PluginConfigModule</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
 <div class="col-first even-row-color class-summary class-summary-tab6"><a href="Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab6">
 <div class="block">Marks a <a href="Config.html" title="annotation interface in me.bristermitten.mittenlib.config"><code>Config</code></a> class as being loaded from a file.</div>

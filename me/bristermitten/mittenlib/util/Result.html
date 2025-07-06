@@ -243,9 +243,14 @@ R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Executes a function with a resource, closing the resource afterwards, and handling any exceptions</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;<a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#void_()" class="member-name-link">void_</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#value()" class="member-name-link">value</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Retrieves the value wrapped in an <code>Optional</code>, if present.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;<a href="Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#void_()" class="member-name-link">void_</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Replaces the value of the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with the <a href="Unit.html" title="class in me.bristermitten.mittenlib.util"><code>Unit</code></a> value.</div>
 </div>
 </div>
@@ -444,6 +449,21 @@ R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 </section>
 </li>
 <li>
+<section class="detail" id="value()">
+<h3>value</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+@Contract(pure=true)
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>&gt;</span>&nbsp;<span class="element-name">value</span>()</div>
+<div class="block">Retrieves the value wrapped in an <code>Optional</code>, if present.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an <code>Optional</code> containing the value, or an empty <code>Optional</code> if no value is present</dd>
+<dt>API Note:</dt>
+<dd>Synonymous with <a href="#toOptional()"><code>toOptional()</code></a></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="error()">
 <h3>error</h3>
 <div class="member-signature"><span class="annotations">@NotNull
@@ -535,7 +555,7 @@ R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list-long">
-<li><a href="#flatMapPure(java.util.function.Function)"><code>for a version that cannot throw checked exceptions</code></a></li>
+<li><a href="#flatMapPure(java.util.function.Function)"><code>a version that cannot throw checked exceptions</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -558,7 +578,7 @@ R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list-long">
-<li><a href="#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)"><code>for a version that can throw checked exceptions</code></a></li>
+<li><a href="#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)"><code>a version that can throw checked exceptions</code></a></li>
 </ul>
 </dd>
 </dl>

@@ -108,8 +108,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a><wbr>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">addWatcher</a><wbr>(<a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a><wbr>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">addWatcher</a><wbr>(@NotNull <a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Add a watcher to the service.</div>
 </div>
@@ -117,11 +117,11 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isWatching()" class="member-name-link">isWatching</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">removeWatcher</a><wbr>(<a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">removeWatcher</a><wbr>(@NotNull <a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes a watcher from the service.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a><wbr>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a><wbr>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#startWatching()" class="member-name-link">startWatching</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Start watching for file changes.</div>
@@ -151,7 +151,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="addWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)">
 <h3>addWatcher</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</span>&nbsp;<span class="element-name">addWatcher</span><wbr><span class="parameters">(<a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</span></div>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</span>&nbsp;<span class="element-name">addWatcher</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</span></div>
 <div class="block">Add a watcher to the service.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -165,11 +167,12 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="removeWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)">
 <h3>removeWatcher</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeWatcher</span><wbr><span class="parameters">(<a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeWatcher</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</span></div>
 <div class="block">Removes a watcher from the service.
  Note that the watcher will not be removed from the underlying watch service until the service is restarted -
  the file will still be watched, but the watcher will not be notified of changes.
- If is operation leaves no watchers, the service will be stopped.</div>
+ If this operation leaves no watchers, the service will be stopped.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>fileWatcher</code> - The watcher to remove.</dd>
@@ -179,7 +182,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="startWatching()">
 <h3>startWatching</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</span>&nbsp;<span class="element-name">startWatching</span>()</div>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html" title="class or interface in java.util.concurrent" class="external-link">Future</a>&lt;<a href="../util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a>&gt;</span>&nbsp;<span class="element-name">startWatching</span>()</div>
 <div class="block">Start watching for file changes.</div>
 <dl class="notes">
 <dt>Returns:</dt>

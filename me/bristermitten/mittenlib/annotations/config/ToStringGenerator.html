@@ -92,6 +92,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ToStringGenerator</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Generates toString methods for configuration classes.
+ This class creates a standard toString implementation that includes all properties
+ of a configuration class in a readable format.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -119,10 +122,12 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.MethodSpec</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generateToString(com.squareup.javapoet.TypeSpec.Builder,com.squareup.javapoet.ClassName)" class="member-name-link">generateToString</a><wbr>(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull com.squareup.javapoet.MethodSpec</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generateToString(java.util.List,com.squareup.javapoet.ClassName)" class="member-name-link">generateToString</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties,
  com.squareup.javapoet.ClassName&nbsp;className)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Generates a toString method for a configuration class.</div>
+</div>
 </div>
 </div>
 </div>
@@ -143,7 +148,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;()">
 <h3>ToStringGenerator</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ToStringGenerator</span>()</div>
+<div class="member-signature"><span class="annotations">@Inject
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">ToStringGenerator</span>()</div>
 </section>
 </li>
 </ul>
@@ -155,10 +161,22 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="generateToString(com.squareup.javapoet.TypeSpec.Builder,com.squareup.javapoet.ClassName)">
+<section class="detail" id="generateToString(java.util.List,com.squareup.javapoet.ClassName)">
 <h3>generateToString</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">generateToString</span><wbr><span class="parameters">(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">generateToString</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties,
  com.squareup.javapoet.ClassName&nbsp;className)</span></div>
+<div class="block">Generates a toString method for a configuration class.
+ The generated method returns a string representation of the class in the format:
+ "ClassName{property1=value1, property2=value2, ...}"</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>properties</code> - The list of properties to include in the toString method</dd>
+<dd><code>className</code> - The name of the class for which the toString method is being generated</dd>
+<dt>Returns:</dt>
+<dd>A MethodSpec representing the generated toString method</dd>
+</dl>
 </section>
 </li>
 </ul>
