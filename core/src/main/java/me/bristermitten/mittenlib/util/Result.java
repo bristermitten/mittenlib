@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -181,6 +182,18 @@ public interface Result<T> {
     Optional<T> toOptional();
 
     /**
+     * Retrieves the value wrapped in an {@code Optional}, if present.
+     *
+     * @return an {@code Optional} containing the value, or an empty {@code Optional} if no value is present
+     * @apiNote Synonymous with {@link #toOptional()}
+     */
+    @NotNull
+    @Contract(pure = true)
+    default Optional<T> value() {
+        return toOptional();
+    }
+
+    /**
      * If this {@link Result} is {@link Fail}, returns the exception.
      * Otherwise, returns an empty {@link Optional}
      *
@@ -189,6 +202,7 @@ public interface Result<T> {
     @NotNull
     @Contract(pure = true)
     Optional<Exception> error();
+
 
     /**
      * Applies a given function to the {@link Result}, threading through the exception if the {@link Result} is {@link Fail}.
@@ -247,7 +261,7 @@ public interface Result<T> {
      * @param function The function to apply
      * @param <R>      The type of the result of the function
      * @return A new {@link Result} containing the result of the function or the exception from this {@link Result}
-     * @see #flatMapPure(Function) for a version that cannot throw checked exceptions
+     * @see #flatMapPure(Function) a version that cannot throw checked exceptions
      */
     @Contract(pure = true)
     @NotNull <R> Result<R> flatMap(SafeFunction<T, Result<R>> function);
@@ -258,7 +272,7 @@ public interface Result<T> {
      * @param function The function to apply
      * @param <R>      The type of the result of the function
      * @return A new {@link Result} containing the result of the function or the exception from this {@link Result}
-     * @see #flatMap(SafeFunction) for a version that can throw checked exceptions
+     * @see #flatMap(SafeFunction) a version that can throw checked exceptions
      */
     @Contract(pure = true)
     @NotNull
@@ -413,8 +427,8 @@ public interface Result<T> {
         @Override
         public String toString() {
             return "Fail{" +
-                    "exception=" + exception +
-                    '}';
+                   "exception=" + exception +
+                   '}';
         }
     }
 
@@ -494,8 +508,8 @@ public interface Result<T> {
         @Override
         public String toString() {
             return "Ok{" +
-                    "value=" + value +
-                    '}';
+                   "value=" + value +
+                   '}';
         }
     }
 }

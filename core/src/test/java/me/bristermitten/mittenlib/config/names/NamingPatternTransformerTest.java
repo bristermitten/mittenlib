@@ -4,56 +4,55 @@ import org.junit.jupiter.api.Test;
 
 import static me.bristermitten.mittenlib.config.names.NamingPatternTransformer.format;
 import static me.bristermitten.mittenlib.config.names.NamingPatterns.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class NamingPatternTransformerTest {
 
     @Test
     void assertThat_defaultPattern_isIdentity() {
-        assertEquals("", format("", NamingPatterns.DEFAULT));
-        assertEquals("a", format("a", NamingPatterns.DEFAULT));
-        assertEquals("abcde", format("abcde", NamingPatterns.DEFAULT));
+        assertThat(format("", DEFAULT)).isEqualTo("");
+        assertThat(format("hello", DEFAULT)).isEqualTo("hello");
     }
 
     @Test
     void assertThat_lowerCamelCase_isIdentity() {
-        assertEquals("", format("", LOWER_CAMEL_CASE));
-        assertEquals("helloWorld", format("helloWorld", LOWER_CAMEL_CASE));
-        assertEquals("hello", format("hello", LOWER_CAMEL_CASE));
+        assertThat(format("", LOWER_CAMEL_CASE)).isEqualTo("");
+        assertThat(format("helloWorld", LOWER_CAMEL_CASE)).isEqualTo("helloWorld");
+        assertThat(format("hello", LOWER_CAMEL_CASE)).isEqualTo("hello");
     }
 
     @Test
     void assertThat_UpperCamelCase_works() {
-        assertEquals("", format("", UPPER_CAMEL_CASE));
-        assertEquals("HelloWorld", format("helloWorld", UPPER_CAMEL_CASE));
-        assertEquals("Hello", format("hello", UPPER_CAMEL_CASE));
+        assertThat(format("", UPPER_CAMEL_CASE)).isEqualTo("");
+        assertThat(format("helloWorld", UPPER_CAMEL_CASE)).isEqualTo("HelloWorld");
+        assertThat(format("hello", UPPER_CAMEL_CASE)).isEqualTo("Hello");
     }
 
     @Test
     void assertThat_lowerSnakeCase_works() {
-        assertEquals("", format("", LOWER_SNAKE_CASE));
-        assertEquals("hello_world", format("helloWorld", LOWER_SNAKE_CASE));
-        assertEquals("hello", format("hello", LOWER_SNAKE_CASE));
+        assertThat(format("", LOWER_SNAKE_CASE)).isEqualTo("");
+        assertThat(format("helloWorld", LOWER_SNAKE_CASE)).isEqualTo("hello_world");
+        assertThat(format("hello", LOWER_SNAKE_CASE)).isEqualTo("hello");
     }
 
     @Test
     void assertThat_upperSnakeCase_works() {
-        assertEquals("", format("", UPPER_SNAKE_CASE));
-        assertEquals("Hello_World", format("helloWorld", UPPER_SNAKE_CASE));
-        assertEquals("Hello", format("hello", UPPER_SNAKE_CASE));
+        assertThat(format("", UPPER_SNAKE_CASE)).isEqualTo("");
+        assertThat(format("helloWorld", UPPER_SNAKE_CASE)).isEqualTo("Hello_World");
+        assertThat(format("hello", UPPER_SNAKE_CASE)).isEqualTo("Hello");
     }
 
     @Test
     void assertThat_lowerKebabCase_works() {
-        assertEquals("", format("", LOWER_KEBAB_CASE));
-        assertEquals("hello-world", format("helloWorld", LOWER_KEBAB_CASE));
-        assertEquals("hello", format("hello", LOWER_KEBAB_CASE));
+        assertThat(format("", LOWER_KEBAB_CASE)).isEqualTo("");
+        assertThat(format("helloWorld", LOWER_KEBAB_CASE)).isEqualTo("hello-world");
+        assertThat(format("hello", LOWER_KEBAB_CASE)).isEqualTo("hello");
     }
 
     @Test
     void assertThat_upperKebabCase_works() {
-        assertEquals("", format("", UPPER_KEBAB_CASE));
-        assertEquals("Hello-World", format("helloWorld", UPPER_KEBAB_CASE));
-        assertEquals("Hello", format("hello", UPPER_KEBAB_CASE));
+        assertThat(format("", UPPER_KEBAB_CASE)).isEqualTo("");
+        assertThat(format("helloWorld", UPPER_KEBAB_CASE)).isEqualTo("Hello-World");
+        assertThat(format("hello", UPPER_KEBAB_CASE)).isEqualTo("Hello");
     }
 }

@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config;
 
+import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -55,16 +56,16 @@ public class ConfigMapLoader {
     }
 
     /**
-     * Creates an exception to use when a value cannot be deserialized as it is not found
+     * Creates an exception to use when a value cannot be deserialized as it is not found (i.e. is null)
      *
      * @param fieldName      the name of the field that is trying to be deserialized
      * @param typeName       the name of the type that is trying to be deserialized
      * @param enclosingClass the name of the enclosing class
-     * @param value          the value that was found instead of the expected value
      * @return the exception to throw
+     * @deprecated Use {@link ConfigLoadingErrors#notFoundException(String, String, Class, String)}
      */
-    public static RuntimeException throwNotFound(String fieldName, String typeName, Class<?> enclosingClass, Object value) {
-        return new IllegalArgumentException(
-                String.format("Cannot deserialize complex type %s for field %s in class %s, received = %s", typeName, fieldName, enclosingClass, value));
+    @Deprecated
+    public static RuntimeException throwNotFound(String fieldName, String typeName, Class<?> enclosingClass, String keyName) {
+        return ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName);
     }
 }

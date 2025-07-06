@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
  * If this annotation is present, the {@link #value()} will be used instead of the generated name from the
  * {@link NamingPattern}.
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface ConfigName {
     /**
      * @return The expected name of the field / key in the config file

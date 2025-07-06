@@ -61,9 +61,9 @@ public class ConfigBenchmark {
 
     @State(Scope.Benchmark)
     public static class BenchState {
-        public Gson gson = new Gson();
-        public Yaml yaml = new Yaml();
-        public ObjectMapper jackson = new ObjectMapper();
+        public final Gson gson = new Gson();
+        public final Yaml yaml = new Yaml();
+        public final ObjectMapper jackson = new ObjectMapper();
         public ConfigProvider<TestData> configProviderJson;
         public ConfigProvider<TestData> configProviderYaml;
         private String yamlData;

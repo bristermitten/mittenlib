@@ -11,7 +11,7 @@ import javax.tools.JavaFileObject;
 import static com.google.testing.compile.Compiler.javac;
 import static com.google.testing.compile.JavaFileObjectSubject.assertThat;
 
-class FieldClassNameGeneratorTest {
+class FieldNameGeneratorTest {
 
     private JavaFileObject compileField(String source) {
         return compileField(source, null);
@@ -22,9 +22,8 @@ class FieldClassNameGeneratorTest {
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                                
                         import java.util.Map;
-                                                
+
                         import me.bristermitten.mittenlib.config.*;
                         import me.bristermitten.mittenlib.config.names.*;
                         @Config
@@ -43,7 +42,7 @@ class FieldClassNameGeneratorTest {
     private void assertConfigKeyUsed(JavaFileObject source, String key) {
         assertThat(source)
                 .contentsAsUtf8String()
-                .contains("$data.getOrDefault(\"%s\"".formatted(key));
+                .contains("$data.get(\"%s\"".formatted(key));
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.google.inject.util.Modules;
 import me.bristermitten.mittenlib.collections.Sets;
 import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
+import me.bristermitten.mittenlib.config.PluginConfigModule;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.lang.LangModule;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
@@ -41,13 +42,14 @@ public class MittenLib<T extends Plugin> {
     }
 
     public MittenLib<T> addConfigModules(Set<Configuration<?>> configs) {
-        return addModule(new ConfigModule(configs));
+        return addModule(
+                Modules.override(new ConfigModule(configs))
+                .with(new PluginConfigModule())
+        );
     }
 
     public MittenLib<T> addConfigModules(Configuration<?>... configs) {
-        return addConfigModules(
-                new HashSet<>(Arrays.asList(configs))
-        );
+        return addConfigModules(new HashSet<>(Arrays.asList(configs)));
     }
 
     public MittenLib<T> addModule(Module module) {
@@ -69,8 +71,7 @@ public class MittenLib<T extends Plugin> {
     private void addModule0(Module module) {
         Class<? extends Module> moduleClass = module.getClass();
         boolean superClass = false;
-        for (Map.Entry<Class<? extends Module>, Module> entry :
-                new HashSet<>(modules.entrySet())) {
+        for (Map.Entry<Class<? extends Module>, Module> entry : new HashSet<>(modules.entrySet())) {
             if (entry.getKey().isAssignableFrom(moduleClass)) {
                 final Module overriding = Modules.override(entry.getValue()).with(module);
                 modules.put(entry.getKey(), overriding);

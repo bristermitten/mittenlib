@@ -20,7 +20,7 @@ class ToStringGeneratorTest {
                                 import me.bristermitten.mittenlib.config.*;import me.bristermitten.mittenlib.config.generate.GenerateToString;
                                 @Config
                                 @GenerateToString
-                                public final class ToStringConfigDTO {
+                                public class ToStringConfigDTO {
                                     int x = 3;
                                     int y;
                                     String z;
@@ -47,16 +47,18 @@ class ToStringGeneratorTest {
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.ToStringConfigDTO",
                         """
                                 package me.bristermitten.mittenlib.tests;
-                                import java.util.Map;
-                                import me.bristermitten.mittenlib.config.*;import me.bristermitten.mittenlib.config.generate.GenerateToString;
+                                
+                                import me.bristermitten.mittenlib.config.Config;
+                                import me.bristermitten.mittenlib.config.generate.GenerateToString;
+                                
                                 @Config
                                 @GenerateToString
-                                public final class ToStringConfigDTO {
+                                public class ToStringConfigDTO {
                                     int x = 3;
-                                    
+                                
                                     @Config
                                     public static class SubclassDTO {
-                                      int y = 4;
+                                        int y = 4;
                                     }
                                 }
                                 """));

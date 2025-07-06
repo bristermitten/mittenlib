@@ -19,7 +19,7 @@ class OverriddenNameGeneratorTest {
                                 import java.util.Map;
                                 import me.bristermitten.mittenlib.config.*;
                                 @Config
-                                public final class OverriddenNameDTO {
+                                public class OverriddenNameDTO {
                                     public int clone;
                                 }
                                 """));

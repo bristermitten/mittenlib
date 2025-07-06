@@ -1,7 +1,8 @@
 package me.bristermitten.mittenlib.annotations.exception;
 
-import me.bristermitten.mittenlib.annotations.config.GeneratedTypeCache;
+import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.util.Stringify;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
@@ -35,7 +36,7 @@ public class DTOReferenceException extends RuntimeException {
     }
 
     @Override
-    public String getMessage() {
+    public @NotNull String getMessage() {
         String typesReplaceWith;
         if (replaceWith != null) {
             typesReplaceWith = replaceWith.getName();

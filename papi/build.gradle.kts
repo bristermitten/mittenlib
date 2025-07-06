@@ -4,5 +4,5 @@ repositories {
 
 dependencies {
     implementation(project(":core"))
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly(libs.placeholderapi)
 }

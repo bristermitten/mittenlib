@@ -1,19 +1,15 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.testing.compile.Compilation;
-import com.google.testing.compile.JavaFileObjects;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import io.toolisticon.cute.Cute;
 import me.bristermitten.mittenlib.config.Config;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.Compiler.javac;
 
 class BigBenchmarkGeneratorTest {
     private static final String ALPHABET =
@@ -40,12 +36,14 @@ class BigBenchmarkGeneratorTest {
                 .forEach(name -> builder.addField(TypeName.INT, name));
 
         TypeSpec build = builder.build();
-        var javaObject = JavaFileObjects.forSourceString(build.name, build.toString());
 
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(javaObject);
-
-        assertThat(compilation).succeededWithoutWarnings();
+        Cute.blackBoxTest()
+                .given()
+                .processor(ConfigProcessor.class)
+                .andSourceFile(build.name, build.toString())
+                .whenCompiled()
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 }
