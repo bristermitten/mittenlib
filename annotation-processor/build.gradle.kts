@@ -6,7 +6,9 @@ java {
 dependencies {
 	implementation(project(":core"))
 	implementation(libs.javapoet)
+	implementation(libs.aptk)
 	implementation(libs.bundles.autoservice)
+	implementation(libs.chalk)
 	@Suppress(
 		"GradlePackageUpdate",
 		"RedundantSuppression"
@@ -18,6 +20,8 @@ dependencies {
 	implementation(libs.jetbrains.annotations)
 	annotationProcessor(libs.auto.service)
 
+	testImplementation(libs.cute)
 	testImplementation(libs.mockito.core)
 	testImplementation(libs.compile.testing)
+	testAnnotationProcessor(project(":annotation-processor"))
 }

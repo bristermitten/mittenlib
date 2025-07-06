@@ -34,7 +34,7 @@ public class MultipleFailuresException extends RuntimeException {
         StringBuilder message = new StringBuilder(super.getMessage());
         message.append(":\n");
         for (int i = 0; i < failures.size(); i++) {
-            message.append(String.format("Failure %d: %s\n", i + 1, failures.get(i).getMessage()));
+            message.append(String.format("%d: %s\n", i + 1, failures.get(i).getMessage()));
         }
         return message.toString();
     }

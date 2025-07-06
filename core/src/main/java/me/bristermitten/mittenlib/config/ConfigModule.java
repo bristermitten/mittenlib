@@ -3,10 +3,7 @@ package me.bristermitten.mittenlib.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
-import me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy;
-import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
-import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
-import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
+import me.bristermitten.mittenlib.config.paths.*;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.DelegatingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
@@ -52,8 +49,8 @@ public class ConfigModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ObjectLoader.class).to(SearchingObjectLoader.class);
-        bind(ConfigInitializationStrategy.class).to(PluginConfigInitializationStrategy.class);
-        bind(ConfigPathResolver.class).to(PluginConfigPathResolver.class);
+        bind(ConfigInitializationStrategy.class).to(NoOpConfigInitializationStrategy.class);
+        bind(ConfigPathResolver.class).to(JarResourcesConfigPathResolver.class);
         bind(ConfigProviderFactory.class).to(SimpleConfigProviderFactory.class);
         bind(ConfigProviderImprover.class).to(SimpleConfigProviderImprover.class);
 

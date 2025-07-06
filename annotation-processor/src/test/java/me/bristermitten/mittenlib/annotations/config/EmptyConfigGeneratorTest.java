@@ -19,7 +19,7 @@ class EmptyConfigGeneratorTest {
                                 import java.util.Map;
                                 import me.bristermitten.mittenlib.config.*;
                                 @Config
-                                public final class EmptyConfigDTO {
+                                public class EmptyConfigDTO {
                                 }
                                 """));
 

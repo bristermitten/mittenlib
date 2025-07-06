@@ -65,6 +65,6 @@ class MissingRequiredFieldsTest {
         assertThat(compilation)
                 .generatedSourceFile("me.bristermitten.mittenlib.tests.RequiredFieldsConfig")
                 .contentsAsUtf8String()
-                .contains("ConfigMapLoader.throwNotFound");
+                .contains("ConfigLoadingErrors.notFoundException(\"requiredInt\"");
     }
 }

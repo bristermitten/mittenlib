@@ -1,0 +1,22 @@
+package me.bristermitten.mittenlib.annotations.ast;
+
+import me.bristermitten.mittenlib.config.names.ConfigName;
+import me.bristermitten.mittenlib.config.names.NamingPattern;
+import org.jetbrains.annotations.Nullable;
+
+public sealed interface ASTSettings {
+    @Nullable NamingPattern namingPattern();
+
+    record ConfigASTSettings(
+            @Nullable NamingPattern namingPattern,
+            boolean generateToString
+    ) implements ASTSettings {
+    }
+
+    record PropertyASTSettings(
+            @Nullable NamingPattern namingPattern,
+            @Nullable ConfigName configName,
+            boolean isNullable
+    ) implements ASTSettings {
+    }
+}

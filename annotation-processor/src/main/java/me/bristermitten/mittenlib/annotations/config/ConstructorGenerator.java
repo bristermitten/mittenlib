@@ -24,15 +24,17 @@ public class ConstructorGenerator {
     private final ElementsFinder elementsFinder;
     private final Types types;
     private final TypesUtil typesUtil;
+    private final ConfigurationClassNameGenerator classNameGenerator;
 
     @Inject
     public ConstructorGenerator(
             ElementsFinder elementsFinder,
             Types types,
-            TypesUtil typesUtil) {
+            TypesUtil typesUtil, ConfigurationClassNameGenerator classNameGenerator) {
         this.elementsFinder = elementsFinder;
         this.types = types;
         this.typesUtil = typesUtil;
+        this.classNameGenerator = classNameGenerator;
     }
 
     /**
@@ -47,6 +49,7 @@ public class ConstructorGenerator {
      * @param getFieldAccessorName A function to get the accessor name for a field
      */
     public void addAllArgsConstructor(
+
             List<VariableElement> variableElements,
             Collection<FieldSpec> fieldSpecs,
             TypeSpec.Builder typeSpecBuilder,
@@ -113,7 +116,7 @@ public class ConstructorGenerator {
      * @return The field name
      */
     public String getSuperFieldName(TypeMirror superClass) {
-        var configName = typesUtil.getConfigClassName(superClass);
+        var configName = classNameGenerator.getConfigClassName(superClass);
         return "parent" + Strings.capitalize(typesUtil.getSimpleName(configName));
     }
 }

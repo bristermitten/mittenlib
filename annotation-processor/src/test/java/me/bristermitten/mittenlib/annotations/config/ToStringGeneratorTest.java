@@ -20,7 +20,7 @@ class ToStringGeneratorTest {
                                 import me.bristermitten.mittenlib.config.*;import me.bristermitten.mittenlib.config.generate.GenerateToString;
                                 @Config
                                 @GenerateToString
-                                public final class ToStringConfigDTO {
+                                public class ToStringConfigDTO {
                                     int x = 3;
                                     int y;
                                     String z;
@@ -51,7 +51,7 @@ class ToStringGeneratorTest {
                                 import me.bristermitten.mittenlib.config.*;import me.bristermitten.mittenlib.config.generate.GenerateToString;
                                 @Config
                                 @GenerateToString
-                                public final class ToStringConfigDTO {
+                                public class ToStringConfigDTO {
                                     int x = 3;
                                     
                                     @Config

@@ -1,0 +1,11 @@
+age: 3
+thing-name: a
+children:
+  - age: 4
+    thing-name: b
+    children:
+      - age: 5
+        thing-name: c
+        children: [ ]
+child:
+  id: pee

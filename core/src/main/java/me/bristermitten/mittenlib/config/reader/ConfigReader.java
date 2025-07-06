@@ -4,7 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.util.Result;
-import me.bristermitten.mittenlib.util.lambda.SafeFunction;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ public class ConfigReader {
      * @param <T>                 the type to map to
      * @return the result of the mapping
      */
-    public <T> Result<T> load(Class<T> type, Path source, @Nullable DeserializationFunction<T> deserializeFunction) {
+    public <T> Result<? extends T> load(Class<T> type, Path source, @Nullable DeserializationFunction<T> deserializeFunction) {
         return read(loader.load(source), deserializeFunction, type);
     }
 
@@ -49,7 +49,7 @@ public class ConfigReader {
      * @param <T>                 the type to map to
      * @return the result of the mapping
      */
-    public <T> Result<T> load(Class<T> type, String source, @Nullable DeserializationFunction<T> deserializeFunction) {
+    public <T> Result<? extends T> load(Class<T> type, String source, @Nullable DeserializationFunction<T> deserializeFunction) {
         return read(loader.load(source), deserializeFunction, type);
     }
 
@@ -62,11 +62,11 @@ public class ConfigReader {
      * @param <T>                 the type to map to
      * @return the result of the mapping
      */
-    public <T> Result<T> load(Class<T> type, Reader source, @Nullable DeserializationFunction<T> deserializeFunction) {
+    public <T> Result<? extends T> load(Class<T> type, Reader source, @Nullable DeserializationFunction<T> deserializeFunction) {
         return read(loader.load(source), deserializeFunction, type);
     }
 
-    private <T> Result<T> read(Result<Map<String, Object>> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type) {
+    private <T> Result<T> read(Result<@NotNull Map<String, Object>> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type) {
         final Function<DeserializationContext, Result<T>> mappingFunction =
                 deserializeFunction == null
                         ? ctx -> mapper.map(ctx.getData(), TypeToken.get(type))
@@ -74,7 +74,7 @@ public class ConfigReader {
 
         return rawData
                 .map(data -> new DeserializationContext(mapper, data))
-                .flatMap(SafeFunction.of(mappingFunction));
+                .flatMap(mappingFunction::apply);
     }
 
     /**

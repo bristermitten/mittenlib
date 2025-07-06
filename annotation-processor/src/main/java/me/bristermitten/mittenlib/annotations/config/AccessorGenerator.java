@@ -1,6 +1,9 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.wrapper.AnnotationMirrorWrapper;
+import me.bristermitten.mittenlib.annotations.util.PrivateAnnotations;
+import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
@@ -8,9 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -54,6 +55,34 @@ public class AccessorGenerator {
 
         builder.addAnnotation(AnnotationSpec.builder(Contract.class)
                 .addMember("pure", CodeBlock.of("true")).build());
+        typeSpecBuilder.addMethod(builder.build());
+    }
+
+    public void createGetterMethodOverriding(TypeSpec.Builder typeSpecBuilder, ExecutableElement overriding, FieldSpec fromField) {
+        var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .returns(fromField.type)
+                .addStatement("return " + fromField.name)
+                .addAnnotation(Override.class);
+
+        for (AnnotationMirror annotationMirror : overriding.getAnnotationMirrors()) {
+            if (PrivateAnnotations.isPrivate(AnnotationMirrorWrapper.wrap(annotationMirror)
+                    .asElement()
+                    .getQualifiedName())) {
+                continue;
+            }
+
+
+            builder.addAnnotation(AnnotationSpec.get(annotationMirror));
+        }
+        if (typesUtil.isNullable(overriding)) {
+            TypeSpecUtil.methodAddAnnotation(builder, Nullable.class);
+        } else {
+            TypeSpecUtil.methodAddAnnotation(builder, NotNull.class);
+        }
+
+        TypeSpecUtil.methodAddAnnotation(builder, Contract.class,
+                b -> b.addMember("pure", CodeBlock.of("true")));
         typeSpecBuilder.addMethod(builder.build());
     }
 

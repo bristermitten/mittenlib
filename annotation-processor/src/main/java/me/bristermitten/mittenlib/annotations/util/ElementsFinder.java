@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import io.toolisticon.aptk.tools.TypeMirrorWrapper;
+
 import javax.inject.Inject;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
@@ -67,5 +69,16 @@ public class ElementsFinder {
                 .toList();
     }
 
+
+    public List<ExecutableElement> getPropertyMethods(TypeElement rootElement) {
+        return elements.getAllMembers(rootElement).stream()
+                .filter(element -> element.getKind() == ElementKind.METHOD)
+                .map(ExecutableElement.class::cast)
+                .filter(method -> method.getParameters().isEmpty()) // Only getters
+                // remove java.util.Object methods
+                .filter(method -> !TypeMirrorWrapper.wrap
+                        (method.getEnclosingElement().asType()).getQualifiedName().equals("java.lang.Object"))
+                .toList();
+    }
 
 }

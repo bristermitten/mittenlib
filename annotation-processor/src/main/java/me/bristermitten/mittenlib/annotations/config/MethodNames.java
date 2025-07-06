@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.inject.Singleton;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 
 import javax.inject.Inject;
@@ -26,7 +27,14 @@ public class MethodNames {
     public String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
         return safeNameCache.computeIfAbsent(variableElement,
                 elem -> safeMethodName0(elem, enclosingClass));
+    }
 
+    public String safeMethodName(Property property) {
+        return switch (property.source()) {
+            case Property.PropertySource.FieldSource(var field) ->
+                    safeMethodName(field, (TypeElement) field.getEnclosingElement());
+            case Property.PropertySource.MethodSource(var method) -> method.getSimpleName().toString();
+        };
     }
 
     private String safeMethodName0(VariableElement variableElement, TypeElement enclosingClass) {

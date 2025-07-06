@@ -39,24 +39,33 @@ public class CollectionsUtils {
      * @return a {@link Result} containing the deserialized list, or a {@link Result#fail(Exception)} if deserialization failed
      */
     public static <T> Result<List<T>> deserializeList(Object rawData, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
+
+        try {
+            // gamble: first we try a blind cast and hope for the best
+            //noinspection unchecked
+           return deserialiseListFrom((List<Map<String, Object>>) rawData, baseContext, deserializationFunction);
+        } catch (ClassCastException ignore) {
+        }
+        // fall back to gson for a more informative error message
         Result<List<Map<String, Object>>> rawListRes = baseContext.getMapper().map(rawData, LIST_MAP_STRING_OBJECT_TOKEN);
-        return rawListRes.flatMap(rawList -> {
-            // Apply the deserialization function to each element of the list, flattening the result
-            final List<T> res = new ArrayList<>();
-            final List<Throwable> errors = new ArrayList<>();
+        return rawListRes.flatMap(f -> deserialiseListFrom(f, baseContext, deserializationFunction));
+    }
 
-            for (Map<String, Object> map : rawList) {
-                Result<T> deserialised = deserializationFunction.apply(baseContext.withData(map));
-                deserialised.error().ifPresent(errors::add);
-                deserialised.value().ifPresent(res::add);
-            }
-            if (!errors.isEmpty()) {
-                return Result.fail(new MultipleFailuresException("Failed to deserialize list", errors));
-            }
+    private static <T> Result<List<T>> deserialiseListFrom(List<Map<String, Object>> rawList, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
+        // Apply the deserialization function to each element of the list, flattening the result
+        final List<T> res = new ArrayList<>();
+        final List<Throwable> errors = new ArrayList<>();
 
-            return Result.ok(res);
-        });
+        for (Map<String, Object> map : rawList) {
+            Result<T> deserialised = deserializationFunction.apply(baseContext.withData(map));
+            deserialised.error().ifPresent(errors::add);
+            deserialised.value().ifPresent(res::add);
+        }
+        if (!errors.isEmpty()) {
+            return Result.fail(new MultipleFailuresException("Failed to deserialize list", errors));
+        }
 
+        return Result.ok(res);
     }
 
     /**
@@ -97,8 +106,7 @@ public class CollectionsUtils {
     /**
      * A custom implementation of {@link ParameterizedType} that allows for defining a parameterized type at runtime.
      * This class represents a parameterized type with a raw type and its actual type arguments.
-     * For example, we can use this to represent a type like `Map<String, List<MyType>>`
-     * dynamically using {@code new GenericParameterizedType(Map.class, String.class, new GenericParameterizedType(List.class, MyType.class))}
+     * For example, we can use this to represent a type like {@code Map<String, List<MyType>>} dynamically using {@code new GenericParameterizedType(Map.class, String.class, new GenericParameterizedType(List.class, MyType.class))}
      */
     static class GenericParameterizedType implements ParameterizedType {
         private @NotNull

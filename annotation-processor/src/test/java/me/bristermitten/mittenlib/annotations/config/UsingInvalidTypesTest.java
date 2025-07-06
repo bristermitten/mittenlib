@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.Compiler.javac;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UsingInvalidTypesTest {
 
@@ -23,7 +22,7 @@ class UsingInvalidTypesTest {
                         import java.util.Map;
                         import me.bristermitten.mittenlib.config.*;
                         @Config
-                        public final class OverriddenNameDTO {
+                        public class OverriddenNameDTO {
                             public int clone;
                         }
                         """);
@@ -33,13 +32,15 @@ class UsingInvalidTypesTest {
                         import java.util.Map;
                         import me.bristermitten.mittenlib.config.*;
                         @Config
-                        public final class OtherDTO {
+                        public class OtherDTO {
                             public me.bristermitten.mittenlib.tests.OverriddenName fail;
                         }
                         """);
 
-        var exception = assertThrows(RuntimeException.class, () -> compilation.compile(source1, source2));
-        assertTrue(exception.getCause() instanceof DTOReferenceException);
+
+        assertThatThrownBy(
+                () -> compilation.compile(source1, source2)
+        ).hasCauseInstanceOf(DTOReferenceException.class);
     }
 
     @Test
@@ -53,12 +54,14 @@ class UsingInvalidTypesTest {
                         import java.util.Map;
                         import me.bristermitten.mittenlib.config.*;
                         @Config
-                        public final class OverriddenNameDTO {
-                            public Blushiwudhqiuhqi what;
+                        public class OverriddenNameDTO {
+                            public DefinitelyAnInvalidNameIHope what;
                         }
                         """);
 
-        var exception = assertThrows(RuntimeException.class, () -> compilation.compile(source1));
-        assertTrue(exception.getCause() instanceof DTOReferenceException);
+        assertThatThrownBy(
+                () -> compilation.compile(source1)
+        ).hasCauseInstanceOf(DTOReferenceException.class)
+                .hasMessageContaining("DefinitelyAnInvalidNameIHope");
     }
 }

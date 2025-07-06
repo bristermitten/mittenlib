@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a type as a <a href="https://github.com/knightzmc/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
+ * Marks a type as a <a href="https://github.com/bristermitten/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
  * that will be processed by the annotation processor, if present.
  * Without the annotation processor, this annotation has no effect.
  */

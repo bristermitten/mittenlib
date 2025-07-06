@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.names.ConfigName;
@@ -49,5 +50,23 @@ public class FieldClassNameGenerator {
             );
         }
         return element.getSimpleName().toString();
+    }
+
+    public String getConfigFieldName(@NotNull Property property) {
+        ConfigName configName = property.settings().configName();
+
+        if (configName != null) {
+            return configName.value();
+        }
+
+        NamingPattern namingPattern = property.settings().namingPattern();
+
+
+        if (namingPattern != null) {
+            return NamingPatternTransformer.format(
+                    property.name(), namingPattern.value()
+            );
+        }
+        return property.name();
     }
 }

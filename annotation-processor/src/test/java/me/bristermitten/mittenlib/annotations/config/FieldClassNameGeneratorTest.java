@@ -43,7 +43,7 @@ class FieldClassNameGeneratorTest {
     private void assertConfigKeyUsed(JavaFileObject source, String key) {
         assertThat(source)
                 .contentsAsUtf8String()
-                .contains("$data.getOrDefault(\"%s\"".formatted(key));
+                .contains("$data.get(\"%s\"".formatted(key));
     }
 
     @Test

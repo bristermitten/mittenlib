@@ -1,11 +1,13 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
+import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
+import com.squareup.javapoet.ClassName;
 import org.junit.jupiter.api.Test;
 
-import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfigurationClassNameGeneratorTest {
 
@@ -19,14 +21,14 @@ class ConfigurationClassNameGeneratorTest {
                                 @me.bristermitten.mittenlib.config.names.NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
                                 @me.bristermitten.mittenlib.config.Source(value = "lang.yml")
                                 @me.bristermitten.mittenlib.config.Config
-                                public final class LangConfigDTO {
+                                public  class LangConfigDTO {
                                     public final ErrorsDTO errors = null;
                                     public final CommandsDTO commands = null;
                                     @me.bristermitten.mittenlib.config.Config
-                                    public static final class CommandsDTO {
+                                    public static  class CommandsDTO {
                                         public final SelectionDTO selection = null;
                                         @me.bristermitten.mittenlib.config.Config
-                                        public static final class SelectionDTO {
+                                        public static  class SelectionDTO {
                                             public final me.bristermitten.mittenlib.lang.LangMessage rename = null;
                                             public final me.bristermitten.mittenlib.lang.LangMessage created = null;
                                             public final me.bristermitten.mittenlib.lang.LangMessage deleted = null;
@@ -35,11 +37,11 @@ class ConfigurationClassNameGeneratorTest {
                                         }
                                     }
                                     @me.bristermitten.mittenlib.config.Config
-                                    public static final class ErrorsDTO {
+                                    public static class ErrorsDTO {
                                         public final me.bristermitten.mittenlib.lang.LangMessage noSelection = null;
                                         public final SelectionDTO selection = null;
                                         @me.bristermitten.mittenlib.config.Config
-                                        public static final class SelectionDTO {
+                                        public static class SelectionDTO {
                                             public final me.bristermitten.mittenlib.lang.LangMessage nodeExists = null;
                                             public final me.bristermitten.mittenlib.lang.LangMessage alreadyHaveSelection = null;
                                             public final me.bristermitten.mittenlib.lang.LangMessage duplicateZone = null;
@@ -49,6 +51,18 @@ class ConfigurationClassNameGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        CompilationSubject.assertThat(compilation).succeededWithoutWarnings();
+    }
+
+    @Test
+    void testCreateConfigImplClassName() {
+        ClassName dtoName = ClassName.bestGuess("TestConfigDTO");
+
+        assertThat(ConfigurationClassNameGenerator.createConfigImplClassName(dtoName))
+                .isEqualTo(ClassName.bestGuess("TestConfig"));
+
+        ClassName configName = ClassName.bestGuess("TestConfig");
+        assertThat(ConfigurationClassNameGenerator.createConfigImplClassName(configName))
+                .isEqualTo(ClassName.bestGuess("TestConfigImpl"));
     }
 }

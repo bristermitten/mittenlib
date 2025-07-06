@@ -2,18 +2,30 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.TypeMirrorWrapper;
+import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
+import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
+import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
-import me.bristermitten.mittenlib.config.*;
+import me.bristermitten.mittenlib.config.CollectionsUtils;
+import me.bristermitten.mittenlib.config.DeserializationContext;
+import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 
 import javax.inject.Inject;
-import javax.lang.model.element.*;
-import javax.lang.model.type.DeclaredType;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Generates deserialization code for configuration classes.
@@ -26,89 +38,100 @@ public class DeserializationCodeGenerator {
      * For example, a method to deserialize a field called "test" would be called deserializeTest
      */
     public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
-    private static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
-    private static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
-
+    public static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
+    public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
+    final TypesUtil typesUtil;
     private final Types types;
-    private final TypesUtil typesUtil;
     private final FieldClassNameGenerator fieldClassNameGenerator;
+    private final GeneratedTypeCache generatedTypeCache;
+    private final ConfigNameCache configNameCache;
+    private final ConfigurationClassNameGenerator configurationClassNameGenerator;
 
     @Inject
     public DeserializationCodeGenerator(
             Types types,
             TypesUtil typesUtil,
-            FieldClassNameGenerator fieldClassNameGenerator) {
+            FieldClassNameGenerator fieldClassNameGenerator, GeneratedTypeCache generatedTypeCache, ConfigNameCache configNameCache, ConfigurationClassNameGenerator configurationClassNameGenerator) {
         this.types = types;
         this.typesUtil = typesUtil;
         this.fieldClassNameGenerator = fieldClassNameGenerator;
+        this.generatedTypeCache = generatedTypeCache;
+        this.configNameCache = configNameCache;
+        this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
     /**
      * Creates a deserialization method for a specific field in a DTO class.
      *
-     * @param dtoType The DTO class type
-     * @param element The field element to create a deserialization method for
+     * @param dtoType  The DTO class type
+     * @param property The field element to create a deserialization method for
      * @return A method spec for the deserialization method
      */
-    public MethodSpec createDeserializeMethodFor(TypeElement dtoType, VariableElement element) {
-        TypeMirror typeMirror = element.asType();
-        final TypeName elementType = getConfigClassName(typeMirror, dtoType);
-        final Name variableName = element.getSimpleName();
-        final TypeMirror boxedType = typesUtil.getBoxedType(typeMirror);
-        final TypeName boxedTypeName = getConfigClassName(boxedType, dtoType);
 
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(variableName.toString()))
+    public MethodSpec createDeserializeMethodFor(TypeElement dtoType, Property property) {
+        TypeMirror elementType = property.propertyType();
+        var elementResultType = configurationClassNameGenerator.publicPropertyClassName(
+                typesUtil.getBoxedType(property.propertyType())
+        );
+
+
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, boxedTypeName))
+                .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
                 .addParameter(ParameterSpec.builder(ClassName.get(dtoType), "dao").build());
 
         builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
-        builder.addStatement("$T $L", elementType, variableName);
-        final String fromMapName = variableName + "FromMap";
-        final String key = fieldClassNameGenerator.getConfigFieldName(element);
-        var defaultName = element.getSimpleName();
-        builder.addStatement("Object $L = $$data.getOrDefault($S, dao.$L)", fromMapName, key, defaultName);
+        builder.addStatement("$T $L", elementType, property.name());
 
-        if (typesUtil.isNullable(element)) {
+        final String key = fieldClassNameGenerator.getConfigFieldName(property);
+        final String fromMapName = property.name() + "FromMap";
+        builder.addStatement("Object $L = $$data.get($S)", fromMapName, key);
+
+        // null check
+        if (property.settings().isNullable()) {
             // Short circuit the null rather than trying any deserialization
             builder.beginControlFlow("if ($L == null)", fromMapName);
             builder.addStatement("return $T.ok(null)", Result.class);
             builder.endControlFlow();
         } else {
             builder.beginControlFlow("if ($L == null)", fromMapName);
-            builder.addStatement("return $T.fail($T.throwNotFound($S, $S, $T.class, $L))",
-                    Result.class, ConfigMapLoader.class, variableName, element, dtoType, fromMapName);
+            builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S))",
+                    Result.class, ConfigLoadingErrors.class, property.name(), elementType, dtoType, key);
             builder.endControlFlow();
         }
 
-        if (!(elementType instanceof ParameterizedTypeName)) {
+        TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
+        boolean isGenericType = wrappedElementType.hasTypeArguments();
+        Optional<TypeElementWrapper> typeElementOpt = wrappedElementType.getTypeElement();
+        if (isGenericType && typeElementOpt.isPresent()) { // generic _and_ declared
             /*
-             Construct a simple check that does
-               if (fromMap instanceof X) return fromMap;
-             Useful when the type is a primitive or String
-             This is only safe to do with non-parameterized types, type erasure and all
-            */
-            final TypeMirror safeType = typesUtil.getSafeType(typeMirror);
-            final TypeName safeTypeName = getConfigClassName(safeType, dtoType);
-            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeTypeName);
-            builder.addStatement("return $T.ok(($T) $L)", Result.class, elementType, fromMapName);
-            builder.endControlFlow();
-        } else if (typeMirror instanceof DeclaredType declaredType) {
-            /*
-             This is really cursed, but it's the only real way
-             When the type is a List<T> or Map<_, T> then we need to first load it as a C<Map<String, Object>> then
-             apply the deserialize function to each element. Otherwise, gson would try to deserialize it without
-             using the generated deserialization method and produce inconsistent results.
+             This is quite messy, but it's the only real way to solve this problem:
+             When the type is a List<T> or Map<_, T> (where T is a @Config type)
+             then we need to first load it as a C<Map<String, Object>>, then
+             apply the deserialize function to each element.
+             Otherwise, we'd fall back to using Gson, which would try to deserialise it without using the
+             generated deserialization method and produce inconsistent results (and taking a performance hit)
+
 
              However, we can't just blindly do this for every type - there's no way of knowing how to convert a
              Blah<A> into a Blah<B> without some knowledge of the underlying structure.
              Map and List are the most common collection types, but this could really use some extensibility.
             */
-            String canonicalName = types.erasure(typeMirror).toString();
-            if (canonicalName.equals("java.util.List")) {
-                var listType = declaredType.getTypeArguments().getFirst();
-                if (isConfigType(listType)) {
+            String canonicalName = wrappedElementType.erasure().getQualifiedName();
+            ElementWrapper.wrap(property.source().element())
+
+                    .validate()
+                    .asError()
+                    .check($ -> AptkCoreMatchers.BY_RAW_TYPE
+                            .getValidator()
+                            .hasOneOf(typeElementOpt.get().unwrap(), List.class, Map.class))
+                    .validateAndIssueMessages();
+
+            if (canonicalName.equals(List.class.getName())) {
+                var listType = wrappedElementType.getTypeArguments().getFirst();
+                if (typesUtil.isConfigType(listType)) {
+
                     TypeName listTypeName = getConfigClassName(listType, null);
                     builder.addStatement("return $T.deserializeList($L, context, $T::$L)", CollectionsUtils.class,
                             fromMapName,
@@ -116,57 +139,93 @@ public class DeserializationCodeGenerator {
                             getDeserializeMethodName(listTypeName));
                     return builder.build();
                 }
-            }
-            if (canonicalName.equals("java.util.Map")) {
-                var mapType = declaredType.getTypeArguments().get(1);
-                var keyType = declaredType.getTypeArguments().get(0);
+            } else if (canonicalName.equals("java.util.Map")) {
+                var arguments = wrappedElementType.getTypeArguments();
+                var keyType = arguments.get(0);
+                var valueType = arguments.get(1);
 
-                if (isConfigType(mapType)) {
-                    TypeName mapTypeName = getConfigClassName(mapType, null);
+                if (typesUtil.isConfigType(valueType)) {
+                    TypeName mapTypeName = getConfigClassName(valueType, null);
                     builder.addStatement("return $T.deserializeMap($T.class, $L, context, $T::$L)",
                             CollectionsUtils.class,
-                            getConfigClassName(typesUtil.getSafeType(keyType), null),
+                            (typesUtil.getSafeType(keyType)),
                             fromMapName,
                             mapTypeName,
                             getDeserializeMethodName(mapTypeName));
                     return builder.build();
                 }
+            } else {
+                throw new IllegalStateException("Unexpected generic type: " + canonicalName);
             }
+
+        } else if (!isGenericType) {
+            /*
+             Construct a simple check that does
+               if (fromMap instanceof X) return fromMap;
+             Useful when the type is a primitive or String
+             This is only safe to do with non-parameterized types, what with type erasure and all
+            */
+            final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
+            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeType);
+            builder.addStatement("return $T.ok(($T) $L)", Result.class, safeType, fromMapName);
+
+            if (typesUtil.isConfigType(elementType)) {
+                TypeName configClassName = getConfigClassName(elementType, dtoType);
+                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, Map.class);
+                builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);
+                builder.addStatement("return $T.$L(context.withData(mapData))", configClassName, getDeserializeMethodName(configClassName));
+                builder.endControlFlow();
+            } else {
+                builder.endControlFlow();
+            }
+
+            builder.beginControlFlow("else");
+            builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
+                    Result.class,
+                    ConfigLoadingErrors.class,
+                    dtoType,
+                    property.name(),
+                    elementType,
+                    fromMapName
+            );
+            builder.endControlFlow();
+            return builder.build();
         }
 
-        if (isConfigType(typeMirror)) {
-            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, Map.class);
-            builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);
-            builder.addStatement("return $T.$L(context.withData(mapData))", elementType, getDeserializeMethodName(elementType));
-            builder.endControlFlow();
-        }
 
         // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
-        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class, boxedTypeName);
+        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class,
+                configurationClassNameGenerator.getConfigPropertyClassName(property)
+        );
         return builder.build();
+
+
+//
+//        // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
+//        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class, boxedTypeName);
+//        return builder.build();
     }
 
     /**
      * Creates the main deserialization method for a config class.
      *
-     * @param typeSpecBuilder The builder for the config class
-     * @param dtoType The DTO class type
-     * @param className The name of the config class
+     * @param typeSpecBuilder  The builder for the config class
+     * @param dtoType          The DTO class type
      * @param variableElements The fields to deserialize
      * @param getDTOSuperclass A function to get the superclass of the DTO
      */
-    public void createDeserializeMethod(TypeSpec.Builder typeSpecBuilder,
-                                     TypeElement dtoType,
-                                     ClassName className,
-                                     List<VariableElement> variableElements,
-                                     java.util.function.Function<TypeElement, TypeMirror> getDTOSuperclass) {
+    public void createDeserializeMethods(TypeSpec.Builder typeSpecBuilder,
+                                         AbstractConfigStructure ast,
+                                         TypeElement dtoType,
+                                         List<Property> variableElements,
+                                         Function<TypeElement, TypeMirror> getDTOSuperclass) {
 
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(className))
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(ast))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, className))
+                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, ConfigurationClassNameGenerator.getPublicClassName(ast)))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
 
-        builder.addStatement("$1T dto = new $1T()", (dtoType.asType()));
+        builder.addStatement("$1T dto = null", (dtoType.asType()));
 
         final List<MethodSpec> deserializeMethods = variableElements.stream()
                 .map(variableElement -> createDeserializeMethodFor(dtoType, variableElement))
@@ -178,18 +237,22 @@ public class DeserializationCodeGenerator {
 
         expressionBuilder.add("return ");
         int i = 0;
-        var superClass = getDTOSuperclass.apply(dtoType);
+
+        var superClass = switch (ast.source()) {
+            case ConfigTypeSource.ClassConfigTypeSource c -> c.parent();
+            case ConfigTypeSource.InterfaceConfigTypeSource iface -> Optional.<TypeMirror>empty();//for now
+        };
 
         // Add the superclass deserialization first, if it exists
-        if (superClass != null) {
-            var superConfigName = getConfigClassName(superClass, dtoType);
+        if (superClass.isPresent()) {
+            var superConfigName = getConfigClassName(superClass.get(), dtoType);
             expressionBuilder.add("$T.$L", superConfigName, getDeserializeMethodName(superConfigName));
             expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
         }
         for (MethodSpec deserializeMethod : deserializeMethods) {
             expressionBuilder.add("$N(context, dto).flatMap(var$L -> \n", deserializeMethod, i++);
         }
-        expressionBuilder.add("$T.ok(new $T(", Result.class, className);
+        expressionBuilder.add("$T.ok(new $T(", Result.class, ConfigurationClassNameGenerator.createConfigImplClassName(ast));
         for (int i1 = 0; i1 < i; i1++) {
             expressionBuilder.add("var$L", i1);
             if (i1 != i - 1) {
@@ -205,22 +268,12 @@ public class DeserializationCodeGenerator {
     }
 
     /**
-     * Checks if a type is a config type (annotated with @Config).
-     *
-     * @param mirror The type to check
-     * @return true if the type is a config type, false otherwise
-     */
-    public boolean isConfigType(TypeMirror mirror) {
-        return mirror instanceof DeclaredType declaredType &&
-                declaredType.asElement().getAnnotation(Config.class) != null;
-    }
-
-    /**
      * Gets the name of the deserialization method for a type.
      *
      * @param name The type name
      * @return The deserialization method name
      */
+    @Deprecated
     public String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
             return DESERIALIZE_METHOD_PREFIX + cn.simpleName();
@@ -228,14 +281,22 @@ public class DeserializationCodeGenerator {
         return DESERIALIZE_METHOD_PREFIX + name;
     }
 
+    public String getDeserializeMethodName(AbstractConfigStructure ast) {
+        return getDeserializeMethodName(ConfigurationClassNameGenerator.createConfigImplClassName(ast));
+    }
+
+//    public ClassName getDeserialiseMethodName(ConfigTypeAST ast) {
+//        re
+//    }
+
     /**
      * Gets the config class name for a type.
      *
      * @param typeMirror The type
-     * @param source The source element (can be null)
+     * @param source     The source element (can be null)
      * @return The config class name
      */
     private TypeName getConfigClassName(TypeMirror typeMirror, Element source) {
-        return typesUtil.getConfigClassName(typeMirror, source);
+        return configurationClassNameGenerator.getConfigClassName(typeMirror, source);
     }
 }

@@ -39,6 +39,7 @@ subprojects {
         testImplementation(libs.spigot.api)
         testImplementation(libs.junit.api)
         testImplementation(libs.mockito.core)
+        testImplementation(libs.assertj.core)
         testRuntimeOnly(libs.junit.engine)
     }
 

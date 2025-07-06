@@ -13,17 +13,17 @@ class CollectionDTOTransformationTest {
     void generateFullConfigClassName() {
         Compilation compilation = javac()
                 .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.CollectionConfigDTO",
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.CollectionConfig",
                         """
                                 package me.bristermitten.mittenlib.tests;
                                 import java.util.Map;
                                 @me.bristermitten.mittenlib.config.names.NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
                                 @me.bristermitten.mittenlib.config.Source(value = "lang.yml")
                                 @me.bristermitten.mittenlib.config.Config
-                                public final class CollectionConfigDTO {
-                                    public final Map<String, SubConfigDTO> map = null;
+                                public class CollectionConfig {
+                                    public final Map<String, SubConfig> map = null;
                                     @me.bristermitten.mittenlib.config.Config
-                                    public static final class SubConfigDTO {
+                                    public static class SubConfig {
                                         int i;
                                         String s;
                                     }

@@ -9,7 +9,7 @@ java {
 
 jmh {
     warmupIterations.set(2)
-    iterations.set(5)
+    iterations.set(3)
     failOnError.set(true)
     fork.set(2)
 }

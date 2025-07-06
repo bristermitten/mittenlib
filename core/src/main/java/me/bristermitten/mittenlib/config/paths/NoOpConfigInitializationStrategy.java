@@ -1,6 +1,5 @@
-package me.bristermitten.mittenlib.annotation.benchmark;
+package me.bristermitten.mittenlib.config.paths;
 
-import me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Unit;
 

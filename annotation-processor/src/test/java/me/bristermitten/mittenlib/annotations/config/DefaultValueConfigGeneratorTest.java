@@ -16,10 +16,9 @@ class DefaultValueConfigGeneratorTest {
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.DefaultValueConfigDTO",
                         """
                                 package me.bristermitten.mittenlib.tests;
-                                import java.util.Map;
-                                import me.bristermitten.mittenlib.config.*;
+                                import                                 me.bristermitten.mittenlib.config.Config;
                                 @Config
-                                public final class DefaultValueConfigDTO {
+                                public class DefaultValueConfigDTO {
                                     int x = 3;
                                     int y;
                                     Integer z = null;

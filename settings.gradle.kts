@@ -54,6 +54,10 @@ dependencyResolutionManagement {
 			library("junit-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
 			library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
 
+			version("assertj", "3.27.3")
+			library("assertj-core", "org.assertj", "assertj-core").versionRef("assertj")
+
+
 			version("mockito", "4.8.0")
 			library("mockito-core", "org.mockito", "mockito-core").versionRef("mockito")
 
@@ -64,6 +68,9 @@ dependencyResolutionManagement {
 			library("jetbrains-annotations", "org.jetbrains", "annotations").version("23.0.0")
 			library("acf-paper", "co.aikar", "acf-paper").version("0.5.1-SNAPSHOT")
 			library("placeholderapi", "me.clip", "placeholderapi").version("2.11.6")
+			library("aptk", "io.toolisticon.aptk", "aptk-tools").version("0.22.5")
+			library("cute", "io.toolisticon.cute", "cute").version("1.8.0")
+			library("chalk", "com.github.tomas-langer", "chalk").version("1.0.2")
 		}
 	}
 }
