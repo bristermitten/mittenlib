@@ -62,7 +62,7 @@ public class ConfigImplGenerator {
      */
     private void emitInto(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
         ClassName configImplClassName = ConfigurationClassNameGenerator.createConfigImplClassName(ast);
-
+        source.addModifiers(Modifier.PUBLIC);
         if (ast instanceof AbstractConfigStructure.Union) {
             source.addModifiers(Modifier.ABSTRACT);
         }
@@ -99,7 +99,7 @@ public class ConfigImplGenerator {
     private void addNestedClassModifiers(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
         // if it's enclosed in a class, make sure it's a nested class rather than an inner class
         if (ast.enclosedIn() != null) {
-            source.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+            source.addModifiers(Modifier.STATIC);
         }
     }
 
