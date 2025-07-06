@@ -85,24 +85,23 @@ public class ConfigImplGenerator {
 
     /**
      * When the element has a @{@link me.bristermitten.mittenlib.config.Source} marked, turn it into a {@link Configuration} field
-     *
-     * @param ast
-     * @param builder
      */
     private void addSourceElement(@NotNull AbstractConfigStructure ast, @NotNull TypeSpec.Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = ConfigurationClassNameGenerator.getPublicClassName(ast);
             builder.addField(
                     FieldSpec.builder(
-                            ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
-                            "CONFIG"
-                    ).initializer(
-                            "new $T<>($S, $T.class, $T::$L)", Configuration.class,
-                            ast.settings().source().value(),
-                            publicClassName,
-                            ConfigurationClassNameGenerator.createConfigImplClassName(ast),
-                            methodNames.getDeserializeMethodName(ast)
-                    ).build()
+                                    ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
+                                    "CONFIG"
+                            )
+                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                            .initializer(
+                                    "new $T<>($S, $T.class, $T::$L)", Configuration.class,
+                                    ast.settings().source().value(),
+                                    publicClassName,
+                                    ConfigurationClassNameGenerator.createConfigImplClassName(ast),
+                                    methodNames.getDeserializeMethodName(ast)
+                            ).build()
             );
         }
     }
