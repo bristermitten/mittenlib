@@ -107,7 +107,7 @@ public class ConfigurationClassNameGenerator {
      */
     public static ClassName getPublicClassName(@NotNull AbstractConfigStructure ast) {
         return switch (ast.source()) {
-            case ConfigTypeSource.InterfaceConfigTypeSource ignored1 -> ast.name();
+            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> ast.name();
             case ConfigTypeSource.ClassConfigTypeSource ignored -> createConfigImplClassName(ast);
         };
     }

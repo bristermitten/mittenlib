@@ -5,6 +5,7 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ToStringGenerator;
+import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +39,12 @@ public class ConfigImplGenerator {
         this.methodNames = methodNames;
     }
 
+    private static void makeAbstractIfUnion(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+        if (ast instanceof AbstractConfigStructure.Union) {
+            source.addModifiers(Modifier.ABSTRACT);
+        }
+    }
+
     /**
      * Generates a JavaFile containing the implementation class for the given configuration structure.
      *
@@ -53,7 +60,6 @@ public class ConfigImplGenerator {
         return JavaFile.builder(configImplClassName.packageName(), source.build()).build();
     }
 
-
     /**
      * Adds all necessary elements to the TypeSpec.Builder to create a complete implementation class.
      *
@@ -63,9 +69,8 @@ public class ConfigImplGenerator {
     private void emitInto(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
         ClassName configImplClassName = ConfigurationClassNameGenerator.createConfigImplClassName(ast);
         source.addModifiers(Modifier.PUBLIC);
-        if (ast instanceof AbstractConfigStructure.Union) {
-            source.addModifiers(Modifier.ABSTRACT);
-        }
+        makeAbstractIfUnion(ast, source);
+        addSourceElement(ast, source);
         addInheritance(ast, source);
         addGeneratedConfigAnnotation(ast, source);
         addNestedClassModifiers(ast, source);
@@ -76,6 +81,30 @@ public class ConfigImplGenerator {
         addDeserializationMethods(ast, source);
         addStandardObjectMethods(ast, configImplClassName, source);
         addChildClasses(ast, source);
+    }
+
+    /**
+     * When the element has a @{@link me.bristermitten.mittenlib.config.Source} marked, turn it into a {@link Configuration} field
+     *
+     * @param ast
+     * @param builder
+     */
+    private void addSourceElement(@NotNull AbstractConfigStructure ast, @NotNull TypeSpec.Builder builder) {
+        if (ast.settings().source() != null) {
+            ClassName publicClassName = ConfigurationClassNameGenerator.getPublicClassName(ast);
+            builder.addField(
+                    FieldSpec.builder(
+                            ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
+                            "CONFIG"
+                    ).initializer(
+                            "new $T<>($S, $T.class, $T::$L)", Configuration.class,
+                            ast.settings().source().value(),
+                            publicClassName,
+                            ConfigurationClassNameGenerator.createConfigImplClassName(ast),
+                            methodNames.getDeserializeMethodName(ast)
+                    ).build()
+            );
+        }
     }
 
     private void addInheritance(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
@@ -110,9 +139,7 @@ public class ConfigImplGenerator {
     }
 
     private void addDeserializationMethods(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
-        deserializationCodeGenerator.createDeserializeMethods(source,
-                ast
-        );
+        deserializationCodeGenerator.createDeserializeMethods(source, ast);
     }
 
     private void addStandardObjectMethods(@NotNull AbstractConfigStructure ast, ClassName configImplClassName, @NotNull TypeSpec.Builder source) {

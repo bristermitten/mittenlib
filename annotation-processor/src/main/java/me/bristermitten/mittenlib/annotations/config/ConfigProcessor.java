@@ -62,7 +62,6 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
      */
     @Override
     public boolean processAnnotations(@NotNull Set<? extends TypeElement> annotations, @NotNull RoundEnvironment roundEnv) {
-
         ToolingProvider.setTooling(processingEnv);
         var injector = Guice.createInjector(
                 new ConfigProcessorModule(processingEnv)
@@ -99,4 +98,6 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         }
         return true;
     }
+
+
 }

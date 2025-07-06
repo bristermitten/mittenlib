@@ -42,15 +42,17 @@ public class DeserializationCodeGenerator {
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
+    private final MethodNames methodNames;
 
     @Inject
     public DeserializationCodeGenerator(
             TypesUtil typesUtil,
             FieldNameGenerator fieldNameGenerator,
-            ConfigurationClassNameGenerator configurationClassNameGenerator) {
+            ConfigurationClassNameGenerator configurationClassNameGenerator, MethodNames methodNames) {
         this.typesUtil = typesUtil;
         this.fieldNameGenerator = fieldNameGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
+        this.methodNames = methodNames;
     }
 
     /**
@@ -129,7 +131,7 @@ public class DeserializationCodeGenerator {
                     builder.addStatement("return $T.deserializeList($L, context, $T::$L)", CollectionsUtils.class,
                             fromMapName,
                             listTypeName,
-                            getDeserializeMethodName(listTypeName));
+                            methodNames.getDeserializeMethodName(listTypeName));
                     return builder.build();
                 }
             } else if (canonicalName.equals("java.util.Map")) {
@@ -144,7 +146,7 @@ public class DeserializationCodeGenerator {
                             (typesUtil.getSafeType(keyType)),
                             fromMapName,
                             mapTypeName,
-                            getDeserializeMethodName(mapTypeName));
+                            methodNames.getDeserializeMethodName(mapTypeName));
                     return builder.build();
                 }
             } else {
@@ -166,7 +168,7 @@ public class DeserializationCodeGenerator {
                 TypeName configClassName = getConfigClassName(elementType, dtoType);
                 builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, Map.class);
                 builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);
-                builder.addStatement("return $T.$L(context.withData(mapData))", configClassName, getDeserializeMethodName(configClassName));
+                builder.addStatement("return $T.$L(context.withData(mapData))", configClassName, methodNames.getDeserializeMethodName(configClassName));
                 builder.endControlFlow();
             } else {
                 builder.endControlFlow();
@@ -192,23 +194,17 @@ public class DeserializationCodeGenerator {
         );
         return builder.build();
 
-
-//
-//        // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
-//        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class, boxedTypeName);
-//        return builder.build();
     }
 
     /**
      * Creates the main deserialization method for a config class.
      *
-     * @param typeSpecBuilder  The builder for the config class
-     *
+     * @param typeSpecBuilder The builder for the config class
      */
     public void createDeserializeMethods(TypeSpec.@NotNull Builder typeSpecBuilder,
                                          @NotNull AbstractConfigStructure ast) {
 
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(ast))
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(methodNames.getDeserializeMethodName(ast))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, ConfigurationClassNameGenerator.getPublicClassName(ast)))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
@@ -219,7 +215,7 @@ public class DeserializationCodeGenerator {
             deserialiseBuilder.add("return ");
             for (AbstractConfigStructure alternative : union.alternatives()) {
                 ClassName alternativeClassName = ConfigurationClassNameGenerator.createConfigImplClassName(alternative);
-                String deserializeMethodName = getDeserializeMethodName(alternativeClassName);
+                String deserializeMethodName = methodNames.getDeserializeMethodName(alternativeClassName);
 
                 deserialiseBuilder.add("$T.$L(context).map($T.class::cast).orElse(() -> \n",
                         alternativeClassName,
@@ -235,7 +231,7 @@ public class DeserializationCodeGenerator {
             typeSpecBuilder.addMethod(builder.build());
             return;
         }
-var dtoType = ast.source().element();
+        var dtoType = ast.source().element();
         builder.addStatement("$1T dto = null", (dtoType.asType()));
 
         final List<MethodSpec> deserializeMethods = ast.properties().stream()
@@ -257,7 +253,7 @@ var dtoType = ast.source().element();
         // Add the superclass deserialization first, if it exists
         if (superClass.isPresent()) {
             var superConfigName = getConfigClassName(superClass.get(), dtoType);
-            expressionBuilder.add("$T.$L", superConfigName, getDeserializeMethodName(superConfigName));
+            expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
             expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
         }
         for (MethodSpec deserializeMethod : deserializeMethods) {
@@ -277,35 +273,6 @@ var dtoType = ast.source().element();
 
         typeSpecBuilder.addMethod(builder.build());
     }
-
-    /**
-     * Gets the name of the deserialization method for a type.
-     *
-     * @param name The type name
-     * @return The deserialization method name
-     */
-    @Deprecated
-    public @NotNull String getDeserializeMethodName(TypeName name) {
-        if (name instanceof ClassName cn) {
-            return DESERIALIZE_METHOD_PREFIX + cn.simpleName();
-        }
-        return DESERIALIZE_METHOD_PREFIX + name;
-    }
-
-    /**
-     * Gets the name of the deserialization method for a configuration structure.
-     * This method uses the implementation class name derived from the structure.
-     *
-     * @param ast The abstract configuration structure
-     * @return The deserialization method name for the structure
-     */
-    public String getDeserializeMethodName(@NotNull AbstractConfigStructure ast) {
-        return getDeserializeMethodName(ConfigurationClassNameGenerator.createConfigImplClassName(ast));
-    }
-
-//    public ClassName getDeserialiseMethodName(ConfigTypeAST ast) {
-//        re
-//    }
 
     /**
      * Gets the config class name for a type.

@@ -10,6 +10,7 @@ import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.ConfigUnion;
+import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.generate.GenerateToString;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
@@ -104,8 +105,9 @@ public class ConfigClassParser {
     private ASTSettings.@NotNull ConfigASTSettings getSettings(@NotNull TypeElement element) {
         var namingPattern = typesUtil.getAnnotation(element, NamingPattern.class);
         GenerateToString generateToString = typesUtil.getAnnotation(element, GenerateToString.class);
+        Source source = typesUtil.getAnnotation(element, Source.class);
 
-        return new ASTSettings.ConfigASTSettings(namingPattern, generateToString != null);
+        return new ASTSettings.ConfigASTSettings(namingPattern, source, generateToString != null);
     }
 
     private @NotNull AbstractConfigStructure parseAbstract(@NotNull TypeElement element, @Nullable ASTParentReference parentReference) {

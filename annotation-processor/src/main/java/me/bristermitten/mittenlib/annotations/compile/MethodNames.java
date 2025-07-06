@@ -1,6 +1,9 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Singleton;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import org.jetbrains.annotations.NotNull;
@@ -79,5 +82,30 @@ public class MethodNames {
             names.add(method.getSimpleName().toString());
         }
         return names;
+    }
+
+    /**
+     * Gets the name of the deserialization method for a type.
+     *
+     * @param name The type name
+     * @return The deserialization method name
+     */
+    @Deprecated
+    public @NotNull String getDeserializeMethodName(TypeName name) {
+        if (name instanceof ClassName cn) {
+            return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + cn.simpleName();
+        }
+        return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + name;
+    }
+
+    /**
+     * Gets the name of the deserialization method for a configuration structure.
+     * This method uses the implementation class name derived from the structure.
+     *
+     * @param ast                          The abstract configuration structure
+     * @return The deserialization method name for the structure
+     */
+    public String getDeserializeMethodName(@NotNull AbstractConfigStructure ast) {
+        return getDeserializeMethodName(ConfigurationClassNameGenerator.createConfigImplClassName(ast));
     }
 }
