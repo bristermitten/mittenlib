@@ -83,7 +83,7 @@ public class AbstractParsingTest {
 
                     assertThat(ast)
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
-                            .extracting(AbstractConfigStructure.Union::unionOptions)
+                            .extracting(AbstractConfigStructure.Union::alternatives)
                             .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
                             .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child1Config.class)))
                             .singleElement()
@@ -95,7 +95,7 @@ public class AbstractParsingTest {
 
                     assertThat(ast)
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
-                            .extracting(AbstractConfigStructure.Union::unionOptions)
+                            .extracting(AbstractConfigStructure.Union::alternatives)
                             .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
                             .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child2Config.class)))
                             .singleElement()

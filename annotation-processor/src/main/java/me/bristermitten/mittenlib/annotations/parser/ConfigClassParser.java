@@ -163,7 +163,7 @@ public class ConfigClassParser {
         return configStructure;
     }
 
-    public AbstractConfigStructure parseAbstract(@NotNull TypeElement element) {
+    public @NotNull AbstractConfigStructure parseAbstract(@NotNull TypeElement element) {
         var ast = parseAbstract(element, null);
         configNameCache.put(ast);
         return ast;

@@ -25,7 +25,6 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Generates deserialization code for configuration classes.
@@ -206,13 +205,11 @@ public class DeserializationCodeGenerator {
      * @param typeSpecBuilder  The builder for the config class
      * @param dtoType          The DTO class type
      * @param variableElements The fields to deserialize
-     * @param getDTOSuperclass A function to get the superclass of the DTO
      */
     public void createDeserializeMethods(TypeSpec.@NotNull Builder typeSpecBuilder,
                                          @NotNull AbstractConfigStructure ast,
                                          @NotNull TypeElement dtoType,
-                                         @NotNull List<Property> variableElements,
-                                         Function<TypeElement, TypeMirror> getDTOSuperclass) {
+                                         @NotNull List<Property> variableElements) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(ast))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -234,7 +231,7 @@ public class DeserializationCodeGenerator {
 
         var superClass = switch (ast.source()) {
             case ConfigTypeSource.ClassConfigTypeSource c -> c.parent();
-            case ConfigTypeSource.InterfaceConfigTypeSource iface -> Optional.<TypeMirror>empty();//for now
+            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> Optional.<TypeMirror>empty();//for now
         };
 
         // Add the superclass deserialization first, if it exists

@@ -8,6 +8,8 @@ import me.bristermitten.mittenlib.config.ConfigUnion;
 @PassIn
 @ConfigUnion
 public interface UnionConfig {
+    String common();
+
     @Config
     interface Child1Config extends UnionConfig {
         String hello();

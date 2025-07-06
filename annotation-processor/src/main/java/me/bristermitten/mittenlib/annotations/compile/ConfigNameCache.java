@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import org.jetbrains.annotations.NotNull;
@@ -30,20 +29,6 @@ public class ConfigNameCache {
      */
     public @NotNull Optional<AbstractConfigStructure> lookupAST(ClassName name) {
         return Optional.ofNullable(astCache.get(name));
-    }
-
-    /**
-     * Looks up an AbstractConfigStructure by its TypeName.
-     * This method only works with TypeNames that are ClassNames.
-     *
-     * @param name The type name to look up
-     * @return An Optional containing the AbstractConfigStructure if found, or empty if not found or if the TypeName is not a ClassName
-     */
-    public @NotNull Optional<AbstractConfigStructure> lookupAST(TypeName name) {
-        if (name instanceof ClassName cn) {
-            return Optional.ofNullable(astCache.get(cn));
-        }
-        return Optional.empty();
     }
 
     /**

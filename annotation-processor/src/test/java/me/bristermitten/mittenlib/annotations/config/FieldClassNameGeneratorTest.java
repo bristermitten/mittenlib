@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import me.bristermitten.mittenlib.config.names.NamingPatterns;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,6 @@ class FieldClassNameGeneratorTest {
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                                
                         import java.util.Map;
                                                 
                         import me.bristermitten.mittenlib.config.*;

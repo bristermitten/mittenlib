@@ -17,7 +17,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
 
@@ -26,14 +25,12 @@ import java.lang.annotation.Annotation;
  */
 public class TypesUtil {
     private final Types types;
-    private final Elements elements;
 
     private final GeneratedTypeCache generatedTypeCache;
 
     @Inject
-    TypesUtil(Types types, Elements elements, GeneratedTypeCache generatedTypeCache) {
+    TypesUtil(Types types, GeneratedTypeCache generatedTypeCache) {
         this.types = types;
-        this.elements = elements;
         this.generatedTypeCache = generatedTypeCache;
     }
 

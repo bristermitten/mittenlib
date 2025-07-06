@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.compile;
+package me.bristermitten.mittenlib.annotations.config;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -17,10 +17,7 @@ import java.util.List;
  */
 public class ToStringGenerator {
 
-    private final MethodNames methodNames;
-
-    @Inject public ToStringGenerator(MethodNames methodNames) {
-        this.methodNames = methodNames;
+    @Inject public ToStringGenerator() {
     }
 
     /**

@@ -50,12 +50,12 @@ public sealed interface AbstractConfigStructure {
             ASTSettings.ConfigASTSettings settings,
             @Nullable ASTParentReference enclosedIn,
             List<ClassName> parents,
-            List<AbstractConfigStructure> unionOptions,
+            List<AbstractConfigStructure> alternatives,
             List<Property> properties
     ) implements AbstractConfigStructure {
         @Override
         public List<AbstractConfigStructure> enclosed() {
-            return unionOptions;
+            return alternatives;
         }
     }
 

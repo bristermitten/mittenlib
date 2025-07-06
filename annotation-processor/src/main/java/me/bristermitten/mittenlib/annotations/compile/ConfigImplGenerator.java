@@ -4,6 +4,7 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.config.ToStringGenerator;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,8 +108,7 @@ public class ConfigImplGenerator {
         deserializationCodeGenerator.createDeserializeMethods(source,
                 ast,
                 ast.source().element(),
-                ast.properties(),
-                v -> null
+                ast.properties()
         );
     }
 

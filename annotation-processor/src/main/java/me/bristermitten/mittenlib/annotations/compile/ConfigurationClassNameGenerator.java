@@ -11,14 +11,12 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
-import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.util.Null;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.NestingKind;
@@ -31,7 +29,6 @@ import javax.lang.model.util.Elements;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 /**
  * Responsible for generating proper class names for configuration classes.
@@ -40,20 +37,14 @@ import java.util.regex.Pattern;
  * custom naming specified in annotations.
  */
 public class ConfigurationClassNameGenerator {
-    private static final Pattern SUFFIX_PATTERN = Pattern.compile("(.+)(DTO|Config)");
-
-    private final ProcessingEnvironment environment;
 
     private final ConfigNameCache configNameCache;
-    private final TypesUtil typesUtil;
     private final GeneratedTypeCache generatedTypeCache;
     private final Elements elements;
 
     @Inject
-    ConfigurationClassNameGenerator(ProcessingEnvironment environment, ConfigNameCache configNameCache, TypesUtil typesUtil, GeneratedTypeCache generatedTypeCache, Elements elements) {
-        this.environment = environment;
+    ConfigurationClassNameGenerator(ConfigNameCache configNameCache, GeneratedTypeCache generatedTypeCache, Elements elements) {
         this.configNameCache = configNameCache;
-        this.typesUtil = typesUtil;
         this.generatedTypeCache = generatedTypeCache;
         this.elements = elements;
     }
@@ -117,8 +108,8 @@ public class ConfigurationClassNameGenerator {
      */
     public static ClassName getPublicClassName(@NotNull AbstractConfigStructure ast) {
         return switch (ast.source()) {
-            case ConfigTypeSource.InterfaceConfigTypeSource iface -> ast.name();
-            case ConfigTypeSource.ClassConfigTypeSource clazz -> createConfigImplClassName(ast);
+            case ConfigTypeSource.InterfaceConfigTypeSource ignored1 -> ast.name();
+            case ConfigTypeSource.ClassConfigTypeSource ignored -> createConfigImplClassName(ast);
         };
     }
 
@@ -132,8 +123,8 @@ public class ConfigurationClassNameGenerator {
      */
     public static ClassName getConcreteConfigClassName(@NotNull AbstractConfigStructure ast) {
         return switch (ast.source()) {
-            case ConfigTypeSource.ClassConfigTypeSource clazz -> ast.name();
-            case ConfigTypeSource.InterfaceConfigTypeSource iface -> createConfigImplClassName(ast);
+            case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
+            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> createConfigImplClassName(ast);
         };
     }
 

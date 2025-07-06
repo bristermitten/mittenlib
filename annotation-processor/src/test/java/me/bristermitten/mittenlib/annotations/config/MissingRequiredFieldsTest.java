@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -34,22 +33,23 @@ class MissingRequiredFieldsTest {
                                     // Required primitive fields (no default values)
                                     public int requiredInt;
                                     public boolean requiredBoolean;
-                                    
+                                
                                     // Required object fields (no default values)
                                     public String requiredString;
-                                    
+                                
                                     // Optional fields (with default values)
                                     public double optionalDouble = 3.14;
-                                    @Nullable public String optionalString = null;
-                                    
+                                    @Nullable
+                                    public String optionalString = null;
+                                
                                     // Required nested config
                                     public NestedConfigDTO nestedConfig;
-                                    
+                                
                                     @Config
                                     public static class NestedConfigDTO {
                                         // Required field in nested config
                                         public int requiredNestedInt;
-                                        
+                                
                                         // Optional field in nested config
                                         public String optionalNestedString = "default";
                                     }

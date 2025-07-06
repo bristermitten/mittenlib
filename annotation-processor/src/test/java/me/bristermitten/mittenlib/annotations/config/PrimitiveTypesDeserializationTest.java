@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -49,7 +48,7 @@ class PrimitiveTypesDeserializationTest {
                                     public Character boxedCharValue = 'A';
                                     public Byte boxedByteValue = 127;
                                     public Short boxedShortValue = 32767;
-                                    
+                                
                                     // String (not a primitive but commonly used)
                                     public String stringValue = "Hello, World!";
                                 }

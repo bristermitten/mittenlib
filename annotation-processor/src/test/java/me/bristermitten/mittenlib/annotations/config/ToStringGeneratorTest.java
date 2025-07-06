@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -48,16 +47,18 @@ class ToStringGeneratorTest {
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.ToStringConfigDTO",
                         """
                                 package me.bristermitten.mittenlib.tests;
-                                import java.util.Map;
-                                import me.bristermitten.mittenlib.config.*;import me.bristermitten.mittenlib.config.generate.GenerateToString;
+                                
+                                import me.bristermitten.mittenlib.config.Config;
+                                import me.bristermitten.mittenlib.config.generate.GenerateToString;
+                                
                                 @Config
                                 @GenerateToString
                                 public class ToStringConfigDTO {
                                     int x = 3;
-                                    
+                                
                                     @Config
                                     public static class SubclassDTO {
-                                      int y = 4;
+                                        int y = 4;
                                     }
                                 }
                                 """));

@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import org.junit.jupiter.api.Test;
 

@@ -37,16 +37,6 @@ public class GeneratedTypeCache {
 
 
     /**
-     * @return the underlying mapping of source type to generated type's qualified name
-     * <p>
-     * This type is mutable and should be modified with care
-     */
-    public @NotNull BiMap<TypeElement, String> getGeneratedSpecs() {
-        return generatedSpecs;
-    }
-
-
-    /**
      * Gets all the known DTO classes which generate a configuration class with the given qualified name
      *
      * @param name the qualified name of the configuration class

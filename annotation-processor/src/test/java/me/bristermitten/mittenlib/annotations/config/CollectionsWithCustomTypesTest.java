@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -123,7 +122,7 @@ class CollectionsWithCustomTypesTest {
                                 public class NestedCollectionsConfigDTO {
                                     // Map with string keys and lists of custom config objects as values
                                     public Map<String, List<QuestConfigDTO>> questsByCategory;
-                                    
+                                
                                     @Config
                                     public static class QuestConfigDTO {
                                         public String id;

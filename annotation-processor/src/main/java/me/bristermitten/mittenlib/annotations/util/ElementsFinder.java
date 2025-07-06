@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.List;
@@ -44,16 +43,6 @@ public class ElementsFinder {
                 .filter(elem -> !elem.getModifiers().contains(Modifier.TRANSIENT)) // ignore transient fields
                 .filter(elem -> !elem.getModifiers().contains(Modifier.STATIC)) // ignore static fields
                 .toList();
-    }
-
-    /**
-     * @param rootElement The element to find variables in
-     * @return All the {@link VariableElement}s in the given element that are suitable for config generation
-     * @see #getApplicableVariableElements(TypeElement)
-     */
-    public List<VariableElement> getApplicableVariableElements(TypeMirror rootElement) {
-        var elem = (TypeElement) types.asElement(rootElement);
-        return getApplicableVariableElements(elem);
     }
 
     /**

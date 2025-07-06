@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.compile;
+package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
@@ -6,7 +6,10 @@ import com.squareup.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
+import me.bristermitten.mittenlib.annotations.parser.ASTVerifier;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
 import me.bristermitten.mittenlib.config.Config;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +29,7 @@ import java.util.Set;
 /**
  * Annotation processor for generating configuration classes from DTO classes marked with {@link Config}.
  * This processor handles the compilation-time generation of implementation classes for configuration DTOs,
- * creating strongly-typed configuration objects with proper getters, equals, hashCode, and toString methods.
- * 
+ * creating strongly typed configuration objects with proper getters, equals, hashCode, and toString methods.
  * The processor only processes top-level classes (not nested classes) and uses Guice for dependency injection
  * of its internal components.
  */
@@ -54,7 +56,7 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
      * 5. Writes the generated files to the filer
      *
      * @param annotations The annotation types requested to be processed
-     * @param roundEnv The environment for this round of annotation processing
+     * @param roundEnv    The environment for this round of annotation processing
      * @return true if the annotations were processed successfully, false otherwise
      * @throws ConfigProcessingException if there is an error writing the generated files
      */
@@ -79,11 +81,12 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         var configClassParser = injector.getInstance(ConfigClassParser.class);
         for (TypeElement clazz : types) {
             var ast = configClassParser.parseAbstract(clazz);
-            if (ast == null) {
-                return false;
-            }
             asts.add(ast);
         }
+
+        ASTVerifier verifier = injector.getInstance(ASTVerifier.class);
+        asts.forEach(verifier::verify);
+
 
         var generator = injector.getInstance(ConfigImplGenerator.class);
         for (AbstractConfigStructure ast : asts) {

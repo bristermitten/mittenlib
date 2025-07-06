@@ -115,7 +115,7 @@ class ConfigClassParserTest {
                     assertThat(ast)
                             .isNotNull()
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
-                            .extracting(AbstractConfigStructure.Union::unionOptions)
+                            .extracting(AbstractConfigStructure.Union::alternatives)
                             .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
                             .hasSize(2)
                             .first()

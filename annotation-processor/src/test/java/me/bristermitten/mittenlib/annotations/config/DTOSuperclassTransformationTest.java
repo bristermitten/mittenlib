@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -27,8 +26,8 @@ class DTOSuperclassTransformationTest {
                                 @Source(value = "lang.yml")
                                 @Config
                                 public class SuperclassConfigDTO {
-                                    public Child1DTO child1;
-                                    public Child2DTO child2;
+                                    Child1DTO child1;
+                                    Child2DTO child2;
                                 
                                     @Config
                                     static class Child1DTO {
