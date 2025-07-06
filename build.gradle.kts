@@ -9,7 +9,8 @@ plugins {
 
 }
 
-tasks.aggregateJavadoc {
+
+fun Javadoc.configureJavadoc() {
 	val options = options as StandardJavadocDocletOptions
 	options.tags("apiNote:a:API Note:")
 
@@ -20,6 +21,10 @@ tasks.aggregateJavadoc {
 	options.links("https://helpch.at/docs/1.8.8/")
 	options.links("https://javadoc.io/doc/net.kyori/adventure-api/latest/")
 	options.links("https://google.github.io/guice/api-docs/latest/javadoc/")
+}
+
+tasks.aggregateJavadoc {
+	configureJavadoc()
 }
 
 subprojects {
@@ -80,6 +85,9 @@ subprojects {
 	tasks.withType<JavaCompile> {
 		options.encoding = "UTF-8"
 		options.isFork = true
+	}
+	tasks.javadoc {
+		configureJavadoc()
 	}
 
 	publishing {
