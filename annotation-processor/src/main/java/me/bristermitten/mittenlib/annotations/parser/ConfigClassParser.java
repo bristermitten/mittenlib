@@ -72,7 +72,6 @@ public class ConfigClassParser {
         List<? extends Element> elements;
         if (wrapped.isClass()) {
             elements = elementsFinder.getApplicableVariableElements(element);
-
         } else if (wrapped.isInterface()) {
             elements = elementsFinder.getPropertyMethods(element);
         } else {

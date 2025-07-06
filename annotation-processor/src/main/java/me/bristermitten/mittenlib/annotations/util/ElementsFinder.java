@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import java.util.List;
 
 
@@ -17,12 +16,9 @@ public class ElementsFinder {
 
     private final Elements elements;
 
-    private final Types types;
-
     @Inject
-    ElementsFinder(Elements elements, Types types) {
+    ElementsFinder(Elements elements) {
         this.elements = elements;
-        this.types = types;
     }
 
     /**

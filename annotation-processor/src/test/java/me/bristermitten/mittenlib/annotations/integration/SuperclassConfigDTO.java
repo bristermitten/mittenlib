@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.annotations.integration;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 
+@SuppressWarnings("unused")
 @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
 @Config
 public class SuperclassConfigDTO {

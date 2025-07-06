@@ -71,21 +71,21 @@ class DTOSuperclassTransformationTest {
                                     public Child4DTO child4;
                                 
                                     @Config
-                                    static class Child1DTO {
+                                    public static class Child1DTO {
                                         int a;
                                     }
                                 
                                     @Config
-                                    static class Child2DTO extends Child1DTO {
+                                    public static class Child2DTO extends Child1DTO {
                                         int b;
                                     }
                                 
                                     @Config
-                                    static class Child3DTO extends Child2DTO {
+                                    public static class Child3DTO extends Child2DTO {
                                         int c;
                                     }
                                     @Config
-                                    static class Child4DTO extends Child3DTO {
+                                    public static class Child4DTO extends Child3DTO {
                                         int d;
                                     }
                                 }

@@ -1,7 +1,5 @@
 package me.bristermitten.mittenlib.annotations.util;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import me.bristermitten.mittenlib.config.Config;
@@ -105,21 +103,6 @@ public class TypesUtil {
         return null;
     }
 
-
-    /**
-     * Gets the simple name of a {@link TypeName}, i.e. the name without a package
-     * For primitives, the unchanged name is returned.
-     *
-     * @param typeMirror The type to get the name of
-     * @return The simple name of the type
-     */
-    public String getSimpleName(@NotNull TypeName typeMirror) {
-        if (typeMirror.isPrimitive()) {
-            return typeMirror.toString();
-        }
-        final ClassName className = (ClassName) typeMirror;
-        return className.simpleName();
-    }
 
     /**
      * Checks if a type is a config type (annotated with @Config).
