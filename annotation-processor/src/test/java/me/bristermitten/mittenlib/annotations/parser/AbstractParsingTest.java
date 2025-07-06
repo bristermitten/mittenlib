@@ -88,9 +88,8 @@ public class AbstractParsingTest {
                             .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child1Config.class)))
                             .singleElement()
                             .extracting(AbstractConfigStructure::properties)
-                            .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
-                            .singleElement()
-                            .hasFieldOrPropertyWithValue("name", "hello");
+                            .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
+                            .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("hello"));
 
 
                     assertThat(ast)
@@ -100,9 +99,8 @@ public class AbstractParsingTest {
                             .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child2Config.class)))
                             .singleElement()
                             .extracting(AbstractConfigStructure::properties)
-                            .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
-                            .singleElement()
-                            .hasFieldOrPropertyWithValue("name", "world");
+                            .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
+                            .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("world"));
 
 
                     assertThat(ast.enclosedIn()).isNull();

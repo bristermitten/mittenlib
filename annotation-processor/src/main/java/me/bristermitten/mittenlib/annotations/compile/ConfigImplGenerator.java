@@ -63,6 +63,9 @@ public class ConfigImplGenerator {
     private void emitInto(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
         ClassName configImplClassName = ConfigurationClassNameGenerator.createConfigImplClassName(ast);
 
+        if(ast instanceof AbstractConfigStructure.Union) {
+            source.addModifiers(Modifier.ABSTRACT);
+        }
         addInheritance(ast, source);
         addGeneratedConfigAnnotation(ast, source);
         addNestedClassModifiers(ast, source);

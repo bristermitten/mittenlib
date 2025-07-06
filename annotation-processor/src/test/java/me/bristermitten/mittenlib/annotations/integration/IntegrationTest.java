@@ -187,25 +187,25 @@ public class IntegrationTest {
                 .isEqualTo("hello");
     }
 
-//    @Test
-//    void testUnionConfigParsing() throws IOException {
-//        var fileContents = loadResourceString("integration/UnionConfig_dummy.yml");
-//
-//        var classStringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
-//                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
-//                        fileContents,
-//                        new Configuration<>(null, UnionConfig.class, UnionConfigImpl::deserializeUnionConfigImpl)
-//                ).getOrThrow();
-//
-//        UnionConfig unionConfig = classStringReaderProvider.get();
-//
-//        assertThat(unionConfig).isNotNull();
-//
-//        assertThat(unionConfig)
-//                .asInstanceOf(InstanceOfAssertFactories.type(UnionConfig.Child1Config.class))
-//                .extracting(UnionConfig.Child1Config::hello)
-//                .isEqualTo("hi");
-//    }
+    @Test
+    void testUnionConfigParsing() throws IOException {
+        var fileContents = loadResourceString("integration/UnionConfig_dummy.yml");
+
+        var classStringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, UnionConfig.class, UnionConfigImpl::deserializeUnionConfigImpl)
+                ).getOrThrow();
+
+        UnionConfig unionConfig = classStringReaderProvider.get();
+
+        assertThat(unionConfig).isNotNull();
+
+        assertThat(unionConfig)
+                .asInstanceOf(InstanceOfAssertFactories.type(UnionConfig.Child1Config.class))
+                .extracting(UnionConfig.Child1Config::hello)
+                .isEqualTo("hi");
+    }
 
 
 }

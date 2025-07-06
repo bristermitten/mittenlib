@@ -20,4 +20,8 @@ public class ConfigLoadingErrors {
                 "Invalid value for property " + enclosingClass.getSimpleName() + "." + propertyName + ", expected value of type " + expectedType + " but got value " + actualValue + " of type " + actualValue.getClass()
         );
     }
+
+    public static RuntimeException noUnionMatch() {
+        return new IllegalArgumentException("No union alternatives matched.");
+    }
 }

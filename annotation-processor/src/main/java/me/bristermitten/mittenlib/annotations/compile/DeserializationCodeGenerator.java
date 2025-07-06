@@ -216,6 +216,29 @@ public class DeserializationCodeGenerator {
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, ConfigurationClassNameGenerator.getPublicClassName(ast)))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
 
+        if (ast instanceof AbstractConfigStructure.Union union) {
+            // union deserialization is very different
+            CodeBlock.Builder deserialiseBuilder = CodeBlock.builder();
+            deserialiseBuilder.add("return ");
+            for (AbstractConfigStructure alternative : union.alternatives()) {
+                ClassName alternativeClassName = ConfigurationClassNameGenerator.createConfigImplClassName(alternative);
+                String deserializeMethodName = getDeserializeMethodName(alternativeClassName);
+
+                deserialiseBuilder.add("$T.$L(context).map($T.class::cast).orElse(() -> \n",
+                        alternativeClassName,
+                        deserializeMethodName,
+                        ConfigurationClassNameGenerator.getPublicClassName(ast));
+                deserialiseBuilder.indent();
+            }
+            deserialiseBuilder.add("$T.fail($T.noUnionMatch())", Result.class, ConfigLoadingErrors.class);
+            deserialiseBuilder.add(")".repeat(union.alternatives().size())); // close all the flatMap parens
+
+            builder.addStatement(deserialiseBuilder.build());
+
+            typeSpecBuilder.addMethod(builder.build());
+            return;
+        }
+
         builder.addStatement("$1T dto = null", (dtoType.asType()));
 
         final List<MethodSpec> deserializeMethods = variableElements.stream()
