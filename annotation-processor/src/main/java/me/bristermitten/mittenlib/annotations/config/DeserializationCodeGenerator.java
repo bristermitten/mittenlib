@@ -15,13 +15,13 @@ import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,22 +41,16 @@ public class DeserializationCodeGenerator {
     public static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
-    private final Types types;
     private final FieldClassNameGenerator fieldClassNameGenerator;
-    private final GeneratedTypeCache generatedTypeCache;
-    private final ConfigNameCache configNameCache;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
 
     @Inject
     public DeserializationCodeGenerator(
-            Types types,
             TypesUtil typesUtil,
-            FieldClassNameGenerator fieldClassNameGenerator, GeneratedTypeCache generatedTypeCache, ConfigNameCache configNameCache, ConfigurationClassNameGenerator configurationClassNameGenerator) {
-        this.types = types;
+            FieldClassNameGenerator fieldClassNameGenerator,
+            ConfigurationClassNameGenerator configurationClassNameGenerator) {
         this.typesUtil = typesUtil;
         this.fieldClassNameGenerator = fieldClassNameGenerator;
-        this.generatedTypeCache = generatedTypeCache;
-        this.configNameCache = configNameCache;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
@@ -68,7 +62,7 @@ public class DeserializationCodeGenerator {
      * @return A method spec for the deserialization method
      */
 
-    public MethodSpec createDeserializeMethodFor(TypeElement dtoType, Property property) {
+    public @NotNull MethodSpec createDeserializeMethodFor(@NotNull TypeElement dtoType, @NotNull Property property) {
         TypeMirror elementType = property.propertyType();
         var elementResultType = configurationClassNameGenerator.publicPropertyClassName(
                 typesUtil.getBoxedType(property.propertyType())
@@ -214,10 +208,10 @@ public class DeserializationCodeGenerator {
      * @param variableElements The fields to deserialize
      * @param getDTOSuperclass A function to get the superclass of the DTO
      */
-    public void createDeserializeMethods(TypeSpec.Builder typeSpecBuilder,
-                                         AbstractConfigStructure ast,
-                                         TypeElement dtoType,
-                                         List<Property> variableElements,
+    public void createDeserializeMethods(TypeSpec.@NotNull Builder typeSpecBuilder,
+                                         @NotNull AbstractConfigStructure ast,
+                                         @NotNull TypeElement dtoType,
+                                         @NotNull List<Property> variableElements,
                                          Function<TypeElement, TypeMirror> getDTOSuperclass) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(ast))
@@ -274,14 +268,21 @@ public class DeserializationCodeGenerator {
      * @return The deserialization method name
      */
     @Deprecated
-    public String getDeserializeMethodName(TypeName name) {
+    public @NotNull String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
             return DESERIALIZE_METHOD_PREFIX + cn.simpleName();
         }
         return DESERIALIZE_METHOD_PREFIX + name;
     }
 
-    public String getDeserializeMethodName(AbstractConfigStructure ast) {
+    /**
+     * Gets the name of the deserialization method for a configuration structure.
+     * This method uses the implementation class name derived from the structure.
+     *
+     * @param ast The abstract configuration structure
+     * @return The deserialization method name for the structure
+     */
+    public String getDeserializeMethodName(@NotNull AbstractConfigStructure ast) {
         return getDeserializeMethodName(ConfigurationClassNameGenerator.createConfigImplClassName(ast));
     }
 
@@ -296,7 +297,7 @@ public class DeserializationCodeGenerator {
      * @param source     The source element (can be null)
      * @return The config class name
      */
-    private TypeName getConfigClassName(TypeMirror typeMirror, Element source) {
+    private @NotNull TypeName getConfigClassName(@NotNull TypeMirror typeMirror, Element source) {
         return configurationClassNameGenerator.getConfigClassName(typeMirror, source);
     }
 }

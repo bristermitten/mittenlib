@@ -6,6 +6,7 @@ import me.bristermitten.mittenlib.annotations.config.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -46,7 +47,7 @@ public class TypesUtil {
      * <li>{@code String -> String}</li>
      * </ul>
      */
-    public TypeMirror getSafeType(TypeMirror typeMirror) {
+    public TypeMirror getSafeType(@NotNull TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return types.boxedClass((PrimitiveType) typeMirror).asType();
         }
@@ -57,7 +58,7 @@ public class TypesUtil {
      * Get a boxed version of a given type, if it is a primitive.
      * Otherwise, the type is returned unchanged
      */
-    public TypeMirror getBoxedType(TypeMirror typeMirror) {
+    public TypeMirror getBoxedType(@NotNull TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return types.boxedClass((PrimitiveType) typeMirror).asType();
         }
@@ -72,7 +73,7 @@ public class TypesUtil {
      * @param element The element to check
      * @return True if the element is nullable, false otherwise
      */
-    public boolean isNullable(Element element) {
+    public boolean isNullable(@NotNull Element element) {
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             if (ann.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
                 return true;
@@ -91,7 +92,7 @@ public class TypesUtil {
      * @param <A>  The annotation type
      * @return The annotation value, if present, else null
      */
-    public <A extends Annotation> @Nullable A getAnnotation(Element e, Class<A> type) {
+    public <A extends Annotation> @Nullable A getAnnotation(@NotNull Element e, @NotNull Class<A> type) {
         A onElem = e.getAnnotation(type);
         if (onElem != null) {
             return onElem;
@@ -115,7 +116,7 @@ public class TypesUtil {
      * @param typeMirror The type to get the name of
      * @return The simple name of the type
      */
-    public String getSimpleName(TypeName typeMirror) {
+    public String getSimpleName(@NotNull TypeName typeMirror) {
         if (typeMirror.isPrimitive()) {
             return typeMirror.toString();
         }
@@ -129,7 +130,7 @@ public class TypesUtil {
      * @param mirror The type to check
      * @return true if the type is a config type, false otherwise
      */
-    public boolean isConfigType(TypeMirror mirror) {
+    public boolean isConfigType(@NotNull TypeMirror mirror) {
         if (mirror.getKind() == TypeKind.ERROR) {
             throw new DTOReferenceException(mirror, generatedTypeCache, null, null);
         }

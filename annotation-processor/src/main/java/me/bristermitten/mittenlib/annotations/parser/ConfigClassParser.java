@@ -42,7 +42,7 @@ public class ConfigClassParser {
         throw new IllegalArgumentException("Invalid config, impossible?");
     }
 
-    private ConfigTypeSource getSource(TypeElement element) {
+    private @NotNull ConfigTypeSource getSource(@NotNull TypeElement element) {
         var wrapped = TypeElementWrapper.wrap(element);
 
         List<TypeMirror> parents = Stream.concat(
@@ -67,7 +67,7 @@ public class ConfigClassParser {
         }
     }
 
-    private List<Property> getPropertiesIn(TypeElement element, @Nullable NamingPattern namingPattern) {
+    private @NotNull List<Property> getPropertiesIn(@NotNull TypeElement element, @Nullable NamingPattern namingPattern) {
         var wrapped = TypeElementWrapper.wrap(element);
         List<? extends Element> elements;
         if (wrapped.isClass()) {
@@ -102,14 +102,14 @@ public class ConfigClassParser {
     }
 
 
-    private ASTSettings.ConfigASTSettings getSettings(TypeElement element) {
+    private ASTSettings.@NotNull ConfigASTSettings getSettings(@NotNull TypeElement element) {
         var namingPattern = typesUtil.getAnnotation(element, NamingPattern.class);
         GenerateToString generateToString = typesUtil.getAnnotation(element, GenerateToString.class);
 
         return new ASTSettings.ConfigASTSettings(namingPattern, generateToString != null);
     }
 
-    private AbstractConfigStructure parseAbstract(@NotNull TypeElement element, @Nullable ASTParentReference parentReference) {
+    private @NotNull AbstractConfigStructure parseAbstract(@NotNull TypeElement element, @Nullable ASTParentReference parentReference) {
         TypeElementWrapper wrapper = TypeElementWrapper.wrap(element);
 
         Optional<TypeElementWrapper> enclosingType = wrapper.getEnclosingElement()
@@ -158,7 +158,7 @@ public class ConfigClassParser {
         return putInCache(new AbstractConfigStructure.Intersection(ClassName.get(element), source, getSettings(element), thisParentReference, enclosedConfigs, parents, properties));
     }
 
-    private AbstractConfigStructure putInCache(AbstractConfigStructure configStructure) {
+    private AbstractConfigStructure putInCache(@NotNull AbstractConfigStructure configStructure) {
         configNameCache.put(configStructure);
         return configStructure;
     }

@@ -4,11 +4,17 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 
+/**
+ * Generates toString methods for configuration classes.
+ * This class creates a standard toString implementation that includes all properties
+ * of a configuration class in a readable format.
+ */
 public class ToStringGenerator {
 
     private final MethodNames methodNames;
@@ -17,8 +23,17 @@ public class ToStringGenerator {
         this.methodNames = methodNames;
     }
 
-    public MethodSpec generateToString(List<Property> properties,
-                                       ClassName className) {
+    /**
+     * Generates a toString method for a configuration class.
+     * The generated method returns a string representation of the class in the format:
+     * "ClassName{property1=value1, property2=value2, ...}"
+     *
+     * @param properties The list of properties to include in the toString method
+     * @param className The name of the class for which the toString method is being generated
+     * @return A MethodSpec representing the generated toString method
+     */
+    public @NotNull MethodSpec generateToString(@NotNull List<Property> properties,
+                                                ClassName className) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("toString")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)

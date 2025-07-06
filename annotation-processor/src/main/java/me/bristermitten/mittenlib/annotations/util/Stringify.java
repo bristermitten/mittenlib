@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.util;
 
 import com.squareup.javapoet.JavaFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -20,7 +21,7 @@ public class Stringify {
      * @return a string value representing the fully qualified name of the class,
      * consisting of the package name and the class name separated by a dot (.)
      */
-    public static String fullyQualifiedName(JavaFile javaFile) {
+    public static @NotNull String fullyQualifiedName(@NotNull JavaFile javaFile) {
         return javaFile.packageName + "." + javaFile.typeSpec.name;
     }
 

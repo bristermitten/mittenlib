@@ -18,7 +18,10 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 
 /**
- * Generates accessor methods (getters and setters) for configuration classes.
+ * Generates accessor methods for configuration classes.
+ * This class creates getter methods for fields and "with" methods that act as immutable setters,
+ * returning new instances with modified values. It also handles method overriding and annotation
+ * preservation when generating accessor methods.
  */
 public class AccessorGenerator {
     private final TypesUtil typesUtil;
@@ -39,7 +42,7 @@ public class AccessorGenerator {
      * @param element         The variable element
      * @param field           The field spec
      */
-    public void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
+    public void createGetterMethod(TypeSpec.@NotNull Builder typeSpecBuilder, @NotNull VariableElement element, @NotNull FieldSpec field) {
         var safeName = getFieldAccessorName(element);
 
         var builder = MethodSpec.methodBuilder(safeName)
@@ -58,7 +61,16 @@ public class AccessorGenerator {
         typeSpecBuilder.addMethod(builder.build());
     }
 
-    public void createGetterMethodOverriding(TypeSpec.Builder typeSpecBuilder, ExecutableElement overriding, FieldSpec fromField) {
+    /**
+     * Creates a getter method that overrides an existing method.
+     * This method preserves annotations from the original method (except for private annotations)
+     * and adds appropriate nullability and contract annotations.
+     *
+     * @param typeSpecBuilder The builder for the type spec
+     * @param overriding The executable element being overridden
+     * @param fromField The field spec that the getter will return
+     */
+    public void createGetterMethodOverriding(TypeSpec.@NotNull Builder typeSpecBuilder, @NotNull ExecutableElement overriding, @NotNull FieldSpec fromField) {
         var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .returns(fromField.type)
@@ -96,11 +108,11 @@ public class AccessorGenerator {
      * @param getSuperFieldName A function to get the field name for a superclass
      */
     public void createWithMethods(
-            TypeSpec.Builder typeSpecBuilder,
+            TypeSpec.@NotNull Builder typeSpecBuilder,
             ClassName className,
-            Map<VariableElement, FieldSpec> fieldSpecs,
+            @NotNull Map<VariableElement, FieldSpec> fieldSpecs,
             @Nullable TypeMirror superClass,
-            Function<TypeMirror, String> getSuperFieldName) {
+            @NotNull Function<TypeMirror, String> getSuperFieldName) {
 
         fieldSpecs.values().forEach(field -> {
             // Create a string representing the constructor parameters
@@ -136,7 +148,7 @@ public class AccessorGenerator {
      * @param variableElement The variable element
      * @return The accessor name
      */
-    private String getFieldAccessorName(VariableElement variableElement) {
+    private String getFieldAccessorName(@NotNull VariableElement variableElement) {
         return methodNames.safeMethodName(variableElement, (TypeElement) variableElement.getEnclosingElement());
     }
 }

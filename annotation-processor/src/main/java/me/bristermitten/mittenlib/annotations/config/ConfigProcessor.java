@@ -10,6 +10,7 @@ import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
 import me.bristermitten.mittenlib.config.Config;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -24,7 +25,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Annotation processor for generating config classes from DTO classes marked with {@link Config}
+ * Annotation processor for generating configuration classes from DTO classes marked with {@link Config}.
+ * This processor handles the compilation-time generation of implementation classes for configuration DTOs,
+ * creating strongly-typed configuration objects with proper getters, equals, hashCode, and toString methods.
+ * 
+ * The processor only processes top-level classes (not nested classes) and uses Guice for dependency injection
+ * of its internal components.
  */
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
@@ -38,8 +44,23 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         super();
     }
 
+    /**
+     * Processes annotations and generates configuration implementation classes.
+     * This method is called by the Java compiler during the annotation processing phase.
+     * It performs the following steps:
+     * 1. Sets up the tooling environment and creates a Guice injector
+     * 2. Finds all top-level classes annotated with @Config
+     * 3. Parses each class into an abstract configuration structure
+     * 4. Generates implementation classes for each structure
+     * 5. Writes the generated files to the filer
+     *
+     * @param annotations The annotation types requested to be processed
+     * @param roundEnv The environment for this round of annotation processing
+     * @return true if the annotations were processed successfully, false otherwise
+     * @throws ConfigProcessingException if there is an error writing the generated files
+     */
     @Override
-    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean processAnnotations(@NotNull Set<? extends TypeElement> annotations, @NotNull RoundEnvironment roundEnv) {
 
         ToolingProvider.setTooling(processingEnv);
         var injector = Guice.createInjector(

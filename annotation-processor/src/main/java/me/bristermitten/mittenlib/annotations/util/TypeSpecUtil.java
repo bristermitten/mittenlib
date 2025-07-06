@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.util;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Repeatable;
 import java.util.function.Consumer;
@@ -9,7 +10,7 @@ import java.util.function.Consumer;
 public class TypeSpecUtil 
 {
     
-    public static void methodAddAnnotation(MethodSpec.Builder builder, Class<?> annotation) {
+    public static void methodAddAnnotation(MethodSpec.@NotNull Builder builder, @NotNull Class<?> annotation) {
         // check if the builder already has the annotation, if so, only add it if the annotation is repeatable
         boolean hasAnnotation = builder.annotations.stream()
                 .anyMatch(existing -> existing.type.toString().equals(annotation.getCanonicalName()));
@@ -19,7 +20,7 @@ public class TypeSpecUtil
         }
     }
 
-    public static void methodAddAnnotation(MethodSpec.Builder builder, Class<?> annotation, Consumer<AnnotationSpec.Builder> builderConsumer) {
+    public static void methodAddAnnotation(MethodSpec.@NotNull Builder builder, @NotNull Class<?> annotation, @NotNull Consumer<AnnotationSpec.Builder> builderConsumer) {
         // check if the builder already has the annotation, if so, only add it if the annotation is repeatable
         boolean hasAnnotation = builder.annotations.stream()
                 .anyMatch(existing -> existing.type.toString().equals(annotation.getCanonicalName()));

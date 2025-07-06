@@ -38,35 +38,44 @@ public class FieldClassNameGenerator {
      */
     public String getConfigFieldName(@NotNull VariableElement element) {
         final ConfigName name = element.getAnnotation(ConfigName.class);
-        if (name != null) {
-            return name.value();
-        }
+        NamingPattern pattern = typesUtil.getAnnotation(element, NamingPattern.class);
+        String fieldName = element.getSimpleName().toString();
 
-        NamingPattern annotation = typesUtil.getAnnotation(element, NamingPattern.class);
-
-        if (annotation != null) {
-            return NamingPatternTransformer.format(
-                    element.getSimpleName().toString(), annotation.value()
-            );
-        }
-        return element.getSimpleName().toString();
+        return getConfigFieldName(name, pattern, fieldName);
     }
 
+    /**
+     * Get a suitable serialization key for a given property.
+     * This is the String that is looked up from the given {@link DeserializationContext#getData()}
+     *
+     * @param property The property
+     * @return The key to use when reading from {@link DeserializationContext#getData()} for the given property.
+     */
     public String getConfigFieldName(@NotNull Property property) {
         ConfigName configName = property.settings().configName();
+        NamingPattern namingPattern = property.settings().namingPattern();
+        String fieldName = property.name();
 
+        return getConfigFieldName(configName, namingPattern, fieldName);
+    }
+
+    /**
+     * Helper method to get the config field name based on annotations and field name.
+     *
+     * @param configName The ConfigName annotation, if present
+     * @param namingPattern The NamingPattern annotation, if present
+     * @param fieldName The name of the field
+     * @return The config field name
+     */
+    private String getConfigFieldName(ConfigName configName, NamingPattern namingPattern, String fieldName) {
         if (configName != null) {
             return configName.value();
         }
 
-        NamingPattern namingPattern = property.settings().namingPattern();
-
-
         if (namingPattern != null) {
-            return NamingPatternTransformer.format(
-                    property.name(), namingPattern.value()
-            );
+            return NamingPatternTransformer.format(fieldName, namingPattern.value());
         }
-        return property.name();
+
+        return fieldName;
     }
 }

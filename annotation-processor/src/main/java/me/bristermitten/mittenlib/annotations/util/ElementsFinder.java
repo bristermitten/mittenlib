@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.util;
 
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
@@ -35,7 +36,7 @@ public class ElementsFinder {
      * @param rootElement The element to find variables in
      * @return All the {@link VariableElement}s in the given element that are suitable for config generation
      */
-    public List<VariableElement> getApplicableVariableElements(TypeElement rootElement) {
+    public @NotNull List<VariableElement> getApplicableVariableElements(TypeElement rootElement) {
         return elements.getAllMembers(rootElement).stream()
                 .filter(elem -> elem.getEnclosingElement().equals(rootElement)) // elements#getAllMembers seems quite unpredictable as to whether it returns members from the superclass, so we'll just remove them in case
                 .filter(element -> element.getKind().isField())
@@ -62,7 +63,7 @@ public class ElementsFinder {
      * @param rootElement The type to search for methods
      * @return All the methods in the given type
      */
-    public List<ExecutableElement> getAllMethods(TypeElement rootElement) {
+    public @NotNull List<ExecutableElement> getAllMethods(TypeElement rootElement) {
         return elements.getAllMembers(rootElement).stream()
                 .filter(element -> element.getKind() == ElementKind.METHOD)
                 .map(ExecutableElement.class::cast)
@@ -70,7 +71,7 @@ public class ElementsFinder {
     }
 
 
-    public List<ExecutableElement> getPropertyMethods(TypeElement rootElement) {
+    public @NotNull List<ExecutableElement> getPropertyMethods(TypeElement rootElement) {
         return elements.getAllMembers(rootElement).stream()
                 .filter(element -> element.getKind() == ElementKind.METHOD)
                 .map(ExecutableElement.class::cast)
