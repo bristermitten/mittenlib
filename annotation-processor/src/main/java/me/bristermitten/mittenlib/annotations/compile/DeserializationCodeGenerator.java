@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;

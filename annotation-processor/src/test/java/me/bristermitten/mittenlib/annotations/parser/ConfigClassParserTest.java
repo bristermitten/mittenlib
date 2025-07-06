@@ -8,7 +8,7 @@ import io.toolisticon.cute.Cute;
 import io.toolisticon.cute.PassIn;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
-import me.bristermitten.mittenlib.annotations.config.ConfigProcessorModule;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
 import me.bristermitten.mittenlib.annotations.integration.InterfaceConfig;
 import me.bristermitten.mittenlib.annotations.integration.UnionConfig;
 import me.bristermitten.mittenlib.annotations.integration.AtomicConfig;

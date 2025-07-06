@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;

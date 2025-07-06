@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
@@ -6,7 +6,6 @@ import com.squareup.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
 import me.bristermitten.mittenlib.config.Config;

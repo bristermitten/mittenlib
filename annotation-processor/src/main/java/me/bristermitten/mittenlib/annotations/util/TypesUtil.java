@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.annotations.util;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
-import me.bristermitten.mittenlib.annotations.config.GeneratedTypeCache;
+import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;

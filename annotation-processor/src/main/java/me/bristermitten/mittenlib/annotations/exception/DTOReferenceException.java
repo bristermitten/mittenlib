@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.annotations.exception;
 
-import me.bristermitten.mittenlib.annotations.config.GeneratedTypeCache;
+import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.util.Stringify;
 import org.jetbrains.annotations.NotNull;
 

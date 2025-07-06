@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;

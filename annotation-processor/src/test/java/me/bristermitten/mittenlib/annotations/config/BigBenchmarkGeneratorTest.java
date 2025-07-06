@@ -4,6 +4,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.toolisticon.cute.Cute;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
 import me.bristermitten.mittenlib.config.Config;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

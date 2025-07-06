@@ -7,7 +7,7 @@ import io.toolisticon.cute.Cute;
 import me.bristermitten.mittenlib.annotations.ast.ASTParentReference;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.config.ConfigProcessorModule;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
 import me.bristermitten.mittenlib.annotations.integration.InterfaceConfig;
 import me.bristermitten.mittenlib.annotations.integration.UnionConfig;
 import org.assertj.core.api.InstanceOfAssertFactories;

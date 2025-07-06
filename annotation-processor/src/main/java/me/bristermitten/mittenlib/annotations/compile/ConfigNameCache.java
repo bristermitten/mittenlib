@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;

@@ -4,6 +4,8 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
 import com.squareup.javapoet.ClassName;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessor;
+import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.Compiler.javac;
