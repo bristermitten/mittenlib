@@ -1,11 +1,9 @@
 package me.bristermitten.mittenlib.annotations.integration;
 
 import me.bristermitten.mittenlib.config.Config;
-import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 
 @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
-@Source(value = "lang.yml")
 @Config
 public class SuperclassConfigDTO {
     public Child1DTO child1;

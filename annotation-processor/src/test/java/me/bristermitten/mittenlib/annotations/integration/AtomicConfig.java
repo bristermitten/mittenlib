@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.annotations.parser.configs;
+package me.bristermitten.mittenlib.annotations.integration;
 
 import io.toolisticon.cute.PassIn;
 import me.bristermitten.mittenlib.config.Config;
