@@ -7,17 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.Repeatable;
 import java.util.function.Consumer;
 
-public class TypeSpecUtil 
-{
-    
+public class TypeSpecUtil {
+
     public static void methodAddAnnotation(MethodSpec.@NotNull Builder builder, @NotNull Class<?> annotation) {
         // check if the builder already has the annotation, if so, only add it if the annotation is repeatable
-        boolean hasAnnotation = builder.annotations.stream()
-                .anyMatch(existing -> existing.type.toString().equals(annotation.getCanonicalName()));
-
-        if (!hasAnnotation || annotation.isAnnotationPresent(Repeatable.class)) {
-            builder.addAnnotation(annotation);
-        }
+        methodAddAnnotation(builder, annotation, b -> {
+        });
     }
 
     public static void methodAddAnnotation(MethodSpec.@NotNull Builder builder, @NotNull Class<?> annotation, @NotNull Consumer<AnnotationSpec.Builder> builderConsumer) {
