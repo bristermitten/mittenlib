@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">ASTSettings.ConfigASTSettings</span>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern, boolean&nbsp;generateToString)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">ASTSettings.ConfigASTSettings</span>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern, @Nullable <a href="../../config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a>&nbsp;source, boolean&nbsp;generateToString)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></span></div>
 </section>
@@ -123,7 +123,8 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,boolean)" class="member-name-link">ConfigASTSettings</a><wbr>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.Source,boolean)" class="member-name-link">ConfigASTSettings</a><wbr>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
+ @Nullable <a href="../../config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a>&nbsp;source,
  boolean&nbsp;generateToString)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>ConfigASTSettings</code> record class.</div>
@@ -162,9 +163,14 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>namingPattern</code> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../../config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#source()" class="member-name-link">source</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <code>source</code> record component.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
 </div>
@@ -185,15 +191,18 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.names.NamingPattern,boolean)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.Source,boolean)">
 <h3>ConfigASTSettings</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ConfigASTSettings</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
+ @Nullable
+ @Nullable <a href="../../config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a>&nbsp;source,
  boolean&nbsp;generateToString)</span></div>
 <div class="block">Creates an instance of a <code>ConfigASTSettings</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>namingPattern</code> - the value for the <code>namingPattern</code> record component</dd>
+<dd><code>source</code> - the value for the <code>source</code> record component</dd>
 <dd><code>generateToString</code> - the value for the <code>generateToString</code> record component</dd>
 </dl>
 </section>
@@ -258,6 +267,18 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <dd><code><a href="ASTSettings.html#namingPattern()">namingPattern</a></code>&nbsp;in interface&nbsp;<code><a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></code></dd>
 <dt>Returns:</dt>
 <dd>the value of the <code>namingPattern</code> record component</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="source()">
+<h3>source</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></span>&nbsp;<span class="element-name">source</span>()</div>
+<div class="block">Returns the value of the <code>source</code> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <code>source</code> record component</dd>
 </dl>
 </section>
 </li>

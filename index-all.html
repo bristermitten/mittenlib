@@ -334,7 +334,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Marks a type as a <a href="https://github.com/bristermitten/mittenlib/tree/master/annotation-processor#naming">DTO type</a>
  that will be processed by the annotation processor, if present.</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.ConfigASTSettings.html#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,boolean)" class="member-name-link">ConfigASTSettings(NamingPattern, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.ConfigASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.ConfigASTSettings</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.ConfigASTSettings.html#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.Source,boolean)" class="member-name-link">ConfigASTSettings(NamingPattern, Source, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.ConfigASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.ConfigASTSettings</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>ConfigASTSettings</code> record class.</div>
 </dd>
@@ -594,7 +594,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Generates deserialization code for configuration classes.</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)" class="member-name-link">DeserializationCodeGenerator(TypesUtil, FieldNameGenerator, ConfigurationClassNameGenerator)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames)" class="member-name-link">DeserializationCodeGenerator(TypesUtil, FieldNameGenerator, ConfigurationClassNameGenerator, MethodNames)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/DeserializationContext.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a> - Class in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
 <dd>
@@ -1048,11 +1048,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/Configuration.html#getDeserializeFunction()" class="member-name-link">getDeserializeFunction()</a> - Method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#getDeserializeMethodName(com.squareup.javapoet.TypeName)" class="member-name-link">getDeserializeMethodName(TypeName)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html#getDeserializeMethodName(com.squareup.javapoet.TypeName)" class="member-name-link">getDeserializeMethodName(TypeName)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#getDeserializeMethodName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getDeserializeMethodName(AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html#getDeserializeMethodName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getDeserializeMethodName(AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a></dt>
 <dd>
 <div class="block">Gets the name of the deserialization method for a configuration structure.</div>
 </dd>
@@ -2196,6 +2196,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.html#source()" class="member-name-link">source()</a> - Method in interface me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.Union.html#source()" class="member-name-link">source()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.Union.html" title="class in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure.Union</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>source</code> record component.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.ConfigASTSettings.html#source()" class="member-name-link">source()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.ConfigASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.ConfigASTSettings</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>source</code> record component.</div>
 </dd>
