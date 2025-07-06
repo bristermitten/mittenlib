@@ -63,13 +63,15 @@ public class ConfigImplGenerator {
     private void emitInto(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
         ClassName configImplClassName = ConfigurationClassNameGenerator.createConfigImplClassName(ast);
 
-        if(ast instanceof AbstractConfigStructure.Union) {
+        if (ast instanceof AbstractConfigStructure.Union) {
             source.addModifiers(Modifier.ABSTRACT);
         }
         addInheritance(ast, source);
         addGeneratedConfigAnnotation(ast, source);
         addNestedClassModifiers(ast, source);
         addProperties(ast, source);
+        addSuperClassField(ast, source);
+        accessorGenerator.createWithMethods(source, ast);
         addAllArgsConstructor(source, ast);
         addDeserializationMethods(ast, source);
         addStandardObjectMethods(ast, configImplClassName, source);
@@ -109,9 +111,7 @@ public class ConfigImplGenerator {
 
     private void addDeserializationMethods(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
         deserializationCodeGenerator.createDeserializeMethods(source,
-                ast,
-                ast.source().element(),
-                ast.properties()
+                ast
         );
     }
 
@@ -195,6 +195,20 @@ public class ConfigImplGenerator {
 
             List<String> parentParams = buildSuperConstructorParams(parent, parentConfig, superParameterName);
             constructor.addStatement("super($L)", String.join(", ", parentParams));
+            constructor.addStatement("this.parent = parent");
+        });
+    }
+
+    private void addSuperClassField(@NotNull AbstractConfigStructure ast, TypeSpec.Builder builder) {
+        var parentMirror = getSuperClass(ast);
+
+        parentMirror.ifPresent(parent -> {
+            var parentConfig = configNameCache.lookupAST(parent)
+                    .orElseThrow(() -> new IllegalStateException("could not determine a config for parent class " + parent));
+            ClassName parentName = ConfigurationClassNameGenerator.createConfigImplClassName(parentConfig);
+            FieldSpec.Builder field = FieldSpec.builder(parentName, "parent", Modifier.PRIVATE, Modifier.FINAL);
+
+            builder.addField(field.build());
         });
     }
 

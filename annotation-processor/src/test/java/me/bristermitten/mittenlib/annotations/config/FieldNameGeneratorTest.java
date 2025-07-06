@@ -11,7 +11,7 @@ import javax.tools.JavaFileObject;
 import static com.google.testing.compile.Compiler.javac;
 import static com.google.testing.compile.JavaFileObjectSubject.assertThat;
 
-class FieldClassNameGeneratorTest {
+class FieldNameGeneratorTest {
 
     private JavaFileObject compileField(String source) {
         return compileField(source, null);

@@ -12,10 +12,10 @@ import javax.inject.Inject;
 /**
  * Responsible for generating serial keys based on DTO fields
  */
-public class FieldClassNameGenerator {
+public class FieldNameGenerator {
 
     @Inject
-    FieldClassNameGenerator() {
+    FieldNameGenerator() {
     }
 
     /**

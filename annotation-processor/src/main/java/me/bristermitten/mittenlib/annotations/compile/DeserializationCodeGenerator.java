@@ -40,16 +40,16 @@ public class DeserializationCodeGenerator {
     public static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
-    private final FieldClassNameGenerator fieldClassNameGenerator;
+    private final FieldNameGenerator fieldNameGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
 
     @Inject
     public DeserializationCodeGenerator(
             TypesUtil typesUtil,
-            FieldClassNameGenerator fieldClassNameGenerator,
+            FieldNameGenerator fieldNameGenerator,
             ConfigurationClassNameGenerator configurationClassNameGenerator) {
         this.typesUtil = typesUtil;
-        this.fieldClassNameGenerator = fieldClassNameGenerator;
+        this.fieldNameGenerator = fieldNameGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
@@ -77,7 +77,7 @@ public class DeserializationCodeGenerator {
         builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement("$T $L", elementType, property.name());
 
-        final String key = fieldClassNameGenerator.getConfigFieldName(property);
+        final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
         builder.addStatement("Object $L = $$data.get($S)", fromMapName, key);
 
@@ -203,13 +203,10 @@ public class DeserializationCodeGenerator {
      * Creates the main deserialization method for a config class.
      *
      * @param typeSpecBuilder  The builder for the config class
-     * @param dtoType          The DTO class type
-     * @param variableElements The fields to deserialize
+     *
      */
     public void createDeserializeMethods(TypeSpec.@NotNull Builder typeSpecBuilder,
-                                         @NotNull AbstractConfigStructure ast,
-                                         @NotNull TypeElement dtoType,
-                                         @NotNull List<Property> variableElements) {
+                                         @NotNull AbstractConfigStructure ast) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(getDeserializeMethodName(ast))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -238,10 +235,10 @@ public class DeserializationCodeGenerator {
             typeSpecBuilder.addMethod(builder.build());
             return;
         }
-
+var dtoType = ast.source().element();
         builder.addStatement("$1T dto = null", (dtoType.asType()));
 
-        final List<MethodSpec> deserializeMethods = variableElements.stream()
+        final List<MethodSpec> deserializeMethods = ast.properties().stream()
                 .map(variableElement -> createDeserializeMethodFor(dtoType, variableElement))
                 .toList();
 

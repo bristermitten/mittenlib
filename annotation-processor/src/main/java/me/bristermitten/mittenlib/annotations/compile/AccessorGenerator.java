@@ -2,6 +2,9 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.wrapper.AnnotationMirrorWrapper;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.PrivateAnnotations;
 import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
@@ -12,10 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
-import java.util.Map;
 import java.util.StringJoiner;
-import java.util.function.Function;
 
 /**
  * Generates accessor methods for configuration classes.
@@ -27,12 +27,15 @@ public class AccessorGenerator {
     private final TypesUtil typesUtil;
     private final MethodNames methodNames;
 
+    private final ConfigurationClassNameGenerator configurationClassNameGenerator;
+
     @Inject
     public AccessorGenerator(
             TypesUtil typesUtil,
-            MethodNames methodNames) {
+            MethodNames methodNames, ConfigurationClassNameGenerator configurationClassNameGenerator) {
         this.typesUtil = typesUtil;
         this.methodNames = methodNames;
+        this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
     /**
@@ -67,8 +70,8 @@ public class AccessorGenerator {
      * and adds appropriate nullability and contract annotations.
      *
      * @param typeSpecBuilder The builder for the type spec
-     * @param overriding The executable element being overridden
-     * @param fromField The field spec that the getter will return
+     * @param overriding      The executable element being overridden
+     * @param fromField       The field spec that the getter will return
      */
     public void createGetterMethodOverriding(TypeSpec.@NotNull Builder typeSpecBuilder, @NotNull ExecutableElement overriding, @NotNull FieldSpec fromField) {
         var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
@@ -101,45 +104,55 @@ public class AccessorGenerator {
     /**
      * Creates "with" methods (immutable setters) for each field.
      *
-     * @param typeSpecBuilder   The builder for the type spec
-     * @param className         The class name
-     * @param fieldSpecs        The field specs
-     * @param superClass        The superclass, if any
-     * @param getSuperFieldName A function to get the field name for a superclass
+     * @param typeSpecBuilder The builder for the type spec
+     * @param ast             The config ast
      */
     public void createWithMethods(
-            TypeSpec.@NotNull Builder typeSpecBuilder,
-            ClassName className,
-            @NotNull Map<VariableElement, FieldSpec> fieldSpecs,
-            @Nullable TypeMirror superClass,
-            @NotNull Function<TypeMirror, String> getSuperFieldName) {
+            @NotNull TypeSpec.Builder typeSpecBuilder,
+            AbstractConfigStructure ast) {
 
-        fieldSpecs.values().forEach(field -> {
+
+        for (Property field : ast.properties()) {
+            ClassName configImplClassName = ConfigurationClassNameGenerator.createConfigImplClassName(ast);
+            MethodSpec.Builder withMethodBuilder = MethodSpec.methodBuilder("with" + Strings.capitalize(field.name()))
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(configImplClassName)
+                    .addParameter(
+                            ParameterSpec.builder(configurationClassNameGenerator.publicPropertyClassName(field), field.name())
+                                    .addModifiers(Modifier.FINAL).build()
+                    );
+
+            if (ast instanceof AbstractConfigStructure.Union) {
+                // make the with method abstract and then alternatives can override it
+                withMethodBuilder.addModifiers(Modifier.ABSTRACT);
+                continue;
+            }
+
             // Create a string representing the constructor parameters
-            String constructorParams = Strings.joinWith(fieldSpecs.values(),
+            String constructorParams = Strings.joinWith(ast.properties(),
                     f2 -> {
-                        if (f2.name.equals(field.name)) {
-                            return f2.name; // we'll use the version from the parameter
+                        if (f2.name().equals(field.name())) {
+                            return f2.name(); // we'll use the version from the parameter
                         }
-                        return "this." + f2.name;
+                        return "this." + f2.name();
                     }, ", ");
 
-            if (superClass != null) {
-                var joiner = new StringJoiner(",")
-                        .add(getSuperFieldName.apply(superClass));
+            if (ast.source() instanceof ConfigTypeSource.ClassConfigTypeSource classSource && classSource.parent().isPresent()) {
+                var superClass = classSource.parent().get(); // TODO
+                var joiner = new StringJoiner(", ")
+                        .add("this.parent");
                 if (!constructorParams.isEmpty()) {
                     joiner.add(constructorParams);
                 }
                 constructorParams = joiner.toString();
             }
+
+
             typeSpecBuilder.addMethod(
-                    MethodSpec.methodBuilder("with" + Strings.capitalize(field.name))
-                            .addModifiers(Modifier.PUBLIC)
-                            .returns(className)
-                            .addParameter(ParameterSpec.builder(field.type, field.name).addModifiers(Modifier.FINAL).build())
-                            .addStatement("return new $T(" + constructorParams + ")", className)
+                    withMethodBuilder
+                            .addStatement("return new $T(" + constructorParams + ")", configImplClassName)
                             .build());
-        });
+        }
     }
 
     /**
