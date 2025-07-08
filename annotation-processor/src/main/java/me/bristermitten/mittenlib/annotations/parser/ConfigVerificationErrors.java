@@ -8,4 +8,9 @@ public class ConfigVerificationErrors {
             PlainValidationMessage.create("UNION_ALTERNATIVE_NOT_EXTENDING_UNION",
                     "Alternative in union ${0} MUST extend the union type when the union type has properties defined!"
             );
+
+    public static final ValidationMessage ENUM_PARSING_SCHEME_NOT_ENUM =
+            PlainValidationMessage.create("ENUM_PARSING_SCHEME_NOT_ENUM",
+                    "This property's type is not an enum, so the @EnumParsingScheme annotation will have no effect."
+            );
 }

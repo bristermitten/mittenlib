@@ -24,4 +24,8 @@ public class ConfigLoadingErrors {
     public static RuntimeException noUnionMatch() {
         return new IllegalArgumentException("No union alternatives matched.");
     }
+
+    public static RuntimeException invalidEnumException(Class<? extends Enum<?>> enumClass, String propertyName, Object actualValue) {
+        return new InvalidEnumValueException(enumClass, propertyName, actualValue);
+    }
 }

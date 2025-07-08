@@ -1,8 +1,10 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
+import me.bristermitten.mittenlib.config.EnumParsingSchemes;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public sealed interface ASTSettings {
@@ -18,6 +20,7 @@ public sealed interface ASTSettings {
     record PropertyASTSettings(
             @Nullable NamingPattern namingPattern,
             @Nullable ConfigName configName,
+            @NotNull EnumParsingSchemes enumParsingScheme,
             boolean isNullable
     ) implements ASTSettings {
     }

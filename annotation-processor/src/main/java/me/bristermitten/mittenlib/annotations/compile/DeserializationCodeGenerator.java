@@ -13,6 +13,7 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
+import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -99,6 +100,7 @@ public class DeserializationCodeGenerator {
         TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
         boolean isGenericType = wrappedElementType.hasTypeArguments();
         Optional<TypeElementWrapper> typeElementOpt = wrappedElementType.getTypeElement();
+
         if (isGenericType && typeElementOpt.isPresent()) { // generic _and_ declared
             /*
              This is quite messy, but it's the only real way to solve this problem:
@@ -164,7 +166,39 @@ public class DeserializationCodeGenerator {
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeType);
             builder.addStatement("return $T.ok(($T) $L)", Result.class, safeType, fromMapName);
 
-            if (typesUtil.isConfigType(elementType)) {
+            if (wrappedElementType.isEnum()) {
+                // try to load it as a string
+                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, String.class);
+
+
+                switch (property.settings().enumParsingScheme()) {
+                    case EXACT_MATCH -> builder.addStatement("$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
+                            safeType,
+                            Enums.class,
+                            String.class,
+                            fromMapName
+                    );
+                    case CASE_INSENSITIVE ->
+                            builder.addStatement("$1T enumValue = $2T.valueOfIgnoreCase(($3T) $4L, $1T.class)",
+                                    safeType,
+                                    Enums.class,
+                                    String.class,
+                                    fromMapName
+                            );
+                }
+
+                builder.beginControlFlow("if (enumValue == null)");
+                builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        safeType,
+                        property.name(),
+                        fromMapName);
+                builder.endControlFlow();
+
+                builder.addStatement("return $T.ok(enumValue)", Result.class);
+                builder.endControlFlow();
+            } else if (typesUtil.isConfigType(elementType)) {
                 TypeName configClassName = getConfigClassName(elementType, dtoType);
                 builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, Map.class);
                 builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);

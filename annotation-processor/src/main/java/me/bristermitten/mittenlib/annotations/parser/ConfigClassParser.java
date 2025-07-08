@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.squareup.javapoet.ClassName;
+import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
@@ -10,6 +11,8 @@ import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.ConfigUnion;
+import me.bristermitten.mittenlib.config.EnumParsingScheme;
+import me.bristermitten.mittenlib.config.EnumParsingSchemes;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.generate.GenerateToString;
 import me.bristermitten.mittenlib.config.names.ConfigName;
@@ -93,10 +96,21 @@ public class ConfigClassParser {
                             Null.orElse(typesUtil.getAnnotation(propertyElement, NamingPattern.class), namingPattern);
 
                     var isNullable = typesUtil.isNullable(propertyElement);
+
+                    var enumParsingScheme = typesUtil.getAnnotation(propertyElement, EnumParsingScheme.class);
+                    if (enumParsingScheme != null
+                        && propertyElement.getAnnotation(EnumParsingScheme.class) != null // if the annotation is precisely present on the property
+                        && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
+                        MessagerUtils.warning(propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
+                    }
+
                     return new Property(propertyElement.getSimpleName().toString(),
                             propertyType,
                             propertySource,
-                            new ASTSettings.PropertyASTSettings(namingPatternSub, configName, isNullable));
+                            new ASTSettings.PropertyASTSettings(namingPatternSub,
+                                    configName,
+                                    enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value()
+                                    , isNullable));
                 })
                 .toList();
     }
