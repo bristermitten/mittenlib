@@ -104,8 +104,8 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.reader.ObjectMapper,java.util.Map)" class="member-name-link">DeserializationContext</a><wbr>(<a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;data)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.reader.ObjectMapper,me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">DeserializationContext</a><wbr>(<a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper,
+ <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;data)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Create a new DeserializationContext</div>
 </div>
@@ -123,14 +123,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getData()" class="member-name-link">getData</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMapper()" class="member-name-link">getMapper</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withData(java.util.Map)" class="member-name-link">withData</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;data)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withData(me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">withData</a><wbr>(<a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;data)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -150,15 +150,15 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.reader.ObjectMapper,java.util.Map)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.reader.ObjectMapper,me.bristermitten.mittenlib.config.tree.DataTree)">
 <h3>DeserializationContext</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DeserializationContext</span><wbr><span class="parameters">(<a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a>&nbsp;mapper,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;data)</span></div>
+ <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;data)</span></div>
 <div class="block">Create a new DeserializationContext</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>mapper</code> - the mapper to use</dd>
-<dd><code>data</code> - the data to deserialize</dd>
+<dd><code>data</code> - the data to deserialise</dd>
 </dl>
 </section>
 </li>
@@ -184,7 +184,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getData()">
 <h3>getData</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="element-name">getData</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></span>&nbsp;<span class="element-name">getData</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the data to deserialize</dd>
@@ -192,9 +192,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="withData(java.util.Map)">
+<section class="detail" id="withData(me.bristermitten.mittenlib.config.tree.DataTree)">
 <h3>withData</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></span>&nbsp;<span class="element-name">withData</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;data)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></span>&nbsp;<span class="element-name">withData</span><wbr><span class="parameters">(<a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;data)</span></div>
 </section>
 </li>
 </ul>
