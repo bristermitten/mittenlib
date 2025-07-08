@@ -16,6 +16,7 @@ import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
@@ -61,9 +62,9 @@ public class DeserializationCodeGenerator {
         this.customDeserializers = customDeserializers;
     }
 
-    private CodeBlock getDeserializationFunction(CustomDeserializerInfo info) {
+    private CodeBlock getDeserializationFunction(CustomDeserializerInfo info, CodeBlock withDataExpression) {
         if (info.isStatic()) {
-            return CodeBlock.of("$T.deserialize(context)", info.deserializerClass());
+            return CodeBlock.of("$T.deserialize(context.withData($L))", info.deserializerClass(), withDataExpression);
         }
         throw new IllegalArgumentException("idk non-static is hard");
     }
@@ -166,7 +167,7 @@ public class DeserializationCodeGenerator {
 
             builder.addStatement("Object $L = $$data.getOrDefault($S, $L)", fromMapName, key, defaultString);
         } else {
-            builder.addStatement("Object $L = $$data.get($S)", fromMapName, key);
+            builder.addStatement("$T $L = $$data.get($S)", DataTree.class, fromMapName, key);
         }
 
         // null check
@@ -271,26 +272,35 @@ public class DeserializationCodeGenerator {
             */
             final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
 
-            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeType);
-            builder.addStatement("return $T.ok(($T) $L)", Result.class, safeType, fromMapName);
+            // if there's a default value then there's a chance that field instanceof <PropertyType>
+            // so we check this first as an easy short-circuit
+            if (property.settings().hasDefaultValue()) {
+                builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeType);
+                builder.addStatement("return $T.ok(($T) $L)", Result.class, safeType, fromMapName);
+                builder.endControlFlow();
+            }
+            // now check if the tree type would directly match any of the primitives (int, string, etc)
+            // and add a short-circuit for that
             var treeType = getDataTreeType(safeType);
             if (treeType.isPresent()) {
-                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, treeType.get());
+
+                builder.beginControlFlow("if ($L instanceof $T)", fromMapName, treeType.get());
                 var convert = dataTreeConvert(safeType, treeType.get(), CodeBlock
                         .of("(($T) $L).value()", treeType.get(), fromMapName));
 
                 builder.addStatement("return $T.ok($L)", Result.class, convert);
+                builder.endControlFlow();
             }
 
             Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
 
             if (customDeserializerOptional.isPresent()) {
                 CustomDeserializerInfo info = customDeserializerOptional.get();
-                CodeBlock deserializationFunction = getDeserializationFunction(info);
-
+                CodeBlock deserializationFunction = getDeserializationFunction(info, CodeBlock.of(
+                        "$T.loadFrom($L)", DataTreeTransforms.class, fromMapName
+                ));
 
                 if (!info.isFallback()) {
-                    builder.endControlFlow();
                     builder.addStatement(CodeBlock.builder().add("return ")
                             .add(deserializationFunction)
                             .build());
@@ -301,23 +311,24 @@ public class DeserializationCodeGenerator {
 
             if (wrappedElementType.isEnum()) {
                 // try to load it as a string
-                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, String.class);
-                {
+                if (property.settings().hasDefaultValue()) {
+                    builder.beginControlFlow("if ($L instanceof $T)", fromMapName, String.class);
+
                     addEnumDeserialisation(property, builder, fromMapName, safeType, CodeBlock.of("$L", fromMapName));
+
+                    builder.endControlFlow();
                 }
-                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class);
+                builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class);
                 {
                     var convert = CodeBlock.of("(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
                     addEnumDeserialisation(property, builder, fromMapName, safeType, convert);
-                    builder.endControlFlow();
                 }
+                builder.endControlFlow();
             } else if (typesUtil.isConfigType(elementType)) {
                 TypeName configClassName = getConfigClassName(elementType, dtoType);
-                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
+                builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
                 builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
                 builder.addStatement("return $T.$L(context.withData(mapData))", configClassName, methodNames.getDeserializeMethodName(configClassName));
-                builder.endControlFlow();
-            } else {
                 builder.endControlFlow();
             }
 
@@ -325,7 +336,9 @@ public class DeserializationCodeGenerator {
             builder.beginControlFlow("else");
             if (customDeserializerOptional.isPresent()) {
                 CustomDeserializerInfo info = customDeserializerOptional.get();
-                CodeBlock deserializationFunction = getDeserializationFunction(info);
+                CodeBlock deserializationFunction = getDeserializationFunction(info, CodeBlock.of(
+                        "$T.loadFrom($L)", DataTreeTransforms.class, fromMapName
+                ));
 
 
                 if (info.isFallback()) {

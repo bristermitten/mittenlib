@@ -48,7 +48,7 @@ public class CustomDeserializerIntegrationTest {
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         """
                                 customType: 'blahblah'
-                                customTypes: [ {} ]""",
+                                customTypes: [ 'f' ]""",
                         new Configuration<>(null, CustomTypeConfig.class, CustomTypeConfigImpl::deserializeCustomTypeConfigImpl)
                 ).getOrThrow();
 
