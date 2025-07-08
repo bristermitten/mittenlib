@@ -13,6 +13,7 @@ import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactor
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,9 @@ public class CustomDeserializerIntegrationTest {
     void test() {
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
-                        "customType: blahblah",
+                        """
+                                customType: 'blahblah'
+                                customTypes: [ {} ]""",
                         new Configuration<>(null, CustomTypeConfig.class, CustomTypeConfigImpl::deserializeCustomTypeConfigImpl)
                 ).getOrThrow();
 
@@ -53,6 +56,13 @@ public class CustomDeserializerIntegrationTest {
         assertThat(customTypeConfig)
                 .extracting(CustomTypeConfig::customType)
                 .isEqualTo(new CustomType("hello"));
+
+        assertThat(customTypeConfig)
+                .extracting(CustomTypeConfig::customTypes)
+                .asInstanceOf(InstanceOfAssertFactories.list(CustomType.class))
+                .singleElement()
+                .isEqualTo(new CustomType("hello"));
+
     }
 
     @Test

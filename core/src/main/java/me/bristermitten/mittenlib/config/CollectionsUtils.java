@@ -43,13 +43,14 @@ public class CollectionsUtils {
         try {
             // gamble: first we try a blind cast and hope for the best
             //noinspection unchecked
-           return deserialiseListFrom((List<Map<String, Object>>) rawData, baseContext, deserializationFunction);
+            return deserialiseListFrom((List<Map<String, Object>>) rawData, baseContext, deserializationFunction);
         } catch (ClassCastException ignore) {
         }
         // fall back to gson for a more informative error message
         Result<List<Map<String, Object>>> rawListRes = baseContext.getMapper().map(rawData, LIST_MAP_STRING_OBJECT_TOKEN);
         return rawListRes.flatMap(f -> deserialiseListFrom(f, baseContext, deserializationFunction));
     }
+
 
     private static <T> Result<List<T>> deserialiseListFrom(List<Map<String, Object>> rawList, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
         // Apply the deserialization function to each element of the list, flattening the result

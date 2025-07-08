@@ -16,7 +16,7 @@ public class DeserializationContext {
      * Create a new DeserializationContext
      *
      * @param mapper the mapper to use
-     * @param data   the data to deserialize
+     * @param data   the data to deserialise
      */
     public DeserializationContext(ObjectMapper mapper, Map<String, Object> data) {
         this.mapper = mapper;

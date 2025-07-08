@@ -67,6 +67,13 @@ public class DeserializationCodeGenerator {
         throw new IllegalArgumentException("idk non-static is hard");
     }
 
+    private CodeBlock getDeserializationFunctionReference(CustomDeserializerInfo info) {
+        if (info.isStatic()) {
+            return CodeBlock.of("$T::deserialize", info.deserializerClass());
+        }
+        throw new IllegalArgumentException("idk non-static is hard");
+    }
+
     /**
      * Creates a deserialization method for a specific field in a DTO class.
      *
@@ -152,19 +159,41 @@ public class DeserializationCodeGenerator {
 
             if (canonicalName.equals(List.class.getName())) {
                 var listType = wrappedElementType.getTypeArguments().getFirst();
+                Optional<CustomDeserializerInfo> optional = customDeserializers.getCustomDeserializer(listType);
+                if (optional.isPresent()) {
+                    CustomDeserializerInfo info = optional.get();
+                    // TODO fallback
+                    CodeBlock deserializationFunction = getDeserializationFunctionReference(info);
+                    builder.addStatement("return $T.deserializeList($L, context, $L)", CollectionsUtils.class, fromMapName, deserializationFunction);
+                    return builder.build();
+                }
                 if (typesUtil.isConfigType(listType)) {
 
                     TypeName listTypeName = getConfigClassName(listType, null);
-                    builder.addStatement("return $T.deserializeList($L, context, $T::$L)", CollectionsUtils.class,
-                            fromMapName,
-                            listTypeName,
-                            methodNames.getDeserializeMethodName(listTypeName));
+
+                    var deserializeCodeBlock = CodeBlock.of("$T::$L", listTypeName, methodNames.getDeserializeMethodName(listTypeName));
+
+                    var statement = CodeBlock.builder()
+                            .add("return $T.deserializeList($L, context, ", CollectionsUtils.class, fromMapName)
+                            .add(deserializeCodeBlock)
+                            .add(")")
+                            .build();
+                    builder.addStatement(statement);
                     return builder.build();
                 }
             } else if (canonicalName.equals("java.util.Map")) {
                 var arguments = wrappedElementType.getTypeArguments();
                 var keyType = arguments.get(0);
                 var valueType = arguments.get(1);
+
+                Optional<CustomDeserializerInfo> optional = customDeserializers.getCustomDeserializer(valueType);
+                if (optional.isPresent()) {
+                    CustomDeserializerInfo info = optional.get();
+                    // TODO fallback
+                    CodeBlock deserializationFunction = getDeserializationFunctionReference(info);
+                    builder.addStatement("return $T.deserializeMap($L, context, $L)", CollectionsUtils.class, fromMapName, deserializationFunction);
+                    return builder.build();
+                }
 
                 if (typesUtil.isConfigType(valueType)) {
                     TypeName mapTypeName = getConfigClassName(valueType, null);
