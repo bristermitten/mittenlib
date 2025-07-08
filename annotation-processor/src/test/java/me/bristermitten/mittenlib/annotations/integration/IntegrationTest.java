@@ -92,11 +92,11 @@ public class IntegrationTest {
                         new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl::deserializeClassConfigImpl)
                 ).getOrThrow();
 
-        ClassConfigImpl interfaceConfig = stringReaderProvider.get();
+        ClassConfigImpl classConfig = stringReaderProvider.get();
 
-        assertThat(interfaceConfig).isNotNull();
-        assertThat(interfaceConfig.name()).isEqualTo("a");
-        assertThatList(interfaceConfig.children())
+        assertThat(classConfig).isNotNull();
+        assertThat(classConfig.name()).isEqualTo("a");
+        assertThatList(classConfig.children())
                 .first()
                 .isEqualTo(new InterfaceConfigImpl(
                         "b",
@@ -108,10 +108,13 @@ public class IntegrationTest {
                         ), null
                 ));
 
-        assertThat(interfaceConfig.child())
+        assertThat(classConfig.child())
                 .isNotNull()
                 .extracting(ClassConfig.ChildConfig::id)
                 .isEqualTo("pee");
+
+        assertThat(classConfig.defaultValue())
+                .isEqualTo(1);
     }
 
     @Test
