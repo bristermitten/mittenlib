@@ -15,6 +15,8 @@ public class ClassConfig {
 
     int age;
 
+    int defaultValue = 1;
+
     List<InterfaceConfig> children;
 
     @Nullable ChildConfig child;

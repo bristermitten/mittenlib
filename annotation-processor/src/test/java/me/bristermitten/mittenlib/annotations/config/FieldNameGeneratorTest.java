@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import javax.tools.JavaFileObject;
+import java.util.regex.Pattern;
 
 import static com.google.testing.compile.Compiler.javac;
 import static com.google.testing.compile.JavaFileObjectSubject.assertThat;
@@ -42,7 +43,7 @@ class FieldNameGeneratorTest {
     private void assertConfigKeyUsed(JavaFileObject source, String key) {
         assertThat(source)
                 .contentsAsUtf8String()
-                .contains("$data.get(\"%s\"".formatted(key));
+                .containsMatch(Pattern.compile("\\$data\\.(get|getOrDefault)\\(\"%s\"".formatted(key)));
     }
 
     @Test

@@ -21,7 +21,8 @@ public sealed interface ASTSettings {
             @Nullable NamingPattern namingPattern,
             @Nullable ConfigName configName,
             @NotNull EnumParsingSchemes enumParsingScheme,
-            boolean isNullable
+            boolean isNullable,
+            boolean hasDefaultValue
     ) implements ASTSettings {
     }
 }

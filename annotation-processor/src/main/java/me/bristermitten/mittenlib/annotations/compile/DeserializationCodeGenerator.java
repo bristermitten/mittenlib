@@ -64,7 +64,7 @@ public class DeserializationCodeGenerator {
      * @return A method spec for the deserialization method
      */
 
-    public @NotNull MethodSpec createDeserializeMethodFor(@NotNull TypeElement dtoType, @NotNull Property property) {
+    public @NotNull MethodSpec createDeserializeMethodFor(@NotNull TypeElement dtoType, @NotNull AbstractConfigStructure propertyAST, @NotNull Property property) {
         TypeMirror elementType = property.propertyType();
         var elementResultType = configurationClassNameGenerator.publicPropertyClassName(
                 typesUtil.getBoxedType(property.propertyType())
@@ -74,15 +74,29 @@ public class DeserializationCodeGenerator {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
-                .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build())
-                .addParameter(ParameterSpec.builder(ClassName.get(dtoType), "dao").build());
+                .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build());
+
+        // we take the dto object as a parameter when it's a class
+        if (propertyAST.source() instanceof ConfigTypeSource.ClassConfigTypeSource) {
+            builder.addParameter(ParameterSpec.builder(ClassName.get(dtoType), "dao").build());
+        }
+
 
         builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
         builder.addStatement("$T $L", elementType, property.name());
 
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
-        builder.addStatement("Object $L = $$data.get($S)", fromMapName, key);
+        if (property.settings().hasDefaultValue()) {
+            var defaultString = switch (propertyAST.source()) {
+                case ConfigTypeSource.ClassConfigTypeSource ignored -> CodeBlock.of("dao.$L", property.name());
+                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("super.$L()", property.name());
+            };
+
+            builder.addStatement("Object $L = $$data.getOrDefault($S, $L)", fromMapName, key, defaultString);
+        } else {
+            builder.addStatement("Object $L = $$data.get($S)", fromMapName, key);
+        }
 
         // null check
         if (property.settings().isNullable()) {
@@ -266,10 +280,13 @@ public class DeserializationCodeGenerator {
             return;
         }
         var dtoType = ast.source().element();
-        builder.addStatement("$1T dto = null", (dtoType.asType()));
+
+        if (ast.source() instanceof ConfigTypeSource.ClassConfigTypeSource) {
+            builder.addStatement("$1T dto = new $1T()", dtoType.asType());
+        }
 
         final List<MethodSpec> deserializeMethods = ast.properties().stream()
-                .map(variableElement -> createDeserializeMethodFor(dtoType, variableElement))
+                .map(variableElement -> createDeserializeMethodFor(dtoType, ast, variableElement))
                 .toList();
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
@@ -290,8 +307,13 @@ public class DeserializationCodeGenerator {
             expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
             expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
         }
+        var deserialiseMethodArguments = switch (ast.source()) {
+            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> "context";
+            case ConfigTypeSource.ClassConfigTypeSource ignored -> "context, dto";
+        };
+
         for (MethodSpec deserializeMethod : deserializeMethods) {
-            expressionBuilder.add("$N(context, dto).flatMap(var$L -> \n", deserializeMethod, i++);
+            expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
         }
         expressionBuilder.add("$T.ok(new $T(", Result.class, ConfigurationClassNameGenerator.createConfigImplClassName(ast));
         for (int i1 = 0; i1 < i; i1++) {
