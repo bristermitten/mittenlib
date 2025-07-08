@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.config;
 
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class DeserializationContext {
     /**
      * @return the data to deserialize
      */
-    public Map<String, Object> getData() {
+    public @NotNull Map<String, Object> getData() {
         return data;
     }
 

@@ -118,7 +118,8 @@ public class ConfigClassParser {
                                     configName,
                                     enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(),
                                     isNullable,
-                                    hasDefault));
+                                    hasDefault
+                            ));
                 })
                 .toList();
     }

@@ -35,7 +35,7 @@ public interface ObjectLoader {
      * @param source the source to load from
      * @return the loaded object
      */
-    @NotNull Result<Map<String, Object>> load(@NotNull final Reader source);
+    @NotNull Result<@NotNull Map<String, Object>> load(@NotNull final Reader source);
 
     @NotNull
     default Result<Map<String, Object>> load(@NotNull final String source) {

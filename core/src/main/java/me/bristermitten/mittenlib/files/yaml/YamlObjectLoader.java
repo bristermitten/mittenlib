@@ -20,8 +20,11 @@ public class YamlObjectLoader implements ObjectLoader {
     }
 
     @Override
-    public @NotNull Result<Map<String, Object>> load(@NotNull Reader source) {
-        //noinspection unchecked
-        return runCatching(() -> (Map<String, Object>) yaml.load(source));
+    public @NotNull Result<@NotNull Map<String, Object>> load(@NotNull Reader source) {
+        return runCatching(() -> {
+            Object load = yaml.load(source);
+            //noinspection unchecked
+            return (Map<String, Object>) load;
+        });
     }
 }

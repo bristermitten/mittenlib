@@ -11,8 +11,12 @@ import javax.lang.model.type.TypeMirror;
  * A representation of a property in a configuration type.
  * In practice, this is either an interface method or a field in a class.
  */
-public record Property(String name, TypeMirror propertyType, @NotNull PropertySource source,
-                       ASTSettings.PropertyASTSettings settings) implements ASTNode {
+public record Property(
+        String name,
+        TypeMirror propertyType,
+        @NotNull PropertySource source,
+        ASTSettings.PropertyASTSettings settings
+) implements ASTNode {
 
     public sealed interface PropertySource {
         Element element();

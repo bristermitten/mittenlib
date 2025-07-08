@@ -8,7 +8,9 @@ import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
+import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
@@ -44,16 +46,25 @@ public class DeserializationCodeGenerator {
     private final FieldNameGenerator fieldNameGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final MethodNames methodNames;
+    private final CustomDeserializers customDeserializers;
 
     @Inject
     public DeserializationCodeGenerator(
             TypesUtil typesUtil,
             FieldNameGenerator fieldNameGenerator,
-            ConfigurationClassNameGenerator configurationClassNameGenerator, MethodNames methodNames) {
+            ConfigurationClassNameGenerator configurationClassNameGenerator, MethodNames methodNames, CustomDeserializers customDeserializers) {
         this.typesUtil = typesUtil;
         this.fieldNameGenerator = fieldNameGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.methodNames = methodNames;
+        this.customDeserializers = customDeserializers;
+    }
+
+    private CodeBlock getDeserializationFunction(CustomDeserializerInfo info) {
+        if (info.isStatic()) {
+            return CodeBlock.of("$T.deserialize(context)", info.deserializerClass());
+        }
+        throw new IllegalArgumentException("idk non-static is hard");
     }
 
     /**
@@ -180,6 +191,23 @@ public class DeserializationCodeGenerator {
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeType);
             builder.addStatement("return $T.ok(($T) $L)", Result.class, safeType, fromMapName);
 
+            Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
+
+            if (customDeserializerOptional.isPresent()) {
+                CustomDeserializerInfo info = customDeserializerOptional.get();
+                CodeBlock deserializationFunction = getDeserializationFunction(info);
+
+
+                if (!info.isFallback()) {
+                    builder.endControlFlow();
+                    builder.addStatement(CodeBlock.builder().add("return ")
+                            .add(deserializationFunction)
+                            .build());
+                    return builder.build();
+                }
+            }
+
+
             if (wrappedElementType.isEnum()) {
                 // try to load it as a string
                 builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, String.class);
@@ -222,7 +250,21 @@ public class DeserializationCodeGenerator {
                 builder.endControlFlow();
             }
 
+
             builder.beginControlFlow("else");
+            if (customDeserializerOptional.isPresent()) {
+                CustomDeserializerInfo info = customDeserializerOptional.get();
+                CodeBlock deserializationFunction = getDeserializationFunction(info);
+
+
+                if (info.isFallback()) {
+                    builder.addStatement(CodeBlock.builder().add("return ")
+                            .add(deserializationFunction)
+                            .build());
+                    builder.endControlFlow();
+                    return builder.build();
+                }
+            }
             builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
                     Result.class,
                     ConfigLoadingErrors.class,

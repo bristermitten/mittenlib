@@ -11,7 +11,9 @@ import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.annotations.parser.ASTVerifier;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
+import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.config.Config;
+import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Processor;
@@ -75,6 +77,14 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
                 .map(TypeElement.class::cast)
                 .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
                 .toList();
+
+
+        CustomDeserializers customDeserializers = injector.getInstance(CustomDeserializers.class);
+        roundEnv.getElementsAnnotatedWith(CustomDeserializerFor.class)
+                .stream()
+                .map(TypeElement.class::cast)
+                .forEach(customDeserializers::registerCustomDeserializer);
+
 
         List<AbstractConfigStructure> asts = new ArrayList<>();
         var configClassParser = injector.getInstance(ConfigClassParser.class);

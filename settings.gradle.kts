@@ -68,7 +68,26 @@ dependencyResolutionManagement {
 			library("jetbrains-annotations", "org.jetbrains", "annotations").version("23.0.0")
 			library("acf-paper", "co.aikar", "acf-paper").version("0.5.1-SNAPSHOT")
 			library("placeholderapi", "me.clip", "placeholderapi").version("2.11.6")
-			library("aptk", "io.toolisticon.aptk", "aptk-tools").version("0.22.5")
+			version("aptk", "0.22.5")
+			library("aptk-tools", "io.toolisticon.aptk", "aptk-tools").versionRef("aptk")
+			library("aptk-compilermessages-api", "io.toolisticon.aptk", "aptk-compilermessages-api").versionRef("aptk")
+			library(
+				"aptk-compilermessages-processor",
+				"io.toolisticon.aptk",
+				"aptk-compilermessages-processor"
+			).versionRef("aptk")
+			library(
+				"aptk-annotationwrapper-processor",
+				"io.toolisticon.aptk",
+				"aptk-annotationwrapper-processor"
+			).versionRef("aptk")
+			library(
+				"aptk-annotationwrapper-api",
+				"io.toolisticon.aptk",
+				"aptk-annotationwrapper-api"
+			).versionRef("aptk")
+
+
 			library("cute", "io.toolisticon.cute", "cute").version("1.8.0")
 			library("chalk", "com.github.tomas-langer", "chalk").version("1.0.2")
 		}
