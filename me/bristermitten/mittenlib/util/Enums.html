@@ -112,6 +112,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a "prettified" name of an enum.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;E&gt;&gt;<br>E</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOfIgnoreCase(java.lang.String,java.lang.Class)" class="member-name-link">valueOfIgnoreCase</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;enumClass)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves an enum constant from the specified <code>enumClass</code> whose name matches the specified <code>name</code>,
+ ignoring case sensitivity.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;E&gt;&gt;<br>E</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOfOrNull(java.lang.String,java.lang.Class)" class="member-name-link">valueOfOrNull</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;enumClass)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves an enum constant from the specified <code>enumClass</code> whose name matches the given <code>name</code>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -144,6 +157,48 @@ loadScripts(document, 'script');</script>
 <dd><code>e</code> - The enum to get the name of</dd>
 <dt>Returns:</dt>
 <dd>The prettified name of the enum</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="valueOfIgnoreCase(java.lang.String,java.lang.Class)">
+<h3>valueOfIgnoreCase</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;E&gt;&gt;</span>&nbsp;<span class="return-type">E</span>&nbsp;<span class="element-name">valueOfIgnoreCase</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;enumClass)</span></div>
+<div class="block">Retrieves an enum constant from the specified <code>enumClass</code> whose name matches the specified <code>name</code>,
+ ignoring case sensitivity. If no match is found, returns <code>null</code>.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>E</code> - the type of the enum.</dd>
+<dt>Parameters:</dt>
+<dd><code>name</code> - the name of the enum constant to retrieve (case-insensitive).</dd>
+<dd><code>enumClass</code> - the class of the enum type to search.</dd>
+<dt>Returns:</dt>
+<dd>the matching enum constant, or <code>null</code> if no match is found.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="valueOfOrNull(java.lang.String,java.lang.Class)">
+<h3>valueOfOrNull</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;E&gt;&gt;</span>&nbsp;<span class="return-type">E</span>&nbsp;<span class="element-name">valueOfOrNull</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ @NotNull
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;enumClass)</span></div>
+<div class="block">Retrieves an enum constant from the specified <code>enumClass</code> whose name matches the given <code>name</code>.
+ If no constant is found, returns <code>null</code>.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>E</code> - the type of the enum.</dd>
+<dt>Parameters:</dt>
+<dd><code>name</code> - the name of the enum constant to retrieve.</dd>
+<dd><code>enumClass</code> - the class of the enum type to search.</dd>
+<dt>Returns:</dt>
+<dd>the matching enum constant, or <code>null</code> if no match is found.</dd>
 </dl>
 </section>
 </li>

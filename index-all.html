@@ -238,6 +238,10 @@ loadScripts(document, 'script');</script>
  This is similar to <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/annotation/Inherited.html" title="class or interface in java.lang.annotation" class="external-link"><code>Inherited</code></a> but doesn't require a sub/superclass relation,
  which better suits the patterns often used in config DTO types.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html#CASE_INSENSITIVE" class="member-name-link">CASE_INSENSITIVE</a> - Enum constant in enum class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></dt>
+<dd>
+<div class="block">Requires the name to exactly match, but case insensitively</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Cast.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Cast</a> - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>
 <div class="block">Utility class for casting objects</div>
@@ -691,6 +695,16 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>enclosedIn</code> record component.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/ConfigVerificationErrors.html#ENUM_PARSING_SCHEME_NOT_ENUM" class="member-name-link">ENUM_PARSING_SCHEME_NOT_ENUM</a> - Static variable in class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/ConfigVerificationErrors.html" title="class in me.bristermitten.mittenlib.annotations.parser">ConfigVerificationErrors</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#enumParsingScheme()" class="member-name-link">enumParsingScheme()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>enumParsingScheme</code> record component.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingScheme.html" class="type-name-link" title="annotation interface in me.bristermitten.mittenlib.config">EnumParsingScheme</a> - Annotation Interface in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html" class="type-name-link" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a> - Enum Class in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Enums.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Enums</a> - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>
 <div class="block">Utility class for enums</div>
@@ -764,6 +778,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/Errors.html" class="type-name-link" title="class in me.bristermitten.mittenlib.util">Errors</a> - Class in <a href="me/bristermitten/mittenlib/util/package-summary.html">me.bristermitten.mittenlib.util</a></dt>
 <dd>
 <div class="block">Utility class for dealing with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link"><code>Throwable</code></a>s</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html#EXACT_MATCH" class="member-name-link">EXACT_MATCH</a> - Enum constant in enum class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></dt>
+<dd>
+<div class="block">Requires the name to exactly match</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#execCatching(me.bristermitten.mittenlib.util.lambda.SafeRunnable)" class="member-name-link">execCatching(SafeRunnable)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
@@ -1084,6 +1102,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/exception/DTOReferenceException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class me.bristermitten.mittenlib.annotations.exception.<a href="me/bristermitten/mittenlib/annotations/exception/DTOReferenceException.html" title="class in me.bristermitten.mittenlib.annotations.exception">DTOReferenceException</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html" title="class in me.bristermitten.mittenlib.config.exception">InvalidEnumValueException</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/exception/PropertyNotFoundException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/PropertyNotFoundException.html" title="class in me.bristermitten.mittenlib.config.exception">PropertyNotFoundException</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getMessage()" class="member-name-link">getMessage()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
@@ -1307,6 +1327,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Invalidate the cached value, causing it to be recomputed on the next call to <a href="me/bristermitten/mittenlib/util/Cached.html#get()"><code>Cached.get()</code></a>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html#invalidEnumException(java.lang.Class,java.lang.String,java.lang.Object)" class="member-name-link">invalidEnumException(Class&lt;? extends Enum&lt;?&gt;&gt;, String, Object)</a> - Static method in class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html" title="class in me.bristermitten.mittenlib.config.exception">ConfigLoadingErrors</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.exception">InvalidEnumValueException</a> - Exception Class in <a href="me/bristermitten/mittenlib/config/exception/package-summary.html">me.bristermitten.mittenlib.config.exception</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html#%3Cinit%3E(java.lang.Class,java.lang.String,java.lang.Object)" class="member-name-link">InvalidEnumValueException(Class&lt;? extends Enum&lt;?&gt;&gt;, String, Object)</a> - Constructor for exception class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html" title="class in me.bristermitten.mittenlib.config.exception">InvalidEnumValueException</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html#invalidPropertyTypeException(java.lang.Class,java.lang.String,java.lang.String,java.lang.Object)" class="member-name-link">invalidPropertyTypeException(Class&lt;?&gt;, String, String, Object)</a> - Static method in class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html" title="class in me.bristermitten.mittenlib.config.exception">ConfigLoadingErrors</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction&lt;T,<wbr>R&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/util/lambda/package-summary.html">me.bristermitten.mittenlib.util.lambda</a></dt>
@@ -1906,7 +1932,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/Property.PropertySource.MethodSource.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource.MethodSource</a> - Record Class in <a href="me/bristermitten/mittenlib/annotations/ast/package-summary.html">me.bristermitten.mittenlib.annotations.ast</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,boolean)" class="member-name-link">PropertyASTSettings(NamingPattern, ConfigName, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean)" class="member-name-link">PropertyASTSettings(NamingPattern, ConfigName, EnumParsingSchemes, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>PropertyASTSettings</code> record class.</div>
 </dd>
@@ -2408,6 +2434,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:V">V</h2>
 <dl class="index">
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingScheme.html#value()" class="member-name-link">value()</a> - Element in annotation interface me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/EnumParsingScheme.html" title="annotation interface in me.bristermitten.mittenlib.config">EnumParsingScheme</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/ConfigName.html#value()" class="member-name-link">value()</a> - Element in annotation interface me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/NamingPattern.html#value()" class="member-name-link">value()</a> - Element in annotation interface me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></dt>
@@ -2418,9 +2446,27 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Retrieves the value wrapped in an <code>Optional</code>, if present.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names">NamingPatterns</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Enums.html#valueOfIgnoreCase(java.lang.String,java.lang.Class)" class="member-name-link">valueOfIgnoreCase(String, Class&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Enums.html" title="class in me.bristermitten.mittenlib.util">Enums</a></dt>
+<dd>
+<div class="block">Retrieves an enum constant from the specified <code>enumClass</code> whose name matches the specified <code>name</code>,
+ ignoring case sensitivity.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Enums.html#valueOfOrNull(java.lang.String,java.lang.Class)" class="member-name-link">valueOfOrNull(String, Class&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Enums.html" title="class in me.bristermitten.mittenlib.util">Enums</a></dt>
+<dd>
+<div class="block">Retrieves an enum constant from the specified <code>enumClass</code> whose name matches the given <code>name</code>.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html#values()" class="member-name-link">values()</a> - Static method in enum class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html#values()" class="member-name-link">values()</a> - Static method in enum class me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names">NamingPatterns</a></dt>
 <dd>
