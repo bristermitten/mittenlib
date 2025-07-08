@@ -172,16 +172,6 @@ public class ConfigurationClassNameGenerator {
 
 
     /**
-     * Get the config property class name for a property.
-     *
-     * @param p The property
-     * @return The config property class name
-     */
-    public TypeName getConfigPropertyClassName(@NotNull Property p) {
-        return getConfigPropertyClassName(p.propertyType());
-    }
-
-    /**
      * Get the config property class name for a type mirror.
      *
      * @param mirror The type mirror

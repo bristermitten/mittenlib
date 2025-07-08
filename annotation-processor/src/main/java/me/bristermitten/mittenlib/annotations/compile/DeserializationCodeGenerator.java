@@ -156,13 +156,15 @@ public class DeserializationCodeGenerator {
                 return methodSpec.get();
             }
         } else if (!isGenericType) {
-            return handleNonGenericType(builder, property, dtoType, elementType, wrappedElementType);
+            if (handleNonGenericType(builder, property, dtoType, elementType, wrappedElementType)) {
+                return builder.build();
+            }
         }
 
         // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
         String fromMapName = property.name() + "FromMap";
         builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class,
-                configurationClassNameGenerator.getConfigPropertyClassName(property)
+                elementResultType
         );
         return builder.build();
     }
@@ -317,9 +319,9 @@ public class DeserializationCodeGenerator {
         return Optional.empty();
     }
 
-    private @NotNull MethodSpec handleNonGenericType(MethodSpec.Builder builder, @NotNull Property property,
-                                                     @NotNull TypeElement dtoType, TypeMirror elementType,
-                                                     TypeMirrorWrapper wrappedElementType) {
+    private boolean handleNonGenericType(MethodSpec.Builder builder, @NotNull Property property,
+                                         @NotNull TypeElement dtoType, TypeMirror elementType,
+                                         TypeMirrorWrapper wrappedElementType) {
         /*
          Construct a simple check that does
            if (fromMap instanceof X) return fromMap;
@@ -335,7 +337,7 @@ public class DeserializationCodeGenerator {
         Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
         if (customDeserializerOptional.isPresent()) {
             if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false)) {
-                return builder.build();
+                return true;
             }
         }
 
@@ -345,17 +347,16 @@ public class DeserializationCodeGenerator {
             handleConfigType(builder, dtoType, elementType, fromMapName);
         }
 
-        builder.beginControlFlow("else");
+
         if (customDeserializerOptional.isPresent()) {
             if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true)) {
-                builder.endControlFlow();
-                return builder.build();
+                return true;
             }
         }
 
         handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
-        builder.endControlFlow();
-        return builder.build();
+
+        return false;
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, @NotNull Property property,
@@ -430,6 +431,10 @@ public class DeserializationCodeGenerator {
 
     private void handleInvalidPropertyType(MethodSpec.Builder builder, @NotNull Property property,
                                            @NotNull TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+        if (!property.settings().hasDefaultValue()) {
+            return; // no need to check this
+        }
+        builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
         builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
                 Result.class,
                 ConfigLoadingErrors.class,
@@ -438,6 +443,7 @@ public class DeserializationCodeGenerator {
                 elementType,
                 fromMapName
         );
+        builder.endControlFlow();
     }
 
     private void addEnumDeserialisation(@NotNull Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
