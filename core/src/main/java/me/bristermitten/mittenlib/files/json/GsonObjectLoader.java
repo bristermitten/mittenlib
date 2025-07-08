@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.files.json;
 
 import com.google.gson.Gson;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.CompositeType;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,8 @@ public class GsonObjectLoader implements ObjectLoader {
     }
 
     @Override
-    public @NotNull Result<Map<String, Object>> load(@NotNull Reader source) {
+    public @NotNull Result<DataTree> load(@NotNull Reader source) {
         return Result.runCatching(() ->
-                gson.fromJson(source, MAP_STRING_OBJ_TYPE));
+                gson.fromJson(source, DataTree.class));
     }
 }

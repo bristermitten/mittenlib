@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.config;
 
 import com.google.gson.reflect.TypeToken;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.MultipleFailuresException;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.Contract;
@@ -19,9 +20,9 @@ import java.util.Map;
  * This is used by generated config classes.
  */
 public class CollectionsUtils {
-    private static final TypeToken<List<Map<String, Object>>> LIST_MAP_STRING_OBJECT_TOKEN = new TypeToken<List<Map<String, Object>>>() {
+    private static final TypeToken<List<DataTree>> LIST_MAP_STRING_OBJECT_TOKEN = new TypeToken<List<DataTree>>() {
     };
-    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT_TOKEN = new TypeToken<Map<String, Object>>() {
+    private static final TypeToken<DataTree> MAP_STRING_OBJECT_TOKEN = new TypeToken<DataTree>() {
     };
 
 
@@ -43,21 +44,21 @@ public class CollectionsUtils {
         try {
             // gamble: first we try a blind cast and hope for the best
             //noinspection unchecked
-            return deserialiseListFrom((List<Map<String, Object>>) rawData, baseContext, deserializationFunction);
+            return deserialiseListFrom((List<DataTree>) rawData, baseContext, deserializationFunction);
         } catch (ClassCastException ignore) {
         }
         // fall back to gson for a more informative error message
-        Result<List<Map<String, Object>>> rawListRes = baseContext.getMapper().map(rawData, LIST_MAP_STRING_OBJECT_TOKEN);
+        Result<List<DataTree>> rawListRes = baseContext.getMapper().map(rawData, LIST_MAP_STRING_OBJECT_TOKEN);
         return rawListRes.flatMap(f -> deserialiseListFrom(f, baseContext, deserializationFunction));
     }
 
 
-    private static <T> Result<List<T>> deserialiseListFrom(List<Map<String, Object>> rawList, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
+    private static <T> Result<List<T>> deserialiseListFrom(List<DataTree> rawList, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
         // Apply the deserialization function to each element of the list, flattening the result
         final List<T> res = new ArrayList<>();
         final List<Throwable> errors = new ArrayList<>();
 
-        for (Map<String, Object> map : rawList) {
+        for (DataTree map : rawList) {
             Result<T> deserialised = deserializationFunction.apply(baseContext.withData(map));
             deserialised.error().ifPresent(errors::add);
             deserialised.value().ifPresent(res::add);
@@ -83,15 +84,15 @@ public class CollectionsUtils {
     public static <K, V> Result<Map<K, V>> deserializeMap(Class<K> keyType, Object rawData, DeserializationContext baseContext, DeserializationFunction<V> deserializationFunction) {
         // first we use the object mapper to convert the raw data into a Map<K, Map<String, Object>>
 //        noinspection unchecked absolutely evil
-        Result<Map<K, Map<String, Object>>> rawMapRes = baseContext.getMapper().map(rawData,
-                (TypeToken<Map<K, Map<String, Object>>>) TypeToken.get(
+        Result<Map<K, DataTree>> rawMapRes = baseContext.getMapper().map(rawData,
+                (TypeToken<Map<K, DataTree>>) TypeToken.get(
                         new GenericParameterizedType(Map.class, keyType, MAP_STRING_OBJECT_TOKEN.getType())
                 ));
         return rawMapRes.flatMap(rawMap -> {
             // Apply the deserialization function to each value in the map, flattening the result
             final Map<K, V> res = new HashMap<>();
             final List<Throwable> errors = new ArrayList<>();
-            for (Map.Entry<K, Map<String, Object>> entry : rawMap.entrySet()) {
+            for (Map.Entry<K, DataTree> entry : rawMap.entrySet()) {
                 Result<V> deserialised = deserializationFunction.apply(baseContext.withData(entry.getValue()));
                 deserialised.error().ifPresent(errors::add);
                 deserialised.value().ifPresent(value -> res.put(entry.getKey(), value));

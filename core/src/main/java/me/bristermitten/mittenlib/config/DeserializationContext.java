@@ -1,16 +1,15 @@
 package me.bristermitten.mittenlib.config;
 
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * Context for deserializing a config, making it easier to pass around
  */
 public class DeserializationContext {
     private final ObjectMapper mapper;
-    private final Map<String, Object> data;
+    private final DataTree data;
 
     /**
      * Create a new DeserializationContext
@@ -18,7 +17,7 @@ public class DeserializationContext {
      * @param mapper the mapper to use
      * @param data   the data to deserialise
      */
-    public DeserializationContext(ObjectMapper mapper, Map<String, Object> data) {
+    public DeserializationContext(ObjectMapper mapper, DataTree data) {
         this.mapper = mapper;
         this.data = data;
     }
@@ -33,11 +32,11 @@ public class DeserializationContext {
     /**
      * @return the data to deserialize
      */
-    public @NotNull Map<String, Object> getData() {
+    public @NotNull DataTree getData() {
         return data;
     }
 
-    public DeserializationContext withData(Map<String, Object> data) {
+    public DeserializationContext withData(DataTree data) {
         return new DeserializationContext(this.mapper, data);
     }
 }

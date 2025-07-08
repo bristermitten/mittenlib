@@ -15,6 +15,7 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
@@ -74,6 +75,58 @@ public class DeserializationCodeGenerator {
         throw new IllegalArgumentException("idk non-static is hard");
     }
 
+    private Optional<TypeName> getDataTreeType(TypeName type) {
+        type = type.isBoxedPrimitive() ? type.unbox() : type;
+        if (type.equals(TypeName.INT) || type.equals(TypeName.LONG) || type.equals(TypeName.SHORT) || type.equals(TypeName.BYTE)) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralInt.class));
+        }
+        if (type.equals(TypeName.FLOAT) || type.equals(TypeName.DOUBLE)) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralFloat.class));
+        }
+        if (type.equals(TypeName.BOOLEAN)) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralBoolean.class));
+        }
+        if (type.equals(ClassName.get(String.class))) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralString.class));
+        }
+        if (type instanceof ParameterizedTypeName p) {
+            if (p.rawType.equals(ClassName.get(Map.class))) {
+                return Optional.of(ClassName.get(DataTree.DataTreeMap.class));
+            }
+            if (p.rawType.equals(ClassName.get(List.class))) {
+                return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
+            }
+        }
+        return Optional.empty();
+    }
+
+    public CodeBlock dataTreeConvert(TypeName type, TypeName dataTreeType, CodeBlock value) {
+        type = type.isBoxedPrimitive() ? type.unbox() : type;
+        if (dataTreeType.equals(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralInt.class))) {
+            if (type.equals(TypeName.INT)) {
+                return CodeBlock.of("($L).intValue()", value);
+            }
+            if (type.equals(TypeName.SHORT)) {
+                return CodeBlock.of("($L).shortValue()", value);
+            }
+            if (type.equals(TypeName.BYTE)) {
+                return CodeBlock.of("($L).byteValue()", value);
+            }
+            if (type.equals(TypeName.LONG)) {
+                return CodeBlock.of("($L).longValue()", value);
+            }
+        }
+        if (dataTreeType.equals(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralFloat.class))) {
+            if (type.equals(TypeName.FLOAT)) {
+                return CodeBlock.of("($L).floatValue()", value);
+            }
+            if (type.equals(TypeName.DOUBLE)) {
+                return CodeBlock.of("($L).doubleValue()", value);
+            }
+        }
+        return value;
+    }
+
     /**
      * Creates a deserialization method for a specific field in a DTO class.
      *
@@ -100,7 +153,7 @@ public class DeserializationCodeGenerator {
         }
 
 
-        builder.addStatement("$T $$data = context.getData()", MAP_STRING_OBJ_NAME);
+        builder.addStatement("$T $$data = context.getData()", DataTree.class);
         builder.addStatement("$T $L", elementType, property.name());
 
         final String key = fieldNameGenerator.getConfigFieldName(property);
@@ -217,8 +270,17 @@ public class DeserializationCodeGenerator {
              This is only safe to do with non-parameterized types, what with type erasure and all
             */
             final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
+
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, safeType);
             builder.addStatement("return $T.ok(($T) $L)", Result.class, safeType, fromMapName);
+            var treeType = getDataTreeType(safeType);
+            if (treeType.isPresent()) {
+                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, treeType.get());
+                var convert = dataTreeConvert(safeType, treeType.get(), CodeBlock
+                        .of("(($T) $L).value()", treeType.get(), fromMapName));
+
+                builder.addStatement("return $T.ok($L)", Result.class, convert);
+            }
 
             Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
 
@@ -240,39 +302,19 @@ public class DeserializationCodeGenerator {
             if (wrappedElementType.isEnum()) {
                 // try to load it as a string
                 builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, String.class);
-
-
-                switch (property.settings().enumParsingScheme()) {
-                    case EXACT_MATCH -> builder.addStatement("$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
-                            safeType,
-                            Enums.class,
-                            String.class,
-                            fromMapName
-                    );
-                    case CASE_INSENSITIVE ->
-                            builder.addStatement("$1T enumValue = $2T.valueOfIgnoreCase(($3T) $4L, $1T.class)",
-                                    safeType,
-                                    Enums.class,
-                                    String.class,
-                                    fromMapName
-                            );
+                {
+                    addEnumDeserialisation(property, builder, fromMapName, safeType, CodeBlock.of("$L", fromMapName));
                 }
-
-                builder.beginControlFlow("if (enumValue == null)");
-                builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L))",
-                        Result.class,
-                        ConfigLoadingErrors.class,
-                        safeType,
-                        property.name(),
-                        fromMapName);
-                builder.endControlFlow();
-
-                builder.addStatement("return $T.ok(enumValue)", Result.class);
-                builder.endControlFlow();
+                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class);
+                {
+                    var convert = CodeBlock.of("(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
+                    addEnumDeserialisation(property, builder, fromMapName, safeType, convert);
+                    builder.endControlFlow();
+                }
             } else if (typesUtil.isConfigType(elementType)) {
                 TypeName configClassName = getConfigClassName(elementType, dtoType);
-                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, Map.class);
-                builder.addStatement("$1T mapData = ($1T) $2L", MAP_STRING_OBJ_NAME, fromMapName);
+                builder.nextControlFlow("else if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
+                builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
                 builder.addStatement("return $T.$L(context.withData(mapData))", configClassName, methodNames.getDeserializeMethodName(configClassName));
                 builder.endControlFlow();
             } else {
@@ -313,6 +355,33 @@ public class DeserializationCodeGenerator {
         );
         return builder.build();
 
+    }
+
+    private void addEnumDeserialisation(@NotNull Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
+        switch (property.settings().enumParsingScheme()) {
+            case EXACT_MATCH -> builder.addStatement("$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
+                    safeType,
+                    Enums.class,
+                    String.class,
+                    convert
+            );
+            case CASE_INSENSITIVE -> builder.addStatement("$1T enumValue = $2T.valueOfIgnoreCase(($3T) $4L, $1T.class)",
+                    safeType,
+                    Enums.class,
+                    String.class,
+                    convert
+            );
+        }
+        builder.beginControlFlow("if (enumValue == null)");
+        builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L))",
+                Result.class,
+                ConfigLoadingErrors.class,
+                safeType,
+                property.name(),
+                fromMapName);
+        builder.endControlFlow();
+
+        builder.addStatement("return $T.ok(enumValue)", Result.class);
     }
 
     /**

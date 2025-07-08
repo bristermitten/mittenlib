@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.config.reader;
 import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -66,7 +66,7 @@ public class ConfigReader {
         return read(loader.load(source), deserializeFunction, type);
     }
 
-    private <T> Result<T> read(Result<@NotNull Map<String, Object>> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type) {
+    private <T> Result<T> read(Result<@NotNull DataTree> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type) {
         final Function<DeserializationContext, Result<T>> mappingFunction =
                 deserializeFunction == null
                         ? ctx -> mapper.map(ctx.getData(), TypeToken.get(type))

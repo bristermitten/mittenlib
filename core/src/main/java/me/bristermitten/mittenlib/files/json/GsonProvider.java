@@ -28,6 +28,7 @@ public class GsonProvider implements Provider<Gson> {
     public Gson get() {
         final GsonBuilder gsonBuilder = gsonBuilderProvider.get();
         typeAdapterFactories.forEach(gsonBuilder::registerTypeAdapterFactory);
+
         extraTypeAdapters.forEach(eta -> gsonBuilder.registerTypeAdapter(eta.type(), eta));
         return gsonBuilder.create();
     }

@@ -1,9 +1,13 @@
 package me.bristermitten.mittenlib.config;
 
+import com.google.gson.TypeAdapterFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
-import me.bristermitten.mittenlib.config.paths.*;
+import me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy;
+import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
+import me.bristermitten.mittenlib.config.paths.JarResourcesConfigPathResolver;
+import me.bristermitten.mittenlib.config.paths.NoOpConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.DelegatingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
@@ -12,6 +16,9 @@ import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProvider
 import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProviderImprover;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
+import me.bristermitten.mittenlib.config.tree.DataTreeTypeAdapter;
+import me.bristermitten.mittenlib.config.tree.DataTreeTypeAdapterFactory;
+import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 import me.bristermitten.mittenlib.util.CompositeType;
 
 import java.util.Set;
@@ -53,6 +60,14 @@ public class ConfigModule extends AbstractModule {
         bind(ConfigPathResolver.class).to(JarResourcesConfigPathResolver.class);
         bind(ConfigProviderFactory.class).to(SimpleConfigProviderFactory.class);
         bind(ConfigProviderImprover.class).to(SimpleConfigProviderImprover.class);
+
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {
+                })
+                .addBinding()
+                .to(DataTreeTypeAdapter.class);
+        Multibinder.newSetBinder(binder(), TypeAdapterFactory.class)
+                .addBinding()
+                .to(DataTreeTypeAdapterFactory.class);
 
         Multibinder<Configuration<?>> configurationMultibinder = Multibinder.newSetBinder(binder(), new TypeLiteral<Configuration<?>>() {
         });
