@@ -571,6 +571,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Curry the first argument of this function, returning a <a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a> that takes only the second argument.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/ConfigVerificationErrors.html#CUSTOM_DESERIALIZER_INVALID_STATIC_METHOD_SIGNATURE" class="member-name-link">CUSTOM_DESERIALIZER_INVALID_STATIC_METHOD_SIGNATURE</a> - Static variable in class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/ConfigVerificationErrors.html" title="class in me.bristermitten.mittenlib.annotations.parser">ConfigVerificationErrors</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/extension/CustomDeserializer.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.extension">CustomDeserializer&lt;T&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/config/extension/package-summary.html">me.bristermitten.mittenlib.config.extension</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/extension/CustomDeserializerFor.html" class="type-name-link" title="annotation interface in me.bristermitten.mittenlib.config.extension">CustomDeserializerFor</a> - Annotation Interface in <a href="me/bristermitten/mittenlib/config/extension/package-summary.html">me.bristermitten.mittenlib.config.extension</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a> - Record Class in <a href="me/bristermitten/mittenlib/annotations/ast/package-summary.html">me.bristermitten.mittenlib.annotations.ast</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#%3Cinit%3E(javax.lang.model.element.TypeElement,boolean,boolean,boolean)" class="member-name-link">CustomDeserializerInfo(TypeElement, boolean, boolean, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>CustomDeserializerInfo</code> record class.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.parser">CustomDeserializers</a> - Class in <a href="me/bristermitten/mittenlib/annotations/parser/package-summary.html">me.bristermitten.mittenlib.annotations.parser</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html#%3Cinit%3E()" class="member-name-link">CustomDeserializers()</a> - Constructor for class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html" title="class in me.bristermitten.mittenlib.annotations.parser">CustomDeserializers</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
@@ -598,7 +614,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Generates deserialization code for configuration classes.</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames)" class="member-name-link">DeserializationCodeGenerator(TypesUtil, FieldNameGenerator, ConfigurationClassNameGenerator, MethodNames)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.parser.CustomDeserializers)" class="member-name-link">DeserializationCodeGenerator(TypesUtil, FieldNameGenerator, ConfigurationClassNameGenerator, MethodNames, CustomDeserializers)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/DeserializationContext.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a> - Class in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
 <dd>
@@ -623,6 +639,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/config/CollectionsUtils.html#deserializeMap(java.lang.Class,java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">deserializeMap(Class&lt;K&gt;, Object, DeserializationContext, DeserializationFunction&lt;V&gt;)</a> - Static method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/CollectionsUtils.html" title="class in me.bristermitten.mittenlib.config">CollectionsUtils</a></dt>
 <dd>
 <div class="block">Attempt to deserialise a map using the MittenLib config system.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#deserializerClass()" class="member-name-link">deserializerClass()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#param-deserializerClass"><code>deserializerClass</code></a> record component.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#difference(java.util.Set,java.util.Set)" class="member-name-link">difference(Set&lt;E&gt;, Set&lt;E&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
 <dd>
@@ -741,6 +761,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/Property.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
@@ -799,6 +823,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#fail(E)" class="member-name-link">fail(E)</a> - Static method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
 <div class="block">Create a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> from a given exception.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/extension/Fallback.html" class="type-name-link" title="annotation interface in me.bristermitten.mittenlib.config.extension">Fallback</a> - Annotation Interface in <a href="me/bristermitten/mittenlib/config/extension/package-summary.html">me.bristermitten.mittenlib.config.extension</a></dt>
+<dd>
+<div class="block">Marks a custom deserializer as a fallback deserializer.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/FieldNameGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.compile">FieldNameGenerator</a> - Class in <a href="me/bristermitten/mittenlib/annotations/compile/package-summary.html">me.bristermitten.mittenlib.annotations.compile</a></dt>
 <dd>
@@ -1058,6 +1086,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the config property class name for a property.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html#getCustomDeserializer(javax.lang.model.type.TypeMirror)" class="member-name-link">getCustomDeserializer(TypeMirror)</a> - Method in class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html" title="class in me.bristermitten.mittenlib.annotations.parser">CustomDeserializers</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getD()" class="member-name-link">getD()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/DeserializationContext.html#getData()" class="member-name-link">getData()</a> - Method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></dt>
@@ -1245,6 +1275,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/Property.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
@@ -1355,6 +1389,14 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#isFailure()" class="member-name-link">isFailure()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#isFallback()" class="member-name-link">isFallback()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#param-isFallback"><code>isFallback</code></a> record component.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#isGlobal()" class="member-name-link">isGlobal()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#param-isGlobal"><code>isGlobal</code></a> record component.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Version.html#isNewerThan(me.bristermitten.mittenlib.util.Version)" class="member-name-link">isNewerThan(Version)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#isNullable()" class="member-name-link">isNullable()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
@@ -1370,6 +1412,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/util/PrivateAnnotations.html#isPrivate(java.lang.String)" class="member-name-link">isPrivate(String)</a> - Static method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/PrivateAnnotations.html" title="class in me.bristermitten.mittenlib.annotations.util">PrivateAnnotations</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#isStatic()" class="member-name-link">isStatic()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#param-isStatic"><code>isStatic</code></a> record component.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#isSuccess()" class="member-name-link">isSuccess()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#isSuccess()" class="member-name-link">isSuccess()</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
@@ -1587,6 +1633,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a> - package me.bristermitten.mittenlib.config</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/exception/package-summary.html">me.bristermitten.mittenlib.config.exception</a> - package me.bristermitten.mittenlib.config.exception</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/extension/package-summary.html">me.bristermitten.mittenlib.config.extension</a> - package me.bristermitten.mittenlib.config.extension</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/generate/package-summary.html">me.bristermitten.mittenlib.config.generate</a> - package me.bristermitten.mittenlib.config.generate</dt>
 <dd>&nbsp;</dd>
@@ -1979,6 +2027,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Handles the exception case of the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with a function.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html#register(com.squareup.javapoet.TypeName,me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo)" class="member-name-link">register(TypeName, CustomDeserializerInfo)</a> - Method in class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html" title="class in me.bristermitten.mittenlib.annotations.parser">CustomDeserializers</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html#registerCustomDeserializer(javax.lang.model.element.TypeElement)" class="member-name-link">registerCustomDeserializer(TypeElement)</a> - Method in class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html" title="class in me.bristermitten.mittenlib.annotations.parser">CustomDeserializers</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#removeWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">removeWatcher(FileWatcher)</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
 <dd>
 <div class="block">Removes a watcher from the service.</div>
@@ -2338,6 +2390,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#toString()" class="member-name-link">toString()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/Property.PropertySource.FieldSource.html#toString()" class="member-name-link">toString()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/Property.PropertySource.FieldSource.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource.FieldSource</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
@@ -2439,6 +2495,8 @@ loadScripts(document, 'script');</script>
 <h2 class="title" id="I:V">V</h2>
 <dl class="index">
 <dt><a href="me/bristermitten/mittenlib/config/EnumParsingScheme.html#value()" class="member-name-link">value()</a> - Element in annotation interface me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/EnumParsingScheme.html" title="annotation interface in me.bristermitten.mittenlib.config">EnumParsingScheme</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/extension/CustomDeserializerFor.html#value()" class="member-name-link">value()</a> - Element in annotation interface me.bristermitten.mittenlib.config.extension.<a href="me/bristermitten/mittenlib/config/extension/CustomDeserializerFor.html" title="annotation interface in me.bristermitten.mittenlib.config.extension">CustomDeserializerFor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/ConfigName.html#value()" class="member-name-link">value()</a> - Element in annotation interface me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a></dt>
 <dd>&nbsp;</dd>

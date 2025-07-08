@@ -11,6 +11,7 @@ me.bristermitten.mittenlib.commands
 me.bristermitten.mittenlib.commands.handlers
 me.bristermitten.mittenlib.config
 me.bristermitten.mittenlib.config.exception
+me.bristermitten.mittenlib.config.extension
 me.bristermitten.mittenlib.config.generate
 me.bristermitten.mittenlib.config.names
 me.bristermitten.mittenlib.config.paths
