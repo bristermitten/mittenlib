@@ -524,7 +524,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a class name for the implementation of a configuration structure.</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">createDeserializeMethodFor(TypeElement, Property)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">createDeserializeMethodFor(TypeElement, AbstractConfigStructure, Property)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
 <dd>
 <div class="block">Creates a deserialization method for a specific field in a DTO class.</div>
 </dd>
@@ -1209,6 +1209,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#handle(java.util.function.Function,java.util.function.Function)" class="member-name-link">handle(Function&lt;T, R&gt;, Function&lt;Exception, R&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#hasDefaultValue()" class="member-name-link">hasDefaultValue()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>hasDefaultValue</code> record component.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.Atomic.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.Atomic.html" title="class in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure.Atomic</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
@@ -1932,7 +1936,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/Property.PropertySource.MethodSource.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource.MethodSource</a> - Record Class in <a href="me/bristermitten/mittenlib/annotations/ast/package-summary.html">me.bristermitten.mittenlib.annotations.ast</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean)" class="member-name-link">PropertyASTSettings(NamingPattern, ConfigName, EnumParsingSchemes, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean,boolean)" class="member-name-link">PropertyASTSettings(NamingPattern, ConfigName, EnumParsingSchemes, boolean, boolean)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>PropertyASTSettings</code> record class.</div>
 </dd>

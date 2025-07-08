@@ -149,7 +149,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull com.squareup.javapoet.MethodSpec</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">createDeserializeMethodFor</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">createDeserializeMethodFor</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
+ @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;propertyAST,
  @NotNull <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a deserialization method for a specific field in a DTO class.</div>
@@ -232,11 +233,13 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.Property)">
+<section class="detail" id="createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property)">
 <h3>createDeserializeMethodFor</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">createDeserializeMethodFor</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
+ @NotNull
+ @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;propertyAST,
  @NotNull
  @NotNull <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</span></div>
 <div class="block">Creates a deserialization method for a specific field in a DTO class.</div>

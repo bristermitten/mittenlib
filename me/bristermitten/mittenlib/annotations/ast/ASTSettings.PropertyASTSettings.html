@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">ASTSettings.PropertyASTSettings</span>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern, @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName, @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme, boolean&nbsp;isNullable)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">ASTSettings.PropertyASTSettings</span>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern, @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName, @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme, boolean&nbsp;isNullable, boolean&nbsp;hasDefaultValue)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></span></div>
 </section>
@@ -123,10 +123,11 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean)" class="member-name-link">PropertyASTSettings</a><wbr>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean,boolean)" class="member-name-link">PropertyASTSettings</a><wbr>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
  @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName,
  @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme,
- boolean&nbsp;isNullable)</code></div>
+ boolean&nbsp;isNullable,
+ boolean&nbsp;hasDefaultValue)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>PropertyASTSettings</code> record class.</div>
 </div>
@@ -159,24 +160,29 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasDefaultValue()" class="member-name-link">hasDefaultValue</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <code>hasDefaultValue</code> record component.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable()" class="member-name-link">isNullable</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable()" class="member-name-link">isNullable</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>isNullable</code> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#namingPattern()" class="member-name-link">namingPattern</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#namingPattern()" class="member-name-link">namingPattern</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>namingPattern</code> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
 </div>
@@ -197,7 +203,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean,boolean)">
 <h3>PropertyASTSettings</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">PropertyASTSettings</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
@@ -205,7 +211,8 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
  @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName,
  @NotNull
  @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme,
- boolean&nbsp;isNullable)</span></div>
+ boolean&nbsp;isNullable,
+ boolean&nbsp;hasDefaultValue)</span></div>
 <div class="block">Creates an instance of a <code>PropertyASTSettings</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -213,6 +220,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <dd><code>configName</code> - the value for the <code>configName</code> record component</dd>
 <dd><code>enumParsingScheme</code> - the value for the <code>enumParsingScheme</code> record component</dd>
 <dd><code>isNullable</code> - the value for the <code>isNullable</code> record component</dd>
+<dd><code>hasDefaultValue</code> - the value for the <code>hasDefaultValue</code> record component</dd>
 </dl>
 </section>
 </li>
@@ -311,6 +319,17 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <code>isNullable</code> record component</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hasDefaultValue()">
+<h3>hasDefaultValue</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasDefaultValue</span>()</div>
+<div class="block">Returns the value of the <code>hasDefaultValue</code> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <code>hasDefaultValue</code> record component</dd>
 </dl>
 </section>
 </li>
