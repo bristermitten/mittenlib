@@ -19,34 +19,44 @@ class ConfigurationClassNameGeneratorTest {
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.LangConfigDTO",
                         """
                                 package me.bristermitten.mittenlib.tests;
-                                @me.bristermitten.mittenlib.config.names.NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
-                                @me.bristermitten.mittenlib.config.Source(value = "lang.yml")
-                                @me.bristermitten.mittenlib.config.Config
-                                public  class LangConfigDTO {
+                                
+                                import me.bristermitten.mittenlib.config.Config;
+                                import me.bristermitten.mittenlib.config.Source;
+                                import me.bristermitten.mittenlib.config.names.NamingPattern;
+                                import me.bristermitten.mittenlib.lang.LangMessage;
+                                
+                                @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
+                                @Source(value = "lang.yml")
+                                @Config
+                                public class LangConfigDTO {
                                     public final ErrorsDTO errors = null;
                                     public final CommandsDTO commands = null;
-                                    @me.bristermitten.mittenlib.config.Config
-                                    public static  class CommandsDTO {
+                                
+                                    @Config
+                                    public static class CommandsDTO {
                                         public final SelectionDTO selection = null;
-                                        @me.bristermitten.mittenlib.config.Config
-                                        public static  class SelectionDTO {
-                                            public final me.bristermitten.mittenlib.lang.LangMessage rename = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage created = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage deleted = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage addedZone = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage removedZone = null;
+                                
+                                        @Config
+                                        public static class SelectionDTO {
+                                            public final LangMessage rename = null;
+                                            public final LangMessage created = null;
+                                            public final LangMessage deleted = null;
+                                            public final LangMessage addedZone = null;
+                                            public final LangMessage removedZone = null;
                                         }
                                     }
-                                    @me.bristermitten.mittenlib.config.Config
+                                
+                                    @Config
                                     public static class ErrorsDTO {
-                                        public final me.bristermitten.mittenlib.lang.LangMessage noSelection = null;
+                                        public final LangMessage noSelection = null;
                                         public final SelectionDTO selection = null;
-                                        @me.bristermitten.mittenlib.config.Config
+                                
+                                        @Config
                                         public static class SelectionDTO {
-                                            public final me.bristermitten.mittenlib.lang.LangMessage nodeExists = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage alreadyHaveSelection = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage duplicateZone = null;
-                                            public final me.bristermitten.mittenlib.lang.LangMessage zoneNotPresent = null;
+                                            public final LangMessage nodeExists = null;
+                                            public final LangMessage alreadyHaveSelection = null;
+                                            public final LangMessage duplicateZone = null;
+                                            public final LangMessage zoneNotPresent = null;
                                         }
                                     }
                                 }
@@ -56,14 +66,14 @@ class ConfigurationClassNameGeneratorTest {
     }
 
     @Test
-    void testCreateConfigImplClassName() {
+    void testTranslateConfigClassName() {
         ClassName dtoName = ClassName.bestGuess("TestConfigDTO");
 
-        assertThat(ConfigurationClassNameGenerator.createConfigImplClassName(dtoName))
+        assertThat(ConfigurationClassNameGenerator.translateConfigClassName(dtoName))
                 .isEqualTo(ClassName.bestGuess("TestConfig"));
 
         ClassName configName = ClassName.bestGuess("TestConfig");
-        assertThat(ConfigurationClassNameGenerator.createConfigImplClassName(configName))
+        assertThat(ConfigurationClassNameGenerator.translateConfigClassName(configName))
                 .isEqualTo(ClassName.bestGuess("TestConfigImpl"));
     }
 }

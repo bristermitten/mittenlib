@@ -27,10 +27,12 @@ public class MethodNames {
     private final ElementsFinder elementsFinder;
     private final Map<VariableElement, String> safeNameCache = new HashMap<>();
     private final Map<VariableElement, Set<String>> methodNamesCache = new HashMap<>();
+    private final ConfigurationClassNameGenerator configurationClassNameGenerator;
 
     @Inject
-    MethodNames(ElementsFinder elementsFinder) {
+    MethodNames(ElementsFinder elementsFinder, ConfigurationClassNameGenerator configurationClassNameGenerator) {
         this.elementsFinder = elementsFinder;
+        this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
     /**
@@ -38,7 +40,7 @@ public class MethodNames {
      * This method uses caching to improve performance for repeated calls with the same element.
      *
      * @param variableElement The variable element to generate a method name for
-     * @param enclosingClass The class that encloses the variable element
+     * @param enclosingClass  The class that encloses the variable element
      * @return A safe method name that doesn't conflict with existing methods
      */
     public @NotNull String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
@@ -102,10 +104,10 @@ public class MethodNames {
      * Gets the name of the deserialization method for a configuration structure.
      * This method uses the implementation class name derived from the structure.
      *
-     * @param ast                          The abstract configuration structure
+     * @param ast The abstract configuration structure
      * @return The deserialization method name for the structure
      */
     public String getDeserializeMethodName(@NotNull AbstractConfigStructure ast) {
-        return getDeserializeMethodName(ConfigurationClassNameGenerator.createConfigImplClassName(ast));
+        return getDeserializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
     }
 }

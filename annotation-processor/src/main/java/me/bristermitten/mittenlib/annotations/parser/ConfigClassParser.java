@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.squareup.javapoet.ClassName;
+import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
@@ -10,10 +11,7 @@ import me.bristermitten.mittenlib.annotations.ast.*;
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
-import me.bristermitten.mittenlib.config.ConfigUnion;
-import me.bristermitten.mittenlib.config.EnumParsingScheme;
-import me.bristermitten.mittenlib.config.EnumParsingSchemes;
-import me.bristermitten.mittenlib.config.Source;
+import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.config.generate.GenerateToString;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
@@ -49,13 +47,7 @@ public class ConfigClassParser {
     private @NotNull ConfigTypeSource getSource(@NotNull TypeElement element) {
         var wrapped = TypeElementWrapper.wrap(element);
 
-        List<TypeMirror> parents = Stream.concat(
-                        Stream.of(element.getSuperclass()),
-                        element.getInterfaces().stream()
-                )
-                .filter(c -> c.getKind() != TypeKind.NONE)
-                .filter(c -> !ClassName.get(c).equals(ClassName.OBJECT))
-                .toList();
+        List<TypeMirror> parents = Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream()).filter(c -> c.getKind() != TypeKind.NONE).filter(c -> !ClassName.get(c).equals(ClassName.OBJECT)).toList();
 
         if (wrapped.isClass()) {
             if (parents.size() > 1) {
@@ -81,70 +73,57 @@ public class ConfigClassParser {
         } else {
             return throwInvalidConfigError();
         }
-        return elements.stream()
-                .map(propertyElement -> {
-                    var propertySource = switch (propertyElement) {
-                        case ExecutableElement e -> new Property.PropertySource.MethodSource(e);
-                        case VariableElement e -> new Property.PropertySource.FieldSource(e);
-                        default -> throw new IllegalStateException("Unexpected value: " + propertyElement.getKind());
-                    };
-                    var propertyType =
-                            propertyElement instanceof ExecutableElement ? ((ExecutableElement) propertyElement).getReturnType() :
-                                    propertyElement.asType();
-                    var configName = typesUtil.getAnnotation(propertyElement, ConfigName.class);
-                    var namingPatternSub =
-                            Null.orElse(typesUtil.getAnnotation(propertyElement, NamingPattern.class), namingPattern);
+        return elements.stream().map(propertyElement -> {
+            var propertySource = switch (propertyElement) {
+                case ExecutableElement e -> new Property.PropertySource.MethodSource(e);
+                case VariableElement e -> new Property.PropertySource.FieldSource(e);
+                default -> throw new IllegalStateException("Unexpected value: " + propertyElement.getKind());
+            };
+            var propertyType = propertyElement instanceof ExecutableElement ? ((ExecutableElement) propertyElement).getReturnType() : propertyElement.asType();
+            var configName = typesUtil.getAnnotation(propertyElement, ConfigName.class);
+            var namingPatternSub = Null.orElse(typesUtil.getAnnotation(propertyElement, NamingPattern.class), namingPattern);
 
-                    var isNullable = typesUtil.isNullable(propertyElement);
+            var isNullable = typesUtil.isNullable(propertyElement);
 
-                    var enumParsingScheme = typesUtil.getAnnotation(propertyElement, EnumParsingScheme.class);
-                    if (enumParsingScheme != null
-                        && propertyElement.getAnnotation(EnumParsingScheme.class) != null // if the annotation is precisely present on the property
-                        && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
-                        MessagerUtils.warning(propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
-                    }
+            var enumParsingScheme = typesUtil.getAnnotation(propertyElement, EnumParsingScheme.class);
+            if (enumParsingScheme != null && propertyElement.getAnnotation(EnumParsingScheme.class) != null // if the annotation is precisely present on the property
+                && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
+                MessagerUtils.warning(propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
+            }
 
-                    var hasDefault = switch (propertySource) {
-                        case Property.PropertySource.MethodSource(var m) -> m.isDefault();
-                        case Property.PropertySource.FieldSource(var ignored) ->
-                            // due to bytecode limitations there's no easy way to determining if this is true or not
-                                true;
-                    };
+            var hasDefault = switch (propertySource) {
+                case Property.PropertySource.MethodSource(var m) -> m.isDefault();
+                case Property.PropertySource.FieldSource(var ignored) ->
+                    // due to bytecode limitations there's no easy way to determining if this is true or not
+                        true;
+            };
 
-                    return new Property(propertyElement.getSimpleName().toString(),
-                            propertyType,
-                            propertySource,
-                            new ASTSettings.PropertyASTSettings(namingPatternSub,
-                                    configName,
-                                    enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(),
-                                    isNullable,
-                                    hasDefault
-                            ));
-                })
-                .toList();
+            return new Property(propertyElement.getSimpleName().toString(), propertyType, propertySource, new ASTSettings.PropertyASTSettings(namingPatternSub, configName, enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(), isNullable, hasDefault));
+        }).toList();
     }
 
 
-    private ASTSettings.@NotNull ConfigASTSettings getSettings(@NotNull TypeElement element) {
+    @DeclareCompilerMessage(enumValueName = "NO_CONFIG_ANNOTATION", message = "Element ${0} does not have a @Config annotation!")
+    private @NotNull ASTSettings.ConfigASTSettings getSettings(@NotNull TypeElement element) {
         var namingPattern = typesUtil.getAnnotation(element, NamingPattern.class);
         GenerateToString generateToString = typesUtil.getAnnotation(element, GenerateToString.class);
         Source source = typesUtil.getAnnotation(element, Source.class);
+        Config config = typesUtil.getAnnotation(element, Config.class);
+        if (config == null) {
+            MessagerUtils.error(element, ConfigClassParserCompilerMessages.NO_CONFIG_ANNOTATION, element);
+            throw new IllegalStateException();
+        }
 
-        return new ASTSettings.ConfigASTSettings(namingPattern, source, generateToString != null);
+        return new ASTSettings.ConfigASTSettings(namingPattern, source, config, generateToString != null);
     }
 
     private @NotNull AbstractConfigStructure parseAbstract(@NotNull TypeElement element, @Nullable ASTParentReference parentReference) {
         TypeElementWrapper wrapper = TypeElementWrapper.wrap(element);
 
-        Optional<TypeElementWrapper> enclosingType = wrapper.getEnclosingElement()
-                .filter(ElementWrapper::isTypeElement)
-                .map(ElementWrapper::toTypeElement);
+        Optional<TypeElementWrapper> enclosingType = wrapper.getEnclosingElement().filter(ElementWrapper::isTypeElement).map(ElementWrapper::toTypeElement);
 
 
-        List<ClassName> parents = Stream.concat(
-                        Stream.of(element.getSuperclass()),
-                        element.getInterfaces().stream()
-                )
+        List<ClassName> parents = Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream())
                 .map(TypeMirrorWrapper::wrap)
                 .<TypeElementWrapper>mapMulti((a, b) -> a.getTypeElement().ifPresent(b))
                 .map(TypeElementWrapper::unwrap)
@@ -152,12 +131,12 @@ public class ConfigClassParser {
                 .filter(c -> !c.equals(ClassName.OBJECT))
                 .toList();
 
-        ClassName enclosingName = enclosingType
-                .map(TypeElementWrapper::unwrap)
+        ClassName enclosingName = enclosingType.map(TypeElementWrapper::unwrap)
                 .map(ClassName::get)
                 .orElse(null);
 
         var thisParentReference = enclosingName == null ? null : new ASTParentReference(enclosingName, parentReference);
+
         var enclosedConfigs = wrapper.filterEnclosedElements()
                 .applyFilter(AptkCoreMatchers.IS_TYPE_ELEMENT)
                 .applyFilter(AptkCoreMatchers.BY_ELEMENT_KIND)

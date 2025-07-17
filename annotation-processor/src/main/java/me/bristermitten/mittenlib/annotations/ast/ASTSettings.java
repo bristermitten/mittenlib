@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
+import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.EnumParsingSchemes;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.names.ConfigName;
@@ -13,6 +14,7 @@ public sealed interface ASTSettings {
     record ConfigASTSettings(
             @Nullable NamingPattern namingPattern,
             @Nullable Source source,
+            @NotNull Config config,
             boolean generateToString
     ) implements ASTSettings {
     }

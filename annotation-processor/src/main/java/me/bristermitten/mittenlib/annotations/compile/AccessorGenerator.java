@@ -113,7 +113,7 @@ public class AccessorGenerator {
 
 
         for (Property field : ast.properties()) {
-            ClassName configImplClassName = ConfigurationClassNameGenerator.createConfigImplClassName(ast);
+            ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
             MethodSpec.Builder withMethodBuilder = MethodSpec.methodBuilder("with" + Strings.capitalize(field.name()))
                     .addModifiers(Modifier.PUBLIC)
                     .returns(configImplClassName)

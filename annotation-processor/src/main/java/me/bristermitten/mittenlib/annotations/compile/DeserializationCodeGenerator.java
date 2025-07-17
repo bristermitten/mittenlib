@@ -483,7 +483,7 @@ public class DeserializationCodeGenerator {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(methodNames.getDeserializeMethodName(ast))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, ConfigurationClassNameGenerator.getPublicClassName(ast)))
+                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, configurationClassNameGenerator.getPublicClassName(ast)))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
 
         if (ast instanceof AbstractConfigStructure.Union union) {
@@ -491,13 +491,13 @@ public class DeserializationCodeGenerator {
             CodeBlock.Builder deserialiseBuilder = CodeBlock.builder();
             deserialiseBuilder.add("return ");
             for (AbstractConfigStructure alternative : union.alternatives()) {
-                ClassName alternativeClassName = ConfigurationClassNameGenerator.createConfigImplClassName(alternative);
+                ClassName alternativeClassName = configurationClassNameGenerator.translateConfigClassName(alternative);
                 String deserializeMethodName = methodNames.getDeserializeMethodName(alternativeClassName);
 
                 deserialiseBuilder.add("$T.$L(context).map($T.class::cast).orElse(() -> \n",
                         alternativeClassName,
                         deserializeMethodName,
-                        ConfigurationClassNameGenerator.getPublicClassName(ast));
+                        configurationClassNameGenerator.getPublicClassName(ast));
                 deserialiseBuilder.indent();
             }
             deserialiseBuilder.add("$T.fail($T.noUnionMatch())", Result.class, ConfigLoadingErrors.class);
@@ -544,7 +544,7 @@ public class DeserializationCodeGenerator {
         for (MethodSpec deserializeMethod : deserializeMethods) {
             expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
         }
-        expressionBuilder.add("$T.ok(new $T(", Result.class, ConfigurationClassNameGenerator.createConfigImplClassName(ast));
+        expressionBuilder.add("$T.ok(new $T(", Result.class, configurationClassNameGenerator.translateConfigClassName(ast));
         for (int i1 = 0; i1 < i; i1++) {
             expressionBuilder.add("var$L", i1);
             if (i1 != i - 1) {
