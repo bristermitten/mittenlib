@@ -28,4 +28,8 @@ public class ConfigLoadingErrors {
     public static RuntimeException invalidEnumException(Class<? extends Enum<?>> enumClass, String propertyName, Object actualValue) {
         return new InvalidEnumValueException(enumClass, propertyName, actualValue);
     }
+
+    public static RuntimeException defaultValueProxyException(Class<?> configClass, String propertyName) {
+        return new UnsupportedOperationException("Default value proxy called for property " + configClass.getSimpleName() + "." + propertyName + "!");
+    }
 }

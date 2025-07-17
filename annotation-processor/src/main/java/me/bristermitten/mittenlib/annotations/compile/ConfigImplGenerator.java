@@ -7,6 +7,7 @@ import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ToStringGenerator;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
+import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,15 +73,20 @@ public class ConfigImplGenerator {
         makeAbstractIfUnion(ast, source);
         addSourceElement(ast, source);
         addInheritance(ast, source);
+        Optional<ClassName> innerDaoName = addInnerDefaultMethodImpl(source, ast);
         addGeneratedConfigAnnotation(ast, source);
         addNestedClassModifiers(ast, source);
         addProperties(ast, source);
         addSuperClassField(ast, source);
         accessorGenerator.createWithMethods(source, ast);
         addAllArgsConstructor(source, ast);
-        addDeserializationMethods(ast, source);
+        addDeserializationMethods(ast, source, switch (ast.source()) {
+            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> innerDaoName.orElse(null);
+            case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
+        });
         addStandardObjectMethods(ast, configImplClassName, source);
         addChildClasses(ast, source);
+
     }
 
     /**
@@ -137,8 +143,10 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addDeserializationMethods(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
-        deserializationCodeGenerator.createDeserializeMethods(source, ast);
+    private void addDeserializationMethods(@NotNull AbstractConfigStructure ast, @NotNull TypeSpec.Builder source
+            , @Nullable ClassName daoName
+    ) {
+        deserializationCodeGenerator.createDeserializeMethods(source, ast, daoName);
     }
 
     private void addStandardObjectMethods(@NotNull AbstractConfigStructure ast, ClassName configImplClassName, @NotNull TypeSpec.Builder source) {
@@ -275,5 +283,45 @@ public class ConfigImplGenerator {
         }
 
         return builder.build();
+    }
+
+
+    private Optional<ClassName> addInnerDefaultMethodImpl(@NotNull TypeSpec.Builder typeSpecBuilder, @NotNull AbstractConfigStructure ast) {
+        if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
+            return Optional.empty(); // nothing to do
+        }
+
+
+        ClassName concreteConfigClassName = configurationClassNameGenerator.getConcreteConfigClassName(ast);
+        var innerName = concreteConfigClassName.nestedClass(ast.name().simpleName() + "DefaultMethodAccess");
+
+
+        var innerBuilder = TypeSpec.classBuilder(innerName);
+        innerBuilder.addModifiers(Modifier.PRIVATE, Modifier.STATIC);
+        innerBuilder.addSuperinterface(ast.name());
+
+        for (Property property : ast.properties()) {
+            if (property.settings().hasDefaultValue()) {
+                continue;
+            }
+
+            innerBuilder.addMethod(
+                    MethodSpec.methodBuilder(property.name())
+                            .addModifiers(Modifier.PUBLIC)
+                            .addAnnotation(Override.class)
+                            .returns(configurationClassNameGenerator.publicPropertyClassName(property))
+                            .addStatement("throw $T.defaultValueProxyException($T.class, $S)",
+                                    ConfigLoadingErrors.class,
+                                    concreteConfigClassName,
+                                    property.name())
+                            .build()
+            );
+        }
+
+        if (innerBuilder.methodSpecs.isEmpty()) {
+            return Optional.empty(); // we've effectively done nothing
+        }
+        typeSpecBuilder.addType(innerBuilder.build());
+        return Optional.of(innerName);
     }
 }

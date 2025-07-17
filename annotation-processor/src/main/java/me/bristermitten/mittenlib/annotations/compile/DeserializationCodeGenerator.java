@@ -21,6 +21,7 @@ import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Element;
@@ -136,14 +137,17 @@ public class DeserializationCodeGenerator {
      * @return A method spec for the deserialization method
      */
 
-    public @NotNull MethodSpec createDeserializeMethodFor(@NotNull TypeElement dtoType, @NotNull AbstractConfigStructure propertyAST, @NotNull Property property) {
+    public @NotNull MethodSpec createDeserializeMethodFor(@NotNull TypeElement dtoType,
+                                                          @NotNull AbstractConfigStructure propertyAST,
+                                                          @NotNull Property property,
+                                                          @Nullable ClassName daoName) {
         TypeMirror elementType = property.propertyType();
         var elementResultType = configurationClassNameGenerator.publicPropertyClassName(
                 typesUtil.getBoxedType(property.propertyType())
         );
 
-        final MethodSpec.Builder builder = createMethodBuilder(dtoType, property, elementResultType, propertyAST);
-        setupInitialStatements(builder, property, propertyAST, elementType);
+        final MethodSpec.Builder builder = createMethodBuilder(dtoType, property, elementResultType, propertyAST, daoName);
+        setupInitialStatements(builder, propertyAST, property, elementType);
         handleNullChecks(builder, property, dtoType, elementType);
 
         TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
@@ -169,32 +173,33 @@ public class DeserializationCodeGenerator {
         return builder.build();
     }
 
-    private MethodSpec.Builder createMethodBuilder(@NotNull TypeElement dtoType, @NotNull Property property,
-                                                   TypeName elementResultType, @NotNull AbstractConfigStructure propertyAST) {
+    private MethodSpec.Builder createMethodBuilder(@NotNull TypeElement dtoType,
+                                                   @NotNull Property property,
+                                                   @NotNull TypeName elementResultType,
+                                                   @NotNull AbstractConfigStructure propertyAST,
+                                                   @Nullable ClassName daoName) {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build());
 
-        // we take the dto object as a parameter when it's a class
-        if (propertyAST.source() instanceof ConfigTypeSource.ClassConfigTypeSource) {
-            builder.addParameter(ParameterSpec.builder(ClassName.get(dtoType), "dao").build());
+        // add the dao as a parameter if necessary
+        if (daoName != null) {
+            builder.addParameter(ParameterSpec.builder(daoName, "dao", Modifier.FINAL).build());
         }
 
         return builder;
     }
 
-    private void setupInitialStatements(MethodSpec.Builder builder, @NotNull Property property,
-                                        @NotNull AbstractConfigStructure propertyAST, TypeMirror elementType) {
+    private void setupInitialStatements(MethodSpec.Builder builder, @NotNull AbstractConfigStructure propertyAST, @NotNull Property property, TypeMirror elementType) {
         builder.addStatement("$T $$data = context.getData()", DataTree.class);
-        builder.addStatement("$T $L", elementType, property.name());
-
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
         if (property.settings().hasDefaultValue()) {
+
             var defaultString = switch (propertyAST.source()) {
+                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("dao.$L()", property.name());
                 case ConfigTypeSource.ClassConfigTypeSource ignored -> CodeBlock.of("dao.$L", property.name());
-                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("super.$L()", property.name());
             };
 
             builder.addStatement("Object $L = $$data.getOrDefault($S, $L)", fromMapName, key, defaultString);
@@ -309,7 +314,7 @@ public class DeserializationCodeGenerator {
             TypeName mapTypeName = getConfigClassName(valueType, null);
             builder.addStatement("return $T.deserializeMap($T.class, $L, context, $T::$L)",
                     CollectionsUtils.class,
-                    (typesUtil.getSafeType(keyType)),
+                    typesUtil.getSafeType(keyType),
                     fromMapName,
                     mapTypeName,
                     methodNames.getDeserializeMethodName(mapTypeName));
@@ -478,13 +483,17 @@ public class DeserializationCodeGenerator {
      *
      * @param typeSpecBuilder The builder for the config class
      */
-    public void createDeserializeMethods(TypeSpec.@NotNull Builder typeSpecBuilder,
-                                         @NotNull AbstractConfigStructure ast) {
+    public void createDeserializeMethods(@NotNull TypeSpec.Builder typeSpecBuilder,
+                                         @NotNull AbstractConfigStructure ast,
+                                         @Nullable ClassName daoName
+    ) {
 
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(methodNames.getDeserializeMethodName(ast))
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, configurationClassNameGenerator.getPublicClassName(ast)))
-                .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").addModifiers(Modifier.FINAL).build());
+                .addParameter(
+                        ParameterSpec.builder(DeserializationContext.class, "context", Modifier.FINAL).build()
+                );
 
         if (ast instanceof AbstractConfigStructure.Union union) {
             // union deserialization is very different
@@ -510,12 +519,12 @@ public class DeserializationCodeGenerator {
         }
         var dtoType = ast.source().element();
 
-        if (ast.source() instanceof ConfigTypeSource.ClassConfigTypeSource) {
-            builder.addStatement("$1T dto = new $1T()", dtoType.asType());
+        if (daoName != null) {
+            builder.addStatement("$1T dao = new $1T()", daoName);
         }
 
         final List<MethodSpec> deserializeMethods = ast.properties().stream()
-                .map(variableElement -> createDeserializeMethodFor(dtoType, ast, variableElement))
+                .map(variableElement -> createDeserializeMethodFor(dtoType, ast, variableElement, daoName))
                 .toList();
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
@@ -536,11 +545,7 @@ public class DeserializationCodeGenerator {
             expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
             expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
         }
-        var deserialiseMethodArguments = switch (ast.source()) {
-            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> "context";
-            case ConfigTypeSource.ClassConfigTypeSource ignored -> "context, dto";
-        };
-
+        var deserialiseMethodArguments = (daoName != null) ? "context, dao" : "context";
         for (MethodSpec deserializeMethod : deserializeMethods) {
             expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
         }
@@ -569,4 +574,5 @@ public class DeserializationCodeGenerator {
     private @NotNull TypeName getConfigClassName(@NotNull TypeMirror typeMirror, Element source) {
         return configurationClassNameGenerator.getConfigClassName(typeMirror, source);
     }
+
 }
