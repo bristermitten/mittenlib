@@ -150,15 +150,17 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull com.squareup.javapoet.MethodSpec</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">createDeserializeMethodFor</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property,com.squareup.javapoet.ClassName)" class="member-name-link">createDeserializeMethodFor</a><wbr>(@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
  @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;propertyAST,
- @NotNull <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
+ @NotNull <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property,
+ @Nullable com.squareup.javapoet.ClassName&nbsp;daoName)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a deserialization method for a specific field in a DTO class.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDeserializeMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">createDeserializeMethods</a><wbr>(@NotNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
- @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDeserializeMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.squareup.javapoet.ClassName)" class="member-name-link">createDeserializeMethods</a><wbr>(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+ @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
+ @Nullable com.squareup.javapoet.ClassName&nbsp;daoName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates the main deserialization method for a config class.</div>
 </div>
@@ -248,7 +250,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property)">
+<section class="detail" id="createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property,com.squareup.javapoet.ClassName)">
 <h3>createDeserializeMethodFor</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">createDeserializeMethodFor</span><wbr><span class="parameters">(@NotNull
@@ -256,7 +258,9 @@ loadScripts(document, 'script');</script>
  @NotNull
  @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;propertyAST,
  @NotNull
- @NotNull <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</span></div>
+ @NotNull <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property,
+ @Nullable
+ @Nullable com.squareup.javapoet.ClassName&nbsp;daoName)</span></div>
 <div class="block">Creates a deserialization method for a specific field in a DTO class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -268,11 +272,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createDeserializeMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
+<section class="detail" id="createDeserializeMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.squareup.javapoet.ClassName)">
 <h3>createDeserializeMethods</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createDeserializeMethods</span><wbr><span class="parameters">(@NotNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createDeserializeMethods</span><wbr><span class="parameters">(@NotNull
+ com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  @NotNull
- @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+ @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
+ @Nullable
+ @Nullable com.squareup.javapoet.ClassName&nbsp;daoName)</span></div>
 <div class="block">Creates the main deserialization method for a config class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
