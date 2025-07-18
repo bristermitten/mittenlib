@@ -34,7 +34,7 @@ subprojects {
 
 	val libs = rootProject.libs
 	group = "me.bristermitten"
-	version = "4.2.11-SNAPSHOT"
+	version = "4.2.12-SNAPSHOT"
 
 	java {
 		sourceCompatibility = JavaVersion.VERSION_1_8
