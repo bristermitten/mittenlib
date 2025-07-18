@@ -8,7 +8,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for transforming between DataTree and POJO representations.
+ * This class provides methods to load a DataTree from various object types
+ * and to convert a DataTree back to a POJO.
+ */
 public class DataTreeTransforms {
+    /**
+     * Load a DataTree from an object.
+     * This method can handle various types of objects including
+     * {@code null}, {@link DataTree}, {@link Double}, {@link Number}, {@link String}, {@link Boolean}, {@link Map}, and {@link List}.
+     * Any other type of object will throw an {@link IllegalArgumentException}.
+     * The method will return a {@link DataTree.DataTreeNull} instance if the input is {@code null}.
+     *
+     * @param node the object to load the DataTree from, can be {@code null}
+     * @return a DataTree representation of the input object
+     */
     public static @NotNull DataTree loadFrom(@Nullable Object node) {
         if (node == null) return DataTree.DataTreeNull.INSTANCE;
         if (node instanceof DataTree) {
@@ -46,7 +61,13 @@ public class DataTreeTransforms {
         throw new IllegalArgumentException("Unknown type: " + node.getClass());
     }
 
-    public static @Nullable Object toPOJO(DataTree tree) {
+    /**
+     * Convert a DataTree to a POJO representation, as an inverse of {@link #loadFrom(Object)}.
+     *
+     * @param tree the DataTree to convert, must not be {@code null}
+     * @return the POJO representation of the DataTree, or {@code null} if the DataTree is an instance of {@link DataTree.DataTreeNull}
+     */
+    public static @Nullable Object toPOJO(@NotNull DataTree tree) {
         if (tree instanceof DataTree.DataTreeNull) {
             return null;
         }
@@ -66,8 +87,7 @@ public class DataTreeTransforms {
                 pojoList.add(toPOJO(dataTree));
             }
             return pojoList;
-        } else {
-            throw new IllegalArgumentException("Unknown type: " + tree.getClass());
         }
+        throw new IllegalArgumentException("Unknown type: " + tree.getClass());
     }
 }

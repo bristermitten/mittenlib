@@ -50,11 +50,6 @@ public abstract class DataTree {
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hashCode(INSTANCE);
-        }
-
-        @Override
         public String toString() {
             return "DataTreeNull{}";
         }
