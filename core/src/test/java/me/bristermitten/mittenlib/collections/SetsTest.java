@@ -64,6 +64,19 @@ class SetsTest {
     }
 
     @Test
+    void assertThat_set3_creationWorks() {
+        final Set<String> hello = Sets.of("hello", "world", "!");
+        assertEquals(3, hello.size());
+    }
+
+    @Test
+    void assertThat_set3_respectsEquality() {
+        final Set<String> hello = Sets.of("hello", "world", "hello");
+        assertEquals(2, hello.size());
+        assertEquals(Sets.of("hello", "world"), hello);
+    }
+
+    @Test
     void assertThat_SetUnion_works() {
         final Set<String> setA = Sets.of("hello");
         final Set<String> setB = Sets.of("world");
@@ -108,4 +121,17 @@ class SetsTest {
         assertFalse(difference.contains("world"));
         assertEquals(Sets.of("hello"), difference);
     }
+
+    @Test
+    void assertThat_SetDifference_emptySet() {
+        final Set<String> setA = Sets.of("hello", "world");
+        final Set<String> setB = Sets.of();
+        Set<String> difference = Sets.difference(setA, setB);
+        assertEquals(2, difference.size());
+        assertTrue(difference.contains("hello"));
+        assertTrue(difference.contains("world"));
+        assertEquals(Sets.of("hello", "world"), difference);
+    }
+
+
 }

@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Utility functions for creating immutable sets
@@ -31,6 +28,53 @@ public class Sets {
         return new SetImpls.Set2<>(e1, e2);
     }
 
+    public static <E> @Unmodifiable Set<E> of(E e1, E e2, E e3) {
+        // unique elements checks
+        if (Objects.equals(e1, e2) && Objects.equals(e1, e3)) {
+            return new SetImpls.Set1<>(e1);
+        }
+        if (Objects.equals(e1, e2)) {
+            return new SetImpls.Set2<>(e1, e3);
+        }
+        if (Objects.equals(e1, e3)) {
+            return new SetImpls.Set2<>(e1, e2);
+        }
+        if (Objects.equals(e2, e3)) {
+            return new SetImpls.Set2<>(e2, e1);
+        }
+        // all unique
+        return new SetImpls.Set3<>(e1, e2, e3);
+    }
+
+    @SafeVarargs
+    public static <E> @Unmodifiable Set<E> of(E... es) {
+        if (es.length == 0) {
+            return of();
+        }
+        if (es.length == 1) {
+            return of(es[0]);
+        }
+        // unique elements checks
+        Set<E> set = new HashSet<>(es.length);
+
+        for (E e : es) {
+            if (e == null) {
+                throw new NullPointerException("Set cannot contain null elements");
+            }
+            set.add(e);
+        }
+
+        return new SetImpls.SetN<>(set);
+    }
+
+    /**
+     * Create an immutable set from a collection of elements.
+     * This method is not guaranteed to copy the collection, but is guaranteed to be immutable and unmodifiable, including if the provided collection changes.
+     *
+     * @param collection the collection to create the set from
+     * @param <E>        the type of the elements in the collection
+     * @return a new immutable set containing the elements of the collection
+     */
     public static <E> @Unmodifiable Set<E> ofAll(Collection<E> collection) {
         if (collection.isEmpty()) {
             return of();
@@ -38,7 +82,7 @@ public class Sets {
         if (collection instanceof SetImpls.MLImmutableSet) {
             return (Set<E>) collection;
         }
-        return ImmutableSet.copyOf(collection);
+        return new SetImpls.SetN<>(new HashSet<>(collection));
     }
 
     /**
@@ -61,6 +105,8 @@ public class Sets {
         if (b.isEmpty()) {
             return a;
         }
+
+
         return new SetImpls.UnionOf<>(a, b); // TODO: make more efficient wrt nested unions
     }
 
