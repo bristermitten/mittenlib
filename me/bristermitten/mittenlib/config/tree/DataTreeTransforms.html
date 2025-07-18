@@ -92,6 +92,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DataTreeTransforms</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Utility class for transforming between DataTree and POJO representations.
+ This class provides methods to load a DataTree from various object types
+ and to convert a DataTree back to a POJO.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -121,10 +124,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NotNull <a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadFrom(java.lang.Object)" class="member-name-link">loadFrom</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;node)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Load a DataTree from an object.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPOJO(me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">toPOJO</a><wbr>(<a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;tree)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toPOJO(me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">toPOJO</a><wbr>(@NotNull <a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;tree)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Convert a DataTree to a POJO representation, as an inverse of <a href="#loadFrom(java.lang.Object)"><code>loadFrom(Object)</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -162,13 +169,32 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NotNull <a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></span>&nbsp;<span class="element-name">loadFrom</span><wbr><span class="parameters">(@Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;node)</span></div>
+<div class="block">Load a DataTree from an object.
+ This method can handle various types of objects including
+ <code>null</code>, <a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link"><code>Double</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link"><code>Boolean</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a>, and <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a>.
+ Any other type of object will throw an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a>.
+ The method will return a <a href="DataTree.DataTreeNull.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree.DataTreeNull</code></a> instance if the input is <code>null</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>node</code> - the object to load the DataTree from, can be <code>null</code></dd>
+<dt>Returns:</dt>
+<dd>a DataTree representation of the input object</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="toPOJO(me.bristermitten.mittenlib.config.tree.DataTree)">
 <h3>toPOJO</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">toPOJO</span><wbr><span class="parameters">(<a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;tree)</span></div>
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">toPOJO</span><wbr><span class="parameters">(@NotNull
+ @NotNull <a href="DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;tree)</span></div>
+<div class="block">Convert a DataTree to a POJO representation, as an inverse of <a href="#loadFrom(java.lang.Object)"><code>loadFrom(Object)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tree</code> - the DataTree to convert, must not be <code>null</code></dd>
+<dt>Returns:</dt>
+<dd>the POJO representation of the DataTree, or <code>null</code> if the DataTree is an instance of <a href="DataTree.DataTreeNull.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree.DataTreeNull</code></a></dd>
+</dl>
 </section>
 </li>
 </ul>
