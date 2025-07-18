@@ -4,10 +4,7 @@ import com.google.common.collect.Iterators;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.AbstractSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementations for immutable sets used in {@link Sets}
@@ -16,11 +13,31 @@ public class SetImpls {
     private SetImpls() {
     }
 
-
-    abstract static class MLImmutableSet<E> extends AbstractSet<E> {
+    static class Set0<E> extends MLImmutableSet<E> { //NOSONAR
         @Override
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException("Immutable set");
+        public boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        @NotNull
+        public Iterator<E> iterator() {
+            return Collections.emptyIterator();
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public MLImmutableSet<E> plus(E e) {
+            return Sets.of(e);
         }
     }
 
@@ -67,9 +84,14 @@ public class SetImpls {
         public int size() {
             return 1;
         }
+
+        @Override
+        public MLImmutableSet<E> plus(E e) {
+            return Sets.of(this.e, e);
+        }
     }
 
-    static class Set2<E> extends AbstractSet<E> { //NOSONAR
+    static class Set2<E> extends MLImmutableSet<E> { //NOSONAR
         private final E e1;
         private final E e2;
 
@@ -117,9 +139,14 @@ public class SetImpls {
         public int size() {
             return 2;
         }
+
+        @Override
+        public MLImmutableSet<E> plus(E e) {
+            return Sets.of(this.e1, this.e2, e);
+        }
     }
 
-    static class Set3<E> extends AbstractSet<E> { //NOSONAR
+    static class Set3<E> extends MLImmutableSet<E> { //NOSONAR
         private final E e1;
         private final E e2;
         private final E e3;
@@ -172,6 +199,11 @@ public class SetImpls {
         public int size() {
             return 3;
         }
+
+        @Override
+        public MLImmutableSet<E> plus(E e) {
+            return Sets.of(this.e1, this.e2, this.e3, e);
+        }
     }
 
     static class SetN<E> extends MLImmutableSet<E> { //NOSONAR
@@ -200,6 +232,16 @@ public class SetImpls {
         @Override
         public int size() {
             return set.size();
+        }
+
+        @Override
+        public MLImmutableSet<E> plus(E e) {
+            if (set.contains(e)) {
+                return this; // no change
+            }
+            Set<E> newSet = new HashSet<>(set);
+            newSet.add(e);
+            return new SetN<>(newSet);
         }
     }
 

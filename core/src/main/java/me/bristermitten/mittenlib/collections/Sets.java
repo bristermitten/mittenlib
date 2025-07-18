@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Utility functions for creating immutable sets
@@ -13,22 +16,22 @@ public class Sets {
     private Sets() {
     }
 
-    public static <E> @Unmodifiable Set<E> of() {
-        return Collections.emptySet();
+    public static <E> @Unmodifiable MLImmutableSet<E> of() {
+        return new SetImpls.Set0<>();
     }
 
-    public static <E> @Unmodifiable Set<E> of(E e) {
+    public static <E> @Unmodifiable MLImmutableSet<E> of(E e) {
         return new SetImpls.Set1<>(e);
     }
 
-    public static <E> @Unmodifiable Set<E> of(E e1, E e2) {
+    public static <E> @Unmodifiable MLImmutableSet<E> of(E e1, E e2) {
         if (Objects.equals(e1, e2)) {
             return new SetImpls.Set1<>(e1); // unique elements
         }
         return new SetImpls.Set2<>(e1, e2);
     }
 
-    public static <E> @Unmodifiable Set<E> of(E e1, E e2, E e3) {
+    public static <E> @Unmodifiable MLImmutableSet<E> of(E e1, E e2, E e3) {
         // unique elements checks
         if (Objects.equals(e1, e2) && Objects.equals(e1, e3)) {
             return new SetImpls.Set1<>(e1);
@@ -47,7 +50,7 @@ public class Sets {
     }
 
     @SafeVarargs
-    public static <E> @Unmodifiable Set<E> of(E... es) {
+    public static <E> @Unmodifiable MLImmutableSet<E> of(E... es) {
         if (es.length == 0) {
             return of();
         }
@@ -75,12 +78,12 @@ public class Sets {
      * @param <E>        the type of the elements in the collection
      * @return a new immutable set containing the elements of the collection
      */
-    public static <E> @Unmodifiable Set<E> ofAll(Collection<E> collection) {
+    public static <E> @Unmodifiable MLImmutableSet<E> ofAll(Collection<E> collection) {
         if (collection.isEmpty()) {
             return of();
         }
-        if (collection instanceof SetImpls.MLImmutableSet) {
-            return (Set<E>) collection;
+        if (collection instanceof MLImmutableSet) {
+            return (MLImmutableSet<E>) collection;
         }
         return new SetImpls.SetN<>(new HashSet<>(collection));
     }
@@ -107,7 +110,7 @@ public class Sets {
         }
 
 
-        return new SetImpls.UnionOf<>(a, b); // TODO: make more efficient wrt nested unions
+        return new SetImpls.UnionOf<>(a, difference(b, a)); // TODO: make more efficient wrt nested unions
     }
 
     /**
@@ -128,8 +131,9 @@ public class Sets {
         if (b.isEmpty()) {
             return a; // a \\ {} = a
         }
+        int expectedSize = Math.abs(a.size() - b.size());
         //noinspection UnstableApiUsage
-        ImmutableSet.Builder<E> objectBuilder = ImmutableSet.builderWithExpectedSize(a.size() - b.size());
+        ImmutableSet.Builder<E> objectBuilder = ImmutableSet.builderWithExpectedSize(expectedSize);
         for (E e : a) {
             if (!b.contains(e)) {
                 objectBuilder.add(e);
