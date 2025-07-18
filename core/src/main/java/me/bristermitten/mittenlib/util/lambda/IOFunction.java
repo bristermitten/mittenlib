@@ -9,7 +9,7 @@ import java.util.function.Function;
 import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 /**
- * Like {@link SafeFunction} but only for {@link  IOException}
+ * Like {@link SafeFunction} but only for {@link IOException}
  *
  * @param <T> the type of the input
  * @param <R> the type of the result
@@ -45,6 +45,7 @@ public interface IOFunction<T, R> {
      *
      * @param t the input
      * @return the result
+     * @throws IOException if an I/O error occurs
      */
     R apply(T t) throws IOException;
 

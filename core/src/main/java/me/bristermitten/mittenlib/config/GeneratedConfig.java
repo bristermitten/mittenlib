@@ -6,7 +6,9 @@ package me.bristermitten.mittenlib.config;
  */
 public @interface GeneratedConfig {
     /**
-     * @return The DTO class that was used to generate this type
+     * The {@link Config} class that was used to generate this type.
+     *
+     * @return The Config class
      */
     Class<?> source();
 }
