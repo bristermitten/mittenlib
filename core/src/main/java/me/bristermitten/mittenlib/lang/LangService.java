@@ -1,38 +1,46 @@
 package me.bristermitten.mittenlib.lang;
 
-import static me.bristermitten.mittenlib.util.Cast.safeCast;
-
+import me.bristermitten.mittenlib.lang.format.MessageFormatter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import javax.inject.Inject;
-
-import me.bristermitten.mittenlib.lang.format.MessageFormatter;
+import static me.bristermitten.mittenlib.util.Cast.safeCast;
 
 public class LangService {
 
     private final MessageFormatter formatter;
     private final BukkitAudiences audiences;
+    private final UnaryOperator<Component> componentPostProcessor;
 
 
     @Inject
     public LangService(MessageFormatter formatter, BukkitAudiences audiences) {
         this.formatter = formatter;
         this.audiences = audiences;
+        this.componentPostProcessor = UnaryOperator.identity();
     }
 
+    public LangService(MessageFormatter formatter, BukkitAudiences audiences, UnaryOperator<Component> componentPostProcessor) {
+        this.formatter = formatter;
+        this.audiences = audiences;
+        this.componentPostProcessor = componentPostProcessor;
+    }
+
+    public LangService withComponentPostProcessor(UnaryOperator<Component> componentPostProcessor) {
+        return new LangService(formatter, audiences, componentPostProcessor);
+    }
 
     public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage) {
         send(receiver, langMessage, Collections.emptyMap(), null);
@@ -93,7 +101,7 @@ public class LangService {
     }
 
     private Component getFormattedComponent(CommandSender receiver, String message) {
-        return formatter.format(message, safeCast(receiver, OfflinePlayer.class));
+        return componentPostProcessor.apply(formatter.format(message, safeCast(receiver, OfflinePlayer.class)));
     }
 
     public void sendActionBar(CommandSender receiver, String message) {
