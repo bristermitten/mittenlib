@@ -106,6 +106,10 @@ loadScripts(document, 'script');</script>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.lang.format.MessageFormatter,net.kyori.adventure.platform.bukkit.BukkitAudiences)" class="member-name-link">LangService</a><wbr>(<a href="format/MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a>&nbsp;formatter,
  net.kyori.adventure.platform.bukkit.BukkitAudiences&nbsp;audiences)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.lang.format.MessageFormatter,net.kyori.adventure.platform.bukkit.BukkitAudiences,java.util.function.UnaryOperator)" class="member-name-link">LangService</a><wbr>(<a href="format/MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a>&nbsp;formatter,
+ net.kyori.adventure.platform.bukkit.BukkitAudiences&nbsp;audiences,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/UnaryOperator.html" title="class or interface in java.util.function" class="external-link">UnaryOperator</a>&lt;<a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link">Component</a>&gt;&nbsp;componentPostProcessor)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -153,6 +157,9 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;title,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subtitle)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withComponentPostProcessor(java.util.function.UnaryOperator)" class="member-name-link">withComponentPostProcessor</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/UnaryOperator.html" title="class or interface in java.util.function" class="external-link">UnaryOperator</a>&lt;<a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link">Component</a>&gt;&nbsp;componentPostProcessor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -178,6 +185,14 @@ loadScripts(document, 'script');</script>
  net.kyori.adventure.platform.bukkit.BukkitAudiences&nbsp;audiences)</span></div>
 </section>
 </li>
+<li>
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.lang.format.MessageFormatter,net.kyori.adventure.platform.bukkit.BukkitAudiences,java.util.function.UnaryOperator)">
+<h3>LangService</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">LangService</span><wbr><span class="parameters">(<a href="format/MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a>&nbsp;formatter,
+ net.kyori.adventure.platform.bukkit.BukkitAudiences&nbsp;audiences,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/UnaryOperator.html" title="class or interface in java.util.function" class="external-link">UnaryOperator</a>&lt;<a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link">Component</a>&gt;&nbsp;componentPostProcessor)</span></div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -186,6 +201,12 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="withComponentPostProcessor(java.util.function.UnaryOperator)">
+<h3>withComponentPostProcessor</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></span>&nbsp;<span class="element-name">withComponentPostProcessor</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/UnaryOperator.html" title="class or interface in java.util.function" class="external-link">UnaryOperator</a>&lt;<a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link">Component</a>&gt;&nbsp;componentPostProcessor)</span></div>
+</section>
+</li>
 <li>
 <section class="detail" id="send(org.bukkit.command.CommandSender,me.bristermitten.mittenlib.lang.LangMessage)">
 <h3>send</h3>
