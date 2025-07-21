@@ -2,10 +2,17 @@ rootProject.name = "mittenlib"
 include("annotation-processor")
 include("core")
 include("commands")
+include("gui")
 include("minimessage")
 include("papi")
 include("annotation-processor:benchmark")
 findProject(":annotation-processor:benchmark")?.name = "benchmark"
+
+
+include("record-generator")
+include("record-generator:api")
+include("record-generator:processor")
+include("record-generator:integration-test")
 
 dependencyResolutionManagement {
 	repositories {

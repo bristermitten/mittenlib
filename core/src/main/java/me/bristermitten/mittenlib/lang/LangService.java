@@ -18,6 +18,9 @@ import java.util.function.UnaryOperator;
 
 import static me.bristermitten.mittenlib.util.Cast.safeCast;
 
+/**
+ * A basic service for sending language messages to command senders.
+ */
 public class LangService {
 
     private final MessageFormatter formatter;
