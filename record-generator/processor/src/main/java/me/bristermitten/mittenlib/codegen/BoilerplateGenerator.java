@@ -1,14 +1,15 @@
-package me.bristermitten.mittenlib.records;
+package me.bristermitten.mittenlib.codegen;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
 public class BoilerplateGenerator {
-    public static MethodSpec genEquals(RecordSpec.RecordConstructorSpec recordConstructorSpec, ClassName name) {
+    public static MethodSpec genEquals(RecordConstructorSpec recordConstructorSpec, ClassName name) {
         MethodSpec.Builder equalsBuilder = MethodSpec.methodBuilder("equals")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(boolean.class)
@@ -41,7 +42,7 @@ public class BoilerplateGenerator {
         return equalsBuilder.build();
     }
 
-    public static MethodSpec genHashCode(RecordSpec.RecordConstructorSpec recordConstructorSpec) {
+    public static MethodSpec genHashCode(RecordConstructorSpec recordConstructorSpec) {
         MethodSpec.Builder hashCodeBuilder = MethodSpec.methodBuilder("hashCode")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(int.class)
@@ -54,14 +55,14 @@ public class BoilerplateGenerator {
         }
 
         CodeBlock hashCodeExpression = recordConstructorSpec.fields().stream()
-                .map(f -> CodeBlock.of("$T.hash(this." + f.name() + ")", Objects.class))
-                .collect(CodeBlock.joining(", ", "return ", ""));
+                .map(f -> CodeBlock.of("this." + f.name(), Objects.class))
+                .collect(CodeBlock.joining(", "));
 
-        hashCodeBuilder.addStatement(hashCodeExpression);
+        hashCodeBuilder.addStatement("return $T.hash($L)", Objects.class, hashCodeExpression);
         return hashCodeBuilder.build();
     }
 
-    public static MethodSpec genToString(RecordSpec.RecordConstructorSpec recordConstructorSpec, ClassName name) {
+    public static MethodSpec genToString(RecordConstructorSpec recordConstructorSpec, ClassName name) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("toString")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
@@ -73,12 +74,11 @@ public class BoilerplateGenerator {
 
         code.add(properties.stream()
                 .map(property -> CodeBlock.of("""
-                        + "$L=" + $N""", property.name(), property.name()))
+                        + "$L=" + $N\s""", property.name(), property.name()))
                 .collect(CodeBlock.joining("""
-                        + ",\"""")));
+                        + ", \"""")));
 
-        code.add("""
-                + "}\"""");
+        code.add("+ \"}\"");
         builder.addStatement(code.build());
         return builder.build();
     }

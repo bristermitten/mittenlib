@@ -1,17 +1,15 @@
-package me.bristermitten.mittenlib.records;
+package me.bristermitten.mittenlib.codegen;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RecordTest {
+public class UnionTest {
 
     @Test
     void test() {
-
-
-        TestRecord record = new TestRecord.Child2(1);
-        assertEquals(TestRecord.Child2(1), record);
+        TestUnion record = new TestUnion.Child2(1);
+        assertEquals(TestUnion.Child2(1), record);
 
         record.match(() -> {
             throw new AssertionError("Should not match Child1");
@@ -23,10 +21,10 @@ public class RecordTest {
         assertFalse(record.asChild1().isPresent());
     }
 
-    @Record
-    interface TestRecordSpec {
-        TestRecordSpec Child1();
+    @Union
+    interface TestUnionSpec {
+        TestUnionSpec Child1();
 
-        TestRecordSpec Child2(int value);
+        TestUnionSpec Child2(int value);
     }
 }

@@ -1,11 +1,11 @@
 # Record Generator
 
-A "polyfill" annotation processor for emulating Java 16 records :)
+A "polyfill" annotation processor for emulating Java 16 records and sealed classes, to create convenient discriminated
+unions.
 
 # Example
 
 ```java
-
 @Record
 interface TestRecordSpec {
     TestRecordSpec Child1();

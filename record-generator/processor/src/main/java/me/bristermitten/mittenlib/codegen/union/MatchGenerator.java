@@ -1,6 +1,7 @@
-package me.bristermitten.mittenlib.records;
+package me.bristermitten.mittenlib.codegen.union;
 
 import com.squareup.javapoet.*;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 
 import java.util.function.*;
 
@@ -8,7 +9,7 @@ import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class MatchGenerator {
-    public static MethodSpec makeVoidMatchMethodSpec(RecordSpec spec) {
+    public static MethodSpec makeVoidMatchMethodSpec(UnionSpec spec) {
         return MethodSpec.methodBuilder("match")
                 .addModifiers(PUBLIC, ABSTRACT)
                 .returns(TypeName.get(void.class))
@@ -25,7 +26,7 @@ public class MatchGenerator {
                 .build();
     }
 
-    public static MethodSpec makeMatchMethodSpec(RecordSpec spec) {
+    public static MethodSpec makeMatchMethodSpec(UnionSpec spec) {
         return MethodSpec.methodBuilder("matchTo")
                 .addModifiers(PUBLIC, ABSTRACT)
                 .addTypeVariable(TypeVariableName.get("T"))
@@ -43,7 +44,7 @@ public class MatchGenerator {
                 .build();
     }
 
-    public static MethodSpec implementVoidMatchMethod(RecordSpec record, RecordSpec.RecordConstructorSpec spec) {
+    public static MethodSpec implementVoidMatchMethod(UnionSpec record, RecordConstructorSpec spec) {
         var m = makeVoidMatchMethodSpec(record)
                 .toBuilder()
                 .addAnnotation(Override.class)
@@ -60,7 +61,7 @@ public class MatchGenerator {
         return m.build();
     }
 
-    public static MethodSpec implementReturningMatchMethod(RecordSpec record, RecordSpec.RecordConstructorSpec spec) {
+    public static MethodSpec implementReturningMatchMethod(UnionSpec record, RecordConstructorSpec spec) {
         var m = makeMatchMethodSpec(record)
                 .toBuilder()
                 .addAnnotation(Override.class)
@@ -78,7 +79,7 @@ public class MatchGenerator {
         return m.build();
     }
 
-    public static TypeName voidFunctionalInterfaceFor(RecordSpec.RecordConstructorSpec spec) {
+    public static TypeName voidFunctionalInterfaceFor(RecordConstructorSpec spec) {
         return switch (spec.fields().size()) {
             case 0 -> ClassName.get(Runnable.class);
 
@@ -93,15 +94,15 @@ public class MatchGenerator {
             };
             case 2 -> ParameterizedTypeName.get(
                     ClassName.get(BiConsumer.class),
-                    spec.fields().getFirst().type(),
-                    spec.fields().get(1).type()
+                    spec.fields().getFirst().type().box(),
+                    spec.fields().get(1).type().box()
             );
             default ->
                     throw new UnsupportedOperationException("Unsupported number of fields for match method: " + spec.fields().size());
         };
     }
 
-    public static TypeName returningFunctionalInterfaceFor(RecordSpec.RecordConstructorSpec spec, TypeName returning) {
+    public static TypeName returningFunctionalInterfaceFor(RecordConstructorSpec spec, TypeName returning) {
         return switch (spec.fields().size()) {
             case 0 -> ParameterizedTypeName.get(
                     ClassName.get(Supplier.class),
@@ -120,6 +121,12 @@ public class MatchGenerator {
                 default ->
                         throw new UnsupportedOperationException("Unsupported type for match method with single field: " + spec.fields().getFirst().type());
             };
+            case 2 -> ParameterizedTypeName.get(
+                    ClassName.get(BiFunction.class),
+                    spec.fields().getFirst().type().box(),
+                    spec.fields().get(1).type().box(),
+                    returning
+            );
             default ->
                     throw new UnsupportedOperationException("Unsupported number of fields for match method: " + spec.fields().size());
         };
@@ -134,6 +141,7 @@ public class MatchGenerator {
             case ParameterizedTypeName p when p.rawType.equals(ClassName.get(Supplier.class)) -> "get";
             case ClassName c when c.equals(ClassName.get(IntConsumer.class)) -> "accept";
             case ParameterizedTypeName p when p.rawType.equals(ClassName.get(BiConsumer.class)) -> "accept";
+            case ParameterizedTypeName p when p.rawType.equals(ClassName.get(BiFunction.class)) -> "apply";
             default -> throw new UnsupportedOperationException("Unsupported functional interface: " + fi);
         };
     }
