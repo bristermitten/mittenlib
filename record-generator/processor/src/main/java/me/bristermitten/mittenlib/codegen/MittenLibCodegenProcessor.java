@@ -1,4 +1,4 @@
-package me.bristermitten.mittenlib.codegen.record;
+package me.bristermitten.mittenlib.codegen;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
@@ -10,9 +10,9 @@ import io.toolisticon.aptk.tools.TypeUtils;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
-import me.bristermitten.mittenlib.codegen.Record;
-import me.bristermitten.mittenlib.codegen.RecordProcessorCompilerMessages;
-import me.bristermitten.mittenlib.codegen.Union;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
+import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
+import me.bristermitten.mittenlib.codegen.record.RecordSpec;
 import me.bristermitten.mittenlib.codegen.union.UnionGenerator;
 import me.bristermitten.mittenlib.codegen.union.UnionSpec;
 
@@ -29,20 +29,20 @@ import java.util.*;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
-public class RecordProcessor extends AbstractAnnotationProcessor {
+public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     private static Optional<RecordConstructorSpec> parseConstructor(ExecutableElement method, TypeElementWrapper typeElement, Collection<String> existingConstructors) {
         if (!TypeUtils.TypeComparison.isTypeEqual(
                 method.getReturnType(),
                 typeElement.asType().unwrap()
         )) {
-            MessagerUtils.error(method, RecordProcessorCompilerMessages.METHOD_BAD_RETURN, typeElement);
+            MessagerUtils.error(method, MittenLibCodegenProcessorCompilerMessages.METHOD_BAD_RETURN, typeElement);
             return Optional.empty();
         }
         String constructorName = method.getSimpleName().toString();
         if (existingConstructors.stream().anyMatch(
                 con -> con.equals(constructorName)
         )) {
-            MessagerUtils.error(method, RecordProcessorCompilerMessages.DUPLICATE_CONSTRUCTOR, constructorName);
+            MessagerUtils.error(method, MittenLibCodegenProcessorCompilerMessages.DUPLICATE_CONSTRUCTOR, constructorName);
             return Optional.empty();
         }
         return Optional.of(
@@ -112,14 +112,14 @@ public class RecordProcessor extends AbstractAnnotationProcessor {
                     .applyFilter(AptkCoreMatchers.IS_METHOD)
                     .getResult();
             if (result.size() != 1) {
-                MessagerUtils.error(typeElement.unwrap(), RecordProcessorCompilerMessages.RECORD_MUST_HAVE_SINGLE_CONSTRUCTOR, typeElement.unwrap());
+                MessagerUtils.error(typeElement.unwrap(), MittenLibCodegenProcessorCompilerMessages.RECORD_MUST_HAVE_SINGLE_CONSTRUCTOR, typeElement.unwrap());
                 continue; // Skip invalid records
             }
 
             ExecutableElement method = result.getFirst();
             Optional<RecordConstructorSpec> recordConstructorSpec = parseConstructor(method, typeElement, List.of());
             if (recordConstructorSpec.isEmpty()) {
-                MessagerUtils.error(method, RecordProcessorCompilerMessages.RECORD_MUST_HAVE_SINGLE_CONSTRUCTOR, typeElement);
+                MessagerUtils.error(method, MittenLibCodegenProcessorCompilerMessages.RECORD_MUST_HAVE_SINGLE_CONSTRUCTOR, typeElement);
                 return false; // Skip invalid records
             }
             RecordConstructorSpec constructor = recordConstructorSpec.get();

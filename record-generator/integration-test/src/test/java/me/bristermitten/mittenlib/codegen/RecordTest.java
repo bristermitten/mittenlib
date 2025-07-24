@@ -15,12 +15,13 @@ public class RecordTest {
 
         assertEquals(new TestRecord("test", 42), r);
         assertEquals("TestRecord{a=test, b=42}", r.toString());
-
-
     }
 
     @Record
     interface TestRecordSpec {
+        @PrimaryConstructor
         TestRecordSpec create(String a, int b);
+
+
     }
 }
