@@ -6,6 +6,9 @@ me.bristermitten.mittenlib.annotations.config
 me.bristermitten.mittenlib.annotations.exception
 me.bristermitten.mittenlib.annotations.parser
 me.bristermitten.mittenlib.annotations.util
+me.bristermitten.mittenlib.codegen
+me.bristermitten.mittenlib.codegen.record
+me.bristermitten.mittenlib.codegen.union
 me.bristermitten.mittenlib.collections
 me.bristermitten.mittenlib.commands
 me.bristermitten.mittenlib.commands.handlers
