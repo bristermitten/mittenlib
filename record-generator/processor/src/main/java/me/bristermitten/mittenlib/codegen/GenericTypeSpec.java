@@ -4,5 +4,4 @@ import com.squareup.javapoet.ClassName;
 
 public interface GenericTypeSpec {
     ClassName name();
-
 }

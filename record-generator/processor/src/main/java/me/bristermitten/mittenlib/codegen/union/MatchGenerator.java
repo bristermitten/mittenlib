@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.codegen.union;
 
 import com.squareup.javapoet.*;
+import me.bristermitten.mittenlib.codegen.MatchStrategies;
 import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 
 import java.util.function.*;
@@ -9,7 +10,7 @@ import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class MatchGenerator {
-    public static MethodSpec makeVoidMatchMethodSpec(UnionSpec spec) {
+    public static MethodSpec makeVoidMatchMethodSpec(ResolvedUnionSpec spec) {
         return MethodSpec.methodBuilder("match")
                 .addModifiers(PUBLIC, ABSTRACT)
                 .returns(TypeName.get(void.class))
@@ -17,8 +18,8 @@ public class MatchGenerator {
                         spec.constructors()
                                 .stream().map(
                                         constructor -> ParameterSpec.builder(
-                                                voidFunctionalInterfaceFor(constructor),
-                                                constructor.name()
+                                                voidFunctionalInterfaceFor(constructor, spec.strategy()),
+                                                constructor.name().simpleName()
                                         ).build()
                                 )
                                 .toList()
@@ -26,7 +27,7 @@ public class MatchGenerator {
                 .build();
     }
 
-    public static MethodSpec makeMatchMethodSpec(UnionSpec spec) {
+    public static MethodSpec makeMatchMethodSpec(ResolvedUnionSpec spec) {
         return MethodSpec.methodBuilder("matchTo")
                 .addModifiers(PUBLIC, ABSTRACT)
                 .addTypeVariable(TypeVariableName.get("T"))
@@ -35,8 +36,8 @@ public class MatchGenerator {
                         spec.constructors()
                                 .stream().map(
                                         constructor -> ParameterSpec.builder(
-                                                returningFunctionalInterfaceFor(constructor, TypeVariableName.get("T")),
-                                                constructor.name()
+                                                returningFunctionalInterfaceFor(constructor, spec.strategy(), TypeVariableName.get("T")),
+                                                constructor.name().simpleName()
                                         ).build()
                                 )
                                 .toList()
@@ -44,16 +45,16 @@ public class MatchGenerator {
                 .build();
     }
 
-    public static MethodSpec implementVoidMatchMethod(UnionSpec record, RecordConstructorSpec spec) {
+    public static MethodSpec implementVoidMatchMethod(ResolvedUnionSpec record, ResolvedUnionConstructor spec) {
+        TypeName usedFunctionalInterface = voidFunctionalInterfaceFor(spec, record.strategy());
+        String functionalInterfaceInvokeName = functionalInterfaceInvokeName(usedFunctionalInterface);
         var m = makeVoidMatchMethodSpec(record)
                 .toBuilder()
                 .addAnnotation(Override.class)
                 .addCode(
-                        CodeBlock.builder().add("$L.$L", spec.name(), functionalInterfaceInvokeName(voidFunctionalInterfaceFor(spec)))
+                        CodeBlock.builder().add("$L.$L", spec.name().simpleName(), functionalInterfaceInvokeName)
                                 .addStatement(
-                                        spec.fields().stream()
-                                                .map(field -> CodeBlock.of("this.$L", field.name()))
-                                                .collect(CodeBlock.joining(", ", "(", ")"))
+                                        matchParameters(record.strategy(), spec.constructor())
                                 )
                                 .build()
                 );
@@ -61,17 +62,26 @@ public class MatchGenerator {
         return m.build();
     }
 
-    public static MethodSpec implementReturningMatchMethod(UnionSpec record, RecordConstructorSpec spec) {
+    private static CodeBlock matchParameters(MatchStrategies strategy, RecordConstructorSpec constructor) {
+        return switch (strategy) {
+            case NOMINAL -> CodeBlock.of("(this)");
+            case STRUCTURAL -> constructor.fields().stream()
+                    .map(field -> CodeBlock.of("this.$L", field.name()))
+                    .collect(CodeBlock.joining(", ", "(", ")"));
+        };
+    }
+
+    public static MethodSpec implementReturningMatchMethod(ResolvedUnionSpec record, ResolvedUnionConstructor spec) {
+        TypeName usedFunctionalInterface = returningFunctionalInterfaceFor(spec, record.strategy(), TypeVariableName.get("T"));
+        String invokeName = functionalInterfaceInvokeName(usedFunctionalInterface);
         var m = makeMatchMethodSpec(record)
                 .toBuilder()
                 .addAnnotation(Override.class)
                 .returns(TypeVariableName.get("T"))
                 .addCode(
-                        CodeBlock.builder().add("return $L.$L", spec.name(), functionalInterfaceInvokeName(returningFunctionalInterfaceFor(spec, TypeVariableName.get("T"))))
+                        CodeBlock.builder().add("return $L.$L", spec.name().simpleName(), invokeName)
                                 .addStatement(
-                                        spec.fields().stream()
-                                                .map(field -> CodeBlock.of("this.$L", field.name()))
-                                                .collect(CodeBlock.joining(", ", "(", ")"))
+                                        matchParameters(record.strategy(), spec.constructor())
                                 )
                                 .build()
                 );
@@ -79,58 +89,76 @@ public class MatchGenerator {
         return m.build();
     }
 
-    public static TypeName voidFunctionalInterfaceFor(RecordConstructorSpec spec) {
-        return switch (spec.fields().size()) {
+    public static TypeName voidFunctionalInterfaceFor(ResolvedUnionConstructor constructor, MatchStrategies strategies) {
+        if (strategies == MatchStrategies.NOMINAL) {
+            return ParameterizedTypeName.get(
+                    ClassName.get(Consumer.class),
+                    constructor.name()
+            );
+        }
+        var fields = constructor.constructor().fields();
+        return switch (fields.size()) {
             case 0 -> ClassName.get(Runnable.class);
 
-            case 1 -> switch (spec.fields().getFirst().type()) {
+            case 1 -> switch (fields.getFirst().type()) {
                 case TypeName i when !i.isPrimitive() -> ParameterizedTypeName.get(
                         ClassName.get(Consumer.class),
                         i
                 );
                 case TypeName i when i.equals(TypeName.INT) -> ClassName.get(IntConsumer.class);
                 default ->
-                        throw new UnsupportedOperationException("Unsupported type for match method with single field: " + spec.fields().getFirst().type());
+                        throw new UnsupportedOperationException("Unsupported type for match method with single field: " + fields.getFirst().type());
             };
             case 2 -> ParameterizedTypeName.get(
                     ClassName.get(BiConsumer.class),
-                    spec.fields().getFirst().type().box(),
-                    spec.fields().get(1).type().box()
+                    fields.getFirst().type().box(),
+                    fields.get(1).type().box()
             );
             default ->
-                    throw new UnsupportedOperationException("Unsupported number of fields for match method: " + spec.fields().size());
+                    throw new UnsupportedOperationException("Unsupported number of fields for match method: " + fields.size());
         };
     }
 
-    public static TypeName returningFunctionalInterfaceFor(RecordConstructorSpec spec, TypeName returning) {
-        return switch (spec.fields().size()) {
-            case 0 -> ParameterizedTypeName.get(
-                    ClassName.get(Supplier.class),
+    public static TypeName returningFunctionalInterfaceFor(ResolvedUnionConstructor spec, MatchStrategies strategies, TypeName returning) {
+        return switch (strategies) {
+            case NOMINAL -> ParameterizedTypeName.get(
+                    ClassName.get(Function.class),
+                    spec.name(),
                     returning
             );
-            case 1 -> switch (spec.fields().getFirst().type()) {
-                case TypeName i when !i.isPrimitive() -> ParameterizedTypeName.get(
-                        ClassName.get(Function.class),
-                        i,
-                        returning
-                );
-                case TypeName i when i.equals(TypeName.INT) -> ParameterizedTypeName.get(
-                        ClassName.get(IntFunction.class),
-                        returning
-                );
-                default ->
-                        throw new UnsupportedOperationException("Unsupported type for match method with single field: " + spec.fields().getFirst().type());
-            };
-            case 2 -> ParameterizedTypeName.get(
-                    ClassName.get(BiFunction.class),
-                    spec.fields().getFirst().type().box(),
-                    spec.fields().get(1).type().box(),
-                    returning
-            );
-            default ->
-                    throw new UnsupportedOperationException("Unsupported number of fields for match method: " + spec.fields().size());
+            case STRUCTURAL -> {
+                var fields = spec.constructor().fields();
+                yield switch (fields.size()) {
+                    case 0 -> ParameterizedTypeName.get(
+                            ClassName.get(Supplier.class),
+                            returning
+                    );
+                    case 1 -> switch (fields.getFirst().type()) {
+                        case TypeName i when !i.isPrimitive() -> ParameterizedTypeName.get(
+                                ClassName.get(Function.class),
+                                i,
+                                returning
+                        );
+                        case TypeName i when i.equals(TypeName.INT) -> ParameterizedTypeName.get(
+                                ClassName.get(IntFunction.class),
+                                returning
+                        );
+                        default ->
+                                throw new UnsupportedOperationException("Unsupported type for match method with single field: " + fields.getFirst().type());
+                    };
+                    case 2 -> ParameterizedTypeName.get(
+                            ClassName.get(BiFunction.class),
+                            fields.getFirst().type().box(),
+                            fields.get(1).type().box(),
+                            returning
+                    );
+                    default ->
+                            throw new UnsupportedOperationException("Unsupported number of fields for match method: " + fields.size());
+                };
+            }
         };
     }
+
 
     private static String functionalInterfaceInvokeName(TypeName fi) {
         return switch (fi) {

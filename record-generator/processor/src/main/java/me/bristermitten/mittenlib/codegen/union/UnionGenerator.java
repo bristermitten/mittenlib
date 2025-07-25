@@ -4,7 +4,6 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.codegen.GeneratedUnion;
 import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
-import me.bristermitten.mittenlib.codegen.record.RecordSpecLike;
 
 import java.util.Optional;
 
@@ -46,6 +45,22 @@ public class UnionGenerator {
         );
     }
 
+
+    private static ResolvedUnionSpec resolve(UnionSpec unionSpec) {
+        return new ResolvedUnionSpec(
+                unionSpec.source(),
+                unionSpec.name(),
+                unionSpec.strategy(),
+                unionSpec.constructors().stream()
+                        .map(constructor -> new ResolvedUnionConstructor(
+                                unionSpec.source(),
+                                unionSpec.name().nestedClass(constructor.name()),
+                                constructor
+                        ))
+                        .toList()
+        );
+    }
+
     public JavaFile generate(UnionSpec unionSpec) {
         ClassName recordImplName = unionSpec.name();
         var typeSpecBuilder = TypeSpec.classBuilder(recordImplName);
@@ -54,22 +69,13 @@ public class UnionGenerator {
                 .addMember("source", "$T.class", unionSpec.source())
                 .build());
 
+        var resolved = resolve(unionSpec);
 
-        typeSpecBuilder.addMethod(MatchGenerator.makeVoidMatchMethodSpec(unionSpec));
-        typeSpecBuilder.addMethod(MatchGenerator.makeMatchMethodSpec(unionSpec));
+        typeSpecBuilder.addMethod(MatchGenerator.makeVoidMatchMethodSpec(resolved));
+        typeSpecBuilder.addMethod(MatchGenerator.makeMatchMethodSpec(resolved));
 
 
-        record RecordConstructorToGenerate(
-                ClassName source, ClassName name, RecordConstructorSpec constructor
-        ) implements RecordSpecLike {
-        }
-        for (RecordConstructorSpec constructor : unionSpec.constructors()) {
-            ClassName constructorClassName = recordImplName.nestedClass(constructor.name());
-            var toGenerate = new RecordConstructorToGenerate(
-                    unionSpec.source(),
-                    constructorClassName,
-                    constructor
-            );
+        for (var toGenerate : resolved.constructors()) {
             var generatedRecord = RecordGenerator.generateBasicRecordTypeSpec(toGenerate);
 
             var constructorTypeSpecBuilder =
@@ -78,11 +84,11 @@ public class UnionGenerator {
 
             constructorTypeSpecBuilder.superclass(recordImplName);
 
-            RecordGenerator.addStaticFactoryMethod(constructor, constructorClassName, typeSpecBuilder);
-            generateAsMethod(constructorClassName, constructor, typeSpecBuilder);
+            RecordGenerator.addStaticFactoryMethod(toGenerate.constructor(), toGenerate.name(), typeSpecBuilder);
+            generateAsMethod(toGenerate.name(), toGenerate.constructor(), typeSpecBuilder);
 
-            constructorTypeSpecBuilder.addMethod(MatchGenerator.implementVoidMatchMethod(unionSpec, constructor));
-            constructorTypeSpecBuilder.addMethod(MatchGenerator.implementReturningMatchMethod(unionSpec, constructor));
+            constructorTypeSpecBuilder.addMethod(MatchGenerator.implementVoidMatchMethod(resolved, toGenerate));
+            constructorTypeSpecBuilder.addMethod(MatchGenerator.implementReturningMatchMethod(resolved, toGenerate));
 
 
             typeSpecBuilder.addType(constructorTypeSpecBuilder.build());

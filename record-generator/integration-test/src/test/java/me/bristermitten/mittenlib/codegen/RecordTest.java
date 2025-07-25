@@ -21,7 +21,5 @@ public class RecordTest {
     interface TestRecordSpec {
         @PrimaryConstructor
         TestRecordSpec create(String a, int b);
-
-
     }
 }

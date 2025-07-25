@@ -3,15 +3,54 @@
 A "polyfill" annotation processor for emulating Java 16 records and sealed classes, to create convenient discriminated
 unions.
 
-# Example
+# Records Example
 
 ```java
 @Record
 interface TestRecordSpec {
-    TestRecordSpec Child1();
-
-    TestRecordSpec Child2(int value);
+    TestRecordSpec create(String a, int b);
 }
 ```
 
-will generate a record type called `TestRecord`
+This will generate an immutable data class named `TestRecord` with the following methods:
+
+```java
+String a();
+int b();
+
+static TestRecord create(String a, int b);
+```
+
+We can also emulate sealed classes with the `@Union` annotation:
+
+```java
+@Union
+interface TestUnionSpec {
+    TestUnionSpec Child1();
+
+    TestUnionSpec Child2(int value);
+}
+```
+
+This will generate a "sealed" class named `TestUnion` with the following methods:
+
+```java
+static TestUnion Child1();
+
+static TestUnion Child2(int value);
+
+Optional<Child1> asChild1();
+
+Optional<Child2> asChild2();
+
+void match(
+        Runnable child1Case,
+        Consumer<Integer> child2Case
+);
+
+<T> T matchAs(
+        Supplier<T> child1Case,
+        Function<Integer, T> child2Case
+);
+```
+

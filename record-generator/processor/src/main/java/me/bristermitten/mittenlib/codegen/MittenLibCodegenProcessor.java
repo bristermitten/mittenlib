@@ -35,7 +35,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
                 method.getReturnType(),
                 typeElement.asType().unwrap()
         )) {
-            MessagerUtils.error(method, MittenLibCodegenProcessorCompilerMessages.METHOD_BAD_RETURN, typeElement);
+            MessagerUtils.error(method, MittenLibCodegenProcessorCompilerMessages.METHOD_BAD_RETURN, typeElement.unwrap());
             return Optional.empty();
         }
         String constructorName = method.getSimpleName().toString();
@@ -138,7 +138,6 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
         for (var record : records) {
             var generate = generator.generate(record);
             try {
-                MessagerUtils.info(null, generate.toString());
                 generate.writeTo(processingEnv.getFiler());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -178,9 +177,14 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
             ClassName recordSpecName = getSpecName(typeElement.unwrap());
 
+            var matchStrategy = typeElement.getAnnotation(MatchStrategy.class)
+                    .map(MatchStrategy::value)
+                    .orElse(MatchStrategies.NOMINAL);
+
             var recordSpec = new UnionSpec(
                     ClassName.get(typeElement.unwrap()),
                     recordSpecName,
+                    matchStrategy,
                     constructors
             );
             unions.add(recordSpec);
@@ -194,7 +198,6 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
         for (UnionSpec record : unions) {
             var generate = generator.generate(record);
             try {
-                MessagerUtils.info(null, generate.toString());
                 generate.writeTo(processingEnv.getFiler());
             } catch (IOException e) {
                 throw new RuntimeException(e);

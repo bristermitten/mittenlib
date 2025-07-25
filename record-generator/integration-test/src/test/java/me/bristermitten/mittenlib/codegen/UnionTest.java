@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UnionTest {
 
     @Test
-    void test() {
-        TestUnion record = new TestUnion.Child2(1);
-        assertEquals(TestUnion.Child2(1), record);
+    void testStructural() {
+        TestStructuralUnion record = new TestStructuralUnion.Child2(1);
+        assertEquals(TestStructuralUnion.Child2(1), record);
 
         record.match(() -> {
             throw new AssertionError("Should not match Child1");
@@ -21,10 +21,34 @@ public class UnionTest {
         assertFalse(record.asChild1().isPresent());
     }
 
-    @Union
-    interface TestUnionSpec {
-        TestUnionSpec Child1();
+    @Test
+    void testNominal() {
+        TestNominalUnion record = new TestNominalUnion.Child2(1);
+        assertEquals(TestNominalUnion.Child2(1), record);
 
-        TestUnionSpec Child2(int value);
+        record.match(child1 -> {
+            throw new AssertionError("Should not match Child1");
+        }, child2 -> assertEquals(1, child2.value()));
+
+        assertEquals(1, (int) record.matchTo(child1 -> -1, TestNominalUnion.Child2::value));
+
+        assertTrue(record.asChild2().isPresent());
+        assertFalse(record.asChild1().isPresent());
+    }
+
+    @Union
+    @MatchStrategy(MatchStrategies.STRUCTURAL)
+    interface TestStructuralUnionSpec {
+        TestStructuralUnionSpec Child1();
+
+        TestStructuralUnionSpec Child2(int value);
+    }
+
+    @Union
+    @MatchStrategy(MatchStrategies.NOMINAL)
+    interface TestNominalUnionSpec {
+        TestNominalUnionSpec Child1();
+
+        TestNominalUnionSpec Child2(int value);
     }
 }
