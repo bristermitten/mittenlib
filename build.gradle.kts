@@ -85,6 +85,7 @@ subprojects {
 	tasks.withType<JavaCompile> {
 		options.encoding = "UTF-8"
 		options.isFork = true
+		options.setIncremental(true)
 	}
 	tasks.javadoc {
 		configureJavadoc()
