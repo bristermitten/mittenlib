@@ -116,4 +116,19 @@ void match(
 );
 ```
 
+## Usage
+
+This module requires 2 dependencies to be added:
+
+- The API module, with the artefact ID `me.bristermitten.mittenlib.record-generator-api`
+- The annotation processor, with the artefact ID `me.bristermitten.mittenlib.record-generator-processor`
+
+With Gradle Kotlin, this can be done like so:
+
+```kotlin
+dependencies {
+	implementation("me.bristermitten.mittenlib:record-generator-api:VERSION")
+	annotationProcessor("me.bristermitten.mittenlib:record-generator-processor:VERSION")
+}
+```
 

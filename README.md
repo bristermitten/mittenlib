@@ -121,6 +121,12 @@ This module adds automatic support for MiniMessage anywhere that Strings are for
 
 This module adds automatic support for placeholder application with PlaceholderAPI anywhere that Strings are formatted
 
+### `record-generator`
+
+[Full documentation](./record-generator/README.md)
+
+An annotation processor that emulates the behaviour of Java 16 Records and Sealed Classes on older Java versions
+
 ## How to use it
 
 MittenLib is published to my Maven repository making it easy to access.
