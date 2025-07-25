@@ -36,6 +36,7 @@ public class UnionTest {
         assertFalse(record.asChild1().isPresent());
     }
 
+    @SuppressWarnings("unused")
     @Union
     @MatchStrategy(MatchStrategies.STRUCTURAL)
     interface TestStructuralUnionSpec {
@@ -44,6 +45,7 @@ public class UnionTest {
         TestStructuralUnionSpec Child2(int value);
     }
 
+    @SuppressWarnings("unused")
     @Union
     @MatchStrategy(MatchStrategies.NOMINAL)
     interface TestNominalUnionSpec {
