@@ -60,7 +60,20 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     }
 
     private static ClassName getSpecName(TypeElement spec) {
+        TypeElementWrapper wrapped = TypeElementWrapper.wrap(spec);
+        var explicitName = wrapped.getAnnotation(Record.class)
+                .map(Record::name)
+                .or(() -> wrapped.getAnnotation(Union.class).map(Union::name))
+                .filter(name -> !name.isBlank());
+
         var recordSpecName = ClassName.get(spec);
+        if (explicitName.isPresent()) {
+            return ClassName.get(
+                    recordSpecName.packageName(),
+                    explicitName.get()
+            );
+        }
+
         return ClassName.get(
                 recordSpecName.packageName(),
                 recordSpecName.simpleName().replace("Spec", "")
