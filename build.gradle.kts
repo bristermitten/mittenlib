@@ -106,7 +106,7 @@ subprojects {
 			publications {
 				create<MavenPublication>("maven") {
 					from(components["java"])
-					artifactId = "mittenlib-$artifactId"
+					artifactId = "mittenlib${project.path.replace(":", "-")}"
 				}
 			}
 		}
