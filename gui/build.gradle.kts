@@ -4,5 +4,8 @@ repositories {
 
 dependencies {
 	implementation(project(":core"))
-	api(libs.acf.paper)
+	implementation(project(":record-generator:api"))
+	testAnnotationProcessor(project(":record-generator:processor"))
+
+	testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
 }
