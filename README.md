@@ -6,8 +6,6 @@ A library I use in many of my plugins which provides a wide range of utilities.
 
 [Javadocs](https://knightzmc.github.io/mittenlib/)
 
-
-
 ## Advantages
 
 MittenLib is different from the common helper frameworks in the Spigot ecosystem in a few ways:
@@ -142,7 +140,7 @@ configuration.
 <repositories>
     <repository>
         <id>bristermitten</id>
-        <url>https://repo.bristermitten.me/repository/maven-public/</url>
+      <url>https://repo.bristermitten.me/public/</url>
     </repository>
 </repositories>
 ```
@@ -162,11 +160,11 @@ configuration.
 
 ```kotlin
 repositories {
-    maven("https://repo.bristermitten.me/public/")
+  maven("https://repo.bristermitten.me/public/")
 }
 
 dependencies {
-    implementation("me.bristermitten:mittenlib-MODULE:VERSION")
+  implementation("me.bristermitten:mittenlib-$MODULE:$VERSION")
 }
 ```
 
@@ -175,11 +173,11 @@ dependencies {
 ```groovy
 repositories {
     maven {
-        url = 'https://repo.bristermitten.me/repository/maven-public/'
+      url = 'https://repo.bristermitten.me/public/'
     }
 }
 
 dependencies {
-    implementation 'me.bristermitten:mittenlib-MODULE:VERSION'
+  implementation "me.bristermitten:mittenlib:$MODULE:$VERSION"
 }
 ```
