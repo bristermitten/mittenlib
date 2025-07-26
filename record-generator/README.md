@@ -16,12 +16,18 @@ interface TestRecordSpec {
 This will generate an immutable data class named `TestRecord` with the following methods:
 
 ```java
-String a();
+public final class TestRecord {
+    String a();
 
-int b();
+    int b();
 
-static TestRecord create(String a, int b);
+    TestRecord(String a, int b);
+
+    static TestRecord create(String a, int b);
+}
 ```
+
+Additionally, the generated class will have standard implementations of `equals`, `hashCode`, and `toString`.
 
 # Union Example
 
@@ -59,7 +65,8 @@ void match(
 );
 ```
 
-Additionally, the generated subclasses will have standard implementations of `equals`, `hashCode`, and `toString`.
+The `Child1` and `Child2` classes are generated as subclasses of `TestUnion`, generated as if they were annotated with
+`@Record`
 
 The class is "sealed" in the sense that the constructor is private, preventing implementation outside the generated
 class.
