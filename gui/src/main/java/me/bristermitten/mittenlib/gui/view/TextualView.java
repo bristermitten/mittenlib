@@ -3,7 +3,7 @@ package me.bristermitten.mittenlib.gui.view;
 import java.util.Map;
 import java.util.Scanner;
 
-public class TextualView<Command> implements View<Command> {
+public class TextualView<Command> implements ViewerlessView<Command, TextualView<Command>> {
 
     private final String text;
     private final Map<String, Command> actions;

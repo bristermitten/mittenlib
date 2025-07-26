@@ -1,11 +1,13 @@
 package me.bristermitten.mittenlib.collections;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.AbstractMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+@Unmodifiable
 public abstract class MLImmutableMap<K, V> extends AbstractMap<K, V> {
     @Override
     public boolean remove(Object key, Object value) {

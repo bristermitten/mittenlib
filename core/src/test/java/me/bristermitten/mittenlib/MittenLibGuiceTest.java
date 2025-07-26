@@ -1,10 +1,10 @@
 package me.bristermitten.mittenlib;
 
+import be.seeseemelk.mockbukkit.MockBukkit;
 import com.google.inject.Injector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockbukkit.mockbukkit.MockBukkit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,7 +21,7 @@ class MittenLibGuiceTest {
     @AfterEach
     public void tearDown() {
         // Stop the mock server
-        MockBukkit.unmock();
+        MockBukkit.unload();
     }
 
 

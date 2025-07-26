@@ -1,8 +1,13 @@
 package me.bristermitten.mittenlib.gui;
 
+import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
 
-public class GUIExecutor<Model, V extends View<Command>, Command, GUI extends GUIBase<Model, Command, V>> {
+public class GUIExecutor<Model,
+        V extends View<Command, V, Viewer>,
+        Viewer extends InventoryViewer<Command, V>,
+        Command,
+        GUI extends GUIBase<Model, Command, V>> {
 
     private final GUI gui;
 
@@ -11,12 +16,12 @@ public class GUIExecutor<Model, V extends View<Command>, Command, GUI extends GU
     }
 
 
-    public Model execute() {
+    public Model execute(Viewer inventoryViewer) {
         Model model = gui.init();
         V view = gui.render(model);
 
         while (true) {
-            view.display();
+            view.display(inventoryViewer);
             Command command = view.waitForCommand();
             if (command == null) {
                 break; // Exit if no command is received

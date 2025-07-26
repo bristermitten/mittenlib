@@ -1,7 +1,5 @@
 package me.bristermitten.mittenlib.gui;
 
-import me.bristermitten.mittenlib.codegen.Record;
-import me.bristermitten.mittenlib.codegen.Union;
 import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.gui.view.TextualView;
 
@@ -38,18 +36,5 @@ public class TestGUI implements GUIBase<Counter, CounterCommand, TextualView<Cou
         );
     }
 
-    @Union
-    interface CounterCommandSpec {
-        CounterCommandSpec Increment();
-
-        CounterCommandSpec Decrement();
-
-        CounterCommandSpec Set(int value);
-    }
-
-    @Record
-    interface CounterSpec {
-        CounterSpec create(int value);
-    }
 
 }

@@ -14,7 +14,7 @@ public class TestGUITest {
         withTextFromSystemIn("1\n")
                 .execute(() -> {
                     Counter finalModel = new GUIExecutor<>(new TestGUI())
-                            .execute();
+                            .execute(null);
 
                     assertEquals(1, finalModel.value(), "Counter should be 1 after command 1 execution");
                 });
@@ -22,7 +22,7 @@ public class TestGUITest {
         withTextFromSystemIn("2\n")
                 .execute(() -> {
                     Counter finalModel = new GUIExecutor<>(new TestGUI())
-                            .execute();
+                            .execute(null);
 
                     assertEquals(-1, finalModel.value(), "Counter should be -1 after command 2 execution");
                 });
@@ -30,7 +30,7 @@ public class TestGUITest {
         withTextFromSystemIn("3\n")
                 .execute(() -> {
                     Counter finalModel = new GUIExecutor<>(new TestGUI())
-                            .execute();
+                            .execute(null);
 
                     assertEquals(42, finalModel.value(), "Counter should be 42 after execution");
                 });
