@@ -42,6 +42,24 @@ public class RecordGenerator {
         );
     }
 
+    public static void addWithMethod(RecordConstructorSpec constructorSpec, RecordConstructorSpec.RecordFieldSpec field, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
+        typeSpecBuilder.addMethod(
+                MethodSpec.methodBuilder("with" + field.name().substring(0, 1).toUpperCase() + field.name().substring(1))
+                        .addModifiers(PUBLIC)
+                        .returns(returnTypeName)
+                        .addParameter(field.type(), field.name())
+                        .addStatement("return new $T($L)", returnTypeName,
+                                constructorSpec.fields().stream()
+                                        .map(f -> f.name().equals(field.name())
+                                                ? CodeBlock.of(field.name())
+                                                : CodeBlock.of("this.$L", f.name()) // Use existing field value
+                                        )
+                                        .collect(CodeBlock.joining(", ")
+                                        ))
+                        .build()
+        );
+    }
+
     public static void addStaticFactoryMethod(RecordConstructorSpec constructor, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
         typeSpecBuilder.addMethod(
                 MethodSpec.methodBuilder(constructor.name())
@@ -71,6 +89,7 @@ public class RecordGenerator {
 
         for (var field : record.constructor().fields()) {
             addFieldAndGetter(field, typeSpecBuilder);
+            addWithMethod(record.constructor(), field, recordImplName, typeSpecBuilder);
         }
         addAllArgsConstructor(record.constructor(), typeSpecBuilder);
 

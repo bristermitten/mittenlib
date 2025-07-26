@@ -34,6 +34,7 @@ public class UnionTest {
 
         assertTrue(record.asChild2().isPresent());
         assertFalse(record.asChild1().isPresent());
+
     }
 
     @SuppressWarnings("unused")
