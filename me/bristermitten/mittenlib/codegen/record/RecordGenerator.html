@@ -147,12 +147,18 @@ loadScripts(document, 'script');</script>
  com.squareup.javapoet.ClassName&nbsp;returnTypeName,
  com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.JavaFile</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generate(me.bristermitten.mittenlib.codegen.record.RecordSpec)" class="member-name-link">generate</a><wbr>(<a href="RecordSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordSpec</a>&nbsp;record)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="RecordGenerator.GeneratedRecord.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordGenerator.GeneratedRecord</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#generateBasicRecordTypeSpec(me.bristermitten.mittenlib.codegen.record.RecordSpecLike)" class="member-name-link">generateBasicRecordTypeSpec</a><wbr>(<a href="RecordSpecLike.html" title="interface in me.bristermitten.mittenlib.codegen.record">RecordSpecLike</a>&nbsp;record)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addWithMethod(me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec,me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec.RecordFieldSpec,com.squareup.javapoet.ClassName,com.squareup.javapoet.TypeSpec.Builder)" class="member-name-link">addWithMethod</a><wbr>(<a href="RecordConstructorSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordConstructorSpec</a>&nbsp;constructorSpec,
+ <a href="RecordConstructorSpec.RecordFieldSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordConstructorSpec.RecordFieldSpec</a>&nbsp;field,
+ com.squareup.javapoet.ClassName&nbsp;returnTypeName,
+ com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.JavaFile</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generate(me.bristermitten.mittenlib.codegen.record.RecordSpec)" class="member-name-link">generate</a><wbr>(<a href="RecordSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordSpec</a>&nbsp;record)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="RecordGenerator.GeneratedRecord.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordGenerator.GeneratedRecord</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#generateBasicRecordTypeSpec(me.bristermitten.mittenlib.codegen.record.RecordSpecLike)" class="member-name-link">generateBasicRecordTypeSpec</a><wbr>(<a href="RecordSpecLike.html" title="interface in me.bristermitten.mittenlib.codegen.record">RecordSpecLike</a>&nbsp;record)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -196,6 +202,15 @@ loadScripts(document, 'script');</script>
 <h3>addFieldAndGetter</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addFieldAndGetter</span><wbr><span class="parameters">(<a href="RecordConstructorSpec.RecordFieldSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordConstructorSpec.RecordFieldSpec</a>&nbsp;field,
  com.squareup.javapoet.TypeSpec.Builder&nbsp;constructorTypeSpecBuilder)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="addWithMethod(me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec,me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec.RecordFieldSpec,com.squareup.javapoet.ClassName,com.squareup.javapoet.TypeSpec.Builder)">
+<h3>addWithMethod</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addWithMethod</span><wbr><span class="parameters">(<a href="RecordConstructorSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordConstructorSpec</a>&nbsp;constructorSpec,
+ <a href="RecordConstructorSpec.RecordFieldSpec.html" title="class in me.bristermitten.mittenlib.codegen.record">RecordConstructorSpec.RecordFieldSpec</a>&nbsp;field,
+ com.squareup.javapoet.ClassName&nbsp;returnTypeName,
+ com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder)</span></div>
 </section>
 </li>
 <li>
