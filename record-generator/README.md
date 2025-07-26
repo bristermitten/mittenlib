@@ -16,18 +16,22 @@ interface TestRecordSpec {
 This will generate an immutable data class named `TestRecord` with the following methods:
 
 ```java
-public TestRecord(String a, int b);
+public final class TestRecord {
+    public TestRecord(String a, int b);
 
-public static TestRecord create(String a, int b);
+    public static TestRecord create(String a, int b);
 
-public String a();
+    public String a();
 
-public int b();
+    public int b();
 
-public TestRecord withA(String a);
+    public TestRecord withA(String a);
 
-public TestRecord withB(int b);
+    public TestRecord withB(int b);
+}
 ```
+
+Additionally, the generated class will have standard implementations of `equals`, `hashCode`, and `toString`.
 
 # Union Example
 
@@ -65,7 +69,8 @@ void match(
 );
 ```
 
-Additionally, the generated subclasses will have standard implementations of `equals`, `hashCode`, and `toString`.
+The `Child1` and `Child2` classes are generated as subclasses of `TestUnion`, generated as if they were annotated with
+`@Record`
 
 The class is "sealed" in the sense that the constructor is private, preventing implementation outside the generated
 class.
@@ -122,4 +127,19 @@ void match(
 );
 ```
 
+## Usage
+
+This module requires 2 dependencies to be added:
+
+- The API module, with the artefact ID `me.bristermitten.mittenlib.record-generator-api`
+- The annotation processor, with the artefact ID `me.bristermitten.mittenlib.record-generator-processor`
+
+With Gradle Kotlin, this can be done like so:
+
+```kotlin
+dependencies {
+	implementation("me.bristermitten.mittenlib:record-generator-api:VERSION")
+	annotationProcessor("me.bristermitten.mittenlib:record-generator-processor:VERSION")
+}
+```
 
