@@ -15,6 +15,12 @@ public class RecordTest {
 
         assertEquals(new TestRecord("test", 42), r);
         assertEquals("TestRecord{a=test, b=42}", r.toString());
+
+        TestRecord newRecord = r.withA("newTest");
+        assertEquals("newTest", newRecord.a());
+        assertEquals(42, newRecord.b());
+        assertEquals("TestRecord{a=newTest, b=42}", newRecord.toString());
+        assertEquals(new TestRecord("newTest", 42), newRecord);
     }
 
     @Record

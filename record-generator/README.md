@@ -6,7 +6,7 @@ unions.
 # Records Example
 
 ```java
-
+import me.bristermitten.mittenlib.codegen.Record;
 @Record
 interface TestRecordSpec {
     TestRecordSpec create(String a, int b);
@@ -17,13 +17,17 @@ This will generate an immutable data class named `TestRecord` with the following
 
 ```java
 public final class TestRecord {
-    String a();
+    public TestRecord(String a, int b);
 
-    int b();
+    public static TestRecord create(String a, int b);
 
-    TestRecord(String a, int b);
+    public String a();
 
-    static TestRecord create(String a, int b);
+    public int b();
+
+    public TestRecord withA(String a);
+
+    public TestRecord withB(int b);
 }
 ```
 
@@ -34,7 +38,7 @@ Additionally, the generated class will have standard implementations of `equals`
 We can also emulate sealed classes / discriminated unions with the `@Union` annotation:
 
 ```java
-
+import me.bristermitten.mittenlib.codegen.Union;
 @Union
 interface TestUnionSpec {
     TestUnionSpec Child1();
@@ -84,7 +88,7 @@ It is recommended to follow this naming convention where possible, however, the 
 also support a `name` parameter to specify a custom class name.
 
 ```java
-
+import me.bristermitten.mittenlib.codegen.Record;
 @Record(name = "CustomName")
 interface NoSpecNeeded {
     // blah
@@ -99,7 +103,9 @@ By default, _nominal_ pattern matching is used, meaning that the `match` and `ma
 types as parameters. However, you can also use _structural_ pattern matching using the `@MatchStrategy` annotation:
 
 ```java
-
+import me.bristermitten.mittenlib.codegen.Union;
+import me.bristermitten.mittenlib.codegen.MatchStrategy;
+import me.bristermitten.mittenlib.codegen.MatchStrategies;
 @Union
 @MatchStrategy(MatchStrategies.STRUCTURAL)
 interface TestUnionSpec {
