@@ -17,13 +17,17 @@ This will generate an immutable data class named `TestRecord` with the following
 
 ```java
 public final class TestRecord {
-    String a();
+    public TestRecord(String a, int b);
 
-    int b();
+    public static TestRecord create(String a, int b);
 
-    TestRecord(String a, int b);
+    public String a();
 
-    static TestRecord create(String a, int b);
+    public int b();
+
+    public TestRecord withA(String a);
+
+    public TestRecord withB(int b);
 }
 ```
 
