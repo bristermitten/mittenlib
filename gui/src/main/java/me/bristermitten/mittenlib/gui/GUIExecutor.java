@@ -17,7 +17,7 @@ public class GUIExecutor<Model, V extends View<Command>, Command, GUI extends GU
 
         while (true) {
             view.display();
-            Command command = (view).waitForCommand();
+            Command command = view.waitForCommand();
             if (command == null) {
                 break; // Exit if no command is received
             }

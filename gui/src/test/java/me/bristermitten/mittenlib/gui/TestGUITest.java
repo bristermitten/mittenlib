@@ -10,6 +10,23 @@ public class TestGUITest {
 
     @Test
     public void test() throws Exception {
+
+        withTextFromSystemIn("1\n")
+                .execute(() -> {
+                    Counter finalModel = new GUIExecutor<>(new TestGUI())
+                            .execute();
+
+                    assertEquals(1, finalModel.value(), "Counter should be 1 after command 1 execution");
+                });
+
+        withTextFromSystemIn("2\n")
+                .execute(() -> {
+                    Counter finalModel = new GUIExecutor<>(new TestGUI())
+                            .execute();
+
+                    assertEquals(-1, finalModel.value(), "Counter should be -1 after command 2 execution");
+                });
+
         withTextFromSystemIn("3\n")
                 .execute(() -> {
                     Counter finalModel = new GUIExecutor<>(new TestGUI())
