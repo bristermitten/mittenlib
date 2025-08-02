@@ -60,6 +60,7 @@ dependencyResolutionManagement {
 			version("junit", "5.8.1")
 			library("junit-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
 			library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
+			library("junit-launcher", "org.junit.platform", "junit-platform-launcher").withoutVersion()
 
 			version("assertj", "3.27.3")
 			library("assertj-core", "org.assertj", "assertj-core").versionRef("assertj")
