@@ -4,7 +4,6 @@ import com.google.common.collect.Iterators;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -61,7 +60,12 @@ public class Futures {
      * @see Futures#sequence(CompletableFuture[])
      */
     public static <T> CompletableFuture<Collection<T>> sequence(Iterable<CompletableFuture<T>> futures) {
-        List<CompletableFuture<T>> futuresList = new LinkedList<>();
+        List<CompletableFuture<T>> futuresList;
+        if (futures instanceof Collection) {
+            futuresList = new ArrayList<>(((Collection<?>) futures).size());
+        } else {
+            futuresList = new ArrayList<>();
+        }
         Iterators.addAll(futuresList, futures.iterator());
         return sequence(futuresList);
     }
