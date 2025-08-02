@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config;
 
+import com.google.errorprone.annotations.InlineMe;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +66,7 @@ public class ConfigMapLoader {
      * @deprecated Use {@link ConfigLoadingErrors#notFoundException(String, String, Class, String)}
      */
     @Deprecated
+    @InlineMe(replacement = "ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName)", imports = "me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors")
     public static RuntimeException throwNotFound(String fieldName, String typeName, Class<?> enclosingClass, String keyName) {
         return ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName);
     }

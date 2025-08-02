@@ -14,7 +14,6 @@ import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -63,7 +62,7 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
      * @throws ConfigProcessingException if there is an error writing the generated files
      */
     @Override
-    public boolean processAnnotations(@NotNull Set<? extends TypeElement> annotations, @NotNull RoundEnvironment roundEnv) {
+    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         ToolingProvider.setTooling(processingEnv);
         var injector = Guice.createInjector(
                 new ConfigProcessorModule(processingEnv)

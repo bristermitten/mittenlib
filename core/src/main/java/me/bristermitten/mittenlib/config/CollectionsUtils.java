@@ -40,12 +40,12 @@ public class CollectionsUtils {
      * @return a {@link Result} containing the deserialized list, or a {@link Result#fail(Exception)} if deserialization failed
      */
     public static <T> Result<List<T>> deserializeList(Object rawData, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
-
         try {
             // gamble: first we try a blind cast and hope for the best
             //noinspection unchecked
             return deserialiseListFrom((List<DataTree>) rawData, baseContext, deserializationFunction);
         } catch (ClassCastException ignore) {
+            // fast path has failed, so...
         }
         // fall back to gson for a more informative error message
         Result<List<DataTree>> rawListRes = baseContext.getMapper().map(rawData, LIST_MAP_STRING_OBJECT_TOKEN);

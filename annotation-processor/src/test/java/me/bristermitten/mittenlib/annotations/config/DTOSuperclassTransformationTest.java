@@ -111,7 +111,7 @@ class DTOSuperclassTransformationTest {
                                         import me.bristermitten.mittenlib.config.*;
                                         import me.bristermitten.mittenlib.config.generate.GenerateToString;
                                         import me.bristermitten.mittenlib.config.names.*;
-                                        import org.jetbrains.annotations.Nullable;
+                                        import org.jspecify.annotations.Nullable;
                                         
                                         @Config
                                         @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
@@ -140,7 +140,7 @@ class DTOSuperclassTransformationTest {
                                         import org.bukkit.Material;
                                         import org.bukkit.enchantments.Enchantment;
                                         import org.bukkit.inventory.ItemFlag;
-                                        import org.jetbrains.annotations.Nullable;
+                                        import org.jspecify.annotations.Nullable;
                                         
                                         @Config
                                         @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)

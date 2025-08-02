@@ -4,6 +4,8 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.codegen.BoilerplateGenerator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 import static javax.lang.model.element.Modifier.*;
 
 public class RecordGenerator {
@@ -44,7 +46,7 @@ public class RecordGenerator {
 
     public static void addWithMethod(RecordConstructorSpec constructorSpec, RecordConstructorSpec.RecordFieldSpec field, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
         typeSpecBuilder.addMethod(
-                MethodSpec.methodBuilder("with" + field.name().substring(0, 1).toUpperCase() + field.name().substring(1))
+                MethodSpec.methodBuilder("with" + field.name().substring(0, 1).toUpperCase(Locale.ROOT) + field.name().substring(1))
                         .addModifiers(PUBLIC)
                         .returns(returnTypeName)
                         .addParameter(field.type(), field.name())

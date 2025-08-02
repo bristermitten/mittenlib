@@ -1,4 +1,5 @@
 import net.ltgt.gradle.errorprone.ErrorPronePlugin
+import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -90,6 +91,8 @@ subprojects {
 	tasks.withType<JavaCompile> {
 		options.encoding = "UTF-8"
 		options.isFork = true
+
+		options.errorprone.disableWarningsInGeneratedCode.set(true)
 	}
 	tasks.javadoc {
 		configureJavadoc()

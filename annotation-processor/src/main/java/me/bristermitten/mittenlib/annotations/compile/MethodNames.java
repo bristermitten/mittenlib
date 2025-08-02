@@ -6,7 +6,6 @@ import com.squareup.javapoet.TypeName;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.ExecutableElement;
@@ -43,7 +42,7 @@ public class MethodNames {
      * @param enclosingClass  The class that encloses the variable element
      * @return A safe method name that doesn't conflict with existing methods
      */
-    public @NotNull String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
+    public String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
         return safeNameCache.computeIfAbsent(variableElement,
                 elem -> safeMethodName0(elem, enclosingClass));
     }
@@ -57,7 +56,7 @@ public class MethodNames {
      * @param property The property to generate a method name for
      * @return A safe method name that doesn't conflict with existing methods
      */
-    public String safeMethodName(@NotNull Property property) {
+    public String safeMethodName(Property property) {
         return switch (property.source()) {
             case Property.PropertySource.FieldSource(var field) ->
                     safeMethodName(field, (TypeElement) field.getEnclosingElement());
@@ -65,7 +64,7 @@ public class MethodNames {
         };
     }
 
-    private @NotNull String safeMethodName0(@NotNull VariableElement variableElement, TypeElement enclosingClass) {
+    private String safeMethodName0(VariableElement variableElement, TypeElement enclosingClass) {
         var methodNames = methodNamesCache.computeIfAbsent(variableElement, x -> getNoArgMethodNames(enclosingClass));
 
         var name = new StringBuilder(variableElement.getSimpleName());
@@ -75,7 +74,7 @@ public class MethodNames {
         return name.toString();
     }
 
-    private @NotNull Set<String> getNoArgMethodNames(TypeElement enclosingClass) {
+    private Set<String> getNoArgMethodNames(TypeElement enclosingClass) {
         var names = new HashSet<String>();
         for (ExecutableElement method : elementsFinder.getAllMethods(enclosingClass)) {
             if (!method.getParameters().isEmpty()) {
@@ -93,7 +92,7 @@ public class MethodNames {
      * @return The deserialization method name
      */
     @Deprecated
-    public @NotNull String getDeserializeMethodName(TypeName name) {
+    public String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
             return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + cn.simpleName();
         }
@@ -107,7 +106,7 @@ public class MethodNames {
      * @param ast The abstract configuration structure
      * @return The deserialization method name for the structure
      */
-    public String getDeserializeMethodName(@NotNull AbstractConfigStructure ast) {
+    public String getDeserializeMethodName(AbstractConfigStructure ast) {
         return getDeserializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
     }
 }

@@ -16,8 +16,7 @@ import me.bristermitten.mittenlib.config.generate.GenerateToString;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.util.Null;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
@@ -40,11 +39,12 @@ public class ConfigClassParser {
         this.configNameCache = configNameCache;
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals") // ok as it always returns bottom
     private static <T> T throwInvalidConfigError() {
         throw new IllegalArgumentException("Invalid config, impossible?");
     }
 
-    private @NotNull ConfigTypeSource getSource(@NotNull TypeElement element) {
+    private ConfigTypeSource getSource(TypeElement element) {
         var wrapped = TypeElementWrapper.wrap(element);
 
         List<TypeMirror> parents = Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream()).filter(c -> c.getKind() != TypeKind.NONE).filter(c -> !ClassName.get(c).equals(ClassName.OBJECT)).toList();
@@ -63,7 +63,7 @@ public class ConfigClassParser {
         }
     }
 
-    private @NotNull List<Property> getPropertiesIn(@NotNull TypeElement element, @Nullable NamingPattern namingPattern) {
+    private List<Property> getPropertiesIn(TypeElement element, @Nullable NamingPattern namingPattern) {
         var wrapped = TypeElementWrapper.wrap(element);
         List<? extends Element> elements;
         if (wrapped.isClass()) {
@@ -79,7 +79,7 @@ public class ConfigClassParser {
                 case VariableElement e -> new Property.PropertySource.FieldSource(e);
                 default -> throw new IllegalStateException("Unexpected value: " + propertyElement.getKind());
             };
-            var propertyType = propertyElement instanceof ExecutableElement ? ((ExecutableElement) propertyElement).getReturnType() : propertyElement.asType();
+            var propertyType = propertyElement instanceof ExecutableElement executableElement ? executableElement.getReturnType() : propertyElement.asType();
             var configName = typesUtil.getAnnotation(propertyElement, ConfigName.class);
             var namingPatternSub = Null.orElse(typesUtil.getAnnotation(propertyElement, NamingPattern.class), namingPattern);
 
@@ -104,7 +104,7 @@ public class ConfigClassParser {
 
 
     @DeclareCompilerMessage(enumValueName = "NO_CONFIG_ANNOTATION", message = "Element ${0} does not have a @Config annotation!")
-    private @NotNull ASTSettings.ConfigASTSettings getSettings(@NotNull TypeElement element) {
+    private ASTSettings.ConfigASTSettings getSettings(TypeElement element) {
         var namingPattern = typesUtil.getAnnotation(element, NamingPattern.class);
         GenerateToString generateToString = typesUtil.getAnnotation(element, GenerateToString.class);
         Source source = typesUtil.getAnnotation(element, Source.class);
@@ -117,7 +117,7 @@ public class ConfigClassParser {
         return new ASTSettings.ConfigASTSettings(namingPattern, source, config, generateToString != null);
     }
 
-    private @NotNull AbstractConfigStructure parseAbstract(@NotNull TypeElement element, @Nullable ASTParentReference parentReference) {
+    private AbstractConfigStructure parseAbstract(TypeElement element, @Nullable ASTParentReference parentReference) {
         TypeElementWrapper wrapper = TypeElementWrapper.wrap(element);
 
         Optional<TypeElementWrapper> enclosingType = wrapper.getEnclosingElement().filter(ElementWrapper::isTypeElement).map(ElementWrapper::toTypeElement);
@@ -161,12 +161,12 @@ public class ConfigClassParser {
         return putInCache(new AbstractConfigStructure.Intersection(ClassName.get(element), source, getSettings(element), thisParentReference, enclosedConfigs, parents, properties));
     }
 
-    private AbstractConfigStructure putInCache(@NotNull AbstractConfigStructure configStructure) {
+    private AbstractConfigStructure putInCache(AbstractConfigStructure configStructure) {
         configNameCache.put(configStructure);
         return configStructure;
     }
 
-    public @NotNull AbstractConfigStructure parseAbstract(@NotNull TypeElement element) {
+    public AbstractConfigStructure parseAbstract(TypeElement element) {
         var ast = parseAbstract(element, null);
         configNameCache.put(ast);
         return ast;

@@ -85,9 +85,9 @@ public class CustomDeserializers {
             }
         }
 
-        var isStatic = !implementsCustomDeserializer;
+        var isStatic = true; // TODO
 
-        var isFallback = (customDeserializerType.getAnnotation(Fallback.class)) != null;
+        var isFallback = customDeserializerType.getAnnotation(Fallback.class) != null;
 
         var customDeserializerInfo = new CustomDeserializerInfo(
                 customDeserializerType,

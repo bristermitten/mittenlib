@@ -4,7 +4,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 import javax.lang.model.element.TypeElement;
@@ -42,7 +41,7 @@ public class GeneratedTypeCache {
      * @param name the qualified name of the configuration class
      * @return a set of all the DTO classes which generate the given configuration class
      */
-    public @NotNull Set<TypeElement> getByName(@NotNull String name) {
+    public Set<TypeElement> getByName(String name) {
         return generatedSpecs.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().contains(name) || name.contains(entry.getValue()))

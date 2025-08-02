@@ -1,3 +1,5 @@
+import net.ltgt.gradle.errorprone.errorprone
+
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = sourceCompatibility
@@ -21,6 +23,7 @@ dependencies {
 
 	implementation(libs.guice)
 
+	implementation(libs.jspecify)
 	implementation(libs.jetbrains.annotations)
 	annotationProcessor(libs.auto.service)
 
@@ -28,4 +31,8 @@ dependencies {
 	testImplementation(libs.mockito.core)
 	testImplementation(libs.compile.testing)
 	testAnnotationProcessor(project(":annotation-processor"))
+}
+
+tasks.withType<JavaCompile>().configureEach {
+	options.errorprone.excludedPaths.set(".*/build/generated/.*")
 }

@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.collections;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.errorprone.annotations.InlineMe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -154,7 +155,8 @@ public class Sets {
      * @return a new set containing the elements of the given sets
      * @deprecated Use {@link Sets#union(Set, Set)}
      */
-    @Deprecated()
+    @Deprecated
+    @InlineMe(replacement = "Sets.union(start, others)", imports = "me.bristermitten.mittenlib.collections.Sets")
     public static <E> @Unmodifiable Set<E> concat(@NotNull @Unmodifiable Set<E> start, @NotNull @Unmodifiable Set<E> others) {
         return union(start, others);
     }

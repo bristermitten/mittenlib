@@ -49,6 +49,7 @@ public class CompoundLangMessage extends LangMessage {
     }
 
     /**
+     * Get the components of this message
      * @return the components of this message
      */
     public @Unmodifiable List<LangMessage> getComponents() {

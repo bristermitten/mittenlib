@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +29,7 @@ public class LegacyCodeUpdaterHook implements FormattingHook {
         while (matcher.find()) {
             char codeChar = matcher.group(0).charAt(1);
             ChatColor code = ChatColor.getByChar(codeChar);
-            String replacement = "<" + code.name().toLowerCase() + ">";
+            String replacement = "<" + code.name().toLowerCase(Locale.ROOT) + ">";
             matcher.appendReplacement(builder, replacement);
         }
         matcher.appendTail(builder);

@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 @CascadeToInnerClasses
 public @interface NamingPattern {
     /**
+     * The naming pattern to use for the annotated class or field.
      * @return the naming pattern to use
      */
     NamingPatterns value() default NamingPatterns.DEFAULT;

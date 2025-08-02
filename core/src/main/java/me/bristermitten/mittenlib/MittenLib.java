@@ -18,11 +18,9 @@ import java.util.*;
 
 public class MittenLib<T extends Plugin> {
 
-    private final T plugin;
     private final Map<Class<? extends Module>, Module> modules = new HashMap<>();
 
     public MittenLib(T plugin) {
-        this.plugin = plugin;
         addModule(new MittenLibModule<>(plugin, Sets.of()));
     }
 

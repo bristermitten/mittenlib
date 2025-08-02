@@ -25,6 +25,8 @@ public class FileWatcher {
     }
 
     /**
+     * Get the path being watched.
+     *
      * @return the path being watched
      */
     public Path getWatching() {
@@ -32,6 +34,8 @@ public class FileWatcher {
     }
 
     /**
+     * Get the consumer to call when the file changes.
+     *
      * @return the consumer to call when the file changes
      */
     public Consumer<WatchEvent<Path>> getOnModify() {

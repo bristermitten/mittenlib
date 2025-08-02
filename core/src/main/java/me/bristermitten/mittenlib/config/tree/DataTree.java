@@ -50,6 +50,11 @@ public abstract class DataTree {
         }
 
         @Override
+        public int hashCode() {
+            return System.identityHashCode(this);
+        }
+
+        @Override
         public String toString() {
             return "DataTreeNull{}";
         }
@@ -57,6 +62,7 @@ public abstract class DataTree {
 
     public static abstract class DataTreeLiteral extends DataTree {
 
+        @Override
         public abstract Object value();
 
         public static class DataTreeLiteralInt extends DataTreeLiteral {
@@ -75,7 +81,7 @@ public abstract class DataTree {
 
             @Override
             public int hashCode() {
-                return Objects.hashCode(value);
+                return Long.hashCode(value);
             }
 
             @Override
@@ -100,7 +106,7 @@ public abstract class DataTree {
 
             @Override
             public int hashCode() {
-                return Objects.hashCode(value);
+                return Double.hashCode(value);
             }
 
             @Override
@@ -150,7 +156,7 @@ public abstract class DataTree {
 
             @Override
             public int hashCode() {
-                return Objects.hashCode(value);
+                return Boolean.hashCode(value);
             }
 
             @Override

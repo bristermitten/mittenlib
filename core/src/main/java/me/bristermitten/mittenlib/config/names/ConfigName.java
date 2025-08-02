@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface ConfigName {
     /**
+     * The expected name of the field / key in the config file.
      * @return The expected name of the field / key in the config file
      */
     String value();

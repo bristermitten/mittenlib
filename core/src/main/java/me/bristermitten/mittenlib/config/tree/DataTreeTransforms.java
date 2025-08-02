@@ -3,8 +3,8 @@ package me.bristermitten.mittenlib.config.tree;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +82,7 @@ public class DataTreeTransforms {
         }
         if (tree instanceof DataTree.DataTreeArray) {
             DataTree[] list = ((DataTree.DataTreeArray) tree).getValues();
-            List<Object> pojoList = new LinkedList<>();
+            List<Object> pojoList = new ArrayList<>();
             for (DataTree dataTree : list) {
                 pojoList.add(toPOJO(dataTree));
             }

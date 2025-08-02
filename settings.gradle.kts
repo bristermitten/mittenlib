@@ -74,6 +74,8 @@ dependencyResolutionManagement {
 			// Other Libraries
 			library("javapoet", "com.squareup", "javapoet").version("1.13.0")
 			library("jetbrains-annotations", "org.jetbrains", "annotations").version("23.0.0")
+			//jspecify
+			library("jspecify", "org.jspecify", "jspecify").version("1.0.0")
 			library("acf-paper", "co.aikar", "acf-paper").version("0.5.1-SNAPSHOT")
 			library("placeholderapi", "me.clip", "placeholderapi").version("2.11.6")
 			version("aptk", "0.22.5")

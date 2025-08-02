@@ -5,7 +5,7 @@ import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.config.names.NamingPatternTransformer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 
@@ -25,7 +25,7 @@ public class FieldNameGenerator {
      * @param property The property
      * @return The key to use when reading from {@link DeserializationContext#getData()} for the given property.
      */
-    public String getConfigFieldName(@NotNull Property property) {
+    public String getConfigFieldName(Property property) {
         ConfigName configName = property.settings().configName();
         NamingPattern namingPattern = property.settings().namingPattern();
         String fieldName = property.name();
@@ -36,12 +36,12 @@ public class FieldNameGenerator {
     /**
      * Helper method to get the config field name based on annotations and field name.
      *
-     * @param configName The ConfigName annotation, if present
+     * @param configName    The ConfigName annotation, if present
      * @param namingPattern The NamingPattern annotation, if present
-     * @param fieldName The name of the field
+     * @param fieldName     The name of the field
      * @return The config field name
      */
-    private String getConfigFieldName(ConfigName configName, NamingPattern namingPattern, String fieldName) {
+    private String getConfigFieldName(@Nullable ConfigName configName, @Nullable NamingPattern namingPattern, String fieldName) {
         if (configName != null) {
             return configName.value();
         }

@@ -9,6 +9,9 @@ dependencies {
 	api(libs.guice)
 	api(libs.adventure.api)
 	api(libs.adventure.platform.bukkit)
+	api(libs.jspecify)
+
+
 	testImplementation(libs.jimfs)
 	testImplementation(libs.mockbukkit)
 

@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +51,7 @@ public class DataTreeTypeAdapter extends ExtraTypeAdapter<DataTree> {
                 return new DataTree.DataTreeMap(map);
             case BEGIN_ARRAY:
                 in.beginArray();
-                List<DataTree> list = new LinkedList<>();
+                List<DataTree> list = new ArrayList<>();
                 while (in.hasNext()) {
                     list.add(read(in));
                 }
@@ -75,7 +75,10 @@ public class DataTreeTypeAdapter extends ExtraTypeAdapter<DataTree> {
                 }
             case BOOLEAN:
                 return new DataTree.DataTreeLiteral.DataTreeLiteralBoolean(in.nextBoolean());
+
+            default:
+                throw new IllegalStateException("Invalid DataTree type: " + in.peek());
+
         }
-        throw new IllegalStateException("Invalid DataTree type: " + in.peek());
     }
 }

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Set;
 
@@ -29,7 +28,6 @@ public abstract class AbstractMessageFormatter implements MessageFormatter {
      *
      * @param hooks the hooks to use
      */
-    @Inject
     protected AbstractMessageFormatter(Set<FormattingHook> hooks) {
         this.hooks = Collections.unmodifiableSet(hooks);
     }

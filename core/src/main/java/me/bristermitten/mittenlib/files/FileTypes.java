@@ -24,8 +24,12 @@ public class FileTypes {
     }
 
     /**
-     * @return A {@link FileTypes} containing all the default {@link FileType}s.
+     * Return a {@link FileTypes} containing the default {@link FileType}s.
      * These are currently {@link JSONFileType} and {@link YamlFileType}
+     *
+     * @return a {@link FileTypes} instance with the default types registered
+     * @see JSONFileType
+     * @see YamlFileType
      */
     public static FileTypes defaultTypes() {
         return new FileTypes(new HashSet<>(Arrays.asList(
@@ -46,6 +50,8 @@ public class FileTypes {
     }
 
     /**
+     * Get the set of registered {@link FileType} classes.
+     *
      * @return the set of {@link FileType} classes registered
      */
     public Set<Class<? extends FileType>> getTypes() {

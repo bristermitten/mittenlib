@@ -1,8 +1,11 @@
 package me.bristermitten.mittenlib.util;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -218,15 +221,17 @@ public class Version implements Comparable<Version> {
 
 
     private static final Cached<Version> serverVersion;
+    private static final Splitter DASH_SPLITTER = Splitter.on('-').omitEmptyStrings().trimResults();
+    private static final Splitter DOT_SPLITTER = Splitter.on('.').omitEmptyStrings().trimResults();
 
     static {
         serverVersion = new Cached<>(() -> {
             try {
-                final String version = Bukkit.getBukkitVersion().split("-")[0];
-                final String[] parts = version.split("\\.");
-                int majorVer = Integer.parseInt(parts[0]);
-                int minorVer = Integer.parseInt(parts[1]);
-                int patchVer = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
+                final String version = Iterables.getOnlyElement(DASH_SPLITTER.split(Bukkit.getBukkitVersion()));
+                final List<String> parts = DOT_SPLITTER.splitToList(version);
+                int majorVer = Integer.parseInt(parts.get(0));
+                int minorVer = Integer.parseInt(parts.get(1));
+                int patchVer = parts.size() > 2 ? Integer.parseInt(parts.get(2)) : 0;
                 return new Version(majorVer, minorVer, patchVer);
             } catch (RuntimeException e) {
                 e.printStackTrace();
@@ -246,6 +251,8 @@ public class Version implements Comparable<Version> {
     }
 
     /**
+     * Gets the server version.
+     *
      * @return the server version, or {@link #UNKNOWN} if it could not be determined
      */
     public static Version getServerVersion() {

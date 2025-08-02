@@ -1,8 +1,13 @@
+import net.ltgt.gradle.errorprone.errorprone
+
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = sourceCompatibility
 }
 
+tasks.withType<JavaCompile>().configureEach {
+	options.errorprone.excludedPaths.set(".*/build/generated/.*")
+}
 
 dependencies {
 	implementation(project(":core"))

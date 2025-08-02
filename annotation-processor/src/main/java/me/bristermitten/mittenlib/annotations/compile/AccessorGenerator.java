@@ -10,8 +10,8 @@ import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
@@ -45,7 +45,7 @@ public class AccessorGenerator {
      * @param element         The variable element
      * @param field           The field spec
      */
-    public void createGetterMethod(TypeSpec.@NotNull Builder typeSpecBuilder, @NotNull VariableElement element, @NotNull FieldSpec field) {
+    public void createGetterMethod(TypeSpec.@NonNull Builder typeSpecBuilder, @NonNull VariableElement element, @NonNull FieldSpec field) {
         var safeName = getFieldAccessorName(element);
 
         var builder = MethodSpec.methodBuilder(safeName)
@@ -56,7 +56,7 @@ public class AccessorGenerator {
         if (typesUtil.isNullable(element)) {
             builder.addAnnotation(Nullable.class);
         } else {
-            builder.addAnnotation(NotNull.class);
+            builder.addAnnotation(NonNull.class);
         }
 
         builder.addAnnotation(AnnotationSpec.builder(Contract.class)
@@ -73,7 +73,7 @@ public class AccessorGenerator {
      * @param overriding      The executable element being overridden
      * @param fromField       The field spec that the getter will return
      */
-    public void createGetterMethodOverriding(TypeSpec.@NotNull Builder typeSpecBuilder, @NotNull ExecutableElement overriding, @NotNull FieldSpec fromField) {
+    public void createGetterMethodOverriding(TypeSpec.@NonNull Builder typeSpecBuilder, @NonNull ExecutableElement overriding, @NonNull FieldSpec fromField) {
         var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .returns(fromField.type)
@@ -93,7 +93,7 @@ public class AccessorGenerator {
         if (typesUtil.isNullable(overriding)) {
             TypeSpecUtil.methodAddAnnotation(builder, Nullable.class);
         } else {
-            TypeSpecUtil.methodAddAnnotation(builder, NotNull.class);
+            TypeSpecUtil.methodAddAnnotation(builder, NonNull.class);
         }
 
         TypeSpecUtil.methodAddAnnotation(builder, Contract.class,
@@ -108,7 +108,7 @@ public class AccessorGenerator {
      * @param ast             The config ast
      */
     public void createWithMethods(
-            @NotNull TypeSpec.Builder typeSpecBuilder,
+            TypeSpec.Builder typeSpecBuilder,
             AbstractConfigStructure ast) {
 
 
@@ -138,7 +138,7 @@ public class AccessorGenerator {
                     }, ", ");
 
             if (ast.source() instanceof ConfigTypeSource.ClassConfigTypeSource classSource && classSource.parent().isPresent()) {
-                var superClass = classSource.parent().get(); // TODO
+//                var superClass = classSource.parent().get(); // TODO
                 var joiner = new StringJoiner(", ")
                         .add("this.parent");
                 if (!constructorParams.isEmpty()) {
@@ -161,7 +161,7 @@ public class AccessorGenerator {
      * @param variableElement The variable element
      * @return The accessor name
      */
-    private String getFieldAccessorName(@NotNull VariableElement variableElement) {
+    private String getFieldAccessorName(@NonNull VariableElement variableElement) {
         return methodNames.safeMethodName(variableElement, (TypeElement) variableElement.getEnclosingElement());
     }
 }

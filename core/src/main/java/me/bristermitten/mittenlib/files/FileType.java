@@ -21,9 +21,11 @@ public interface FileType {
     boolean matches(Path path);
 
     /**
-     * @return an Object Loader for this file type
-     * It is assumed that the loader will only work (i.e. not produce an {@link Result#fail(Exception)})
+     * Returns an {@link ObjectLoader} for this file type.
+     * It should be assumed that the loader will only work (i.e. not produce an {@link Result#fail(Exception)})
      * for paths for which {@link FileType#matches(Path)} returns true
+     *
+     * @return an Object Loader for this file type
      */
     @NotNull ObjectLoader loader();
 }

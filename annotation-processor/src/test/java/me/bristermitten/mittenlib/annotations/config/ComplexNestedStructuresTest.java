@@ -24,7 +24,7 @@ class ComplexNestedStructuresTest {
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.config.names.NamingPatterns;
-                                import org.jetbrains.annotations.Nullable;
+                                import org.jspecify.annotations.Nullable;
 
                                 import java.util.List;
                                 import java.util.Map;

@@ -3,7 +3,6 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
@@ -31,10 +30,10 @@ public class EqualsHashCodeGenerator {
      * - It compares all properties for equality using Objects.equals
      *
      * @param configClassName The name of the class for which the equals method is being generated
-     * @param properties The list of properties to compare in the equals method
+     * @param properties      The list of properties to compare in the equals method
      * @return A MethodSpec representing the generated equals method
      */
-    public @NotNull MethodSpec generateEquals(ClassName configClassName, @NotNull List<Property> properties) {
+    public MethodSpec generateEquals(ClassName configClassName, List<Property> properties) {
         var builder = MethodSpec.methodBuilder("equals")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
@@ -71,7 +70,7 @@ public class EqualsHashCodeGenerator {
      * @param properties The list of properties to include in the hash code calculation
      * @return A MethodSpec representing the generated hashCode method
      */
-    public @NotNull MethodSpec generateHashCode(@NotNull List<Property> properties) {
+    public MethodSpec generateHashCode(List<Property> properties) {
         var builder = MethodSpec.methodBuilder("hashCode")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)

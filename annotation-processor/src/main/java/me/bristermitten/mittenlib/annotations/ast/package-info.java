@@ -24,7 +24,7 @@
  * {@snippet :
  *
  * import me.bristermitten.mittenlib.config.Config;
- * import org.jetbrains.annotations.Nullable;
+ * import org.jspecify.annotations.Nullable;
  *     @ConfigUnion
  *     public interface RepositoryConfig {
  *         @Config
@@ -47,7 +47,7 @@
  * //     * {@snippet :
  * //     *
  * //     * import me.bristermitten.mittenlib.config.Config;
- * //     * import org.jetbrains.annotations.Nullable;
+ * //     * import org.jspecify.annotations.Nullable;
  * //     *     @ConfigUnion(tag = "type")
  * //     *     public interface RepositoryConfig {
  * //     *         @Config
@@ -65,4 +65,7 @@
  * //     *         }
  * //     * }}
  */
+@NullMarked
 package me.bristermitten.mittenlib.annotations.ast;
+
+import org.jspecify.annotations.NullMarked;
