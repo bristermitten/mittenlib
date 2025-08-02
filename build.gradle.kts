@@ -1,3 +1,4 @@
+import net.ltgt.gradle.errorprone.ErrorPronePlugin
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -6,7 +7,7 @@ plugins {
 	`java-library`
 	`maven-publish`
 	id("io.freefair.aggregate-javadoc") version "6.3.0"
-
+	id("net.ltgt.errorprone") version "+"
 }
 
 
@@ -31,6 +32,7 @@ subprojects {
 	apply<JavaPlugin>()
 	apply<JavaLibraryPlugin>()
 	apply<MavenPublishPlugin>()
+	apply<ErrorPronePlugin>()
 
 	val libs = rootProject.libs
 	group = "me.bristermitten"
@@ -63,6 +65,8 @@ subprojects {
 		testImplementation(libs.assertj.core)
 		testRuntimeOnly(libs.junit.engine)
 		testRuntimeOnly(libs.junit.launcher)
+
+		errorprone("com.google.errorprone:error_prone_core:+")
 	}
 
 	tasks.test {
