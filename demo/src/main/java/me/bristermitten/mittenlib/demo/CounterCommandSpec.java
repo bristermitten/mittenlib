@@ -10,6 +10,8 @@ interface CounterCommandSpec {
     CounterCommandSpec Decrement();
 
     CounterCommandSpec Set(int value);
+
+    CounterCommandSpec DisplayCount();
 }
 
 @Record

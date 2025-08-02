@@ -5,6 +5,7 @@ import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.gui.view.View;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Map;
@@ -16,19 +17,25 @@ public class SpigotGUIView<Command> implements View<Command, SpigotGUIView<Comma
 
     private final @Unmodifiable MLImmutableMap<Integer, InventoryButton<Command>> buttons;
     Inventory inventory;
+    private final @Nullable Command onClose;
 
-    public SpigotGUIView(int size, String title, @Unmodifiable Map<Integer, InventoryButton<Command>> buttons) {
+    public SpigotGUIView(int size, String title, @Unmodifiable Map<Integer, InventoryButton<Command>> buttons, @Nullable Command onClose) {
         this.size = size;
         this.title = title;
         this.buttons = Maps.of(buttons.entrySet());
+        this.onClose = onClose;
     }
 
     public static <Command> SpigotGUIView<Command> create(int size, String title) {
-        return new SpigotGUIView<>(size, title, Maps.of());
+        return new SpigotGUIView<>(size, title, Maps.of(), null);
     }
 
     public SpigotGUIView<Command> withButton(int slot, InventoryButton<Command> button) {
-        return new SpigotGUIView<>(size, title, buttons.plus(slot, button));
+        return new SpigotGUIView<>(size, title, buttons.plus(slot, button), null);
+    }
+
+    public SpigotGUIView<Command> onClose(@Nullable Command onClose) {
+        return new SpigotGUIView<>(size, title, buttons, onClose);
     }
 
     public Optional<InventoryButton<Command>> getButton(int slot) {

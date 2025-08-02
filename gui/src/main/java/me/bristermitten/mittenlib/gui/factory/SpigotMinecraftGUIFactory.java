@@ -34,7 +34,7 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
         }
         Component formattedTitle = messageFormatter.format(title, null);
 
-        return new SpigotGUIView<>(size, LegacyComponentSerializer.legacySection().serialize(formattedTitle), Maps.of());
+        return new SpigotGUIView<>(size, LegacyComponentSerializer.legacySection().serialize(formattedTitle), Maps.of(), null);
     }
 
     @Override

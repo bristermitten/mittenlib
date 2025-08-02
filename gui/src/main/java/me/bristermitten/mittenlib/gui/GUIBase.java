@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.gui;
 
+import me.bristermitten.mittenlib.gui.message.Message;
+
 /**
  * Base interface for GUI applications, based on the Model-View-Command pattern (Elm Architecture).
  *
@@ -7,11 +9,11 @@ package me.bristermitten.mittenlib.gui;
  * @param <Command> the type of commands that can be executed to update the model
  * @param <View>    the type of view that renders the model and waits for commands
  */
-public interface GUIBase<Model, Command, View> {
+public interface GUIBase<Model, Command, View, Msg extends Message<Model>> {
 
     Model init();
 
-    Model update(Model model, Command command);
+    Msg update(Model model, Command command);
 
     View render(Model model);
 }

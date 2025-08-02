@@ -2,8 +2,10 @@ package me.bristermitten.mittenlib.demo;
 
 import com.google.inject.Inject;
 import me.bristermitten.mittenlib.gui.factory.MinecraftGUIFactory;
+import me.bristermitten.mittenlib.gui.message.Message;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUI;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
+import me.bristermitten.mittenlib.gui.spigot.message.SpigotMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,17 +28,19 @@ public class DemoCounterGUI extends SpigotGUI<Counter, CounterCommand> {
     }
 
     @Override
-    public Counter update(Counter counter, CounterCommand counterCommand) {
+    public SpigotMessage<Counter> update(Counter counter, CounterCommand counterCommand) {
         return counterCommand.matchTo(
-                increment -> Counter.create(counter.value() + 1),
-                decrement -> Counter.create(counter.value() - 1),
-                setValue -> Counter.create(setValue.value())
+                increment -> Message.pure(counter.withValue(counter.value() + 1)),
+                decrement -> Message.pure(counter.withValue(counter.value() + 1)),
+                setValue -> Message.pure(counter.withValue(setValue.value())),
+                dipslay -> Message.pure(counter)
         );
     }
 
     @Override
     public SpigotGUIView<CounterCommand> render(Counter counter) {
         return minecraftGuiFactory.<CounterCommand>createSpigotView(27, "Count: " + counter.value())
+                .onClose(CounterCommand.DisplayCount())
                 .withButton(10, minecraftGuiFactory.createButton(
                         new ItemStack(Material.EMERALD),
                         CounterCommand.Increment(),
