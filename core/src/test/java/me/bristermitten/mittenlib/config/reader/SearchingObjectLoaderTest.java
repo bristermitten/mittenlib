@@ -61,9 +61,9 @@ public class SearchingObjectLoaderTest {
                 .isEqualTo(true);
 
         assertThat(load.getOrThrow())
-                .isEqualTo(new DataTree.DataTreeMap(
-                        Maps.of(new DataTree.DataTreeLiteral.DataTreeLiteralString("hello"),
-                                new DataTree.DataTreeLiteral.DataTreeLiteralString("world")
+                .isEqualTo(DataTree.map(
+                        Maps.of(DataTree.string("hello"),
+                                DataTree.string("world")
                         )
                 ));
     }
