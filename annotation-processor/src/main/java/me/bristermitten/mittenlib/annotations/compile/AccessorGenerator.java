@@ -7,7 +7,6 @@ import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.PrivateAnnotations;
 import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
-import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
@@ -23,16 +22,14 @@ import java.util.StringJoiner;
  * preservation when generating accessor methods.
  */
 public class AccessorGenerator {
-    private final TypesUtil typesUtil;
     private final MethodNames methodNames;
 
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
 
     @Inject
     public AccessorGenerator(
-            TypesUtil typesUtil,
-            MethodNames methodNames, ConfigurationClassNameGenerator configurationClassNameGenerator) {
-        this.typesUtil = typesUtil;
+            MethodNames methodNames,
+            ConfigurationClassNameGenerator configurationClassNameGenerator) {
         this.methodNames = methodNames;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
