@@ -42,7 +42,6 @@ public class DeserializationCodeGenerator {
      * For example, a method to deserialize a field called "test" would be called deserializeTest
      */
     public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
-    public static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
@@ -148,7 +147,7 @@ public class DeserializationCodeGenerator {
                 typesUtil.getBoxedType(property.propertyType())
         );
 
-        final MethodSpec.Builder builder = createMethodBuilder(property, elementResultType, daoName);
+        final MethodSpec.Builder builder = createDeserializeMethodBuilder(property, elementResultType, daoName);
         setupInitialStatements(builder, propertyAST, property);
         handleNullChecks(builder, property, dtoType, elementTypeName);
 
@@ -175,9 +174,9 @@ public class DeserializationCodeGenerator {
         return builder.build();
     }
 
-    private MethodSpec.Builder createMethodBuilder(Property property,
-                                                   TypeName elementResultType,
-                                                   @Nullable ClassName daoName) {
+    private MethodSpec.Builder createDeserializeMethodBuilder(Property property,
+                                                              TypeName elementResultType,
+                                                              @Nullable ClassName daoName) {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
@@ -291,12 +290,7 @@ public class DeserializationCodeGenerator {
             var deserializeCodeBlock = CodeBlock.of("$T::$L", listTypeName,
                     methodNames.getDeserializeMethodName(listTypeName));
 
-            var statement = CodeBlock.builder()
-                    .add("return $T.deserializeList($L, context, ", CollectionsUtils.class, fromMapName)
-                    .add(deserializeCodeBlock)
-                    .add(")")
-                    .build();
-            builder.addStatement(statement);
+            builder.addStatement("return $T.deserializeList($L, context, $L)", CollectionsUtils.class, fromMapName, deserializeCodeBlock);
             return Optional.of(builder.build());
         }
 

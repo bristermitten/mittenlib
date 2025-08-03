@@ -87,11 +87,11 @@ public class MethodNames {
 
     /**
      * Gets the name of the deserialization method for a type.
+     * This should only be used when the type is known to be a configuration implementation class.
      *
      * @param name The type name
      * @return The deserialization method name
      */
-    @Deprecated
     public String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
             return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + cn.simpleName();
