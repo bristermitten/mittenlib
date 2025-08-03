@@ -11,7 +11,6 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
@@ -45,7 +44,7 @@ public class AccessorGenerator {
      * @param element         The variable element
      * @param field           The field spec
      */
-    public void createGetterMethod(TypeSpec.@NonNull Builder typeSpecBuilder, @NonNull VariableElement element, @NonNull FieldSpec field) {
+    public void createGetterMethod(TypeSpec.Builder typeSpecBuilder, @NonNull VariableElement element, @NonNull FieldSpec field) {
         var safeName = getFieldAccessorName(element);
 
         var builder = MethodSpec.methodBuilder(safeName)
@@ -53,11 +52,6 @@ public class AccessorGenerator {
                 .returns(field.type)
                 .addStatement("return " + field.name);
 
-        if (typesUtil.isNullable(element)) {
-            builder.addAnnotation(Nullable.class);
-        } else {
-            builder.addAnnotation(NonNull.class);
-        }
 
         builder.addAnnotation(AnnotationSpec.builder(Contract.class)
                 .addMember("pure", CodeBlock.of("true")).build());
@@ -90,11 +84,7 @@ public class AccessorGenerator {
 
             builder.addAnnotation(AnnotationSpec.get(annotationMirror));
         }
-        if (typesUtil.isNullable(overriding)) {
-            TypeSpecUtil.methodAddAnnotation(builder, Nullable.class);
-        } else {
-            TypeSpecUtil.methodAddAnnotation(builder, NonNull.class);
-        }
+
 
         TypeSpecUtil.methodAddAnnotation(builder, Contract.class,
                 b -> b.addMember("pure", CodeBlock.of("true")));

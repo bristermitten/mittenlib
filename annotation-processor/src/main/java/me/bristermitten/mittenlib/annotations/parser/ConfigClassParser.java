@@ -98,7 +98,14 @@ public class ConfigClassParser {
                         true;
             };
 
-            return new Property(propertyElement.getSimpleName().toString(), propertyType, propertySource, new ASTSettings.PropertyASTSettings(namingPatternSub, configName, enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(), isNullable, hasDefault));
+            return new Property(propertyElement.getSimpleName().toString(),
+                    propertyType,
+                    propertySource,
+                    new ASTSettings.PropertyASTSettings(namingPatternSub,
+                            configName,
+                            enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(),
+                            isNullable,
+                            hasDefault));
         }).toList();
     }
 

@@ -9,6 +9,7 @@ import org.jspecify.annotations.Nullable;
 import javax.inject.Inject;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
@@ -68,12 +69,34 @@ public class TypesUtil {
      * @return True if the element is nullable, false otherwise
      */
     public boolean isNullable(Element element) {
+        if (element instanceof VariableElement variableElement) {
+            if (isNullable(variableElement.asType())) {
+                return true;
+            }
+        }
+        if (element instanceof ExecutableElement exec) {
+            if (isNullable(exec.getReturnType())) {
+                return true;
+            }
+        }
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             if (ann.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean isNullable(TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return false; // primitives are never nullable
+        }
+        for (AnnotationMirror annotationMirror : typeMirror.getAnnotationMirrors()) {
+            if (annotationMirror.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
+                return true;
+            }
+        }
+        return false; // no Nullable annotation found
     }
 
     /**

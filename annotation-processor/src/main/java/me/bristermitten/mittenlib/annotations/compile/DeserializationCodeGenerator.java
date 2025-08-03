@@ -143,13 +143,14 @@ public class DeserializationCodeGenerator {
                                                  Property property,
                                                  @Nullable ClassName daoName) {
         TypeMirror elementType = property.propertyType();
+        TypeName elementTypeName = TypeName.get(elementType).withoutAnnotations();
         var elementResultType = configurationClassNameGenerator.publicPropertyClassName(
                 typesUtil.getBoxedType(property.propertyType())
         );
 
         final MethodSpec.Builder builder = createMethodBuilder(property, elementResultType, daoName);
         setupInitialStatements(builder, propertyAST, property);
-        handleNullChecks(builder, property, dtoType, elementType);
+        handleNullChecks(builder, property, dtoType, elementTypeName);
 
         TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
         boolean isGenericType = wrappedElementType.hasTypeArguments();
@@ -209,8 +210,10 @@ public class DeserializationCodeGenerator {
         }
     }
 
-    private void handleNullChecks(MethodSpec.Builder builder, Property property,
-                                  TypeElement dtoType, TypeMirror elementType) {
+    private void handleNullChecks(MethodSpec.Builder builder,
+                                  Property property,
+                                  TypeElement dtoType,
+                                  TypeName elementTypeName) {
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
 
@@ -222,7 +225,12 @@ public class DeserializationCodeGenerator {
         } else {
             builder.beginControlFlow("if ($L == null)", fromMapName);
             builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S))",
-                    Result.class, ConfigLoadingErrors.class, property.name(), elementType, dtoType, key);
+                    Result.class,
+                    ConfigLoadingErrors.class,
+                    property.name(),
+                    elementTypeName,
+                    dtoType,
+                    key);
             builder.endControlFlow();
         }
     }
