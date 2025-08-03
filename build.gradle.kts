@@ -81,7 +81,8 @@ subprojects {
 			showStandardStreams = true
 			events = setOf(
 				TestLogEvent.FAILED,
-				TestLogEvent.PASSED
+				TestLogEvent.PASSED,
+				TestLogEvent.SKIPPED
 			)
 			exceptionFormat = TestExceptionFormat.FULL
 		}

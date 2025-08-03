@@ -27,6 +27,6 @@ tasks.compileTestJava {
 
 tasks.test {
 	useJUnitPlatform {
-		includeEngines("jqwik")
+		includeEngines("jqwik", "junit-jupiter")
 	}
 }
