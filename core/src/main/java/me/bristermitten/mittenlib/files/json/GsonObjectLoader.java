@@ -16,7 +16,7 @@ public class GsonObjectLoader implements ObjectLoader {
     private final Gson gson;
 
     @Inject
-    GsonObjectLoader(Gson gson) {
+    public GsonObjectLoader(Gson gson) {
         this.gson = gson;
     }
 
