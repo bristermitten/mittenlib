@@ -1,14 +1,14 @@
 package me.bristermitten.mittenlib.collections;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public abstract class MLImmutableSet<E> extends AbstractSet<E> {
+public abstract class MLImmutableSet<E> extends AbstractSet<@NonNull E> {
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(@NonNull Object o) {
         throw new UnsupportedOperationException("Immutable set");
     }
 
@@ -18,30 +18,30 @@ public abstract class MLImmutableSet<E> extends AbstractSet<E> {
     }
 
     @Override
-    public boolean add(E e) {
+    public boolean add(@NonNull E e) {
         throw new UnsupportedOperationException("Immutable set");
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends E> c) {
+    public boolean addAll(@NonNull Collection<? extends E> c) {
         throw new UnsupportedOperationException("Immutable set");
     }
 
     @Override
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(@NonNull Collection<?> c) {
         throw new UnsupportedOperationException("Immutable set");
     }
 
     @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
+    public boolean retainAll(@NonNull Collection<?> c) {
         throw new UnsupportedOperationException("Immutable set");
     }
 
     @Override
-    public boolean removeIf(@NotNull Predicate<? super E> filter) {
+    public boolean removeIf(@NonNull Predicate<? super E> filter) {
         throw new UnsupportedOperationException("Immutable set");
     }
 
 
-    public abstract MLImmutableSet<E> plus(E e);
+    public abstract @NonNull MLImmutableSet<E> plus(@NonNull E e);
 }

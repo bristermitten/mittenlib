@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.collections;
 
 import com.google.common.collect.Iterators;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ public class SetImpls {
     private SetImpls() {
     }
 
-    static class Set0<E> extends MLImmutableSet<E> { //NOSONAR
+    static class Set0<E> extends MLImmutableSet<E> {
         @Override
         public boolean contains(Object o) {
             return false;
@@ -25,7 +25,7 @@ public class SetImpls {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Iterator<E> iterator() {
             return Collections.emptyIterator();
         }
@@ -36,15 +36,17 @@ public class SetImpls {
         }
 
         @Override
-        public MLImmutableSet<E> plus(E e) {
+        public @NonNull MLImmutableSet<E> plus(@NonNull E e) {
+            Objects.requireNonNull(e);
             return Sets.of(e);
         }
     }
 
-    static class Set1<E> extends MLImmutableSet<E> { //NOSONAR
+    static class Set1<E> extends MLImmutableSet<E> {
         private final E e;
 
-        Set1(E e) {
+        Set1(@NonNull E e) {
+            Objects.requireNonNull(e);
             this.e = e;
         }
 
@@ -59,7 +61,7 @@ public class SetImpls {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Iterator<E> iterator() {
             return new Iterator<E>() {
                 private boolean hasNext = true;
@@ -86,16 +88,19 @@ public class SetImpls {
         }
 
         @Override
-        public MLImmutableSet<E> plus(E e) {
+        public @NonNull MLImmutableSet<E> plus(@NonNull E e) {
+            Objects.requireNonNull(e);
             return Sets.of(this.e, e);
         }
     }
 
-    static class Set2<E> extends MLImmutableSet<E> { //NOSONAR
+    static class Set2<E> extends MLImmutableSet<E> {
         private final E e1;
         private final E e2;
 
         Set2(E e1, E e2) {
+            Objects.requireNonNull(e1);
+            Objects.requireNonNull(e2);
             this.e1 = e1;
             this.e2 = e2;
         }
@@ -111,7 +116,7 @@ public class SetImpls {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Iterator<E> iterator() {
             return new Iterator<E>() {
                 private int count = 0;
@@ -141,17 +146,21 @@ public class SetImpls {
         }
 
         @Override
-        public MLImmutableSet<E> plus(E e) {
+        public @NonNull MLImmutableSet<E> plus(@NonNull E e) {
+            Objects.requireNonNull(e);
             return Sets.of(this.e1, this.e2, e);
         }
     }
 
-    static class Set3<E> extends MLImmutableSet<E> { //NOSONAR
+    static class Set3<E> extends MLImmutableSet<E> {
         private final E e1;
         private final E e2;
         private final E e3;
 
         Set3(E e1, E e2, E e3) {
+            Objects.requireNonNull(e1);
+            Objects.requireNonNull(e2);
+            Objects.requireNonNull(e3);
             this.e1 = e1;
             this.e2 = e2;
             this.e3 = e3;
@@ -168,7 +177,7 @@ public class SetImpls {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Iterator<E> iterator() {
             return new Iterator<E>() {
                 private int count = 0;
@@ -201,15 +210,17 @@ public class SetImpls {
         }
 
         @Override
-        public MLImmutableSet<E> plus(E e) {
+        public @NonNull MLImmutableSet<E> plus(@NonNull E e) {
+            Objects.requireNonNull(e);
             return Sets.of(this.e1, this.e2, this.e3, e);
         }
     }
 
-    static class SetN<E> extends MLImmutableSet<E> { //NOSONAR
+    static class SetN<E> extends MLImmutableSet<E> {
         private final Set<E> set;
 
-        SetN(Set<E> set) {
+        SetN(@NonNull Set<@NonNull E> set) {
+            Objects.requireNonNull(set);
             this.set = set;
         }
 
@@ -224,7 +235,7 @@ public class SetImpls {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Iterator<E> iterator() {
             return set.iterator();
         }
@@ -235,7 +246,8 @@ public class SetImpls {
         }
 
         @Override
-        public MLImmutableSet<E> plus(E e) {
+        public @NonNull MLImmutableSet<E> plus(@NonNull E e) {
+            Objects.requireNonNull(e);
             if (set.contains(e)) {
                 return this; // no change
             }
@@ -275,7 +287,7 @@ public class SetImpls {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Iterator<E> iterator() {
             return Iterators.concat(first.iterator(), second.iterator());
         }

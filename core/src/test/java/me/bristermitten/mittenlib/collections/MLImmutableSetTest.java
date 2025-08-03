@@ -18,9 +18,9 @@ class MLImmutableSetTest {
      */
     private static <E> MLImmutableSet<E> createTestSet(Collection<E> elements) {
         // Use the existing Sets implementation which should return MLImmutableSet instances
-        Set<E> set = Sets.ofAll(elements);
+        MLImmutableSet<E> set = Sets.ofAll(elements);
         assertInstanceOf(MLImmutableSet.class, set, "Set should be an MLImmutableSet");
-        return (MLImmutableSet<E>) set;
+        return set;
     }
 
     @Test
@@ -76,7 +76,9 @@ class MLImmutableSetTest {
         MLImmutableSet<String> set = createTestSet(List.of("a", "b", "c"));
 
         // Adding null should throw
-        assertThrows(NullPointerException.class, () -> set.plus(null));
+        //noinspection DataFlowIssue
+        assertThrows(NullPointerException.class,
+                () -> set.plus(null));
     }
 
     @Test
