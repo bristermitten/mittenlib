@@ -28,7 +28,6 @@ tasks.shadowJar {
 
 tasks.withType<RunServer> {
 	javaLauncher = javaToolchains.launcherFor {
-		vendor = JvmVendorSpec.JETBRAINS
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 	jvmArgs("-XX:+AllowEnhancedClassRedefinition")
