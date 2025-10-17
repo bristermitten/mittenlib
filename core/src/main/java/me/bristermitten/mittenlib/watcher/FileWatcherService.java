@@ -103,13 +103,16 @@ public class FileWatcherService {
         }
 
         CompletableFuture<Unit> future = new CompletableFuture<>();
-        service.submit(() -> run(future));
+        service.execute(() -> run(future));
+
         return future;
     }
 
     /**
-     * @return whether the service is currently watching for file changes.
+     * Returns whether the service is currently watching for file changes.
      * Note that this may return true even if the service is not currently watching, if the service is in the process of starting up.
+     *
+     * @return whether the service is currently watching for file changes.
      * @see #startWatching()
      */
     public boolean isWatching() {

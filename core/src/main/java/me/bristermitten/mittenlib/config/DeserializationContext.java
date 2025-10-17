@@ -23,6 +23,8 @@ public class DeserializationContext {
     }
 
     /**
+     * Returns the mapper to use for deserialization.
+     * In generated config code, this is only used as a last resort.
      * @return the mapper to use
      */
     public ObjectMapper getMapper() {
@@ -30,6 +32,7 @@ public class DeserializationContext {
     }
 
     /**
+     * Returns the data to deserialize. This may be a child of the original data, or the original data itself.
      * @return the data to deserialize
      */
     public @NotNull DataTree getData() {

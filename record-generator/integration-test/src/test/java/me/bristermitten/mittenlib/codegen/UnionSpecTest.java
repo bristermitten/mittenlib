@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UnionTest {
+public class UnionSpecTest {
 
     @Test
     void testStructural() {
@@ -38,7 +38,7 @@ public class UnionTest {
     }
 
     @SuppressWarnings("unused")
-    @Union
+    @UnionSpec
     @MatchStrategy(MatchStrategies.STRUCTURAL)
     interface TestStructuralUnionSpec {
         TestStructuralUnionSpec Child1();
@@ -47,7 +47,7 @@ public class UnionTest {
     }
 
     @SuppressWarnings("unused")
-    @Union
+    @UnionSpec
     @MatchStrategy(MatchStrategies.NOMINAL)
     interface TestNominalUnionSpec {
         TestNominalUnionSpec Child1();

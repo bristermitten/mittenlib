@@ -4,12 +4,12 @@ import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
@@ -42,7 +42,7 @@ public class TypesUtil {
      * <li>{@code String -> String}</li>
      * </ul>
      */
-    public TypeMirror getSafeType(@NotNull TypeMirror typeMirror) {
+    public TypeMirror getSafeType(TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return types.boxedClass((PrimitiveType) typeMirror).asType();
         }
@@ -53,7 +53,7 @@ public class TypesUtil {
      * Get a boxed version of a given type, if it is a primitive.
      * Otherwise, the type is returned unchanged
      */
-    public TypeMirror getBoxedType(@NotNull TypeMirror typeMirror) {
+    public TypeMirror getBoxedType(TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
             return types.boxedClass((PrimitiveType) typeMirror).asType();
         }
@@ -68,13 +68,35 @@ public class TypesUtil {
      * @param element The element to check
      * @return True if the element is nullable, false otherwise
      */
-    public boolean isNullable(@NotNull Element element) {
+    public boolean isNullable(Element element) {
+        if (element instanceof VariableElement variableElement) {
+            if (isNullable(variableElement.asType())) {
+                return true;
+            }
+        }
+        if (element instanceof ExecutableElement exec) {
+            if (isNullable(exec.getReturnType())) {
+                return true;
+            }
+        }
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             if (ann.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean isNullable(TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return false; // primitives are never nullable
+        }
+        for (AnnotationMirror annotationMirror : typeMirror.getAnnotationMirrors()) {
+            if (annotationMirror.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
+                return true;
+            }
+        }
+        return false; // no Nullable annotation found
     }
 
     /**
@@ -87,8 +109,8 @@ public class TypesUtil {
      * @param <A>  The annotation type
      * @return The annotation value, if present, else null
      */
-    public <A extends Annotation> @Nullable A getAnnotation(@NotNull Element e, @NotNull Class<A> type) {
-        A onElem = e.getAnnotation(type);
+    public <A extends Annotation> @Nullable A getAnnotation(Element e, Class<A> type) {
+        @Nullable A onElem = e.getAnnotation(type);
         if (onElem != null) {
             return onElem;
         }
@@ -110,7 +132,7 @@ public class TypesUtil {
      * @param mirror The type to check
      * @return true if the type is a config type, false otherwise
      */
-    public boolean isConfigType(@NotNull TypeMirror mirror) {
+    public boolean isConfigType(TypeMirror mirror) {
         if (mirror.getKind() == TypeKind.ERROR) {
             throw new DTOReferenceException(mirror, generatedTypeCache, null, null);
         }

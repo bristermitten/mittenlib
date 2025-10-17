@@ -1,10 +1,13 @@
 package me.bristermitten.mittenlib.collections;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,6 +15,7 @@ import java.util.stream.Collectors;
  * Utility functions for creating immutable maps
  * Unnecessary in Java 9+
  */
+@NullMarked
 public class Maps {
     private Maps() {
     }
@@ -24,19 +28,45 @@ public class Maps {
         return empty();
     }
 
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k, @NotNull V v) {
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k, @NonNull V v) {
+        Objects.requireNonNull(k);
+        Objects.requireNonNull(v);
         return new MapImpls.Map1<>(k, v);
     }
 
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2) {
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1,
+                                                               @NonNull V v1,
+                                                               @NonNull K k2,
+                                                               @NonNull V v2) {
+        Objects.requireNonNull(k1);
+        Objects.requireNonNull(v1);
+
+        Objects.requireNonNull(k2);
+        Objects.requireNonNull(v2);
+
+        if (Objects.equals(k1, k2)) {
+            throw new IllegalArgumentException("Maps.of duplicate keys");
+        }
+
         return new MapImpls.Map2<>(k1, v1, k2, v2);
     }
 
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3) {
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3) {
+        Objects.requireNonNull(k1);
+        Objects.requireNonNull(v1);
+        Objects.requireNonNull(k2);
+        Objects.requireNonNull(v2);
+        Objects.requireNonNull(k3);
+        Objects.requireNonNull(v3);
+
+        if (Objects.equals(k1, k2) || Objects.equals(k1, k3)) {
+            throw new IllegalArgumentException("Maps.of duplicate keys");
+        }
+
         return new MapImpls.Map3<>(k1, v1, k2, v2, k3, v3);
     }
 
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4) {
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -47,7 +77,7 @@ public class Maps {
         );
     }
 
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4, @NotNull K k5, @NotNull V v5) {
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4, @NonNull K k5, @NonNull V v5) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -59,8 +89,8 @@ public class Maps {
         );
     }
 
-    @NotNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4, @NotNull K k5, @NotNull V v5, @NotNull K k6, @NotNull V v6) {
+    @NonNull
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4, @NonNull K k5, @NonNull V v5, @NonNull K k6, @NonNull V v6) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -74,8 +104,8 @@ public class Maps {
     }
 
 
-    @NotNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4, @NotNull K k5, @NotNull V v5, @NotNull K k6, @NotNull V v6, @NotNull K k7, @NotNull V v7) {
+    @NonNull
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4, @NonNull K k5, @NonNull V v5, @NonNull K k6, @NonNull V v6, @NonNull K k7, @NonNull V v7) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -89,8 +119,8 @@ public class Maps {
         );
     }
 
-    @NotNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4, @NotNull K k5, @NotNull V v5, @NotNull K k6, @NotNull V v6, @NotNull K k7, @NotNull V v7, @NotNull K k8, @NotNull V v8) {
+    @NonNull
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4, @NonNull K k5, @NonNull V v5, @NonNull K k6, @NonNull V v6, @NonNull K k7, @NonNull V v7, @NonNull K k8, @NonNull V v8) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -105,8 +135,8 @@ public class Maps {
         );
     }
 
-    @NotNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4, @NotNull K k5, @NotNull V v5, @NotNull K k6, @NotNull V v6, @NotNull K k7, @NotNull V v7, @NotNull K k8, @NotNull V v8, @NotNull K k9, @NotNull V v9) {
+    @NonNull
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4, @NonNull K k5, @NonNull V v5, @NonNull K k6, @NonNull V v6, @NonNull K k7, @NonNull V v7, @NonNull K k8, @NonNull V v8, @NonNull K k9, @NonNull V v9) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -122,8 +152,8 @@ public class Maps {
         );
     }
 
-    @NotNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull K k1, @NotNull V v1, @NotNull K k2, @NotNull V v2, @NotNull K k3, @NotNull V v3, @NotNull K k4, @NotNull V v4, @NotNull K k5, @NotNull V v5, @NotNull K k6, @NotNull V v6, @NotNull K k7, @NotNull V v7, @NotNull K k8, @NotNull V v8, @NotNull K k9, @NotNull V v9, @NotNull K k10, @NotNull V v10) {
+    @NonNull
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NonNull K k1, @NonNull V v1, @NonNull K k2, @NonNull V v2, @NonNull K k3, @NonNull V v3, @NonNull K k4, @NonNull V v4, @NonNull K k5, @NonNull V v5, @NonNull K k6, @NonNull V v6, @NonNull K k7, @NonNull V v7, @NonNull K k8, @NonNull V v8, @NonNull K k9, @NonNull V v9, @NonNull K k10, @NonNull V v10) {
         return new MapImpls.MapN<>(
                 Sets.of(
                         entry(k1, v1),
@@ -154,7 +184,7 @@ public class Maps {
      * @param <V> the type of values in the map
      * @return a new map containing all entries from the original map plus the new key-value pair
      */
-    public static @NotNull <K, V> MLImmutableMap<K, V> of(@NotNull Map<K, V> map, @NotNull K k, @NotNull V v) {
+    public static @NonNull <K, V> MLImmutableMap<K, V> of(@NonNull Map<K, V> map, @NonNull K k, @NonNull V v) {
         if (map instanceof MLImmutableMap) {
             return ((MLImmutableMap<K, V>) map).plus(k, v);
         }
@@ -162,8 +192,8 @@ public class Maps {
     }
 
     @SafeVarargs
-    @NotNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(@NotNull Map.Entry<K, V>... entries) {
+    @NonNull
+    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(Map.@NonNull Entry<K, V> @NonNull ... entries) {
         if (entries.length == 0) {
             return empty();
         }
@@ -174,7 +204,7 @@ public class Maps {
         return new MapImpls.MapN<>(Sets.of(entries));
     }
 
-    public static <K, V> @Unmodifiable @NotNull MLImmutableMap<K, V> of(@NotNull Collection<Map.Entry<K, V>> entries) {
+    public static <K, V> @Unmodifiable @NonNull MLImmutableMap<K, V> of(Collection<Map.Entry<K, V>> entries) {
         if (entries.isEmpty()) {
             return empty();
         }
@@ -190,8 +220,7 @@ public class Maps {
         return new MapImpls.MapN<>(Sets.ofAll(collect));
     }
 
-    @NotNull
-    public static <K, V> Map.@Unmodifiable Entry<K, V> entry(@NotNull K key, @NotNull V value) {
+    public static <K, V> Map.@NonNull @Unmodifiable Entry<K, V> entry(@NonNull K key, @NonNull V value) {
         return new MapImpls.MLEntry<>(key, value);
     }
 }

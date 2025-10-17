@@ -2,8 +2,7 @@ package me.bristermitten.mittenlib.annotations.ast;
 
 import com.squareup.javapoet.ClassName;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -15,10 +14,13 @@ public sealed interface AbstractConfigStructure {
     ClassName name();
 
     /**
+     * A reference to the class this config is enclosed in
+     *
      * @return The name of the class this config is enclosed in, if present
      */
     @Contract(pure = true)
-    @Nullable ASTParentReference enclosedIn();
+    @Nullable
+    ASTParentReference enclosedIn();
 
     @Contract(pure = true)
     List<AbstractConfigStructure> enclosed();
@@ -28,11 +30,9 @@ public sealed interface AbstractConfigStructure {
     List<Property> properties();
 
     @Contract(pure = true)
-    @NotNull
     ConfigTypeSource source();
 
     @Contract(pure = true)
-    @NotNull
     ASTSettings.ConfigASTSettings settings();
 
     record Intersection(ClassName name,

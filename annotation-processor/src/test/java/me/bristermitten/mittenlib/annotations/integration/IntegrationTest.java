@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatList;
 
@@ -39,15 +40,6 @@ public class IntegrationTest {
                     }
                 }
         );
-    }
-
-    private String loadResourceString(String resource) throws IOException {
-        try (var res = getClass().getClassLoader().getResourceAsStream(resource)) {
-            if (res == null) {
-                throw new IOException("Resource not found: " + resource);
-            }
-            return new String(res.readAllBytes());
-        }
     }
 
     @Test

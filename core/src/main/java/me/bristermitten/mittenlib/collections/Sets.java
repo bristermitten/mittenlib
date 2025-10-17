@@ -1,30 +1,35 @@
 package me.bristermitten.mittenlib.collections;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.errorprone.annotations.InlineMe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
- * Utility functions for creating immutable sets
+ * Utility functions for creating immutable sets.
  */
+@NullMarked
 public class Sets {
     private Sets() {
     }
 
-    public static <E> @Unmodifiable MLImmutableSet<E> of() {
+    public static <E> @NonNull @Unmodifiable MLImmutableSet<E> of() {
         return new SetImpls.Set0<>();
     }
 
-    public static <E> @Unmodifiable MLImmutableSet<E> of(E e) {
+    public static <E> @NonNull @Unmodifiable MLImmutableSet<E> of(@NonNull E e) {
+        Objects.requireNonNull(e);
         return new SetImpls.Set1<>(e);
     }
 
-    public static <E> @Unmodifiable MLImmutableSet<E> of(E e1, E e2) {
+    public static <E> @NonNull @Unmodifiable MLImmutableSet<E> of(@NonNull E e1, @NonNull E e2) {
+        Objects.requireNonNull(e1);
+        Objects.requireNonNull(e2);
+
         if (Objects.equals(e1, e2)) {
             return new SetImpls.Set1<>(e1); // unique elements
         }
@@ -50,7 +55,7 @@ public class Sets {
     }
 
     @SafeVarargs
-    public static <E> @Unmodifiable MLImmutableSet<E> of(E... es) {
+    public static <E> @Unmodifiable MLImmutableSet<E> of(E @NonNull ... es) {
         if (es.length == 0) {
             return of();
         }
@@ -82,6 +87,18 @@ public class Sets {
         if (collection.isEmpty()) {
             return of();
         }
+        if (collection.size() == 1) {
+            return of(collection.iterator().next());
+        }
+        if (collection.size() == 2) {
+            Iterator<E> iterator = collection.iterator();
+            return of(iterator.next(), iterator.next());
+        }
+        if (collection.size() == 3) {
+            Iterator<E> iterator = collection.iterator();
+            return of(iterator.next(), iterator.next(), iterator.next());
+        }
+
         if (collection instanceof MLImmutableSet) {
             return (MLImmutableSet<E>) collection;
         }
@@ -154,7 +171,8 @@ public class Sets {
      * @return a new set containing the elements of the given sets
      * @deprecated Use {@link Sets#union(Set, Set)}
      */
-    @Deprecated()
+    @Deprecated
+    @InlineMe(replacement = "Sets.union(start, others)", imports = "me.bristermitten.mittenlib.collections.Sets")
     public static <E> @Unmodifiable Set<E> concat(@NotNull @Unmodifiable Set<E> start, @NotNull @Unmodifiable Set<E> others) {
         return union(start, others);
     }

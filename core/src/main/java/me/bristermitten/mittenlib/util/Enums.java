@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 /**
  * Utility class for enums
  */
@@ -20,7 +22,7 @@ public class Enums {
      * @return The prettified name of the enum
      */
     public static <E extends Enum<E>> @NotNull String prettyName(@NotNull E e) {
-        final String[] split = e.name().toLowerCase().split("_");
+        final String[] split = e.name().toLowerCase(Locale.getDefault()).split("_");
         return Strings.joinWith(split, Strings::capitalize, " ");
     }
 

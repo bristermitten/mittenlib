@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.config.tree;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,20 +12,52 @@ import java.util.Objects;
 /**
  * Like {@link com.google.gson.JsonElement} but without a strict dependency on json
  */
+@NullMarked
 public abstract class DataTree {
 
     private DataTree() {
 
     }
 
-    public abstract Object value();
+    // static factories
+
+    public static DataTreeLiteral.DataTreeLiteralString string(String value) {
+        return new DataTreeLiteral.DataTreeLiteralString(value);
+    }
+
+    public static DataTreeLiteral.DataTreeLiteralInt integer(long value) {
+        return new DataTreeLiteral.DataTreeLiteralInt(value);
+    }
+
+    public static DataTreeLiteral.DataTreeLiteralFloat floating(double value) {
+        return new DataTreeLiteral.DataTreeLiteralFloat(value);
+    }
+
+    public static DataTreeLiteral.DataTreeLiteralBoolean bool(boolean value) {
+        return new DataTreeLiteral.DataTreeLiteralBoolean(value);
+    }
+
+    public static DataTreeNull null_() {
+        return DataTreeNull.INSTANCE;
+    }
+
+
+    public static DataTree.DataTreeArray array(DataTree... values) {
+        return new DataTree.DataTreeArray(values);
+    }
+
+    public static DataTree.DataTreeMap map(Map<DataTree, DataTree> values) {
+        return new DataTree.DataTreeMap(values);
+    }
+
+    public abstract @Nullable Object value();
 
     public @Nullable DataTree get(String key) {
         return null; // not an object
     }
 
     @Contract("_, !null -> !null; _ , _-> _")
-    public Object getOrDefault(@NotNull String key, @Nullable Object defaultValue) {
+    public @Nullable Object getOrDefault(String key, @Nullable Object defaultValue) {
         DataTree get = this.get(key);
         if (get == null) {
             return defaultValue;
@@ -40,13 +72,18 @@ public abstract class DataTree {
         }
 
         @Override
-        public Object value() {
+        public @Nullable Object value() {
             return null;
         }
 
         @Override
         public boolean equals(Object obj) {
             return obj instanceof DataTreeNull;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(this);
         }
 
         @Override
@@ -57,6 +94,7 @@ public abstract class DataTree {
 
     public static abstract class DataTreeLiteral extends DataTree {
 
+        @Override
         public abstract Object value();
 
         public static class DataTreeLiteralInt extends DataTreeLiteral {
@@ -75,7 +113,7 @@ public abstract class DataTree {
 
             @Override
             public int hashCode() {
-                return Objects.hashCode(value);
+                return Long.hashCode(value);
             }
 
             @Override
@@ -100,7 +138,7 @@ public abstract class DataTree {
 
             @Override
             public int hashCode() {
-                return Objects.hashCode(value);
+                return Double.hashCode(value);
             }
 
             @Override
@@ -150,7 +188,7 @@ public abstract class DataTree {
 
             @Override
             public int hashCode() {
-                return Objects.hashCode(value);
+                return Boolean.hashCode(value);
             }
 
             @Override

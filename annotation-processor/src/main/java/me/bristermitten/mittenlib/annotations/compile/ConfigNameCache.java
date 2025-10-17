@@ -3,7 +3,6 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.squareup.javapoet.ClassName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 import javax.lang.model.type.TypeKind;
@@ -27,7 +26,7 @@ public class ConfigNameCache {
      * @param name The class name to look up
      * @return An Optional containing the AbstractConfigStructure if found, or empty if not found
      */
-    public @NotNull Optional<AbstractConfigStructure> lookupAST(ClassName name) {
+    public Optional<AbstractConfigStructure> lookupAST(ClassName name) {
         return Optional.ofNullable(astCache.get(name));
     }
 
@@ -38,7 +37,7 @@ public class ConfigNameCache {
      * @param mirror The type mirror to look up
      * @return An Optional containing the AbstractConfigStructure if found, or empty if not found or if the TypeMirror is not a declared type
      */
-    public Optional<AbstractConfigStructure> lookupAST(@NotNull TypeMirror mirror) {
+    public Optional<AbstractConfigStructure> lookupAST(TypeMirror mirror) {
         if (mirror.getKind() != TypeKind.DECLARED) {
             return Optional.empty();
         }
@@ -52,7 +51,7 @@ public class ConfigNameCache {
      *
      * @param ast The AbstractConfigStructure to add to the cache
      */
-    public void put(@NotNull AbstractConfigStructure ast) {
+    public void put(AbstractConfigStructure ast) {
         astCache.put(ast.name(), ast);
     }
 }

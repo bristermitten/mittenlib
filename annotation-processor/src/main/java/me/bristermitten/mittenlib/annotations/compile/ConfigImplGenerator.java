@@ -4,16 +4,21 @@ import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.config.ToStringGenerator;
+import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
+import me.bristermitten.mittenlib.annotations.util.Nullity;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
+import javax.annotation.processing.Generated;
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Optional;
@@ -40,11 +45,12 @@ public class ConfigImplGenerator {
         this.methodNames = methodNames;
     }
 
-    private static void makeAbstractIfUnion(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private static void makeAbstractIfUnion(AbstractConfigStructure ast, TypeSpec.Builder source) {
         if (ast instanceof AbstractConfigStructure.Union) {
             source.addModifiers(Modifier.ABSTRACT);
         }
     }
+
 
     /**
      * Generates a JavaFile containing the implementation class for the given configuration structure.
@@ -52,7 +58,7 @@ public class ConfigImplGenerator {
      * @param ast The abstract configuration structure to generate an implementation for
      * @return A JavaFile containing the generated implementation class
      */
-    public @NotNull JavaFile emit(@NotNull AbstractConfigStructure ast) {
+    public @NonNull JavaFile emit(@NonNull AbstractConfigStructure ast) {
         ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
         TypeSpec.Builder source = TypeSpec.classBuilder(configImplClassName);
 
@@ -67,14 +73,14 @@ public class ConfigImplGenerator {
      * @param ast    The abstract configuration structure to generate an implementation for
      * @param source The TypeSpec.Builder to add elements to
      */
-    private void emitInto(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private void emitInto(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
         ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
         source.addModifiers(Modifier.PUBLIC);
         makeAbstractIfUnion(ast, source);
         addSourceElement(ast, source);
         addInheritance(ast, source);
         Optional<ClassName> innerDaoName = addInnerDefaultMethodImpl(source, ast);
-        addGeneratedConfigAnnotation(ast, source);
+        addGeneratedConfigAnnotations(ast, source);
         addNestedClassModifiers(ast, source);
         addProperties(ast, source);
         addSuperClassField(ast, source);
@@ -92,7 +98,7 @@ public class ConfigImplGenerator {
     /**
      * When the element has a @{@link me.bristermitten.mittenlib.config.Source} marked, turn it into a {@link Configuration} field
      */
-    private void addSourceElement(@NotNull AbstractConfigStructure ast, @NotNull TypeSpec.Builder builder) {
+    private void addSourceElement(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
             builder.addField(
@@ -112,7 +118,7 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addInheritance(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private void addInheritance(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
         if (ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource) {
             source.addSuperinterface(ast.name());
         }
@@ -124,32 +130,43 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addGeneratedConfigAnnotation(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private void addGeneratedConfigAnnotations(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
         source.addAnnotation(AnnotationSpec.builder(GeneratedConfig.class)
                 .addMember("source", "$T.class", ast.name())
                 .build());
+
+
+        source.addAnnotation(AnnotationSpec.builder(Generated.class)
+                .addMember("value", "$S", ConfigProcessor.class.getName())
+                .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
+                .addMember("date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
+                .build()
+        );
     }
 
-    private void addNestedClassModifiers(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private void addNestedClassModifiers(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
         // if it's enclosed in a class, make sure it's a nested class rather than an inner class
         if (ast.enclosedIn() != null) {
             source.addModifiers(Modifier.STATIC);
         }
     }
 
-    private void addProperties(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private void addProperties(AbstractConfigStructure ast, TypeSpec.Builder source) {
         for (Property property : ast.properties()) {
             addProperty(property, source);
         }
     }
 
-    private void addDeserializationMethods(@NotNull AbstractConfigStructure ast, @NotNull TypeSpec.Builder source
-            , @Nullable ClassName daoName
+    private void addDeserializationMethods(AbstractConfigStructure ast,
+                                           TypeSpec.Builder source,
+                                           @Nullable ClassName daoName
     ) {
         deserializationCodeGenerator.createDeserializeMethods(source, ast, daoName);
     }
 
-    private void addStandardObjectMethods(@NotNull AbstractConfigStructure ast, ClassName configImplClassName, @NotNull TypeSpec.Builder source) {
+    private void addStandardObjectMethods(AbstractConfigStructure ast,
+                                          ClassName configImplClassName,
+                                          TypeSpec.Builder source) {
         if (ast.settings().generateToString()) {
             var toString = toStringGenerator.generateToString(ast.properties(), configImplClassName);
             source.addMethod(toString);
@@ -159,7 +176,7 @@ public class ConfigImplGenerator {
         source.addMethod(equalsHashCodeGenerator.generateHashCode(ast.properties()));
     }
 
-    private void addChildClasses(@NotNull AbstractConfigStructure ast, TypeSpec.@NotNull Builder source) {
+    private void addChildClasses(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
         for (AbstractConfigStructure child : ast.enclosed()) {
             var childClassName = configurationClassNameGenerator.translateConfigClassName(child);
             TypeSpec.Builder childBuilder = TypeSpec.classBuilder(childClassName);
@@ -168,9 +185,10 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addProperty(@NotNull Property property, TypeSpec.@NotNull Builder source) {
+    private void addProperty(@NonNull Property property, TypeSpec.@NonNull Builder source) {
         FieldSpec field = FieldSpec.builder(
-                configurationClassNameGenerator.publicPropertyClassName(property),
+                configurationClassNameGenerator.publicPropertyClassName(property)
+                        .annotated(Nullity.getNullityAnnotationSpec(property)),
                 property.name(),
                 Modifier.FINAL, Modifier.PRIVATE
         ).build();
@@ -185,20 +203,20 @@ public class ConfigImplGenerator {
         }
     }
 
-    private Optional<TypeMirror> getSuperClass(@NotNull AbstractConfigStructure ast) {
+    private Optional<TypeMirror> getSuperClass(@NonNull AbstractConfigStructure ast) {
         if (ast.source() instanceof ConfigTypeSource.ClassConfigTypeSource classParent) {
             return classParent.parent();
         }
         return Optional.empty();
     }
 
-    private @NotNull Optional<TypeMirror> getSuperClass(@NotNull TypeMirror ast) {
+    private @NonNull Optional<TypeMirror> getSuperClass(@NonNull TypeMirror ast) {
         return configNameCache
                 .lookupAST(ast)
                 .flatMap(this::getSuperClass);
     }
 
-    private void addAllArgsConstructor(TypeSpec.@NotNull Builder source, @NotNull AbstractConfigStructure ast) {
+    private void addAllArgsConstructor(TypeSpec.@NonNull Builder source, @NonNull AbstractConfigStructure ast) {
         MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
@@ -208,7 +226,7 @@ public class ConfigImplGenerator {
         source.addMethod(constructor.build());
     }
 
-    private void addSuperClassParameter(@NotNull AbstractConfigStructure ast, MethodSpec.@NotNull Builder constructor) {
+    private void addSuperClassParameter(@NonNull AbstractConfigStructure ast, MethodSpec.@NonNull Builder constructor) {
         // when we have a super_class_
         // we accept an instance of it as a parent
         // and then call `super(parent.a(), parent.b(), ...)`
@@ -233,7 +251,7 @@ public class ConfigImplGenerator {
         });
     }
 
-    private void addSuperClassField(@NotNull AbstractConfigStructure ast, TypeSpec.Builder builder) {
+    private void addSuperClassField(@NonNull AbstractConfigStructure ast, TypeSpec.Builder builder) {
         var parentMirror = getSuperClass(ast);
 
         parentMirror.ifPresent(parent -> {
@@ -246,7 +264,7 @@ public class ConfigImplGenerator {
         });
     }
 
-    private @NotNull List<String> buildSuperConstructorParams(@NotNull TypeMirror parent, @NotNull AbstractConfigStructure parentConfig, @NotNull String superParameterName) {
+    private @NonNull List<String> buildSuperConstructorParams(@NonNull TypeMirror parent, @NonNull AbstractConfigStructure parentConfig, @NonNull String superParameterName) {
         var parentParams = parentConfig.properties().stream()
                 .map(variableElement -> superParameterName + "." + methodNames.safeMethodName(variableElement) + "()")
                 .toList();
@@ -262,7 +280,7 @@ public class ConfigImplGenerator {
         return parentParams;
     }
 
-    private void addPropertyParameters(@NotNull AbstractConfigStructure ast, MethodSpec.@NotNull Builder constructor) {
+    private void addPropertyParameters(@NonNull AbstractConfigStructure ast, MethodSpec.@NonNull Builder constructor) {
         for (Property property : ast.properties()) {
             ParameterSpec parameter = createPropertyParameter(property);
             constructor.addParameter(parameter);
@@ -270,23 +288,19 @@ public class ConfigImplGenerator {
         }
     }
 
-    private @NotNull ParameterSpec createPropertyParameter(@NotNull Property property) {
+    private @NonNull ParameterSpec createPropertyParameter(@NonNull Property property) {
+        var nullityAnnotation = Nullity.getNullityAnnotation(property);
         ParameterSpec.Builder builder = ParameterSpec.builder(
-                configurationClassNameGenerator.publicPropertyClassName(property),
+                configurationClassNameGenerator.publicPropertyClassName(property)
+                        .annotated(AnnotationSpec.builder(nullityAnnotation).build()),
                 property.name()
         ).addModifiers(Modifier.FINAL);
 
-        if (property.settings().isNullable()) {
-            builder.addAnnotation(AnnotationSpec.builder(Nullable.class).build());
-        } else {
-            builder.addAnnotation(AnnotationSpec.builder(NotNull.class).build());
-        }
 
         return builder.build();
     }
 
-
-    private Optional<ClassName> addInnerDefaultMethodImpl(@NotNull TypeSpec.Builder typeSpecBuilder, @NotNull AbstractConfigStructure ast) {
+    private Optional<ClassName> addInnerDefaultMethodImpl(TypeSpec.@NonNull Builder typeSpecBuilder, @NonNull AbstractConfigStructure ast) {
         if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
             return Optional.empty(); // nothing to do
         }

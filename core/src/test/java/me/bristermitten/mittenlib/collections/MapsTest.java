@@ -88,6 +88,7 @@ class MapsTest {
         assertEquals(3, map.get("c"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testImmutabilityOperations() {
         Map<String, Integer> map = Maps.of("key", 42);
@@ -117,12 +118,14 @@ class MapsTest {
         assertThrows(UnsupportedOperationException.class, entrySet::clear);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullKeyThrows() {
         assertThrows(NullPointerException.class, () -> Maps.of(null, 1));
         assertThrows(NullPointerException.class, () -> Maps.of("a", 1, null, 2));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullValueThrows() {
         assertThrows(NullPointerException.class, () -> Maps.of("a", null));
@@ -188,10 +191,12 @@ class MapsTest {
 
         Map<String, Integer> ourMap = Maps.of(entries);
 
+        //noinspection DataFlowIssue
         assertThrows(UnsupportedOperationException.class, () -> ourMap.put("newKey", 999));
 
         if (!ourMap.isEmpty()) {
             String firstKey = ourMap.keySet().iterator().next();
+            //noinspection DataFlowIssue
             assertThrows(UnsupportedOperationException.class, () -> ourMap.remove(firstKey));
         }
 
@@ -249,10 +254,7 @@ class MapsTest {
 
     @Property
     void iteratingEntrySetCoversAllEntries(@ForAll Map<String, Integer> standardMap) {
-        List<Entry<String, Integer>> entries = new ArrayList<>(standardMap.entrySet());
-        Entry<String, Integer>[] entryArray = entries.toArray(new Entry[0]);
-
-        Map<String, Integer> ourMap = Maps.of(entryArray);
+        Map<String, Integer> ourMap = Maps.of(standardMap.entrySet());
 
         Set<String> keysFromIteration = new HashSet<>();
         Set<Integer> valuesFromIteration = new HashSet<>();
@@ -268,10 +270,7 @@ class MapsTest {
 
     @Property
     void containsEntryWorksCorrectly(@ForAll Map<String, Integer> standardMap) {
-        List<Entry<String, Integer>> entries = new ArrayList<>(standardMap.entrySet());
-        Entry<String, Integer>[] entryArray = entries.toArray(new Entry[0]);
-
-        Map<String, Integer> ourMap = Maps.of(entryArray);
+        Map<String, Integer> ourMap = Maps.of(standardMap.entrySet());
         Set<Entry<String, Integer>> entrySet = ourMap.entrySet();
 
         // All entries from standard map should be contained in our entry set
@@ -297,6 +296,7 @@ class MapsTest {
         Map<String, Integer> ourMap = Maps.of(entries);
 
         Map<String, Integer> collectedMap = new HashMap<>();
+        //noinspection UseBulkOperation testing that forEach works correctly
         ourMap.forEach(collectedMap::put);
 
         assertEquals(standardMap, collectedMap);

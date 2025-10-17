@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -339,11 +338,14 @@ public interface Result<T> {
     T recover(Function<Exception, T> exceptionHandler);
 
     /**
+     * Checks if the {@link Result} is a success.
+     *
      * @return If the {@link Result} is {@link Ok}. This should be equivalent to {@code !isFail()}
      */
     boolean isSuccess();
 
     /**
+     * Checks if the {@link Result} is a failure.
      * @return If the {@link Result} is {@link Fail}. This should be equivalent to {@code !isSuccess()}
      */
     boolean isFailure();
@@ -414,7 +416,7 @@ public interface Result<T> {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (!(o instanceof Fail)) return false;
             Fail<?, ?> fail = (Fail<?, ?>) o;
             return exception.equals(fail.exception);
         }
@@ -495,7 +497,7 @@ public interface Result<T> {
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+            if (!(obj instanceof Ok)) return false;
             Ok<?> ok = (Ok<?>) obj;
             return Objects.equals(value, ok.value);
         }

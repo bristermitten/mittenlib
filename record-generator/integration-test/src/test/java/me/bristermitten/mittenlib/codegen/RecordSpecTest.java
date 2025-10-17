@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RecordTest {
+public class RecordSpecTest {
 
     @Test
     void test() {
@@ -23,7 +23,7 @@ public class RecordTest {
         assertEquals(new TestRecord("newTest", 42), newRecord);
     }
 
-    @Record
+    @RecordSpec
     interface TestRecordSpec {
         @PrimaryConstructor
         TestRecordSpec create(String a, int b);

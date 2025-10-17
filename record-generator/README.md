@@ -6,8 +6,9 @@ unions.
 # Records Example
 
 ```java
-import me.bristermitten.mittenlib.codegen.Record;
-@Record
+import me.bristermitten.mittenlib.codegen.RecordSpec;
+
+@RecordSpec
 interface TestRecordSpec {
     TestRecordSpec create(String a, int b);
 }
@@ -38,8 +39,9 @@ Additionally, the generated class will have standard implementations of `equals`
 We can also emulate sealed classes / discriminated unions with the `@Union` annotation:
 
 ```java
-import me.bristermitten.mittenlib.codegen.Union;
-@Union
+import me.bristermitten.mittenlib.codegen.UnionSpec;
+
+@UnionSpec
 interface TestUnionSpec {
     TestUnionSpec Child1();
 
@@ -88,8 +90,9 @@ It is recommended to follow this naming convention where possible, however, the 
 also support a `name` parameter to specify a custom class name.
 
 ```java
-import me.bristermitten.mittenlib.codegen.Record;
-@Record(name = "CustomName")
+import me.bristermitten.mittenlib.codegen.RecordSpec;
+
+@RecordSpec(name = "CustomName")
 interface NoSpecNeeded {
     // blah
 }
@@ -103,10 +106,10 @@ By default, _nominal_ pattern matching is used, meaning that the `match` and `ma
 types as parameters. However, you can also use _structural_ pattern matching using the `@MatchStrategy` annotation:
 
 ```java
-import me.bristermitten.mittenlib.codegen.Union;
+import me.bristermitten.mittenlib.codegen.UnionSpec;
 import me.bristermitten.mittenlib.codegen.MatchStrategy;
 import me.bristermitten.mittenlib.codegen.MatchStrategies;
-@Union
+@UnionSpec
 @MatchStrategy(MatchStrategies.STRUCTURAL)
 interface TestUnionSpec {
     TestUnionSpec Child1();

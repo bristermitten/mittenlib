@@ -44,6 +44,7 @@ public abstract class ExtraTypeAdapter<T> extends TypeAdapter<T> {
     }
 
     /**
+     * Get the type that this {@link ExtraTypeAdapter} is for.
      * @return The type that this {@link ExtraTypeAdapter} is for.
      */
 

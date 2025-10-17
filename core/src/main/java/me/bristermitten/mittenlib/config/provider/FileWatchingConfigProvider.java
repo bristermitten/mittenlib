@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A {@link ConfigProvider} that watches a file for changes, reloading the config when the file changes
@@ -29,10 +30,14 @@ public class FileWatchingConfigProvider<T> implements ConfigProvider<T>, Wrappin
         final Path path = delegate.path()
                 .orElseThrow(() -> new IllegalArgumentException("FileWatchingConfigProvider requires delegate.path() to be present"));
 
-        watcherService.addWatcher(new FileWatcher(
-                path,
-                pathWatchEvent -> delegate.invalidate()
-        ));
+        try {
+            watcherService.addWatcher(new FileWatcher(
+                    path,
+                    pathWatchEvent -> delegate.invalidate()
+            )).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

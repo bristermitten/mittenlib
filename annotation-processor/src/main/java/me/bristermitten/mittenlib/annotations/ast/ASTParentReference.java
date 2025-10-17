@@ -1,17 +1,17 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
 import com.squareup.javapoet.ClassName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
+
 
 /**
  * List of hierarchical names
  *
- * @param parentClassName
- * @param parent
+ * @param parentClassName the class name of the parent
+ * @param parent          parent reference, null if this is the root
  */
 public record ASTParentReference(
-        @NotNull ClassName parentClassName,
+        ClassName parentClassName,
         @Nullable ASTParentReference parent
 ) {
 }

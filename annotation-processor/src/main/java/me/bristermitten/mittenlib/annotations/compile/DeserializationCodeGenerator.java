@@ -20,8 +20,7 @@ import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Element;
@@ -43,7 +42,6 @@ public class DeserializationCodeGenerator {
      * For example, a method to deserialize a field called "test" would be called deserializeTest
      */
     public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
-    public static final TypeName MAP_STRING_OBJ_NAME = ParameterizedTypeName.get(Map.class, String.class, Object.class);
     public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
@@ -132,23 +130,26 @@ public class DeserializationCodeGenerator {
     /**
      * Creates a deserialization method for a specific field in a DTO class.
      *
-     * @param dtoType  The DTO class type
-     * @param property The field element to create a deserialization method for
+     * @param dtoType     The DTO class type
+     * @param property    The field element to create a deserialization method for
+     * @param propertyAST The AST representation of the property
+     * @param daoName     The DAO class name, if applicable (can be null)
      * @return A method spec for the deserialization method
      */
 
-    public @NotNull MethodSpec createDeserializeMethodFor(@NotNull TypeElement dtoType,
-                                                          @NotNull AbstractConfigStructure propertyAST,
-                                                          @NotNull Property property,
-                                                          @Nullable ClassName daoName) {
+    public MethodSpec createDeserializeMethodFor(TypeElement dtoType,
+                                                 AbstractConfigStructure propertyAST,
+                                                 Property property,
+                                                 @Nullable ClassName daoName) {
         TypeMirror elementType = property.propertyType();
+        TypeName elementTypeName = TypeName.get(elementType).withoutAnnotations();
         var elementResultType = configurationClassNameGenerator.publicPropertyClassName(
                 typesUtil.getBoxedType(property.propertyType())
         );
 
-        final MethodSpec.Builder builder = createMethodBuilder(dtoType, property, elementResultType, propertyAST, daoName);
-        setupInitialStatements(builder, propertyAST, property, elementType);
-        handleNullChecks(builder, property, dtoType, elementType);
+        final MethodSpec.Builder builder = createDeserializeMethodBuilder(property, elementResultType, daoName);
+        setupInitialStatements(builder, propertyAST, property);
+        handleNullChecks(builder, property, dtoType, elementTypeName);
 
         TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
         boolean isGenericType = wrappedElementType.hasTypeArguments();
@@ -173,11 +174,9 @@ public class DeserializationCodeGenerator {
         return builder.build();
     }
 
-    private MethodSpec.Builder createMethodBuilder(@NotNull TypeElement dtoType,
-                                                   @NotNull Property property,
-                                                   @NotNull TypeName elementResultType,
-                                                   @NotNull AbstractConfigStructure propertyAST,
-                                                   @Nullable ClassName daoName) {
+    private MethodSpec.Builder createDeserializeMethodBuilder(Property property,
+                                                              TypeName elementResultType,
+                                                              @Nullable ClassName daoName) {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
@@ -191,7 +190,9 @@ public class DeserializationCodeGenerator {
         return builder;
     }
 
-    private void setupInitialStatements(MethodSpec.Builder builder, @NotNull AbstractConfigStructure propertyAST, @NotNull Property property, TypeMirror elementType) {
+    private void setupInitialStatements(MethodSpec.Builder builder,
+                                        AbstractConfigStructure propertyAST,
+                                        Property property) {
         builder.addStatement("$T $$data = context.getData()", DataTree.class);
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
@@ -208,8 +209,10 @@ public class DeserializationCodeGenerator {
         }
     }
 
-    private void handleNullChecks(MethodSpec.Builder builder, @NotNull Property property,
-                                  @NotNull TypeElement dtoType, TypeMirror elementType) {
+    private void handleNullChecks(MethodSpec.Builder builder,
+                                  Property property,
+                                  TypeElement dtoType,
+                                  TypeName elementTypeName) {
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
 
@@ -221,14 +224,19 @@ public class DeserializationCodeGenerator {
         } else {
             builder.beginControlFlow("if ($L == null)", fromMapName);
             builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S))",
-                    Result.class, ConfigLoadingErrors.class, property.name(), elementType, dtoType, key);
+                    Result.class,
+                    ConfigLoadingErrors.class,
+                    property.name(),
+                    elementTypeName,
+                    dtoType,
+                    key);
             builder.endControlFlow();
         }
     }
 
-    private @NotNull Optional<MethodSpec> handleGenericType(MethodSpec.Builder builder, @NotNull Property property,
-                                                            TypeMirrorWrapper wrappedElementType,
-                                                            TypeElementWrapper elementType) {
+    private Optional<MethodSpec> handleGenericType(MethodSpec.Builder builder, Property property,
+                                                   TypeMirrorWrapper wrappedElementType,
+                                                   TypeElementWrapper elementType) {
         /*
          This is quite messy, but it's the only real way to solve this problem:
          When the type is a List<T> or Map<_, T> (where T is a @Config type)
@@ -262,9 +270,9 @@ public class DeserializationCodeGenerator {
         }
     }
 
-    private @NotNull Optional<MethodSpec> handleListType(MethodSpec.Builder builder,
-                                                         TypeMirrorWrapper wrappedElementType,
-                                                         String fromMapName) {
+    private Optional<MethodSpec> handleListType(MethodSpec.Builder builder,
+                                                TypeMirrorWrapper wrappedElementType,
+                                                String fromMapName) {
         var listType = wrappedElementType.getTypeArguments().getFirst();
         Optional<CustomDeserializerInfo> optional = customDeserializers.getCustomDeserializer(listType);
 
@@ -282,20 +290,15 @@ public class DeserializationCodeGenerator {
             var deserializeCodeBlock = CodeBlock.of("$T::$L", listTypeName,
                     methodNames.getDeserializeMethodName(listTypeName));
 
-            var statement = CodeBlock.builder()
-                    .add("return $T.deserializeList($L, context, ", CollectionsUtils.class, fromMapName)
-                    .add(deserializeCodeBlock)
-                    .add(")")
-                    .build();
-            builder.addStatement(statement);
+            builder.addStatement("return $T.deserializeList($L, context, $L)", CollectionsUtils.class, fromMapName, deserializeCodeBlock);
             return Optional.of(builder.build());
         }
 
         return Optional.empty();
     }
 
-    private @NotNull Optional<MethodSpec> handleMapType(MethodSpec.Builder builder,
-                                                        TypeMirrorWrapper wrappedElementType, String fromMapName) {
+    private Optional<MethodSpec> handleMapType(MethodSpec.Builder builder,
+                                               TypeMirrorWrapper wrappedElementType, String fromMapName) {
         var arguments = wrappedElementType.getTypeArguments();
         var keyType = arguments.get(0);
         var valueType = arguments.get(1);
@@ -324,8 +327,8 @@ public class DeserializationCodeGenerator {
         return Optional.empty();
     }
 
-    private boolean handleNonGenericType(MethodSpec.Builder builder, @NotNull Property property,
-                                         @NotNull TypeElement dtoType, TypeMirror elementType,
+    private boolean handleNonGenericType(MethodSpec.Builder builder, Property property,
+                                         TypeElement dtoType, TypeMirror elementType,
                                          TypeMirrorWrapper wrappedElementType) {
         /*
          Construct a simple check that does
@@ -364,7 +367,7 @@ public class DeserializationCodeGenerator {
         return false;
     }
 
-    private void handleDirectTypeMatch(MethodSpec.Builder builder, @NotNull Property property,
+    private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,
                                        String fromMapName, TypeName safeType) {
         // if there's a default value then there's a chance that field instanceof <PropertyType>
         // so we check this first as an easy short-circuit
@@ -407,7 +410,7 @@ public class DeserializationCodeGenerator {
         return false;
     }
 
-    private void handleEnumType(MethodSpec.Builder builder, @NotNull Property property,
+    private void handleEnumType(MethodSpec.Builder builder, Property property,
                                 String fromMapName, TypeName safeType) {
         // try to load it as a string
         if (property.settings().hasDefaultValue()) {
@@ -424,7 +427,7 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private void handleConfigType(MethodSpec.Builder builder, @NotNull TypeElement dtoType,
+    private void handleConfigType(MethodSpec.Builder builder, TypeElement dtoType,
                                   TypeMirror elementType, String fromMapName) {
         TypeName configClassName = getConfigClassName(elementType, dtoType);
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
@@ -434,8 +437,8 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private void handleInvalidPropertyType(MethodSpec.Builder builder, @NotNull Property property,
-                                           @NotNull TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+                                           TypeElement dtoType, TypeMirror elementType, String fromMapName) {
         if (!property.settings().hasDefaultValue()) {
             return; // no need to check this
         }
@@ -451,7 +454,7 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private void addEnumDeserialisation(@NotNull Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
+    private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
         switch (property.settings().enumParsingScheme()) {
             case EXACT_MATCH -> builder.addStatement("$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
                     safeType,
@@ -483,8 +486,8 @@ public class DeserializationCodeGenerator {
      *
      * @param typeSpecBuilder The builder for the config class
      */
-    public void createDeserializeMethods(@NotNull TypeSpec.Builder typeSpecBuilder,
-                                         @NotNull AbstractConfigStructure ast,
+    public void createDeserializeMethods(TypeSpec.Builder typeSpecBuilder,
+                                         AbstractConfigStructure ast,
                                          @Nullable ClassName daoName
     ) {
 
@@ -571,7 +574,7 @@ public class DeserializationCodeGenerator {
      * @param source     The source element (can be null)
      * @return The config class name
      */
-    private @NotNull TypeName getConfigClassName(@NotNull TypeMirror typeMirror, Element source) {
+    private TypeName getConfigClassName(TypeMirror typeMirror, @Nullable Element source) {
         return configurationClassNameGenerator.getConfigClassName(typeMirror, source);
     }
 

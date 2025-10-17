@@ -85,6 +85,7 @@ dependencyResolutionManagement {
 			version("junit", "5.8.1")
 			library("junit-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
 			library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
+			library("junit-launcher", "org.junit.platform", "junit-platform-launcher").withoutVersion()
 
 			version("assertj", "3.27.3")
 			library("assertj-core", "org.assertj", "assertj-core").versionRef("assertj")
@@ -102,6 +103,8 @@ dependencyResolutionManagement {
 			// Other Libraries
 			library("javapoet", "com.squareup", "javapoet").version("1.13.0")
 			library("jetbrains-annotations", "org.jetbrains", "annotations").version("23.0.0")
+			//jspecify
+			library("jspecify", "org.jspecify", "jspecify").version("1.0.0")
 			library("acf-paper", "co.aikar", "acf-paper").version("0.5.1-SNAPSHOT")
 			library("placeholderapi", "me.clip", "placeholderapi").version("2.11.6")
 			version("aptk", "0.22.5")

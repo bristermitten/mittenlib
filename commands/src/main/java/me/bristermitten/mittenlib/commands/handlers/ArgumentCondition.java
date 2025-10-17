@@ -19,6 +19,8 @@ public interface ArgumentCondition<T> extends CommandConditions.ParameterConditi
     @NotNull String id();
 
     /**
+     * The type of the argument that this condition applies to.
+     *
      * @return The type of the argument that this condition applies to.
      */
 

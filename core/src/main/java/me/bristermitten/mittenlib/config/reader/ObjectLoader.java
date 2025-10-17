@@ -3,7 +3,6 @@ package me.bristermitten.mittenlib.config.reader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
-import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Reader;
@@ -39,7 +38,7 @@ public interface ObjectLoader {
     @NotNull Result<@NotNull DataTree> load(@NotNull final Reader source);
 
     @NotNull
-    default Result<@NotNull DataTree> load(@NotNull @Language("yaml") final String source) {
+    default Result<@NotNull DataTree> load(@NotNull final String source) {
         return Result.tryWithResources(
                 (SafeSupplier<Reader>) () -> new StringReader(source),
                 this::load);

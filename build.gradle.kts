@@ -1,3 +1,5 @@
+import net.ltgt.gradle.errorprone.ErrorPronePlugin
+import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -6,7 +8,7 @@ plugins {
 	`java-library`
 	`maven-publish`
 	id("io.freefair.aggregate-javadoc") version "6.3.0"
-
+	id("net.ltgt.errorprone") version "+"
 }
 
 
@@ -31,10 +33,11 @@ subprojects {
 	apply<JavaPlugin>()
 	apply<JavaLibraryPlugin>()
 	apply<MavenPublishPlugin>()
+	apply<ErrorPronePlugin>()
 
 	val libs = rootProject.libs
 	group = "me.bristermitten"
-	version = "4.4.0-SNAPSHOT"
+	version = "4.5.0-SNAPSHOT"
 
 	java {
 		sourceCompatibility = JavaVersion.VERSION_1_8
@@ -55,6 +58,9 @@ subprojects {
 		testImplementation(libs.mockito.core)
 		testImplementation(libs.assertj.core)
 		testRuntimeOnly(libs.junit.engine)
+		testRuntimeOnly(libs.junit.launcher)
+
+		errorprone("com.google.errorprone:error_prone_core:+")
 	}
 
 	tasks.test {
@@ -68,7 +74,8 @@ subprojects {
 			showStandardStreams = true
 			events = setOf(
 				TestLogEvent.FAILED,
-				TestLogEvent.PASSED
+				TestLogEvent.PASSED,
+				TestLogEvent.SKIPPED
 			)
 			exceptionFormat = TestExceptionFormat.FULL
 		}
@@ -78,6 +85,8 @@ subprojects {
 	tasks.withType<JavaCompile> {
 		options.encoding = "UTF-8"
 		options.isFork = true
+
+		options.errorprone.disableWarningsInGeneratedCode.set(true)
 		options.setIncremental(true)
 	}
 	tasks.javadoc {

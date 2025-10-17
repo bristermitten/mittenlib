@@ -12,9 +12,7 @@ import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
-import me.bristermitten.mittenlib.codegen.record.RecordSpec;
 import me.bristermitten.mittenlib.codegen.union.UnionGenerator;
-import me.bristermitten.mittenlib.codegen.union.UnionSpec;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -63,9 +61,9 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
     private static ClassName getSpecName(TypeElement spec) {
         TypeElementWrapper wrapped = TypeElementWrapper.wrap(spec);
-        var explicitName = wrapped.getAnnotation(Record.class)
-                .map(Record::name)
-                .or(() -> wrapped.getAnnotation(Union.class).map(Union::name))
+        var explicitName = wrapped.getAnnotation(RecordSpec.class)
+                .map(RecordSpec::name)
+                .or(() -> wrapped.getAnnotation(UnionSpec.class).map(UnionSpec::name))
                 .filter(name -> !name.isBlank());
 
         var recordSpecName = ClassName.get(spec);
@@ -84,7 +82,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return createSupportedAnnotationSet(me.bristermitten.mittenlib.codegen.Record.class, Union.class);
+        return createSupportedAnnotationSet(RecordSpec.class, UnionSpec.class);
     }
 
     @Override
@@ -108,10 +106,10 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
             message = "Record ${0} must have a single constructor!"
     )
     private boolean processRecords(RoundEnvironment roundEnv) {
-        var records = new ArrayList<RecordSpec>();
+        var records = new ArrayList<me.bristermitten.mittenlib.codegen.record.RecordSpec>();
 
         // Process each annotated record class
-        for (Element element : roundEnv.getElementsAnnotatedWith(Record.class)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(RecordSpec.class)) {
             ElementWrapper<Element> wrap = ElementWrapper.wrap(element);
             wrap
                     .validateWithFluentElementValidator()
@@ -138,7 +136,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
             ClassName recordSpecName = getSpecName(typeElement.unwrap());
 
-            var recordSpec = new RecordSpec(
+            var recordSpec = new me.bristermitten.mittenlib.codegen.record.RecordSpec(
                     ClassName.get(typeElement.unwrap()),
                     recordSpecName,
                     constructor
@@ -161,9 +159,9 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     }
 
     private boolean processUnions(RoundEnvironment roundEnv) {
-        var unions = new ArrayList<UnionSpec>();
+        var unions = new ArrayList<me.bristermitten.mittenlib.codegen.union.UnionSpec>();
         // Process each annotated record class
-        for (Element element : roundEnv.getElementsAnnotatedWith(Union.class)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(UnionSpec.class)) {
             ElementWrapper<Element> wrap = ElementWrapper.wrap(element);
             wrap
                     .validateWithFluentElementValidator()
@@ -193,7 +191,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
                     .map(MatchStrategy::value)
                     .orElse(MatchStrategies.NOMINAL);
 
-            var recordSpec = new UnionSpec(
+            var recordSpec = new me.bristermitten.mittenlib.codegen.union.UnionSpec(
                     ClassName.get(typeElement.unwrap()),
                     recordSpecName,
                     matchStrategy,
@@ -207,7 +205,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
         }
 
         UnionGenerator generator = new UnionGenerator();
-        for (UnionSpec record : unions) {
+        for (me.bristermitten.mittenlib.codegen.union.UnionSpec record : unions) {
             var generate = generator.generate(record);
             try {
                 generate.writeTo(processingEnv.getFiler());

@@ -27,6 +27,8 @@ public class Configuration<T> {
     }
 
     /**
+     * Returns the name of the file to load.
+     *
      * @return the name of the file to load
      */
 
@@ -35,6 +37,8 @@ public class Configuration<T> {
     }
 
     /**
+     * Returns the type to deserialize to.
+     *
      * @return the type to deserialize to
      */
     public Class<T> getType() {
@@ -42,6 +46,8 @@ public class Configuration<T> {
     }
 
     /**
+     * Returns the function to use to deserialize the data.
+     *
      * @return the function to use to deserialize the data
      */
     @Nullable

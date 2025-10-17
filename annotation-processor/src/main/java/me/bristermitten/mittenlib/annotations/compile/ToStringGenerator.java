@@ -1,10 +1,9 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
@@ -17,7 +16,8 @@ import java.util.List;
  */
 public class ToStringGenerator {
 
-    @Inject public ToStringGenerator() {
+    @Inject
+    public ToStringGenerator() {
     }
 
     /**
@@ -26,11 +26,11 @@ public class ToStringGenerator {
      * "ClassName{property1=value1, property2=value2, ...}"
      *
      * @param properties The list of properties to include in the toString method
-     * @param className The name of the class for which the toString method is being generated
+     * @param className  The name of the class for which the toString method is being generated
      * @return A MethodSpec representing the generated toString method
      */
-    public @NotNull MethodSpec generateToString(@NotNull List<Property> properties,
-                                                ClassName className) {
+    public MethodSpec generateToString(List<Property> properties,
+                                       ClassName className) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("toString")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
