@@ -68,7 +68,7 @@ public class SpigotEventHandler implements Listener {
     private <Msg> void processSession(Player player, SpigotGUIView<Msg> view, int slot) {
         // Find the GUI session for this player
 
-        Optional<GUISession<Object, Msg, Command<Object>, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>>> session =
+        Optional<GUISession<Object, Msg, Command<Msg>, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>>> session =
                 guiManager.getSessionByViewer(
                         new SpigotInventoryViewer<>(player)
                 );

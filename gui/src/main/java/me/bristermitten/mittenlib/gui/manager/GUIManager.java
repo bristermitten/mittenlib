@@ -26,7 +26,7 @@ public interface GUIManager {
      * @param <Viewer> the viewer type
      * @return a unique session ID for this GUI instance
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     SessionID<Model, Msg, V, Viewer> startSession(GUIBase<Model, Msg, V, Cmd> gui, Viewer viewer);
 
     /**
@@ -36,7 +36,7 @@ public interface GUIManager {
      * @param command   the command to send
      * @return true if the command was sent successfully, false if the session doesn't exist
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command);
 
     /**
@@ -45,7 +45,7 @@ public interface GUIManager {
      * @param sessionId the session ID to close
      * @return true if the session was closed, false if it didn't exist
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId);
 
     /**
@@ -54,7 +54,7 @@ public interface GUIManager {
      * @param sessionId the session ID
      * @return the session if it exists and is active
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSession(SessionID<Model, Msg, V, Viewer> sessionId);
 
     /**
@@ -63,7 +63,7 @@ public interface GUIManager {
      * @param viewer the viewer to search for
      * @return the session if found
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSessionByViewer(Viewer viewer);
 
     /**

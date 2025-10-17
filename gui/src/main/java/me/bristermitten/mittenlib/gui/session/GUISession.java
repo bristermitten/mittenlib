@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Represents an active GUI session with state management and event handling.
  * Follows the Elm architecture pattern with immutable state updates.
  */
-public class GUISession<Model, Msg, Cmd extends Command<Model>, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
+public class GUISession<Model, Msg, Cmd extends Command<Msg>, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
 
     private final SessionID<Model, Msg, V, Viewer> sessionId;
     private final GUIBase<Model, Msg, V, Cmd> gui;

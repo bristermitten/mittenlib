@@ -33,9 +33,9 @@ public class DemoPlugin extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Bukkit.getScheduler().runTaskLater(this, () -> {
-            SpigotInventoryViewer<CounterCommand> viewer = new SpigotInventoryViewer<>(event.getPlayer());
+            SpigotInventoryViewer<CounterMessage> viewer = new SpigotInventoryViewer<>(event.getPlayer());
             GUIManager guiManager = injector.getInstance(GUIManager.class);
-            SessionID<Counter, CounterCommand, SpigotGUIView<CounterCommand>, SpigotInventoryViewer<CounterCommand>> sessionID = guiManager
+            SessionID<Counter, CounterMessage, SpigotGUIView<CounterMessage>, SpigotInventoryViewer<CounterMessage>> sessionID = guiManager
                     .startSession(counterGUI, viewer);
 
 

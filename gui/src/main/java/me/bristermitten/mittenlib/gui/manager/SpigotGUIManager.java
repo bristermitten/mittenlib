@@ -37,7 +37,7 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     SessionID<Model, Msg, V, Viewer> startSession(GUIBase<Model, Msg, V, Cmd> gui, Viewer viewer) {
 
         // Close any existing session for this viewer
@@ -65,7 +65,7 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command) {
 
         // we can't inline this line because type inference breaks :(
@@ -78,7 +78,7 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId) {
         GUISession<?, ?, ?, ?, ?> session = activeSessions.get(sessionId);
         if (session != null) {
@@ -91,7 +91,7 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSession(SessionID<Model, Msg, V, Viewer> sessionId) {
         //noinspection unchecked
         return Optional.ofNullable((GUISession<Model, Msg, Cmd, V, Viewer>) activeSessions.get(sessionId));
@@ -99,7 +99,7 @@ public class SpigotGUIManager implements GUIManager {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Msg>, Viewer extends InventoryViewer<Msg, V>>
     Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSessionByViewer(Viewer viewer) {
         SessionID sessionId = viewerToSession.get(viewer);
         if (sessionId != null) {

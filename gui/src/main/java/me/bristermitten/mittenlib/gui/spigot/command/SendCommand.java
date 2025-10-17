@@ -1,12 +1,12 @@
-package me.bristermitten.mittenlib.gui.spigot.message;
+package me.bristermitten.mittenlib.gui.spigot.command;
 
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 
-public class SendMessage<T> implements SpigotMessage<T> {
+public class SendCommand<T> implements SpigotCommand<T> {
     private final T value;
     private final String rawMessage;
 
-    public SendMessage(T value, String rawMessage) {
+    public SendCommand(T value, String rawMessage) {
         this.value = value;
         this.rawMessage = rawMessage;
     }

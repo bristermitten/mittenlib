@@ -3,10 +3,11 @@ package me.bristermitten.mittenlib.gui;
 import me.bristermitten.mittenlib.gui.spigot.InventoryButton;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUI;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
+import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommand;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class TestSpigotGUI extends SpigotGUI<Counter, CounterCommand> {
+public class TestSpigotGUI extends SpigotGUI<Counter, CounterMessage, Object> {
 
 
     @Override
@@ -15,28 +16,33 @@ public class TestSpigotGUI extends SpigotGUI<Counter, CounterCommand> {
     }
 
     @Override
-    public Counter update(Counter counter, CounterCommand counterCommand) {
-        return counterCommand.matchTo(
-                increment -> Counter.create(counter.value() + 1),
-                decrement -> Counter.create(counter.value() - 1),
-                setValue -> Counter.create(setValue.value())
-        );
+    public UpdateResult<Counter, CounterMessage, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
+        return null;
     }
 
+//    @Override
+//    public Counter update(Counter counter, CounterMessage counterCommand) {
+//        return counterCommand.matchTo(
+//                increment -> Counter.create(counter.value() + 1),
+//                decrement -> Counter.create(counter.value() - 1),
+//                setValue -> Counter.create(setValue.value())
+//        );
+//    }
+
     @Override
-    public SpigotGUIView<CounterCommand> render(Counter counter) {
-        return SpigotGUIView.<CounterCommand>create(9, "Counter GUI")
+    public SpigotGUIView<CounterMessage> render(Counter counter) {
+        return SpigotGUIView.<CounterMessage>create(9, "Counter GUI")
                 .withButton(0, new InventoryButton<>(
                         new ItemStack(Material.STONE),
-                        CounterCommand.Increment()
+                        CounterMessage.Increment()
                 ))
                 .withButton(1, new InventoryButton<>(
                         new ItemStack(Material.DIRT),
-                        CounterCommand.Decrement()
+                        CounterMessage.Decrement()
                 ))
                 .withButton(2, new InventoryButton<>(
                         new ItemStack(Material.GOLD_INGOT),
-                        CounterCommand.Set(42) // needs better parsing
+                        CounterMessage.Set(42) // needs better parsing
                 ));
     }
 

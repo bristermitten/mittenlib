@@ -1,8 +1,8 @@
-package me.bristermitten.mittenlib.gui.spigot.message;
+package me.bristermitten.mittenlib.gui.spigot.command;
 
 import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 
-public interface SpigotMessage<T> extends Command<T> {
+public interface SpigotCommand<T> extends Command<T> {
     T run(SpigotGUIView<?> view);
 }

@@ -7,7 +7,7 @@ public class GUIExecutor<Model,
         V extends View<Msg, V, Viewer>,
         Viewer extends InventoryViewer<Msg, V>,
         Msg,
-        Cmd extends me.bristermitten.mittenlib.gui.command.Command<Model>,
+        Cmd extends me.bristermitten.mittenlib.gui.command.Command<Msg>,
         GUI extends GUIBase<Model, Msg, V, Cmd>> {
 
     private final GUI gui;
@@ -28,7 +28,7 @@ public class GUIExecutor<Model,
             if (command == null) {
                 break; // Exit if no command is received
             }
-            Cmd cmd = gui.update(model, command);
+            UpdateResult<Model, Msg, Cmd> cmd = gui.update(model, command);
 //            model = gui.update(model, command); // TODO
             view = gui.render(model);
         }

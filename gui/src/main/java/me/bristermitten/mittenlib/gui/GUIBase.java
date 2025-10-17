@@ -10,11 +10,11 @@ import me.bristermitten.mittenlib.gui.command.Command;
  * @param <View>  the type of view that renders the model and waits for commands
  * @param <Cmd>   the type of commands that can be sent to perform side effects
  */
-public interface GUIBase<Model, Msg, View, Cmd extends Command<Model>> {
+public interface GUIBase<Model, Msg, View, Cmd extends Command<Msg>> {
 
     Model init();
 
-    Cmd update(Model model, Msg message);
+    UpdateResult<Model, Msg, Cmd> update(Model model, Msg message);
 
     View render(Model model);
 }
