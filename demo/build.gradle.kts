@@ -1,7 +1,7 @@
 import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
-	id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 	id("com.gradleup.shadow") version "8.3.8"
 
 }
@@ -30,12 +30,12 @@ tasks.withType<RunServer> {
 	javaLauncher = javaToolchains.launcherFor {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
-	jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+//	jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 
 	minecraftVersion("1.8.8")
 	downloadPlugins {
 		url("https://ci.viaversion.com/job/ViaVersion/1180/artifact/build/libs/ViaVersion-5.4.1.jar")
-		url("https://www.spigotmc.org/resources/vault.34315/download?version=344916")
+//		url("https://www.spigotmc.org/resources/vault.34315/download?version=344916")
 		url("https://github.com/EssentialsX/Essentials/releases/download/2.21.1/EssentialsX-2.21.1.jar")
 	}
 }
