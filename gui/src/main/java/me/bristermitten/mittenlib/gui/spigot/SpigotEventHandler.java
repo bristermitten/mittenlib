@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.gui.spigot;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.manager.GUIManager;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import org.bukkit.entity.Player;
@@ -64,9 +65,10 @@ public class SpigotEventHandler implements Listener {
                 (SpigotGUIView<Object>) guiView.get(), slot);
     }
 
-    private <Command> void processSession(Player player, SpigotGUIView<Command> view, int slot) {
+    private <Msg> void processSession(Player player, SpigotGUIView<Msg> view, int slot) {
         // Find the GUI session for this player
-        Optional<GUISession<Object, Command, SpigotGUIView<Command>, SpigotInventoryViewer<Command>>> session =
+
+        Optional<GUISession<Object, Msg, Command<Object>, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>>> session =
                 guiManager.getSessionByViewer(
                         new SpigotInventoryViewer<>(player)
                 );
@@ -75,15 +77,15 @@ public class SpigotEventHandler implements Listener {
         }
         // Get the button for this slot
 
-        Optional<? extends InventoryButton<Command>> button = view.getButton(slot);
+        Optional<? extends InventoryButton<Msg>> button = view.getButton(slot);
 
         if (!button.isPresent()) {
             return;
         }
 
         // Send the command to the session
-        Command command = button.get().getCommand();
-        guiManager.sendCommand(session.get().getSessionId(), command);
+        Msg command = button.get().getMessage();
+        guiManager.sendMessage(session.get().getSessionId(), command);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -102,7 +104,7 @@ public class SpigotEventHandler implements Listener {
         }
 
         // Find and close the GUI session for this player
-        Optional<GUISession<Object, Object, SpigotGUIView<Object>, SpigotInventoryViewer<Object>>> session = guiManager.getSessionByViewer(
+        Optional<GUISession<Object, Object, Command<Object>, SpigotGUIView<Object>, SpigotInventoryViewer<Object>>> session = guiManager.getSessionByViewer(
                 new SpigotInventoryViewer<>(player)
         );
 

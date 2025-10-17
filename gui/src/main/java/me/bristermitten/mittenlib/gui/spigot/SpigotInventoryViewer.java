@@ -3,7 +3,7 @@ package me.bristermitten.mittenlib.gui.spigot;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import org.bukkit.entity.Player;
 
-public class SpigotInventoryViewer<C> implements InventoryViewer<C, SpigotGUIView<C>> {
+public class SpigotInventoryViewer<Msg> implements InventoryViewer<Msg, SpigotGUIView<Msg>> {
     private final Player player;
 
     public SpigotInventoryViewer(Player player) {
@@ -11,7 +11,7 @@ public class SpigotInventoryViewer<C> implements InventoryViewer<C, SpigotGUIVie
     }
 
     @Override
-    public void display(SpigotGUIView<C> view) {
+    public void display(SpigotGUIView<Msg> view) {
         player.openInventory(view.inventory);
     }
 

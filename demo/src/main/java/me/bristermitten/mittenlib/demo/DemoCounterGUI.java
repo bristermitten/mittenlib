@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.demo;
 
 import com.google.inject.Inject;
 import me.bristermitten.mittenlib.gui.factory.MinecraftGUIFactory;
-import me.bristermitten.mittenlib.gui.message.Message;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUI;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import me.bristermitten.mittenlib.gui.spigot.message.SpigotMessage;
@@ -29,12 +28,13 @@ public class DemoCounterGUI extends SpigotGUI<Counter, CounterCommand> {
 
     @Override
     public SpigotMessage<Counter> update(Counter counter, CounterCommand counterCommand) {
-        return counterCommand.matchTo(
-                increment -> Message.pure(counter.withValue(counter.value() + 1)),
-                decrement -> Message.pure(counter.withValue(counter.value() + 1)),
-                setValue -> Message.pure(counter.withValue(setValue.value())),
-                dipslay -> Message.pure(counter)
-        );
+        return null;
+//        return counterCommand.matchTo(
+//                increment -> Command.pure(counter.withValue(counter.value() + 1)),
+//                decrement -> Command.pure(counter.withValue(counter.value() + 1)),
+//                setValue -> Command.pure(counter.withValue(setValue.value())),
+//                dipslay -> Command.pure(counter)
+//        );
     }
 
     @Override

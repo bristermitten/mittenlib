@@ -2,16 +2,16 @@ package me.bristermitten.mittenlib.gui.spigot;
 
 import org.bukkit.inventory.ItemStack;
 
-public class InventoryButton<Command> {
+public class InventoryButton<Msg> {
     private final ItemStack itemStack;
-    private final Command command;
+    private final Msg command;
 
-    public InventoryButton(ItemStack itemStack, Command command) {
+    public InventoryButton(ItemStack itemStack, Msg command) {
         this.itemStack = itemStack;
         this.command = command;
     }
 
-    public Command getCommand() {
+    public Msg getMessage() {
         return command;
     }
 

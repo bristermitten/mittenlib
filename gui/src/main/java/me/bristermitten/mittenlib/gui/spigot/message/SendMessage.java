@@ -13,6 +13,6 @@ public class SendMessage<T> implements SpigotMessage<T> {
 
     @Override
     public T run(SpigotGUIView<?> view) {
-
+        return null;
     }
 }

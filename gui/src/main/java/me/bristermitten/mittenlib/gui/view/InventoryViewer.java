@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.gui.view;
 
-public interface InventoryViewer<Command,
-        V extends View<Command, V, ? extends InventoryViewer<Command, V>>> {
+public interface InventoryViewer<Msg,
+        V extends View<Msg, V, ? extends InventoryViewer<Msg, V>>> {
     void display(V view);
 }

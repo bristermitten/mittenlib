@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.gui.manager;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.bristermitten.mittenlib.gui.GUIBase;
+import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.event.EventBus;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
@@ -24,7 +25,7 @@ public class SpigotGUIManager implements GUIManager {
 
     private final EventBus eventBus;
     private final InventoryStorage inventoryStorage;
-    private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?>> activeSessions;
+    private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?, ?>> activeSessions;
     private final Map<Object, SessionID<?, ?, ?, ?>> viewerToSession;
 
     @Inject
@@ -36,16 +37,16 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    SessionID<Model, Command, V, Viewer> startSession(GUIBase<Model, Command, V> gui, Viewer viewer) {
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    SessionID<Model, Msg, V, Viewer> startSession(GUIBase<Model, Msg, V, Cmd> gui, Viewer viewer) {
 
         // Close any existing session for this viewer
-        Optional<GUISession<Model, Command, V, Viewer>> existingSession = getSessionByViewer(viewer);
+        Optional<GUISession<Model, Msg, Cmd, V, Viewer>> existingSession = getSessionByViewer(viewer);
         existingSession.ifPresent(session -> closeSession(session.getSessionId()));
 
         // Create new session
-        SessionID<Model, Command, V, Viewer> sessionId = new SessionID<>(UUID.randomUUID());
-        GUISession<Model, Command, V, Viewer> session = new GUISession<>(sessionId, gui, viewer, eventBus, inventoryStorage);
+        SessionID<Model, Msg, V, Viewer> sessionId = new SessionID<>(UUID.randomUUID());
+        GUISession<Model, Msg, Cmd, V, Viewer> session = new GUISession<>(sessionId, gui, viewer, eventBus, inventoryStorage);
 
         // Store session mappings
         activeSessions.put(sessionId, session);
@@ -64,9 +65,12 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>> boolean sendCommand(SessionID<Model, Command, V, Viewer> sessionId, Command command) {
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command) {
 
-        GUISession<Model, Command, V, Viewer> session = getSession(sessionId).orElse(null);
+        // we can't inline this line because type inference breaks :(
+        Optional<GUISession<Model, Msg, Cmd, V, Viewer>> session1 = getSession(sessionId);
+        GUISession<Model, Msg, Cmd, V, Viewer> session = session1.orElse(null);
         if (session != null && session.isActive()) {
             return session.processCommand(command);
         }
@@ -74,8 +78,9 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>> boolean closeSession(SessionID<Model, Command, V, Viewer> sessionId) {
-        GUISession<?, ?, ?, ?> session = activeSessions.get(sessionId);
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId) {
+        GUISession<?, ?, ?, ?, ?> session = activeSessions.get(sessionId);
         if (session != null) {
             session.close();
             activeSessions.remove(sessionId);
@@ -86,15 +91,16 @@ public class SpigotGUIManager implements GUIManager {
     }
 
     @Override
-    public <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>> Optional<GUISession<Model, Command, V, Viewer>> getSession(SessionID<Model, Command, V, Viewer> sessionId) {
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSession(SessionID<Model, Msg, V, Viewer> sessionId) {
         //noinspection unchecked
-        return Optional.ofNullable((GUISession<Model, Command, V, Viewer>) activeSessions.get(sessionId));
+        return Optional.ofNullable((GUISession<Model, Msg, Cmd, V, Viewer>) activeSessions.get(sessionId));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    Optional<GUISession<Model, Command, V, Viewer>> getSessionByViewer(Viewer viewer) {
+    public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSessionByViewer(Viewer viewer) {
         SessionID sessionId = viewerToSession.get(viewer);
         if (sessionId != null) {
             return getSession(sessionId);

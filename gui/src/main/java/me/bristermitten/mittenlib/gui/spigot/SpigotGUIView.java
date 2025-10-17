@@ -11,39 +11,39 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Map;
 import java.util.Optional;
 
-public class SpigotGUIView<Command> implements View<Command, SpigotGUIView<Command>, SpigotInventoryViewer<Command>> {
+public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>> {
     private final int size;
     private final String title;
 
-    private final @Unmodifiable MLImmutableMap<Integer, InventoryButton<Command>> buttons;
+    private final @Unmodifiable MLImmutableMap<Integer, InventoryButton<Msg>> buttons;
     Inventory inventory;
-    private final @Nullable Command onClose;
+    private final @Nullable Msg onClose;
 
-    public SpigotGUIView(int size, String title, @Unmodifiable Map<Integer, InventoryButton<Command>> buttons, @Nullable Command onClose) {
+    public SpigotGUIView(int size, String title, @Unmodifiable Map<Integer, InventoryButton<Msg>> buttons, @Nullable Msg onClose) {
         this.size = size;
         this.title = title;
         this.buttons = Maps.of(buttons.entrySet());
         this.onClose = onClose;
     }
 
-    public static <Command> SpigotGUIView<Command> create(int size, String title) {
+    public static <Msg> SpigotGUIView<Msg> create(int size, String title) {
         return new SpigotGUIView<>(size, title, Maps.of(), null);
     }
 
-    public SpigotGUIView<Command> withButton(int slot, InventoryButton<Command> button) {
+    public SpigotGUIView<Msg> withButton(int slot, InventoryButton<Msg> button) {
         return new SpigotGUIView<>(size, title, buttons.plus(slot, button), null);
     }
 
-    public SpigotGUIView<Command> onClose(@Nullable Command onClose) {
+    public SpigotGUIView<Msg> onClose(@Nullable Msg onClose) {
         return new SpigotGUIView<>(size, title, buttons, onClose);
     }
 
-    public Optional<InventoryButton<Command>> getButton(int slot) {
+    public Optional<InventoryButton<Msg>> getButton(int slot) {
         return Optional.ofNullable(buttons.get(slot));
     }
 
     @Override
-    public void display(SpigotInventoryViewer<Command> inventoryViewer) {
+    public void display(SpigotInventoryViewer<Msg> inventoryViewer) {
         Inventory inventory = Bukkit.createInventory(
                 null,
                 size,
@@ -64,7 +64,7 @@ public class SpigotGUIView<Command> implements View<Command, SpigotGUIView<Comma
     }
 
     @Override
-    public Command waitForCommand() {
+    public Msg waitForCommand() {
         return null;
     }
 }

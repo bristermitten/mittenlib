@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.gui.manager;
 
 import me.bristermitten.mittenlib.gui.GUIBase;
+import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
@@ -17,16 +18,16 @@ public interface GUIManager {
     /**
      * Creates and starts a new GUI session for the given viewer.
      *
-     * @param gui       the GUI implementation to run
-     * @param viewer    the viewer (e.g., player) who will interact with the GUI
-     * @param <Model>   the model type
-     * @param <Command> the command type
-     * @param <V>       the view type
-     * @param <Viewer>  the viewer type
+     * @param gui      the GUI implementation to run
+     * @param viewer   the viewer (e.g., player) who will interact with the GUI
+     * @param <Model>  the model type
+     * @param <Msg>    the message type
+     * @param <V>      the view type
+     * @param <Viewer> the viewer type
      * @return a unique session ID for this GUI instance
      */
-    <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    SessionID<Model, Command, V, Viewer> startSession(GUIBase<Model, Command, V> gui, Viewer viewer);
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    SessionID<Model, Msg, V, Viewer> startSession(GUIBase<Model, Msg, V, Cmd> gui, Viewer viewer);
 
     /**
      * Sends a command to an active GUI session.
@@ -35,8 +36,8 @@ public interface GUIManager {
      * @param command   the command to send
      * @return true if the command was sent successfully, false if the session doesn't exist
      */
-    <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    boolean sendCommand(SessionID<Model, Command, V, Viewer> sessionId, Command command);
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command);
 
     /**
      * Closes a GUI session and cleans up resources.
@@ -44,8 +45,8 @@ public interface GUIManager {
      * @param sessionId the session ID to close
      * @return true if the session was closed, false if it didn't exist
      */
-    <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    boolean closeSession(SessionID<Model, Command, V, Viewer> sessionId);
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId);
 
     /**
      * Gets an active GUI session by ID.
@@ -53,8 +54,8 @@ public interface GUIManager {
      * @param sessionId the session ID
      * @return the session if it exists and is active
      */
-    <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    Optional<GUISession<Model, Command, V, Viewer>> getSession(SessionID<Model, Command, V, Viewer> sessionId);
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSession(SessionID<Model, Msg, V, Viewer> sessionId);
 
     /**
      * Finds a GUI session by viewer.
@@ -62,8 +63,8 @@ public interface GUIManager {
      * @param viewer the viewer to search for
      * @return the session if found
      */
-    <Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>>
-    Optional<GUISession<Model, Command, V, Viewer>> getSessionByViewer(Viewer viewer);
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Model>, Viewer extends InventoryViewer<Msg, V>>
+    Optional<GUISession<Model, Msg, Cmd, V, Viewer>> getSessionByViewer(Viewer viewer);
 
     /**
      * Closes all active sessions and shuts down the manager.

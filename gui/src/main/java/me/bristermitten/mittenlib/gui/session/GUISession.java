@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.gui.session;
 
 import me.bristermitten.mittenlib.gui.GUIBase;
+import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.event.EventBus;
 import me.bristermitten.mittenlib.gui.event.Subscription;
 import me.bristermitten.mittenlib.gui.spigot.InventoryStorage;
@@ -15,10 +16,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * Represents an active GUI session with state management and event handling.
  * Follows the Elm architecture pattern with immutable state updates.
  */
-public class GUISession<Model, Command, V extends View<Command, V, Viewer>, Viewer extends InventoryViewer<Command, V>> {
+public class GUISession<Model, Msg, Cmd extends Command<Model>, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
 
-    private final SessionID<Model, Command, V, Viewer> sessionId;
-    private final GUIBase<Model, Command, V> gui;
+    private final SessionID<Model, Msg, V, Viewer> sessionId;
+    private final GUIBase<Model, Msg, V, Cmd> gui;
     private final Viewer viewer;
     private final EventBus eventBus;
     private final InventoryStorage inventoryStorage;
@@ -30,7 +31,7 @@ public class GUISession<Model, Command, V extends View<Command, V, Viewer>, View
     private volatile boolean transitioning = false;
     private Subscription commandSubscription;
 
-    public GUISession(SessionID<Model, Command, V, Viewer> sessionId, GUIBase<Model, Command, V> gui, Viewer viewer, EventBus eventBus, InventoryStorage inventoryStorage) {
+    public GUISession(SessionID<Model, Msg, V, Viewer> sessionId, GUIBase<Model, Msg, V, Cmd> gui, Viewer viewer, EventBus eventBus, InventoryStorage inventoryStorage) {
         this.sessionId = sessionId;
         this.gui = gui;
         this.viewer = viewer;
@@ -72,10 +73,10 @@ public class GUISession<Model, Command, V extends View<Command, V, Viewer>, View
     /**
      * Processes a command and updates the GUI state.
      *
-     * @param command the command to process
+     * @param msg the command to process
      * @return true if the command was processed successfully
      */
-    public boolean processCommand(Command command) {
+    public boolean processCommand(Msg msg) {
         if (!active) {
             return false;
         }
@@ -84,7 +85,8 @@ public class GUISession<Model, Command, V extends View<Command, V, Viewer>, View
             Model oldModel = currentModel.get();
 
             // Update the model
-            Model newModel = gui.update(oldModel, command);
+            Model newModel = null;
+//                    gui.update(oldModel, msg); TODO:
             currentModel.set(newModel);
 
             // Render the new view
@@ -140,7 +142,7 @@ public class GUISession<Model, Command, V extends View<Command, V, Viewer>, View
     }
 
     // Getters
-    public SessionID<Model, Command, V, Viewer> getSessionId() {
+    public SessionID<Model, Msg, V, Viewer> getSessionId() {
         return sessionId;
     }
 

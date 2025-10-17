@@ -4,10 +4,11 @@ import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
 
 public class GUIExecutor<Model,
-        V extends View<Command, V, Viewer>,
-        Viewer extends InventoryViewer<Command, V>,
-        Command,
-        GUI extends GUIBase<Model, Command, V>> {
+        V extends View<Msg, V, Viewer>,
+        Viewer extends InventoryViewer<Msg, V>,
+        Msg,
+        Cmd extends me.bristermitten.mittenlib.gui.command.Command<Model>,
+        GUI extends GUIBase<Model, Msg, V, Cmd>> {
 
     private final GUI gui;
 
@@ -17,16 +18,18 @@ public class GUIExecutor<Model,
 
 
     public Model execute(Viewer inventoryViewer) {
+
         Model model = gui.init();
         V view = gui.render(model);
 
         while (true) {
             view.display(inventoryViewer);
-            Command command = view.waitForCommand();
+            Msg command = view.waitForCommand();
             if (command == null) {
                 break; // Exit if no command is received
             }
-            model = gui.update(model, command);
+            Cmd cmd = gui.update(model, command);
+//            model = gui.update(model, command); // TODO
             view = gui.render(model);
         }
 
