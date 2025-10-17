@@ -8,6 +8,7 @@ import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommand;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Improved counter GUI that uses dependency injection instead of static methods.
@@ -23,23 +24,22 @@ public class DemoCounterGUI extends SpigotGUI<Counter, CounterMessage, Object> {
     }
 
     @Override
-    public Counter init() {
+    public @NotNull Counter init() {
         return Counter.create(0);
     }
 
     @Override
-    public UpdateResult<Counter, CounterMessage, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
-//        return CounterMessage.matchTo(
-//                increment -> Command.pure(counter.withValue(counter.value() + 1)),
-//                decrement -> Command.pure(counter.withValue(counter.value() + 1)),
-//                setValue -> Command.pure(counter.withValue(setValue.value())),
-//                dipslay -> Command.pure(counter)
-//        );
-        return null;
+    public @NotNull UpdateResult<Counter, CounterMessage, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
+        return message.matchTo(
+                increment -> UpdateResult.pure(Counter.create(counter.value() + 1)),
+                decrement -> UpdateResult.pure(Counter.create(counter.value() - 1)),
+                setValue -> UpdateResult.pure(Counter.create(setValue.value())),
+                displayCount -> UpdateResult.pure(counter)
+        );
     }
 
     @Override
-    public SpigotGUIView<CounterMessage> render(Counter counter) {
+    public @NotNull SpigotGUIView<CounterMessage> render(Counter counter) {
         return minecraftGuiFactory.<CounterMessage>createSpigotView(27, "Count: " + counter.value())
                 .onClose(CounterMessage.DisplayCount())
                 .withButton(10, minecraftGuiFactory.createButton(

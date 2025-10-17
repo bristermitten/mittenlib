@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.gui;
 
 import me.bristermitten.mittenlib.gui.command.Command;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base interface for GUI applications, based on the Model-View-Command pattern (Elm Architecture).
@@ -12,9 +13,9 @@ import me.bristermitten.mittenlib.gui.command.Command;
  */
 public interface GUIBase<Model, Msg, View, Cmd extends Command<Msg>> {
 
-    Model init();
+    @NotNull Model init();
 
-    UpdateResult<Model, Msg, Cmd> update(Model model, Msg message);
+    @NotNull UpdateResult<Model, Msg, Cmd> update(Model model, Msg message);
 
-    View render(Model model);
+    @NotNull View render(Model model);
 }

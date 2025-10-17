@@ -29,7 +29,12 @@ public class GUIExecutor<Model,
                 break; // Exit if no command is received
             }
             UpdateResult<Model, Msg, Cmd> cmd = gui.update(model, command);
-//            model = gui.update(model, command); // TODO
+            model = cmd.getModel();
+
+            if (cmd.getCommand() != null) {
+                throw new UnsupportedOperationException("Commands are not supported in this GUIExecutor implementation.");
+            }
+
             view = gui.render(model);
         }
 

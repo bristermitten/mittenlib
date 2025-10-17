@@ -6,31 +6,28 @@ import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommand;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class TestSpigotGUI extends SpigotGUI<Counter, CounterMessage, Object> {
 
 
     @Override
-    public Counter init() {
+    public @NotNull Counter init() {
         return Counter.create(0);
     }
 
     @Override
-    public UpdateResult<Counter, CounterMessage, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
-        return null;
+    public @NotNull UpdateResult<Counter, CounterMessage, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
+        return message.matchTo(
+                increment -> UpdateResult.pure(counter.withValue(counter.value() + 1)),
+                decrement -> UpdateResult.pure(counter.withValue(counter.value() - 1)),
+                setValue -> UpdateResult.pure(counter.withValue(setValue.value()))
+        );
     }
 
-//    @Override
-//    public Counter update(Counter counter, CounterMessage counterCommand) {
-//        return counterCommand.matchTo(
-//                increment -> Counter.create(counter.value() + 1),
-//                decrement -> Counter.create(counter.value() - 1),
-//                setValue -> Counter.create(setValue.value())
-//        );
-//    }
 
     @Override
-    public SpigotGUIView<CounterMessage> render(Counter counter) {
+    public @NotNull SpigotGUIView<CounterMessage> render(Counter counter) {
         return SpigotGUIView.<CounterMessage>create(9, "Counter GUI")
                 .withButton(0, new InventoryButton<>(
                         new ItemStack(Material.STONE),
