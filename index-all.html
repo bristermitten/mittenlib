@@ -212,6 +212,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:B">B</h2>
 <dl class="index">
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.html#batch(me.bristermitten.mittenlib.gui.command.Command...)" class="member-name-link">batch(Command&lt;Ctx, Msg&gt;...)</a> - Static method in interface me.bristermitten.mittenlib.gui.command.<a href="me/bristermitten/mittenlib/gui/command/Command.html" title="interface in me.bristermitten.mittenlib.gui.command">Command</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/BoilerplateGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.codegen">BoilerplateGenerator</a> - Class in <a href="me/bristermitten/mittenlib/codegen/package-summary.html">me.bristermitten.mittenlib.codegen</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/BoilerplateGenerator.html#%3Cinit%3E()" class="member-name-link">BoilerplateGenerator()</a> - Constructor for class me.bristermitten.mittenlib.codegen.<a href="me/bristermitten/mittenlib/codegen/BoilerplateGenerator.html" title="class in me.bristermitten.mittenlib.codegen">BoilerplateGenerator</a></dt>
@@ -290,6 +292,24 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html#clearCache()" class="member-name-link">clearCache()</a> - Method in class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">ReadingConfigProvider</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#close()" class="member-name-link">close()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html#close()" class="member-name-link">close()</a> - Static method in interface me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommand</a></dt>
+<dd>
+<div class="block">A command that closes the inventory.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html#closeInventory()" class="member-name-link">closeInventory()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">DefaultSpigotCommandContext</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html#closeInventory()" class="member-name-link">closeInventory()</a> - Method in interface me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommandContext</a></dt>
+<dd>
+<div class="block">Close the inventory of the player associated with this context.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html#closeSession(me.bristermitten.mittenlib.gui.session.SessionID)" class="member-name-link">closeSession(SessionID&lt;Model, Msg, V, Viewer&gt;)</a> - Method in interface me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager</a></dt>
+<dd>
+<div class="block">Closes a GUI session and cleans up resources.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#closeSession(me.bristermitten.mittenlib.gui.session.SessionID)" class="member-name-link">closeSession(SessionID&lt;Model, Msg, V, Viewer&gt;)</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/CollectionsUtils.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config">CollectionsUtils</a> - Class in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
 <dd>
 <div class="block">Utility for deserializing collections using the MittenLib config system.</div>
@@ -299,8 +319,19 @@ loadScripts(document, 'script');</script>
 <div class="block">A command
  Classes should extend this instead of <code>BaseCommand</code>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.command">Command&lt;Ctx,<wbr>Msg&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/command/package-summary.html">me.bristermitten.mittenlib.gui.command</a></dt>
+<dd>
+<div class="block">A command is an object which performs some side effect and produces a message upon completion.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/commands/Command.html#%3Cinit%3E()" class="member-name-link">Command()</a> - Constructor for class me.bristermitten.mittenlib.commands.<a href="me/bristermitten/mittenlib/commands/Command.html" title="class in me.bristermitten.mittenlib.commands">Command</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.PureCommand.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.command">Command.PureCommand&lt;Ctx,<wbr>Msg&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/command/package-summary.html">me.bristermitten.mittenlib.gui.command</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/CommandContext.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.command">CommandContext</a> - Interface in <a href="me/bristermitten/mittenlib/gui/command/package-summary.html">me.bristermitten.mittenlib.gui.command</a></dt>
+<dd>
+<div class="block">Marker for environments that a Command can run in,
+ letting it access environment-specific data.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/commands/CommandManagerProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.commands">CommandManagerProvider</a> - Class in <a href="me/bristermitten/mittenlib/commands/package-summary.html">me.bristermitten.mittenlib.commands</a></dt>
 <dd>
 <div class="block">A provider for <code>PaperCommandManager</code>.</div>
@@ -504,9 +535,13 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/FileTypeModule.html#configure()" class="member-name-link">configure()</a> - Method in class me.bristermitten.mittenlib.files.<a href="me/bristermitten/mittenlib/files/FileTypeModule.html" title="class in me.bristermitten.mittenlib.files">FileTypeModule</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIModule.html#configure()" class="member-name-link">configure()</a> - Method in class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/GUIModule.html" title="class in me.bristermitten.mittenlib.gui">GUIModule</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/format/hook/HookModule.html#configure()" class="member-name-link">configure()</a> - Method in class me.bristermitten.mittenlib.lang.format.hook.<a href="me/bristermitten/mittenlib/lang/format/hook/HookModule.html" title="class in me.bristermitten.mittenlib.lang.format.hook">HookModule</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangModule.html#configure()" class="member-name-link">configure()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangModule.html" title="class in me.bristermitten.mittenlib.lang">LangModule</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/ListenersModule.html#configure()" class="member-name-link">configure()</a> - Method in class me.bristermitten.mittenlib.<a href="me/bristermitten/mittenlib/ListenersModule.html" title="class in me.bristermitten.mittenlib">ListenersModule</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/minimessage/MiniMessageModule.html#configure()" class="member-name-link">configure()</a> - Method in class me.bristermitten.mittenlib.minimessage.<a href="me/bristermitten/mittenlib/minimessage/MiniMessageModule.html" title="class in me.bristermitten.mittenlib.minimessage">MiniMessageModule</a></dt>
 <dd>&nbsp;</dd>
@@ -558,6 +593,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Consume the input, possibly throwing an exception.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#create(int,java.lang.String)" class="member-name-link">create(int, String)</a> - Static method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTreeTypeAdapterFactory.html#create(com.google.gson.Gson,com.google.gson.reflect.TypeToken)" class="member-name-link">create(Gson, TypeToken&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTreeTypeAdapterFactory.html" title="class in me.bristermitten.mittenlib.config.tree">DataTreeTypeAdapterFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessageTypeAdapterFactory.html#create(com.google.gson.Gson,com.google.gson.reflect.TypeToken)" class="member-name-link">create(Gson, TypeToken&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessageTypeAdapterFactory.html" title="class in me.bristermitten.mittenlib.lang">LangMessageTypeAdapterFactory</a></dt>
@@ -570,6 +607,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a <code>MiniMessage</code> instance for a player.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html#createButton(org.bukkit.inventory.ItemStack,Command)" class="member-name-link">createButton(ItemStack, Command)</a> - Method in interface me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a></dt>
+<dd>
+<div class="block">Creates a new InventoryButton with the specified item and command.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html#createButton(org.bukkit.inventory.ItemStack,Command)" class="member-name-link">createButton(ItemStack, Command)</a> - Method in class me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html#createButton(org.bukkit.inventory.ItemStack,Command,java.lang.String)" class="member-name-link">createButton(ItemStack, Command, String)</a> - Method in interface me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a></dt>
+<dd>
+<div class="block">Creates a new InventoryButton with the specified item, command, and display name.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html#createButton(org.bukkit.inventory.ItemStack,Command,java.lang.String)" class="member-name-link">createButton(ItemStack, Command, String)</a> - Method in class me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#createDeserializeMethodFor(javax.lang.model.element.TypeElement,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property,com.squareup.javapoet.ClassName)" class="member-name-link">createDeserializeMethodFor(TypeElement, AbstractConfigStructure, Property, ClassName)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
 <dd>
 <div class="block">Creates a deserialization method for a specific field in a DTO class.</div>
@@ -593,6 +642,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates the simplest <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> possible for the given <a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a>.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html#createProvider(me.bristermitten.mittenlib.config.Configuration)" class="member-name-link">createProvider(Configuration&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html#createSpigotView(int,java.lang.String)" class="member-name-link">createSpigotView(int, String)</a> - Method in interface me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a></dt>
+<dd>
+<div class="block">Creates a new SpigotGUIView with the specified size and title.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html#createSpigotView(int,java.lang.String)" class="member-name-link">createSpigotView(int, String)</a> - Method in class me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderFactory.html#createStringReaderProvider(java.lang.String,me.bristermitten.mittenlib.config.Configuration)" class="member-name-link">createStringReaderProvider(String, Configuration&lt;T&gt;)</a> - Method in interface me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderFactory.html" title="interface in me.bristermitten.mittenlib.config.provider.construct">ConfigProviderFactory</a></dt>
 <dd>
@@ -698,6 +753,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/lang/format/DefaultMiniMessageFactory.html#%3Cinit%3E()" class="member-name-link">DefaultMiniMessageFactory()</a> - Constructor for class me.bristermitten.mittenlib.lang.format.<a href="me/bristermitten/mittenlib/lang/format/DefaultMiniMessageFactory.html" title="class in me.bristermitten.mittenlib.lang.format">DefaultMiniMessageFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot.command">DefaultSpigotCommandContext</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/command/package-summary.html">me.bristermitten.mittenlib.gui.spigot.command</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html#%3Cinit%3E(org.bukkit.entity.Player)" class="member-name-link">DefaultSpigotCommandContext(Player)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">DefaultSpigotCommandContext</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/FileTypes.html#defaultTypes()" class="member-name-link">defaultTypes()</a> - Static method in class me.bristermitten.mittenlib.files.<a href="me/bristermitten/mittenlib/files/FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></dt>
 <dd>
 <div class="block">Return a <a href="me/bristermitten/mittenlib/files/FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> containing the default <a href="me/bristermitten/mittenlib/files/FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a>s.</div>
@@ -712,6 +771,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a new DelegatingConfigProvider</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html" class="type-name-link" title="class in me.bristermitten.mittenlib.demo">DemoCounterGUI</a> - Class in <a href="me/bristermitten/mittenlib/demo/package-summary.html">me.bristermitten.mittenlib.demo</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html#%3Cinit%3E(me.bristermitten.mittenlib.gui.factory.MinecraftGUIFactory)" class="member-name-link">DemoCounterGUI(MinecraftGUIFactory)</a> - Constructor for class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html" title="class in me.bristermitten.mittenlib.demo">DemoCounterGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoPlugin.html" class="type-name-link" title="class in me.bristermitten.mittenlib.demo">DemoPlugin</a> - Class in <a href="me/bristermitten/mittenlib/demo/package-summary.html">me.bristermitten.mittenlib.demo</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoPlugin.html#%3Cinit%3E()" class="member-name-link">DemoPlugin()</a> - Constructor for class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoPlugin.html" title="class in me.bristermitten.mittenlib.demo">DemoPlugin</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a> - Class in <a href="me/bristermitten/mittenlib/annotations/compile/package-summary.html">me.bristermitten.mittenlib.annotations.compile</a></dt>
 <dd>
 <div class="block">Generates deserialization code for configuration classes.</div>
@@ -926,6 +993,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeMap.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeMap.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeNull.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeNull.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeNull</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/SessionID.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/SessionID.html" title="class in me.bristermitten.mittenlib.gui.session">SessionID</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
 <dd>&nbsp;</dd>
@@ -1202,6 +1273,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getActionBar()" class="member-name-link">getActionBar()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#getActiveSessionCount()" class="member-name-link">getActiveSessionCount()</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>
+<div class="block">Gets the number of active sessions.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/CompositeType.html#getActualTypeArguments()" class="member-name-link">getActualTypeArguments()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/CompositeType.html" title="class in me.bristermitten.mittenlib.util">CompositeType</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/util/ElementsFinder.html#getAllMethods(javax.lang.model.element.TypeElement)" class="member-name-link">getAllMethods(TypeElement)</a> - Method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/ElementsFinder.html" title="class in me.bristermitten.mittenlib.annotations.util">ElementsFinder</a></dt>
@@ -1223,6 +1298,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get a boxed version of a given type, if it is a primitive.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#getButton(int)" class="member-name-link">getButton(int)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#getButtons()" class="member-name-link">getButtons()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/GeneratedTypeCache.html#getByName(java.lang.String)" class="member-name-link">getByName(String)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/GeneratedTypeCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">GeneratedTypeCache</a></dt>
 <dd>
 <div class="block">Gets all the known DTO classes which generate a configuration class with the given qualified name</div>
@@ -1233,6 +1312,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the result, catching any exceptions and wrapping them in a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/UpdateResult.html#getCommand()" class="member-name-link">getCommand()</a> - Method in class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#getCompletionFuture()" class="member-name-link">getCompletionFuture()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/CompoundLangMessage.html#getComponents()" class="member-name-link">getComponents()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/CompoundLangMessage.html" title="class in me.bristermitten.mittenlib.lang">CompoundLangMessage</a></dt>
 <dd>
 <div class="block">Get the components of this message</div>
@@ -1266,6 +1349,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the config property class name for a type mirror.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#getCurrentModel()" class="member-name-link">getCurrentModel()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#getCurrentView()" class="member-name-link">getCurrentView()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html#getCustomDeserializer(javax.lang.model.type.TypeMirror)" class="member-name-link">getCustomDeserializer(TypeMirror)</a> - Method in class me.bristermitten.mittenlib.annotations.parser.<a href="me/bristermitten/mittenlib/annotations/parser/CustomDeserializers.html" title="class in me.bristermitten.mittenlib.annotations.parser">CustomDeserializers</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getD()" class="member-name-link">getD()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
@@ -1304,6 +1391,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getI()" class="member-name-link">getI()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html#getItemStack()" class="member-name-link">getItemStack()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getJ()" class="member-name-link">getJ()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getK()" class="member-name-link">getK()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
@@ -1324,11 +1413,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/exception/PropertyNotFoundException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/PropertyNotFoundException.html" title="class in me.bristermitten.mittenlib.config.exception">PropertyNotFoundException</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html#getMessage()" class="member-name-link">getMessage()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getMessage()" class="member-name-link">getMessage()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/MultipleFailuresException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/MultipleFailuresException.html" title="class in me.bristermitten.mittenlib.util">MultipleFailuresException</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Version.html#getMinor()" class="member-name-link">getMinor()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/UpdateResult.html#getModel()" class="member-name-link">getModel()</a> - Method in class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getN()" class="member-name-link">getN()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
 <dd>&nbsp;</dd>
@@ -1341,6 +1434,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/annotations/util/Nullity.html#getNullityAnnotationSpec(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getNullityAnnotationSpec(Property)</a> - Static method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/Nullity.html" title="class in me.bristermitten.mittenlib.annotations.util">Nullity</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#getO()" class="member-name-link">getO()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#getOnClose()" class="member-name-link">getOnClose()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcher.html#getOnModify()" class="member-name-link">getOnModify()</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a></dt>
 <dd>
@@ -1363,6 +1458,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/Version.html#getPatch()" class="member-name-link">getPatch()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html#getPitch()" class="member-name-link">getPitch()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html" title="class in me.bristermitten.mittenlib.lang">LangMessage.SoundConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html#getPlayer()" class="member-name-link">getPlayer()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/util/ElementsFinder.html#getPropertyMethods(javax.lang.model.element.TypeElement)" class="member-name-link">getPropertyMethods(TypeElement)</a> - Method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/ElementsFinder.html" title="class in me.bristermitten.mittenlib.annotations.util">ElementsFinder</a></dt>
 <dd>&nbsp;</dd>
@@ -1389,6 +1486,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the server version.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html#getSession(me.bristermitten.mittenlib.gui.session.SessionID)" class="member-name-link">getSession(SessionID&lt;Model, Msg, V, Viewer&gt;)</a> - Method in interface me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager</a></dt>
+<dd>
+<div class="block">Gets an active GUI session by ID.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#getSession(me.bristermitten.mittenlib.gui.session.SessionID)" class="member-name-link">getSession(SessionID&lt;Model, Msg, V, Viewer&gt;)</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html#getSessionByViewer(Viewer)" class="member-name-link">getSessionByViewer(Viewer)</a> - Method in interface me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager</a></dt>
+<dd>
+<div class="block">Finds a GUI session by viewer.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#getSessionByViewer(Viewer)" class="member-name-link">getSessionByViewer(Viewer)</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#getSessionId()" class="member-name-link">getSessionId()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#getSize()" class="member-name-link">getSize()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getSound()" class="member-name-link">getSound()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html#getSound()" class="member-name-link">getSound()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html" title="class in me.bristermitten.mittenlib.lang">LangMessage.SoundConfig</a></dt>
@@ -1396,6 +1509,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getSubtitle()" class="member-name-link">getSubtitle()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/MittenLibCodegenProcessor.html#getSupportedAnnotationTypes()" class="member-name-link">getSupportedAnnotationTypes()</a> - Method in class me.bristermitten.mittenlib.codegen.<a href="me/bristermitten/mittenlib/codegen/MittenLibCodegenProcessor.html" title="class in me.bristermitten.mittenlib.codegen">MittenLibCodegenProcessor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#getTitle()" class="member-name-link">getTitle()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.html#getTitle()" class="member-name-link">getTitle()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></dt>
 <dd>&nbsp;</dd>
@@ -1410,6 +1525,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Get the set of registered <a href="me/bristermitten/mittenlib/files/FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeArray.html#getValues()" class="member-name-link">getValues()</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeArray.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeArray</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#getViewer()" class="member-name-link">getViewer()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html#getVolume()" class="member-name-link">getVolume()</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html" title="class in me.bristermitten.mittenlib.lang">LangMessage.SoundConfig</a></dt>
 <dd>&nbsp;</dd>
@@ -1441,6 +1558,28 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Standard provider for <code>Gson</code> instances.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIBase.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui">GUIBase&lt;Model,<wbr>Msg,<wbr>View,<wbr>Ctx,<wbr>Cmd&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/package-summary.html">me.bristermitten.mittenlib.gui</a></dt>
+<dd>
+<div class="block">Base interface for GUI applications, based on the Elm Architecture (Model-View-Update / TEA).</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager&lt;Ctx&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/manager/package-summary.html">me.bristermitten.mittenlib.gui.manager</a></dt>
+<dd>
+<div class="block">Manages GUI sessions and their lifecycles.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIModule.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui">GUIModule</a> - Class in <a href="me/bristermitten/mittenlib/gui/package-summary.html">me.bristermitten.mittenlib.gui</a></dt>
+<dd>
+<div class="block">Guice module for the GUI framework.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIModule.html#%3Cinit%3E()" class="member-name-link">GUIModule()</a> - Constructor for class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/GUIModule.html" title="class in me.bristermitten.mittenlib.gui">GUIModule</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.session">GUISession&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer,<wbr>Ctx&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/session/package-summary.html">me.bristermitten.mittenlib.gui.session</a></dt>
+<dd>
+<div class="block">Represents an active GUI session with state management and event handling.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#%3Cinit%3E(me.bristermitten.mittenlib.gui.session.SessionID,me.bristermitten.mittenlib.gui.GUIBase,Viewer,Model,java.util.function.Consumer,me.bristermitten.mittenlib.gui.session.GUISession.CommandRunner)" class="member-name-link">GUISession(SessionID&lt;Model, Msg, V, Viewer&gt;, GUIBase&lt;Model, Msg, V, Ctx, ? extends Command&lt;Ctx, Msg&gt;&gt;, Viewer, Model, Consumer&lt;V&gt;, GUISession.CommandRunner&lt;Ctx, Msg&gt;)</a> - Constructor for class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.CommandRunner.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.session">GUISession.CommandRunner&lt;Ctx,<wbr>Msg&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/session/package-summary.html">me.bristermitten.mittenlib.gui.session</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
@@ -1547,6 +1686,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeNull.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeNull.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeNull</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/SessionID.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/SessionID.html" title="class in me.bristermitten.mittenlib.gui.session">SessionID</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
@@ -1601,6 +1744,12 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderImprover.html#improve(me.bristermitten.mittenlib.config.provider.ConfigProvider)" class="member-name-link">improve(ConfigProvider&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderImprover.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderImprover</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html#init()" class="member-name-link">init()</a> - Method in class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html" title="class in me.bristermitten.mittenlib.demo">DemoCounterGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIBase.html#init()" class="member-name-link">init()</a> - Method in interface me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/GUIBase.html" title="interface in me.bristermitten.mittenlib.gui">GUIBase</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/ListenerRegistration.html#init()" class="member-name-link">init()</a> - Method in class me.bristermitten.mittenlib.<a href="me/bristermitten/mittenlib/ListenerRegistration.html" title="class in me.bristermitten.mittenlib">ListenerRegistration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/paths/ConfigInitializationStrategy.html#initializeConfig(java.lang.String)" class="member-name-link">initializeConfig(String)</a> - Method in interface me.bristermitten.mittenlib.config.paths.<a href="me/bristermitten/mittenlib/config/paths/ConfigInitializationStrategy.html" title="interface in me.bristermitten.mittenlib.config.paths">ConfigInitializationStrategy</a></dt>
 <dd>
 <div class="block">Attempt to initialize the config</div>
@@ -1637,11 +1786,19 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html#invalidPropertyTypeException(java.lang.Class,java.lang.String,java.lang.String,java.lang.Object)" class="member-name-link">invalidPropertyTypeException(Class&lt;?&gt;, String, String, Object)</a> - Static method in class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html" title="class in me.bristermitten.mittenlib.config.exception">ConfigLoadingErrors</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton&lt;Msg&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html#%3Cinit%3E(org.bukkit.inventory.ItemStack,Msg)" class="member-name-link">InventoryButton(ItemStack, Msg)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/view/InventoryViewer.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.view">InventoryViewer&lt;Msg,<wbr>V&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/view/package-summary.html">me.bristermitten.mittenlib.gui.view</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction&lt;T,<wbr>R&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/util/lambda/package-summary.html">me.bristermitten.mittenlib.util.lambda</a></dt>
 <dd>
 <div class="block">Like <a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a> but only for <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link"><code>IOException</code></a></div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#isA()" class="member-name-link">isA()</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#isActive()" class="member-name-link">isActive()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/util/TypesUtil.html#isConfigType(javax.lang.model.type.TypeMirror)" class="member-name-link">isConfigType(TypeMirror)</a> - Method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a></dt>
 <dd>
@@ -1700,6 +1857,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">An <a href="me/bristermitten/mittenlib/commands/handlers/ArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers"><code>ArgumentContext</code></a> that is only aware of the issuer of the command, and not the argument's value.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#isTransitioning()" class="member-name-link">isTransitioning()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#isWatching()" class="member-name-link">isWatching()</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
 <dd>
 <div class="block">Returns whether the service is currently watching for file changes.</div>
@@ -1762,6 +1921,16 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/lang/format/hook/LegacyCodeUpdaterHook.html#%3Cinit%3E()" class="member-name-link">LegacyCodeUpdaterHook()</a> - Constructor for class me.bristermitten.mittenlib.lang.format.hook.<a href="me/bristermitten/mittenlib/lang/format/hook/LegacyCodeUpdaterHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">LegacyCodeUpdaterHook</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.LGson.html#%3Cinit%3E()" class="member-name-link">LGson()</a> - Constructor for class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.LGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson.LGson</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/ListenerRegistration.html" class="type-name-link" title="class in me.bristermitten.mittenlib">ListenerRegistration</a> - Class in <a href="me/bristermitten/mittenlib/package-summary.html">me.bristermitten.mittenlib</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/ListenerRegistration.html#%3Cinit%3E(org.bukkit.plugin.Plugin,java.util.Set,java.util.logging.Logger)" class="member-name-link">ListenerRegistration(Plugin, Set&lt;Listener&gt;, Logger)</a> - Constructor for class me.bristermitten.mittenlib.<a href="me/bristermitten/mittenlib/ListenerRegistration.html" title="class in me.bristermitten.mittenlib">ListenerRegistration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/ListenersModule.html" class="type-name-link" title="class in me.bristermitten.mittenlib">ListenersModule</a> - Class in <a href="me/bristermitten/mittenlib/package-summary.html">me.bristermitten.mittenlib</a></dt>
+<dd>
+<div class="block">Creates a new empty <a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/multibindings/Multibinder.html" title="class or interface in com.google.inject.multibindings" class="external-link"><code>Multibinder</code></a> for Bukkit <a href="https://helpch.at/docs/1.8.8/org/bukkit/event/Listener.html" title="class or interface in org.bukkit.event" class="external-link"><code>Listener</code></a>s and binds <a href="me/bristermitten/mittenlib/ListenerRegistration.html" title="class in me.bristermitten.mittenlib"><code>ListenerRegistration</code></a> as an eager singleton.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/ListenersModule.html#%3Cinit%3E()" class="member-name-link">ListenersModule()</a> - Constructor for class me.bristermitten.mittenlib.<a href="me/bristermitten/mittenlib/ListenersModule.html" title="class in me.bristermitten.mittenlib">ListenersModule</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html#load(java.io.Reader)" class="member-name-link">load(Reader)</a> - Method in interface me.bristermitten.mittenlib.config.reader.<a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a></dt>
 <dd>
@@ -1952,11 +2121,29 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/package-summary.html">me.bristermitten.mittenlib.config.tree</a> - package me.bristermitten.mittenlib.config.tree</dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/package-summary.html">me.bristermitten.mittenlib.demo</a> - package me.bristermitten.mittenlib.demo</dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/package-summary.html">me.bristermitten.mittenlib.files</a> - package me.bristermitten.mittenlib.files</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/json/package-summary.html">me.bristermitten.mittenlib.files.json</a> - package me.bristermitten.mittenlib.files.json</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/yaml/package-summary.html">me.bristermitten.mittenlib.files.yaml</a> - package me.bristermitten.mittenlib.files.yaml</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/package-summary.html">me.bristermitten.mittenlib.gui</a> - package me.bristermitten.mittenlib.gui</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/package-summary.html">me.bristermitten.mittenlib.gui.command</a> - package me.bristermitten.mittenlib.gui.command</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/package-summary.html">me.bristermitten.mittenlib.gui.factory</a> - package me.bristermitten.mittenlib.gui.factory</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/package-summary.html">me.bristermitten.mittenlib.gui.manager</a> - package me.bristermitten.mittenlib.gui.manager</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/package-summary.html">me.bristermitten.mittenlib.gui.session</a> - package me.bristermitten.mittenlib.gui.session</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a> - package me.bristermitten.mittenlib.gui.spigot</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/package-summary.html">me.bristermitten.mittenlib.gui.spigot.command</a> - package me.bristermitten.mittenlib.gui.spigot.command</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/view/package-summary.html">me.bristermitten.mittenlib.gui.view</a> - package me.bristermitten.mittenlib.gui.view</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/package-summary.html">me.bristermitten.mittenlib.lang</a> - package me.bristermitten.mittenlib.lang</dt>
 <dd>&nbsp;</dd>
@@ -1992,6 +2179,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/Property.PropertySource.MethodSource.html#%3Cinit%3E(javax.lang.model.element.ExecutableElement)" class="member-name-link">MethodSource(ExecutableElement)</a> - Constructor for record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/Property.PropertySource.MethodSource.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource.MethodSource</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>MethodSource</code> record class.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a> - Interface in <a href="me/bristermitten/mittenlib/gui/factory/package-summary.html">me.bristermitten.mittenlib.gui.factory</a></dt>
+<dd>
+<div class="block">Factory interface for creating GUI components.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/lang/format/MiniMessageFormatter.html" class="type-name-link" title="class in me.bristermitten.mittenlib.lang.format">MiniMessageFormatter</a> - Class in <a href="me/bristermitten/mittenlib/lang/format/package-summary.html">me.bristermitten.mittenlib.lang.format</a></dt>
 <dd>
@@ -2189,6 +2380,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of(K,V,K,V,K,V,K,V,K,V,K,V,K,V,K,V,K,V,K,V)" class="member-name-link">of(K, V, K, V, K, V, K, V, K, V, K, V, K, V, K, V, K, V, K, V)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/UpdateResult.html#of(Model,Cmd)" class="member-name-link">of(Model, Cmd)</a> - Static method in class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#of(E...)" class="member-name-link">of(E...)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Sets.html#of(E,E,E)" class="member-name-link">of(E, E, E)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></dt>
@@ -2203,6 +2396,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of(java.util.Collection)" class="member-name-link">of(Collection&lt;Map.Entry&lt;K, V&gt;&gt;)</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html#of(java.util.function.Consumer)" class="member-name-link">of(Consumer&lt;SpigotCommandContext&gt;)</a> - Static method in interface me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommand</a></dt>
+<dd>
+<div class="block">Wrap a simple consumer into a SpigotCommand.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html#of(java.util.function.Function)" class="member-name-link">of(Function&lt;T, R&gt;)</a> - Static method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction</a></dt>
 <dd>
 <div class="block">Wrap a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link"><code>Function</code></a> in a <a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>IOFunction</code></a></div>
@@ -2221,6 +2418,16 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> from a given value.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#onClose(Msg)" class="member-name-link">onClose(Msg)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoPlugin.html#onEnable()" class="member-name-link">onEnable()</a> - Method in class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoPlugin.html" title="class in me.bristermitten.mittenlib.demo">DemoPlugin</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)" class="member-name-link">onInventoryClick(InventoryClickEvent)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotEventHandler</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)" class="member-name-link">onInventoryClose(InventoryCloseEvent)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotEventHandler</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoPlugin.html#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)" class="member-name-link">onPlayerJoin(PlayerJoinEvent)</a> - Method in class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoPlugin.html" title="class in me.bristermitten.mittenlib.demo">DemoPlugin</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#orElse(java.util.function.Supplier)" class="member-name-link">orElse(Supplier&lt;Result&lt;T&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#orElse(java.util.function.Supplier)" class="member-name-link">orElse(Supplier&lt;Result&lt;T&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
@@ -2298,6 +2505,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Utility class for working with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a>s</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html#player()" class="member-name-link">player()</a> - Method in class me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/DefaultSpigotCommandContext.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">DefaultSpigotCommandContext</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html#player()" class="member-name-link">player()</a> - Method in interface me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommandContext</a></dt>
+<dd>
+<div class="block">The player executing the command / viewing the GUI.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/paths/PluginConfigInitializationStrategy.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.paths">PluginConfigInitializationStrategy</a> - Class in <a href="me/bristermitten/mittenlib/config/paths/package-summary.html">me.bristermitten.mittenlib.config.paths</a></dt>
 <dd>
 <div class="block">A <a href="me/bristermitten/mittenlib/config/paths/ConfigInitializationStrategy.html" title="interface in me.bristermitten.mittenlib.config.paths"><code>ConfigInitializationStrategy</code></a> that copies a resource from a plugin's jar to its data folder if it does not exist</div>
@@ -2350,6 +2563,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/MittenLibCodegenProcessor.html#processAnnotations(java.util.Set,javax.annotation.processing.RoundEnvironment)" class="member-name-link">processAnnotations(Set&lt;? extends TypeElement&gt;, RoundEnvironment)</a> - Method in class me.bristermitten.mittenlib.codegen.<a href="me/bristermitten/mittenlib/codegen/MittenLibCodegenProcessor.html" title="class in me.bristermitten.mittenlib.codegen">MittenLibCodegenProcessor</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#processMessage(Msg)" class="member-name-link">processMessage(Msg)</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>
+<div class="block">The core message processing loop.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.Atomic.html#properties()" class="member-name-link">properties()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/AbstractConfigStructure.Atomic.html" title="class in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure.Atomic</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>properties</code> record component.</div>
@@ -2398,6 +2615,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the public property class name for a property.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/UpdateResult.html#pure(Model)" class="member-name-link">pure(Model)</a> - Static method in class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.html#pure(Msg)" class="member-name-link">pure(Msg)</a> - Static method in interface me.bristermitten.mittenlib.gui.command.<a href="me/bristermitten/mittenlib/gui/command/Command.html" title="interface in me.bristermitten.mittenlib.gui.command">Command</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.PureCommand.html#%3Cinit%3E(Msg)" class="member-name-link">PureCommand(Msg)</a> - Constructor for class me.bristermitten.mittenlib.gui.command.<a href="me/bristermitten/mittenlib/gui/command/Command.PureCommand.html" title="class in me.bristermitten.mittenlib.gui.command">Command.PureCommand</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html#put(K,V)" class="member-name-link">put(K, V)</a> - Method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/ConfigNameCache.html#put(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">put(AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a></dt>
@@ -2479,6 +2702,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Removes a watcher from the service.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html#render(me.bristermitten.mittenlib.demo.Counter)" class="member-name-link">render(Counter)</a> - Method in class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html" title="class in me.bristermitten.mittenlib.demo">DemoCounterGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIBase.html#render(Model)" class="member-name-link">render(Model)</a> - Method in interface me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/GUIBase.html" title="interface in me.bristermitten.mittenlib.gui">GUIBase</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html#replace(K,V)" class="member-name-link">replace(K, V)</a> - Method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html#replace(K,V,V)" class="member-name-link">replace(K, V, V)</a> - Method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableMap</a></dt>
@@ -2529,6 +2756,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Run the code, possibly throwing an exception.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.PureCommand.html#run(Ctx,java.util.function.Consumer)" class="member-name-link">run(Ctx, Consumer&lt;Msg&gt;)</a> - Method in class me.bristermitten.mittenlib.gui.command.<a href="me/bristermitten/mittenlib/gui/command/Command.PureCommand.html" title="class in me.bristermitten.mittenlib.gui.command">Command.PureCommand</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/command/Command.html#run(Ctx,java.util.function.Consumer)" class="member-name-link">run(Ctx, Consumer&lt;Msg&gt;)</a> - Method in interface me.bristermitten.mittenlib.gui.command.<a href="me/bristermitten/mittenlib/gui/command/Command.html" title="interface in me.bristermitten.mittenlib.gui.command">Command</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.CommandRunner.html#run(me.bristermitten.mittenlib.gui.command.Command,java.util.function.Consumer)" class="member-name-link">run(Command&lt;Ctx, Msg&gt;, Consumer&lt;Msg&gt;)</a> - Method in interface me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.CommandRunner.html" title="interface in me.bristermitten.mittenlib.gui.session">GUISession.CommandRunner</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html#run(me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext,java.util.function.Consumer)" class="member-name-link">run(SpigotCommandContext, Consumer&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">SendMessageCommand</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html#runCatching()" class="member-name-link">runCatching()</a> - Method in interface me.bristermitten.mittenlib.util.lambda.<a href="me/bristermitten/mittenlib/util/lambda/SafeRunnable.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeRunnable</a></dt>
 <dd>
 <div class="block">Run the code, catching any exceptions and wrapping them in a <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a></div>
@@ -2590,7 +2825,17 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangService.html#sendActionBar(org.bukkit.command.CommandSender,java.lang.String)" class="member-name-link">sendActionBar(CommandSender, String)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html#sendMessage(me.bristermitten.mittenlib.gui.session.SessionID,Msg)" class="member-name-link">sendMessage(SessionID&lt;Model, Msg, V, Viewer&gt;, Msg)</a> - Method in interface me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager</a></dt>
+<dd>
+<div class="block">Sends a command to an active GUI session.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#sendMessage(me.bristermitten.mittenlib.gui.session.SessionID,Msg)" class="member-name-link">sendMessage(SessionID&lt;Model, Msg, V, Viewer&gt;, Msg)</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangService.html#sendMessage(org.bukkit.command.CommandSender,java.lang.String)" class="member-name-link">sendMessage(CommandSender, String)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot.command">SendMessageCommand&lt;T&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/command/package-summary.html">me.bristermitten.mittenlib.gui.spigot.command</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html#%3Cinit%3E(java.lang.String)" class="member-name-link">SendMessageCommand(String)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.command.<a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">SendMessageCommand</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangService.html#sendTitle(org.bukkit.command.CommandSender,java.lang.String,java.lang.String)" class="member-name-link">sendTitle(CommandSender, String, String)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></dt>
 <dd>&nbsp;</dd>
@@ -2615,6 +2860,10 @@ loadScripts(document, 'script');</script>
  This is similar to (<a href="https://hackage.haskell.org/package/base-4.16.2.0/docs/GHC-Base.html#v:sequence">Haskell's sequence function</a>),
  but specialised for CompletableFutures because we don't have higher kinded types in Java :(</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/SessionID.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.session">SessionID&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/session/package-summary.html">me.bristermitten.mittenlib.gui.session</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/SessionID.html#%3Cinit%3E(java.util.UUID)" class="member-name-link">SessionID(UUID)</a> - Constructor for class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/SessionID.html" title="class in me.bristermitten.mittenlib.gui.session">SessionID</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html#setA(boolean)" class="member-name-link">setA(boolean)</a> - Method in class me.bristermitten.mittenlib.annotation.benchmark.<a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangMessageBuilder.html#setActionBar(java.lang.String)" class="member-name-link">setActionBar(String)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangMessageBuilder.html" title="class in me.bristermitten.mittenlib.lang">LangMessageBuilder</a></dt>
@@ -2703,6 +2952,12 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/hook/PAPIFormattingHook.html#shouldRegister()" class="member-name-link">shouldRegister()</a> - Method in class me.bristermitten.mittenlib.lang.hook.<a href="me/bristermitten/mittenlib/lang/hook/PAPIFormattingHook.html" title="class in me.bristermitten.mittenlib.lang.hook">PAPIFormattingHook</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html#shutdown()" class="member-name-link">shutdown()</a> - Method in interface me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager</a></dt>
+<dd>
+<div class="block">Closes all active sessions and shuts down the manager.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#shutdown()" class="member-name-link">shutdown()</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/format/hook/SimpleColorCodeHook.html" class="type-name-link" title="class in me.bristermitten.mittenlib.lang.format.hook">SimpleColorCodeHook</a> - Class in <a href="me/bristermitten/mittenlib/lang/format/hook/package-summary.html">me.bristermitten.mittenlib.lang.format.hook</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/format/hook/SimpleColorCodeHook.html#%3Cinit%3E()" class="member-name-link">SimpleColorCodeHook()</a> - Constructor for class me.bristermitten.mittenlib.lang.format.hook.<a href="me/bristermitten/mittenlib/lang/format/hook/SimpleColorCodeHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">SimpleColorCodeHook</a></dt>
@@ -2783,6 +3038,58 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Marks a <a href="me/bristermitten/mittenlib/config/Config.html" title="annotation interface in me.bristermitten.mittenlib.config"><code>Config</code></a> class as being loaded from a file.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommand&lt;Msg&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/spigot/command/package-summary.html">me.bristermitten.mittenlib.gui.spigot.command</a></dt>
+<dd>
+<div class="block">A command that can be executed in a Spigot GUI context.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommandContext</a> - Interface in <a href="me/bristermitten/mittenlib/gui/spigot/command/package-summary.html">me.bristermitten.mittenlib.gui.spigot.command</a></dt>
+<dd>
+<div class="block">The context for a Spigot command execution.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotEventHandler</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a></dt>
+<dd>
+<div class="block">Handles Spigot inventory events and connects them to the GUI framework.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html#%3Cinit%3E(me.bristermitten.mittenlib.gui.manager.SpigotGUIManager)" class="member-name-link">SpigotEventHandler(SpigotGUIManager)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotEventHandler</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUI.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUI&lt;Model,<wbr>Msg&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a></dt>
+<dd>
+<div class="block">Base class for Spigot GUIs.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUI.html#%3Cinit%3E()" class="member-name-link">SpigotGUI()</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUI.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a> - Class in <a href="me/bristermitten/mittenlib/gui/manager/package-summary.html">me.bristermitten.mittenlib.gui.manager</a></dt>
+<dd>
+<div class="block">Spigot implementation of the GUIManager.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#%3Cinit%3E()" class="member-name-link">SpigotGUIManager()</a> - Constructor for class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView&lt;Msg&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a></dt>
+<dd>
+<div class="block">A view of a Spigot GUI - not a real inventory, but a description of one.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#%3Cinit%3E(int,java.lang.String,java.util.Map,Msg)" class="member-name-link">SpigotGUIView(int, String, Map&lt;Integer, InventoryButton&lt;Msg&gt;&gt;, Msg)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer&lt;Msg&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html#%3Cinit%3E(org.bukkit.entity.Player)" class="member-name-link">SpigotInventoryViewer(Player)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a> - Class in <a href="me/bristermitten/mittenlib/gui/factory/package-summary.html">me.bristermitten.mittenlib.gui.factory</a></dt>
+<dd>
+<div class="block">Spigot implementation of GUIFactory for creating GUI components.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html#%3Cinit%3E(me.bristermitten.mittenlib.lang.format.MessageFormatter)" class="member-name-link">SpigotMinecraftGUIFactory(MessageFormatter)</a> - Constructor for class me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#start()" class="member-name-link">start()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
+<dd>
+<div class="block">Starts the GUI session by rendering the initial view.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html#startSession(me.bristermitten.mittenlib.gui.GUIBase,Viewer)" class="member-name-link">startSession(GUIBase&lt;Model, Msg, V, Ctx, Cmd&gt;, Viewer)</a> - Method in interface me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager</a></dt>
+<dd>
+<div class="block">Creates and starts a new GUI session for the given viewer.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html#startSession(me.bristermitten.mittenlib.gui.GUIBase,Viewer)" class="member-name-link">startSession(GUIBase&lt;Model, Msg, V, SpigotCommandContext, Cmd&gt;, Viewer)</a> - Method in class me.bristermitten.mittenlib.gui.manager.<a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html#startWatching()" class="member-name-link">startWatching()</a> - Method in class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/FileWatcherService.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcherService</a></dt>
 <dd>
 <div class="block">Start watching for file changes.</div>
@@ -2940,6 +3247,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeNull.html#toString()" class="member-name-link">toString()</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeNull.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeNull</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/session/SessionID.html#toString()" class="member-name-link">toString()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/SessionID.html" title="class in me.bristermitten.mittenlib.gui.session">SessionID</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#toString()" class="member-name-link">toString()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#toString()" class="member-name-link">toString()</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
@@ -3048,6 +3357,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Unknown version, probably something very old</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/paths/PluginConfigInitializationStrategy.UnknownResourceException.html#%3Cinit%3E(java.lang.String)" class="member-name-link">UnknownResourceException(String)</a> - Constructor for exception class me.bristermitten.mittenlib.config.paths.<a href="me/bristermitten/mittenlib/config/paths/PluginConfigInitializationStrategy.UnknownResourceException.html" title="class in me.bristermitten.mittenlib.config.paths">PluginConfigInitializationStrategy.UnknownResourceException</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html#update(me.bristermitten.mittenlib.demo.Counter,me.bristermitten.mittenlib.demo.CounterMessage)" class="member-name-link">update(Counter, CounterMessage)</a> - Method in class me.bristermitten.mittenlib.demo.<a href="me/bristermitten/mittenlib/demo/DemoCounterGUI.html" title="class in me.bristermitten.mittenlib.demo">DemoCounterGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/GUIBase.html#update(Model,Msg)" class="member-name-link">update(Model, Msg)</a> - Method in interface me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/GUIBase.html" title="interface in me.bristermitten.mittenlib.gui">GUIBase</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/UpdateResult.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui">UpdateResult&lt;Model,<wbr>Msg,<wbr>Ctx,<wbr>Cmd&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/package-summary.html">me.bristermitten.mittenlib.gui</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/UpdateResult.html#%3Cinit%3E(Model,Cmd)" class="member-name-link">UpdateResult(Model, Cmd)</a> - Constructor for class me.bristermitten.mittenlib.gui.<a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html#UPPER_CAMEL_CASE" class="member-name-link">UPPER_CAMEL_CASE</a> - Enum constant in enum class me.bristermitten.mittenlib.config.names.<a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names">NamingPatterns</a></dt>
 <dd>
@@ -3340,6 +3657,8 @@ the order they are declared.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/Version.html#%3Cinit%3E(int,int,int)" class="member-name-link">Version(int, int, int)</a> - Constructor for class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/view/View.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.gui.view">View&lt;Msg,<wbr>ThisView,<wbr>Viewer&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/gui/view/package-summary.html">me.bristermitten.mittenlib.gui.view</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#void_()" class="member-name-link">void_()</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
 <div class="block">Replaces the value of the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with the <a href="me/bristermitten/mittenlib/util/Unit.html" title="class in me.bristermitten.mittenlib.util"><code>Unit</code></a> value.</div>
@@ -3352,6 +3671,8 @@ the order they are declared.</div>
 <dt><a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.watcher">WatchServiceProvider</a> - Class in <a href="me/bristermitten/mittenlib/watcher/package-summary.html">me.bristermitten.mittenlib.watcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html#%3Cinit%3E()" class="member-name-link">WatchServiceProvider()</a> - Constructor for class me.bristermitten.mittenlib.watcher.<a href="me/bristermitten/mittenlib/watcher/WatchServiceProvider.html" title="class in me.bristermitten.mittenlib.watcher">WatchServiceProvider</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html#withButton(int,me.bristermitten.mittenlib.gui.spigot.InventoryButton)" class="member-name-link">withButton(int, InventoryButton&lt;Msg&gt;)</a> - Method in class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangService.html#withComponentPostProcessor(java.util.function.UnaryOperator)" class="member-name-link">withComponentPostProcessor(UnaryOperator&lt;Component&gt;)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></dt>
 <dd>&nbsp;</dd>
