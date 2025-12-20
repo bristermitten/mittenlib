@@ -48,7 +48,7 @@ subprojects {
 
 	val libs = rootProject.libs
 	group = "me.bristermitten"
-	version = "4.5.0-SNAPSHOT"
+    version = "4.6.0-SNAPSHOT"
 
 	java {
 		sourceCompatibility = JavaVersion.VERSION_1_8
@@ -61,13 +61,6 @@ subprojects {
 		}
 	}
 
-	repositories {
-		mavenCentral()
-		maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-		maven("https://oss.sonatype.org/content/repositories/snapshots")
-		maven("https://oss.sonatype.org/content/repositories/central")
-        maven("https://repo.aikar.co/content/groups/aikar/") // contains bungee chat 1.8 version
-	}
 
 	dependencies {
 		compileOnly(libs.spigot.api)
@@ -105,8 +98,10 @@ subprojects {
         options.encoding = "UTF-8"
         options.isFork = true
 
-        options.errorprone.disableWarningsInGeneratedCode.set(true)
-    }
+		options.errorprone.disableWarningsInGeneratedCode.set(true)
+		options.setIncremental(true)
+	}
+
 
     tasks.withType<Javadoc> {
         configureJavadoc()

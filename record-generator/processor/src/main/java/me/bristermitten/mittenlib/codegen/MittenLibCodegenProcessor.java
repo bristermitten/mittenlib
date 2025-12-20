@@ -16,6 +16,7 @@ import me.bristermitten.mittenlib.codegen.union.UnionGenerator;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -27,6 +28,7 @@ import java.util.*;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
+@SupportedOptions("org.gradle.annotation.processing.isolating")
 public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     private static Optional<RecordConstructorSpec> parseConstructor(ExecutableElement method, TypeElementWrapper typeElement, Collection<String> existingConstructors) {
         if (!TypeUtils.TypeComparison.isTypeEqual(
@@ -91,9 +93,6 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
             message = "Constructors must have distinct names, overloading is not allowed"
     )
     public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            return false; // No further processing needed
-        }
 
 
         var unions = processUnions(roundEnv);

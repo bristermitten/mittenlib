@@ -1,0 +1,180 @@
+package me.bristermitten.mittenlib.gui.session;
+
+import me.bristermitten.mittenlib.gui.GUIBase;
+import me.bristermitten.mittenlib.gui.UpdateResult;
+import me.bristermitten.mittenlib.gui.command.Command;
+import me.bristermitten.mittenlib.gui.command.CommandContext;
+import me.bristermitten.mittenlib.gui.view.InventoryViewer;
+import me.bristermitten.mittenlib.gui.view.View;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+
+/**
+ * Represents an active GUI session with state management and event handling.
+ * Follows the Elm architecture pattern with immutable state updates.
+ */
+public class GUISession<Model,
+        Msg,
+        V extends View<Msg, V, Viewer>,
+        Viewer extends InventoryViewer<Msg, V>,
+        Ctx extends CommandContext> {
+
+    /**
+     * The unique session ID.
+     */
+    private final SessionID<Model, Msg, V, Viewer> sessionId;
+
+    /**
+     * The viewer (e.g. player) interacting with the GUI.
+     */
+    private final Viewer viewer;
+
+    /**
+     * The GUI itself
+     */
+    private final GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui;
+
+    /**
+     * Renderer for a view
+     */
+    private final Consumer<V> renderer;
+
+    private final CommandRunner<Ctx, Msg> commandRunner;
+
+    // State
+    private final AtomicReference<Model> currentModel;
+    private final AtomicReference<V> currentView;
+    private final CompletableFuture<Model> completionFuture;
+
+    private volatile boolean active = true;
+    private volatile boolean transitioning = false;
+
+    public GUISession(SessionID<Model, Msg, V, Viewer> sessionId,
+                      GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
+                      Viewer viewer,
+                      Model initialModel,
+                      Consumer<V> renderer,
+                      CommandRunner<Ctx, Msg> commandRunner) {
+        this.sessionId = sessionId;
+        this.gui = gui;
+        this.viewer = viewer;
+        this.renderer = renderer;
+
+        this.currentModel = new AtomicReference<>(initialModel);
+        this.commandRunner = commandRunner;
+        this.currentView = new AtomicReference<>();
+        this.completionFuture = new CompletableFuture<>();
+    }
+
+
+    /**
+     * Starts the GUI session by rendering the initial view.
+     *
+     * @throws IllegalStateException if the session is inactive
+     */
+    public void start() {
+        synchronized (this) {
+            if (!active) {
+                throw new IllegalStateException("Cannot start an inactive session");
+            }
+
+            // render the initial view
+            renderAndFlush(currentModel.get());
+        }
+    }
+
+
+    /**
+     * The core message processing loop.
+     * Processes a message, updates the model, renders the view, and runs commands.
+     *
+     * @param msg the message to process
+     * @return true if processed, false if session is inactive
+     */
+    public boolean processMessage(Msg msg) {
+        if (!active) {
+            return false;
+        }
+
+        synchronized (this) {
+            try {
+                // first, update the model
+                Model oldModel = currentModel.get();
+
+                UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result = gui.update(oldModel, msg);
+
+                Model newModel = result.getModel();
+                currentModel.set(newModel);
+
+                // render new model
+                transitioning = true;
+                renderAndFlush(newModel);
+                transitioning = false;
+
+                // run any commands
+                if (result.getCommand() != null) {
+                    commandRunner.run(result.getCommand(), this::processMessage);
+                }
+
+                return true;
+            } catch (Exception e) {
+                // TODO: proper error handling
+                e.printStackTrace();
+                close();
+                return false;
+            }
+        }
+    }
+
+    private void renderAndFlush(Model model) {
+        V layout = gui.render(model);
+        currentView.set(layout);
+
+
+        renderer.accept(layout);
+    }
+
+    public void close() {
+        synchronized (this) {
+            if (active) {
+                active = false;
+                completionFuture.complete(currentModel.get());
+            }
+        }
+    }
+
+    public SessionID<Model, Msg, V, Viewer> getSessionId() {
+        return sessionId;
+    }
+
+    public Viewer getViewer() {
+        return viewer;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public CompletableFuture<Model> getCompletionFuture() {
+        return completionFuture;
+    }
+
+    public V getCurrentView() {
+        return currentView.get();
+    }
+
+    public Model getCurrentModel() {
+        return currentModel.get();
+    }
+
+    public boolean isTransitioning() {
+        return transitioning;
+    }
+
+    @FunctionalInterface
+    public interface CommandRunner<Ctx extends CommandContext, Msg> {
+        void run(Command<Ctx, Msg> cmd, Consumer<Msg> dispatcher);
+    }
+}

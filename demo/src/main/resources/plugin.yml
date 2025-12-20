@@ -1,0 +1,3 @@
+name: MittenLibDemo
+version: 1.0
+main: me.bristermitten.mittenlib.demo.DemoPlugin
