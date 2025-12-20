@@ -7,7 +7,6 @@ import me.bristermitten.mittenlib.gui.factory.MinecraftGUIFactory;
 import me.bristermitten.mittenlib.gui.factory.SpigotMinecraftGUIFactory;
 import me.bristermitten.mittenlib.gui.manager.GUIManager;
 import me.bristermitten.mittenlib.gui.manager.SpigotGUIManager;
-import me.bristermitten.mittenlib.gui.spigot.InventoryStorage;
 import me.bristermitten.mittenlib.gui.spigot.SpigotEventHandler;
 import org.bukkit.event.Listener;
 
@@ -24,7 +23,6 @@ public class GUIModule extends AbstractModule {
         bind(MinecraftGUIFactory.class).to(SpigotMinecraftGUIFactory.class).in(Scopes.SINGLETON);
 
         // Spigot-specific components
-        bind(InventoryStorage.class).in(Scopes.SINGLETON);
         bind(SpigotEventHandler.class);
         Multibinder.newSetBinder(binder(), Listener.class)
                 .addBinding().to(SpigotEventHandler.class);
