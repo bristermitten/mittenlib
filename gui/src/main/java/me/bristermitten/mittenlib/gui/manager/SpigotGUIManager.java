@@ -5,10 +5,8 @@ import com.google.inject.Singleton;
 import me.bristermitten.mittenlib.gui.GUIBase;
 import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
-import me.bristermitten.mittenlib.gui.event.EventBus;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
-import me.bristermitten.mittenlib.gui.spigot.InventoryStorage;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import me.bristermitten.mittenlib.gui.spigot.SpigotInventoryViewer;
 import me.bristermitten.mittenlib.gui.spigot.command.DefaultSpigotCommandContext;
@@ -33,16 +31,14 @@ import java.util.function.Consumer;
 @Singleton
 public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
-    private final EventBus eventBus;
-    private final InventoryStorage inventoryStorage;
-    private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?, ?>> activeSessions;
+    // Map of active sessions from SessionID to GUISession
+    private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?, SpigotCommandContext>> activeSessions;
 
+    // Map of viewers to their corresponding SessionID
     private final Map<Object, SessionID<?, ?, ?, ?>> viewerToSession;
 
     @Inject
-    public SpigotGUIManager(EventBus eventBus, InventoryStorage inventoryStorage) {
-        this.eventBus = eventBus;
-        this.inventoryStorage = inventoryStorage;
+    public SpigotGUIManager() {
         this.activeSessions = new ConcurrentHashMap<>();
         this.viewerToSession = new ConcurrentHashMap<>();
     }
@@ -51,7 +47,6 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     @Override
     public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<SpigotCommandContext, Msg>, Viewer extends InventoryViewer<Msg, V>>
     SessionID<Model, Msg, V, Viewer> startSession(GUIBase<Model, Msg, V, SpigotCommandContext, Cmd> gui, Viewer viewer) {
-
         if (!(viewer instanceof SpigotInventoryViewer)) {
             throw new IllegalArgumentException("SpigotGUIManager requires SpigotInventoryViewer");
         }
@@ -60,19 +55,18 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
         closeExistingSession(player);
 
-        // Create new session
+        // create new session
         SessionID<Model, Msg, V, Viewer> sessionId = new SessionID<>(UUID.randomUUID());
-
         GUISession<Model, Msg, V, Viewer, SpigotCommandContext> session = getSession(gui, viewer, sessionId);
 
-        // Store session mappings
+
         activeSessions.put(sessionId, session);
         viewerToSession.put(viewer, sessionId);
 
-        // Start the session
+
         session.start();
 
-        // Set up cleanup when session completes
+        // when session completes, remove from active sessions
         session.getCompletionFuture().whenComplete((model, throwable) -> {
             activeSessions.remove(sessionId);
             viewerToSession.remove(viewer);
@@ -111,8 +105,6 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
         };
 
         GUISession.CommandRunner<SpigotCommandContext, Msg> commandRunner = (cmd, dispatch) -> {
-            // Create a context linked to this player
-            // Assuming your Command interface is: void run(Context ctx, Consumer<Msg> dispatch)
             DefaultSpigotCommandContext context = new DefaultSpigotCommandContext(spigotViewer.getPlayer());
             cmd.run(context, dispatch);
         };
@@ -125,9 +117,13 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
                 commandRunner);
     }
 
+
     /**
-     * The "Renderer" implementation for Spigot.
-     * Handles opening/updating the inventory based on the Pure Layout.
+     * update the player's inventory to match the given layout.
+     *
+     * @param player the player whose inventory to update
+     * @param layout the layout to apply
+     * @param <Msg>  the message type
      */
     private <Msg> void updateInventory(Player player, SpigotGUIView<Msg> layout) {
         Inventory current = player.getOpenInventory().getTopInventory();
@@ -136,8 +132,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
         Inventory target;
 
-        // Reuse strategy: If title and size match, just update items.
-        // Note: Bukkit doesn't allow easy title changes without reopening.
+        // we can reuse the current inventory if it matches size and title
         boolean canReuse = current != null
                 && current.getSize() == size
                 && player.getOpenInventory().getTitle().equals(title);
@@ -145,13 +140,12 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
         if (canReuse) {
             target = current;
         } else {
-            // Create and open new
-            target = Bukkit.createInventory(player, size, title); // You might need Component/Legacy adapter here
+            target = Bukkit.createInventory(player, size, title);
             player.openInventory(target);
         }
 
-        // Sync items (Naive clear-and-set approach)
-        // Optimization: You could diff 'current' vs 'layout' to only set changed slots
+        // simply clear and repopulate the inventory
+        // TODO: is it worth doing a diff and only updating changed slots?
         target.clear();
         layout.getButtons().forEach((slot, button) ->
                 target.setItem(slot, button.getItemStack())
@@ -174,8 +168,21 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     @Override
     public <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<SpigotCommandContext, Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId) {
-        GUISession<?, ?, ?, ?, ?> session = activeSessions.get(sessionId);
+        GUISession<Model, Msg, V, Viewer, SpigotCommandContext> session =
+                getSession(sessionId).orElse(null);
+
         if (session != null) {
+
+            V currentView = session.getCurrentView();
+            if (currentView instanceof SpigotGUIView) {
+                @SuppressWarnings("unchecked")
+                SpigotGUIView<Msg> layout = (SpigotGUIView<Msg>) currentView;
+                Msg onClose = layout.getOnClose();
+                if (onClose != null) {
+                    session.processMessage(onClose);
+                }
+            }
+
             session.close();
             activeSessions.remove(sessionId);
             viewerToSession.remove(session.getViewer());

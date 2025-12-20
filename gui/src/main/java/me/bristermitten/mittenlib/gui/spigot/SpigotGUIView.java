@@ -50,4 +50,8 @@ public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotI
     public int getSize() {
         return size;
     }
+
+    public @Nullable Msg getOnClose() {
+        return onClose;
+    }
 }

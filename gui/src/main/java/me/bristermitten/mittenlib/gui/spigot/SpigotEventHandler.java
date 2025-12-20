@@ -63,7 +63,7 @@ public class SpigotEventHandler implements Listener {
         }
 
 
-        Object layoutObj = session.getCurrentLayout();
+        Object layoutObj = session.getCurrentView();
 
         // 4. Check for Button
         if (layoutObj instanceof SpigotGUIView) {

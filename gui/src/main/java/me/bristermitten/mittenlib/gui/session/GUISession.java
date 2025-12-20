@@ -45,7 +45,7 @@ public class GUISession<Model,
 
     // State
     private final AtomicReference<Model> currentModel;
-    private final AtomicReference<V> currentLayout;
+    private final AtomicReference<V> currentView;
     private final CompletableFuture<Model> completionFuture;
 
     private volatile boolean active = true;
@@ -64,7 +64,7 @@ public class GUISession<Model,
 
         this.currentModel = new AtomicReference<>(initialModel);
         this.commandRunner = commandRunner;
-        this.currentLayout = new AtomicReference<>();
+        this.currentView = new AtomicReference<>();
         this.completionFuture = new CompletableFuture<>();
     }
 
@@ -132,7 +132,7 @@ public class GUISession<Model,
     private void renderAndFlush(Model model) {
         // Calculate the Layout (Pure)
         V layout = gui.render(model);
-        currentLayout.set(layout);
+        currentView.set(layout);
 
         // Push to screen (Impure)
         renderer.accept(layout);
@@ -161,8 +161,8 @@ public class GUISession<Model,
         return completionFuture;
     }
 
-    public V getCurrentLayout() {
-        return currentLayout.get();
+    public V getCurrentView() {
+        return currentView.get();
     }
 
     public Model getCurrentModel() {
