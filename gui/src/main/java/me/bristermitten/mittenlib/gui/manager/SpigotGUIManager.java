@@ -25,8 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * Spigot implementation of GUIManager that manages GUI sessions and their lifecycles.
- * Uses dependency injection and reactive event handling.
+ * Spigot implementation of the GUIManager.
  */
 @Singleton
 public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {

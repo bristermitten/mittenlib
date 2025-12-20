@@ -9,6 +9,11 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * A view of a Spigot GUI - not a real inventory, but a description of one.
+ *
+ * @param <Msg> the message type
+ */
 public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>> {
     private final int size;
     private final String title;

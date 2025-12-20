@@ -3,16 +3,18 @@ package me.bristermitten.mittenlib.gui.spigot.command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
 import org.bukkit.entity.Player;
 
+/**
+ * The context for a Spigot command execution.
+ */
 public interface SpigotCommandContext extends CommandContext {
     /**
-     * The player executing the command.
+     * The player executing the command / viewing the GUI.
      */
     Player player();
 
     /**
-     * Helper to close the inventory (Valid side effect).
-     * Note: In most cases, you should let the Session handle closing via Model updates,
-     * but this is useful for "Force Close" commands.
+     * Close the inventory of the player associated with this context.
+     * Note: In most cases, closing the inventory should be done with a Message & Command that explicitly closes it.
      */
     void closeInventory();
 }
