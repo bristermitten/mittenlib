@@ -34,7 +34,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?, SpigotCommandContext>> activeSessions;
 
     // Map of viewers to their corresponding SessionID
-    private final Map<Object, SessionID<?, ?, ?, ?>> viewerToSession;
+    private final Map<SpigotInventoryViewer<?>, SessionID<?, ?, ?, ?>> viewerToSession;
 
     @Inject
     public SpigotGUIManager() {
@@ -60,7 +60,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
 
         activeSessions.put(sessionId, session);
-        viewerToSession.put(viewer, sessionId);
+        viewerToSession.put(spigotViewer, sessionId);
 
 
         session.start();
