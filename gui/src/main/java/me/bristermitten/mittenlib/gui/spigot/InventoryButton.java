@@ -4,15 +4,15 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventoryButton<Msg> {
     private final ItemStack itemStack;
-    private final Msg command;
+    private final Msg message;
 
-    public InventoryButton(ItemStack itemStack, Msg command) {
+    public InventoryButton(ItemStack itemStack, Msg message) {
         this.itemStack = itemStack;
-        this.command = command;
+        this.message = message;
     }
 
     public Msg getMessage() {
-        return command;
+        return message;
     }
 
     public ItemStack getItemStack() {

@@ -12,7 +12,16 @@ public interface Command<Ctx extends CommandContext, Msg> {
         return new PureCommand<>(value);
     }
 
-    void run(Ctx context, Consumer<Msg> dispatch);
+    @SafeVarargs
+    static <Ctx extends CommandContext, Msg> Command<Ctx, Msg> batch(Command<Ctx, Msg>... commands) {
+        return (context, dispatch) -> {
+            for (Command<Ctx, Msg> cmd : commands) {
+                cmd.run(context, dispatch);
+            }
+        };
+    }
+
+    void run(Ctx context, Consumer<Msg> continuation);
 
     class PureCommand<Ctx extends CommandContext, Msg> implements Command<Ctx, Msg> {
         private final Msg value;
@@ -22,8 +31,8 @@ public interface Command<Ctx extends CommandContext, Msg> {
         }
 
         @Override
-        public void run(Ctx context, Consumer<Msg> dispatch) {
-            dispatch.accept(value);
+        public void run(Ctx context, Consumer<Msg> continuation) {
+            continuation.accept(value);
         }
     }
 }

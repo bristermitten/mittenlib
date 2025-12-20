@@ -5,16 +5,14 @@ import me.bristermitten.mittenlib.gui.UpdateResult;
 import me.bristermitten.mittenlib.gui.factory.MinecraftGUIFactory;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUI;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
+import me.bristermitten.mittenlib.gui.spigot.command.SendMessageCommand;
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommand;
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Improved counter GUI that uses dependency injection instead of static methods.
- * Demonstrates the new Elm-like architecture with proper Guice integration.
- */
+
 public class DemoCounterGUI extends SpigotGUI<Counter, CounterMessage> {
 
     private final MinecraftGUIFactory minecraftGuiFactory;
@@ -32,7 +30,10 @@ public class DemoCounterGUI extends SpigotGUI<Counter, CounterMessage> {
     @Override
     public @NotNull UpdateResult<Counter, CounterMessage, SpigotCommandContext, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
         return message.matchTo(
-                increment -> UpdateResult.pure(Counter.create(counter.value() + 1)),
+                increment -> UpdateResult.of(
+                        Counter.create(counter.value() + 1),
+                        new SendMessageCommand<>("hello from increment!")
+                ),
                 decrement -> UpdateResult.pure(Counter.create(counter.value() - 1)),
                 setValue -> UpdateResult.pure(Counter.create(setValue.value())),
                 displayCount -> UpdateResult.pure(counter)
