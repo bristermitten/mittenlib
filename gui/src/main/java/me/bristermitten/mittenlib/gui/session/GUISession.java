@@ -71,21 +71,23 @@ public class GUISession<Model,
 
     /**
      * Starts the GUI session by rendering the initial view.
-     * Note: The model is assumed to be initialized before passing to constructor
-     * (or you can move init() here).
+     *
+     * @throws IllegalStateException if the session is inactive
      */
     public void start() {
-        if (!active) {
-            throw new IllegalStateException("Cannot start an inactive session");
-        }
+        synchronized (this) {
+            if (!active) {
+                throw new IllegalStateException("Cannot start an inactive session");
+            }
 
-        // 1. Render initial state
-        renderAndFlush(currentModel.get());
+            // render the initial view
+            renderAndFlush(currentModel.get());
+        }
     }
 
 
     /**
-     * The core "Game Loop".
+     * The core message processing loop.
      * Processes a message, updates the model, renders the view, and runs commands.
      *
      * @param msg the message to process
@@ -96,10 +98,9 @@ public class GUISession<Model,
             return false;
         }
 
-        // 1. Update (Pure Logic)
-        // We synchronize to ensure messages are processed in order
         synchronized (this) {
             try {
+                // first, update the model
                 Model oldModel = currentModel.get();
 
                 UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result = gui.update(oldModel, msg);
@@ -107,21 +108,19 @@ public class GUISession<Model,
                 Model newModel = result.getModel();
                 currentModel.set(newModel);
 
-                // 2. Render & Display (Side Effect -> Screen)
+                // render new model
                 transitioning = true;
                 renderAndFlush(newModel);
                 transitioning = false;
 
-                // 3. Run Commands (Side Effect -> Logic)
+                // run any commands
                 if (result.getCommand() != null) {
-                    // Commands might emit new messages (e.g. "DataLoaded"), so we pass a dispatcher
                     commandRunner.run(result.getCommand(), this::processMessage);
                 }
 
                 return true;
-
             } catch (Exception e) {
-                // In a robust system, you might send a Msg.Error here instead of closing
+                // TODO: proper error handling
                 e.printStackTrace();
                 close();
                 return false;
@@ -130,18 +129,19 @@ public class GUISession<Model,
     }
 
     private void renderAndFlush(Model model) {
-        // Calculate the Layout (Pure)
         V layout = gui.render(model);
         currentView.set(layout);
 
-        // Push to screen (Impure)
+
         renderer.accept(layout);
     }
 
     public void close() {
-        if (active) {
-            active = false;
-            completionFuture.complete(currentModel.get());
+        synchronized (this) {
+            if (active) {
+                active = false;
+                completionFuture.complete(currentModel.get());
+            }
         }
     }
 
