@@ -5,7 +5,7 @@ import me.bristermitten.mittenlib.gui.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Base interface for GUI applications, based on the Model-View-Command pattern (Elm Architecture).
+ * Base interface for GUI applications, based on the Elm Architecture (Model-View-Update / TEA).
  *
  * @param <Model> the type of the model that holds the state of the application
  * @param <Msg>   the type of messages that can be executed to update the model
