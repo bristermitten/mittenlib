@@ -33,7 +33,7 @@ public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotI
     }
 
     public SpigotGUIView<Msg> withButton(int slot, InventoryButton<Msg> button) {
-        return new SpigotGUIView<>(size, title, buttons.plus(slot, button), null);
+        return new SpigotGUIView<>(size, title, buttons.plus(slot, button), onClose);
     }
 
     public SpigotGUIView<Msg> onClose(@Nullable Msg onClose) {
