@@ -126,7 +126,9 @@ implements <a href="../FileType.html" title="interface in me.bristermitten.mitte
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="../../config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loader()" class="member-name-link">loader</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns an <a href="../../config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a> for this file type.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#matches(java.nio.file.Path)" class="member-name-link">matches</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -186,13 +188,15 @@ implements <a href="../FileType.html" title="interface in me.bristermitten.mitte
 <h3>loader</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="../../config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a></span>&nbsp;<span class="element-name">loader</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../FileType.html#loader()">FileType</a></code></span></div>
+<div class="block">Returns an <a href="../../config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a> for this file type.
+ It should be assumed that the loader will only work (i.e. not produce an <a href="../../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a>)
+ for paths for which <a href="../FileType.html#matches(java.nio.file.Path)"><code>FileType.matches(Path)</code></a> returns true</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../FileType.html#loader()">loader</a></code>&nbsp;in interface&nbsp;<code><a href="../FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a></code></dd>
 <dt>Returns:</dt>
-<dd>an Object Loader for this file type
- It is assumed that the loader will only work (i.e. not produce an <a href="../../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a>)
- for paths for which <a href="../FileType.html#matches(java.nio.file.Path)"><code>FileType.matches(Path)</code></a> returns true</dd>
+<dd>an Object Loader for this file type</dd>
 </dl>
 </section>
 </li>

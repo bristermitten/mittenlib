@@ -96,7 +96,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="ASTNode.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTNode</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">Property</span>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;propertyType, @NotNull <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a>&nbsp;source, <a href="ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a>&nbsp;settings)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">Property</span>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;propertyType, <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a>&nbsp;source, <a href="ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a>&nbsp;settings)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="ASTNode.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTNode</a></span></div>
 <div class="block">A representation of a property in a configuration type.
@@ -129,7 +129,7 @@ implements <a href="ASTNode.html" title="interface in me.bristermitten.mittenlib
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,javax.lang.model.type.TypeMirror,me.bristermitten.mittenlib.annotations.ast.Property.PropertySource,me.bristermitten.mittenlib.annotations.ast.ASTSettings.PropertyASTSettings)" class="member-name-link">Property</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;propertyType,
- @NotNull <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a>&nbsp;source,
+ <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a>&nbsp;source,
  <a href="ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a>&nbsp;settings)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>Property</code> record class.</div>
@@ -173,7 +173,7 @@ implements <a href="ASTNode.html" title="interface in me.bristermitten.mittenlib
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>settings</code> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#source()" class="member-name-link">source</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>source</code> record component.</div>
@@ -205,8 +205,7 @@ implements <a href="ASTNode.html" title="interface in me.bristermitten.mittenlib
 <h3>Property</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Property</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;propertyType,
- @NotNull
- @NotNull <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a>&nbsp;source,
+ <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a>&nbsp;source,
  <a href="ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a>&nbsp;settings)</span></div>
 <div class="block">Creates an instance of a <code>Property</code> record class.</div>
 <dl class="notes">
@@ -292,8 +291,7 @@ implements <a href="ASTNode.html" title="interface in me.bristermitten.mittenlib
 <li>
 <section class="detail" id="source()">
 <h3>source</h3>
-<div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a></span>&nbsp;<span class="element-name">source</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Property.PropertySource.html" title="interface in me.bristermitten.mittenlib.annotations.ast">Property.PropertySource</a></span>&nbsp;<span class="element-name">source</span>()</div>
 <div class="block">Returns the value of the <code>source</code> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>

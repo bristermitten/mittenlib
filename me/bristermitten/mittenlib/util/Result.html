@@ -182,10 +182,14 @@ E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isFailure()" class="member-name-link">isFailure</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is a failure.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSuccess()" class="member-name-link">isSuccess</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is a success.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;@NotNull <a href="Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">map</a><wbr>(<a href="lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">SafeFunction</a>&lt;<a href="Result.html" title="type parameter in Result">T</a>,<wbr>R&gt;&nbsp;function)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -670,6 +674,7 @@ R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <section class="detail" id="isSuccess()">
 <h3>isSuccess</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isSuccess</span>()</div>
+<div class="block">Checks if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is a success.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Ok.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Ok</code></a>. This should be equivalent to <code>!isFail()</code></dd>
@@ -680,6 +685,7 @@ R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <section class="detail" id="isFailure()">
 <h3>isFailure</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isFailure</span>()</div>
+<div class="block">Checks if the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is a failure.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>If the <a href="Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> is <a href="Result.Fail.html" title="class in me.bristermitten.mittenlib.util"><code>Result.Fail</code></a>. This should be equivalent to <code>!isSuccess()</code></dd>

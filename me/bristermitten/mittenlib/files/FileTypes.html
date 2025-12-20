@@ -130,10 +130,14 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#defaultTypes()" class="member-name-link">defaultTypes</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Return a <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> containing the default <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a>s.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTypes()" class="member-name-link">getTypes</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the set of registered <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes.</div>
+</div>
 </div>
 </div>
 </div>
@@ -174,10 +178,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="defaultTypes()">
 <h3>defaultTypes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files">FileTypes</a></span>&nbsp;<span class="element-name">defaultTypes</span>()</div>
+<div class="block">Return a <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> containing the default <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a>s.
+ These are currently <a href="json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json"><code>JSONFileType</code></a> and <a href="yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml"><code>YamlFileType</code></a></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>A <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> containing all the default <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a>s.
- These are currently <a href="json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json"><code>JSONFileType</code></a> and <a href="yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml"><code>YamlFileType</code></a></dd>
+<dd>a <a href="FileTypes.html" title="class in me.bristermitten.mittenlib.files"><code>FileTypes</code></a> instance with the default types registered</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json"><code>JSONFileType</code></a></li>
+<li><a href="yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml"><code>YamlFileType</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -198,6 +210,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getTypes()">
 <h3>getTypes</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a>&gt;&gt;</span>&nbsp;<span class="element-name">getTypes</span>()</div>
+<div class="block">Get the set of registered <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the set of <a href="FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes registered</dd>

@@ -125,10 +125,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getData()" class="member-name-link">getData</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the data to deserialize.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMapper()" class="member-name-link">getMapper</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the mapper to use for deserialization.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withData(me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">withData</a><wbr>(<a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&nbsp;data)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -174,6 +178,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getMapper()">
 <h3>getMapper</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a></span>&nbsp;<span class="element-name">getMapper</span>()</div>
+<div class="block">Returns the mapper to use for deserialization.
+ In generated config code, this is only used as a last resort.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the mapper to use</dd>
@@ -185,6 +191,7 @@ loadScripts(document, 'script');</script>
 <h3>getData</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></span>&nbsp;<span class="element-name">getData</span>()</div>
+<div class="block">Returns the data to deserialize. This may be a child of the original data, or the original data itself.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the data to deserialize</dd>

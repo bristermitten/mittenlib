@@ -90,9 +90,10 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Sets</span>
+<div class="type-signature"><span class="annotations">@NullMarked
+</span><span class="modifiers">public class </span><span class="element-name type-name-label">Sets</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Utility functions for creating immutable sets</div>
+<div class="block">Utility functions for creating immutable sets.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -121,18 +122,18 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return a new set containing the difference of 2 sets, i.e.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@NonNull @Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of()" class="member-name-link">of</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E)" class="member-name-link">of</a><wbr>(E&nbsp;e)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@NonNull @Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E)" class="member-name-link">of</a><wbr>(@NonNull E&nbsp;e)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E...)" class="member-name-link">of</a><wbr>(E...&nbsp;es)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@NonNull @Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E,E)" class="member-name-link">of</a><wbr>(@NonNull E&nbsp;e1,
+ @NonNull E&nbsp;e2)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E,E)" class="member-name-link">of</a><wbr>(E&nbsp;e1,
- E&nbsp;e2)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E...)" class="member-name-link">of</a><wbr>(E @NonNull ...&nbsp;es)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;E&gt;&nbsp;@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a><wbr>&lt;E&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(E,E,E)" class="member-name-link">of</a><wbr>(E&nbsp;e1,
@@ -171,20 +172,23 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="of()">
 <h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span>()</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>
+<span class="return-type">@NonNull @Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span>()</div>
 </section>
 </li>
 <li>
 <section class="detail" id="of(E)">
 <h3 id="of(java.lang.Object)">of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(E&nbsp;e)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>
+<span class="return-type">@NonNull @Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull E&nbsp;e)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="of(E,E)">
 <h3 id="of(java.lang.Object,java.lang.Object)">of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(E&nbsp;e1,
- E&nbsp;e2)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>
+<span class="return-type">@NonNull @Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull E&nbsp;e1,
+ @NonNull E&nbsp;e2)</span></div>
 </section>
 </li>
 <li>
@@ -199,7 +203,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="of(E...)">
 <h3 id="of(java.lang.Object[])">of</h3>
 <div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(E...&nbsp;es)</span></div>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">@Unmodifiable <a href="MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet</a>&lt;E&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(E @NonNull ...&nbsp;es)</span></div>
 </section>
 </li>
 <li>
@@ -262,6 +266,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="concat(java.util.Set,java.util.Set)">
 <h3>concat</h3>
 <div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@InlineMe(replacement="Sets.union(start, others)",
+          imports="me.bristermitten.mittenlib.collections.Sets")
 </span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;E&gt;</span>&nbsp;<span class="return-type">@Unmodifiable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;E&gt;</span>&nbsp;<span class="element-name">concat</span><wbr><span class="parameters">(@NotNull
  @NotNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;E&gt;&nbsp;start,
  @NotNull

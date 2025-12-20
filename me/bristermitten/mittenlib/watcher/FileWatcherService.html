@@ -115,7 +115,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isWatching()" class="member-name-link">isWatching</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns whether the service is currently watching for file changes.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeWatcher(me.bristermitten.mittenlib.watcher.FileWatcher)" class="member-name-link">removeWatcher</a><wbr>(@NotNull <a href="FileWatcher.html" title="class in me.bristermitten.mittenlib.watcher">FileWatcher</a>&nbsp;fileWatcher)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -197,10 +199,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isWatching()">
 <h3>isWatching</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isWatching</span>()</div>
+<div class="block">Returns whether the service is currently watching for file changes.
+ Note that this may return true even if the service is not currently watching, if the service is in the process of starting up.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>whether the service is currently watching for file changes.
- Note that this may return true even if the service is not currently watching, if the service is in the process of starting up.</dd>
+<dd>whether the service is currently watching for file changes.</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">

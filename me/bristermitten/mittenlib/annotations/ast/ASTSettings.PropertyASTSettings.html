@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">ASTSettings.PropertyASTSettings</span>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern, @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName, @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme, boolean&nbsp;isNullable, boolean&nbsp;hasDefaultValue)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">ASTSettings.PropertyASTSettings</span>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern, @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName, <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme, boolean&nbsp;isNullable, boolean&nbsp;hasDefaultValue)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="ASTSettings.html" title="interface in me.bristermitten.mittenlib.annotations.ast">ASTSettings</a></span></div>
 </section>
@@ -125,7 +125,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean,boolean)" class="member-name-link">PropertyASTSettings</a><wbr>(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
  @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName,
- @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme,
+ <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme,
  boolean&nbsp;isNullable,
  boolean&nbsp;hasDefaultValue)</code></div>
 <div class="col-last even-row-color">
@@ -150,7 +150,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>configName</code> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enumParsingScheme()" class="member-name-link">enumParsingScheme</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>enumParsingScheme</code> record component.</div>
@@ -205,12 +205,9 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <li>
 <section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.config.names.NamingPattern,me.bristermitten.mittenlib.config.names.ConfigName,me.bristermitten.mittenlib.config.EnumParsingSchemes,boolean,boolean)">
 <h3>PropertyASTSettings</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">PropertyASTSettings</span><wbr><span class="parameters">(@Nullable
- @Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
- @Nullable
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">PropertyASTSettings</span><wbr><span class="parameters">(@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a>&nbsp;namingPattern,
  @Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a>&nbsp;configName,
- @NotNull
- @NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme,
+ <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a>&nbsp;enumParsingScheme,
  boolean&nbsp;isNullable,
  boolean&nbsp;hasDefaultValue)</span></div>
 <div class="block">Creates an instance of a <code>PropertyASTSettings</code> record class.</div>
@@ -276,8 +273,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <li>
 <section class="detail" id="namingPattern()">
 <h3>namingPattern</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></span>&nbsp;<span class="element-name">namingPattern</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></span>&nbsp;<span class="element-name">namingPattern</span>()</div>
 <div class="block">Returns the value of the <code>namingPattern</code> record component.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
@@ -290,8 +286,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <li>
 <section class="detail" id="configName()">
 <h3>configName</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a></span>&nbsp;<span class="element-name">configName</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../../config/names/ConfigName.html" title="annotation interface in me.bristermitten.mittenlib.config.names">ConfigName</a></span>&nbsp;<span class="element-name">configName</span>()</div>
 <div class="block">Returns the value of the <code>configName</code> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -302,8 +297,7 @@ implements <a href="ASTSettings.html" title="interface in me.bristermitten.mitte
 <li>
 <section class="detail" id="enumParsingScheme()">
 <h3>enumParsingScheme</h3>
-<div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></span>&nbsp;<span class="element-name">enumParsingScheme</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../config/EnumParsingSchemes.html" title="enum class in me.bristermitten.mittenlib.config">EnumParsingSchemes</a></span>&nbsp;<span class="element-name">enumParsingScheme</span>()</div>
 <div class="block">Returns the value of the <code>enumParsingScheme</code> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>

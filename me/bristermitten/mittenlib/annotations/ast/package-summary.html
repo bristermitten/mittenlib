@@ -68,7 +68,8 @@ loadScripts(document, 'script');</script>
 <h1 title="Package me.bristermitten.mittenlib.annotations.ast" class="title">Package me.bristermitten.mittenlib.annotations.ast</h1>
 </div>
 <hr>
-<div class="package-signature">package <span class="element-name">me.bristermitten.mittenlib.annotations.ast</span></div>
+<div class="package-signature"><span class="annotations">@NullMarked
+</span>package <span class="element-name">me.bristermitten.mittenlib.annotations.ast</span></div>
 <section class="package-description" id="package-description">
 <div class="block">The structure of a config's data in a more abstract form than a class hierarchy.
  <p>
@@ -102,7 +103,7 @@ loadScripts(document, 'script');</script>
 <div class="snippet-container"><button class="copy snippet-copy" aria-label="Copy snippet" onclick="copySnippet(this)"><span data-copied="Copied!">Copy</span><img src="../../../../../copy.svg" alt="Copy snippet"></button>
 <pre class="snippet"><code>
  import me.bristermitten.mittenlib.config.Config;
- import org.jetbrains.annotations.Nullable;
+ import org.jspecify.annotations.Nullable;
      @ConfigUnion
      public interface RepositoryConfig {
          @Config
@@ -128,7 +129,7 @@ loadScripts(document, 'script');</script>
 <div class="snippet-container"><button class="copy snippet-copy" aria-label="Copy snippet" onclick="copySnippet(this)"><span data-copied="Copied!">Copy</span><img src="../../../../../copy.svg" alt="Copy snippet"></button>
 <pre class="snippet"><code>//     *
 //     * import me.bristermitten.mittenlib.config.Config;
-//     * import org.jetbrains.annotations.Nullable;
+//     * import org.jspecify.annotations.Nullable;
 //     *     @ConfigUnion(tag = "type")
 //     *     public interface RepositoryConfig {
 //     *         @Config
@@ -188,7 +189,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ConfigTypeSource.InterfaceConfigTypeSource.html" title="class in me.bristermitten.mittenlib.annotations.ast">ConfigTypeSource.InterfaceConfigTypeSource</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab4">&nbsp;</div>
 <div class="col-first even-row-color class-summary class-summary-tab4"><a href="CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">Information about a custom deserializer.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab4"><a href="Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab4">
 <div class="block">A representation of a property in a configuration type.</div>

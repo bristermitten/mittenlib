@@ -103,9 +103,9 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.AccessorGenerator,me.bristermitten.mittenlib.annotations.compile.DeserializationCodeGenerator,me.bristermitten.mittenlib.annotations.config.ToStringGenerator,me.bristermitten.mittenlib.annotations.compile.EqualsHashCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.MethodNames)" class="member-name-link">ConfigImplGenerator</a><wbr>(<a href="AccessorGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">AccessorGenerator</a>&nbsp;accessorGenerator,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.AccessorGenerator,me.bristermitten.mittenlib.annotations.compile.DeserializationCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ToStringGenerator,me.bristermitten.mittenlib.annotations.compile.EqualsHashCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.MethodNames)" class="member-name-link">ConfigImplGenerator</a><wbr>(<a href="AccessorGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">AccessorGenerator</a>&nbsp;accessorGenerator,
  <a href="DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a>&nbsp;deserializationCodeGenerator,
- <a href="../config/ToStringGenerator.html" title="class in me.bristermitten.mittenlib.annotations.config">ToStringGenerator</a>&nbsp;toStringGenerator,
+ <a href="ToStringGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ToStringGenerator</a>&nbsp;toStringGenerator,
  <a href="EqualsHashCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">EqualsHashCodeGenerator</a>&nbsp;equalsHashCodeGenerator,
  <a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;configurationClassNameGenerator,
  <a href="ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a>&nbsp;configNameCache,
@@ -125,8 +125,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull com.squareup.javapoet.JavaFile</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#emit(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">emit</a><wbr>(@NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull com.squareup.javapoet.JavaFile</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#emit(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">emit</a><wbr>(@NonNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Generates a JavaFile containing the implementation class for the given configuration structure.</div>
 </div>
@@ -148,12 +148,12 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.compile.AccessorGenerator,me.bristermitten.mittenlib.annotations.compile.DeserializationCodeGenerator,me.bristermitten.mittenlib.annotations.config.ToStringGenerator,me.bristermitten.mittenlib.annotations.compile.EqualsHashCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.MethodNames)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.compile.AccessorGenerator,me.bristermitten.mittenlib.annotations.compile.DeserializationCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ToStringGenerator,me.bristermitten.mittenlib.annotations.compile.EqualsHashCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.MethodNames)">
 <h3>ConfigImplGenerator</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="element-name">ConfigImplGenerator</span><wbr><span class="parameters">(<a href="AccessorGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">AccessorGenerator</a>&nbsp;accessorGenerator,
  <a href="DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a>&nbsp;deserializationCodeGenerator,
- <a href="../config/ToStringGenerator.html" title="class in me.bristermitten.mittenlib.annotations.config">ToStringGenerator</a>&nbsp;toStringGenerator,
+ <a href="ToStringGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ToStringGenerator</a>&nbsp;toStringGenerator,
  <a href="EqualsHashCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">EqualsHashCodeGenerator</a>&nbsp;equalsHashCodeGenerator,
  <a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;configurationClassNameGenerator,
  <a href="ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a>&nbsp;configNameCache,
@@ -171,9 +171,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="emit(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>emit</h3>
-<div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull com.squareup.javapoet.JavaFile</span>&nbsp;<span class="element-name">emit</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull com.squareup.javapoet.JavaFile</span>&nbsp;<span class="element-name">emit</span><wbr><span class="parameters">(@NonNull <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Generates a JavaFile containing the implementation class for the given configuration structure.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

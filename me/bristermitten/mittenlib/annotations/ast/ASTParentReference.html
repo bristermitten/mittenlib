@@ -93,11 +93,11 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-parentClassName">parentClassName</span></code> - </dd>
-<dd><code><span id="param-parent">parent</span></code> - </dd>
+<dd><code><span id="param-parentClassName">parentClassName</span></code> - the class name of the parent</dd>
+<dd><code><span id="param-parent">parent</span></code> - parent reference, null if this is the root</dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">ASTParentReference</span>(@NotNull com.squareup.javapoet.ClassName&nbsp;parentClassName, @Nullable <a href="ASTParentReference.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTParentReference</a>&nbsp;parent)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">ASTParentReference</span>(com.squareup.javapoet.ClassName&nbsp;parentClassName, @Nullable <a href="ASTParentReference.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTParentReference</a>&nbsp;parent)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">List of hierarchical names</div>
 </section>
@@ -111,7 +111,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.squareup.javapoet.ClassName,me.bristermitten.mittenlib.annotations.ast.ASTParentReference)" class="member-name-link">ASTParentReference</a><wbr>(@NotNull com.squareup.javapoet.ClassName&nbsp;parentClassName,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.squareup.javapoet.ClassName,me.bristermitten.mittenlib.annotations.ast.ASTParentReference)" class="member-name-link">ASTParentReference</a><wbr>(com.squareup.javapoet.ClassName&nbsp;parentClassName,
  @Nullable <a href="ASTParentReference.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTParentReference</a>&nbsp;parent)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>ASTParentReference</code> record class.</div>
@@ -145,7 +145,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-parent"><code>parent</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parentClassName()" class="member-name-link">parentClassName</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-parentClassName"><code>parentClassName</code></a> record component.</div>
@@ -175,9 +175,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(com.squareup.javapoet.ClassName,me.bristermitten.mittenlib.annotations.ast.ASTParentReference)">
 <h3>ASTParentReference</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ASTParentReference</span><wbr><span class="parameters">(@NotNull
- @NotNull com.squareup.javapoet.ClassName&nbsp;parentClassName,
- @Nullable
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ASTParentReference</span><wbr><span class="parameters">(com.squareup.javapoet.ClassName&nbsp;parentClassName,
  @Nullable <a href="ASTParentReference.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTParentReference</a>&nbsp;parent)</span></div>
 <div class="block">Creates an instance of a <code>ASTParentReference</code> record class.</div>
 <dl class="notes">
@@ -239,8 +237,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="parentClassName()">
 <h3>parentClassName</h3>
-<div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">parentClassName</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">parentClassName</span>()</div>
 <div class="block">Returns the value of the <a href="#param-parentClassName"><code>parentClassName</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -251,8 +248,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="parent()">
 <h3>parent</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="ASTParentReference.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTParentReference</a></span>&nbsp;<span class="element-name">parent</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="ASTParentReference.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTParentReference</a></span>&nbsp;<span class="element-name">parent</span>()</div>
 <div class="block">Returns the value of the <a href="#param-parent"><code>parent</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>

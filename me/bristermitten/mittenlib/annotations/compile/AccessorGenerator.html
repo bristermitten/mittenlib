@@ -107,8 +107,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)" class="member-name-link">AccessorGenerator</a><wbr>(<a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil,
- <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)" class="member-name-link">AccessorGenerator</a><wbr>(<a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,
  <a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;configurationClassNameGenerator)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -126,16 +125,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethod(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.squareup.javapoet.FieldSpec)" class="member-name-link">createGetterMethod</a><wbr>(@NotNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element,
- @NotNull com.squareup.javapoet.FieldSpec&nbsp;field)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethod(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.squareup.javapoet.FieldSpec)" class="member-name-link">createGetterMethod</a><wbr>(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element,
+ @NonNull com.squareup.javapoet.FieldSpec&nbsp;field)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a getter method for a field.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethodOverriding(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.squareup.javapoet.FieldSpec)" class="member-name-link">createGetterMethodOverriding</a><wbr>(@NotNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;overriding,
- @NotNull com.squareup.javapoet.FieldSpec&nbsp;fromField)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethodOverriding(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.squareup.javapoet.FieldSpec)" class="member-name-link">createGetterMethodOverriding</a><wbr>(@NonNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;overriding,
+ @NonNull com.squareup.javapoet.FieldSpec&nbsp;fromField)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a getter method that overrides an existing method.</div>
 </div>
@@ -163,11 +162,10 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)">
 <h3>AccessorGenerator</h3>
 <div class="member-signature"><span class="annotations">@Inject
-</span><span class="modifiers">public</span>&nbsp;<span class="element-name">AccessorGenerator</span><wbr><span class="parameters">(<a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil,
- <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">AccessorGenerator</span><wbr><span class="parameters">(<a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,
  <a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;configurationClassNameGenerator)</span></div>
 </section>
 </li>
@@ -182,11 +180,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="createGetterMethod(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.squareup.javapoet.FieldSpec)">
 <h3>createGetterMethod</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethod</span><wbr><span class="parameters">(@NotNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
- @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element,
- @NotNull
- @NotNull com.squareup.javapoet.FieldSpec&nbsp;field)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethod</span><wbr><span class="parameters">(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element,
+ @NonNull com.squareup.javapoet.FieldSpec&nbsp;field)</span></div>
 <div class="block">Creates a getter method for a field.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -199,11 +195,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="createGetterMethodOverriding(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.squareup.javapoet.FieldSpec)">
 <h3>createGetterMethodOverriding</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethodOverriding</span><wbr><span class="parameters">(@NotNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
- @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;overriding,
- @NotNull
- @NotNull com.squareup.javapoet.FieldSpec&nbsp;fromField)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethodOverriding</span><wbr><span class="parameters">(@NonNull com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;overriding,
+ @NonNull com.squareup.javapoet.FieldSpec&nbsp;fromField)</span></div>
 <div class="block">Creates a getter method that overrides an existing method.
  This method preserves annotations from the original method (except for private annotations)
  and adds appropriate nullability and contract annotations.</div>
@@ -218,8 +212,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="createWithMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>createWithMethods</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createWithMethods</span><wbr><span class="parameters">(@NotNull
- com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createWithMethods</span><wbr><span class="parameters">(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Creates "with" methods (immutable setters) for each field.</div>
 <dl class="notes">
