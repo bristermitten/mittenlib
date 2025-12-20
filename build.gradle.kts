@@ -4,13 +4,28 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-	java
+    id("io.freefair.aggregate-javadoc") version "9.1.0"
+    java
 	`java-library`
 	`maven-publish`
-	id("io.freefair.aggregate-javadoc") version "6.3.0"
 	id("net.ltgt.errorprone") version "+"
 }
 
+dependencies {
+    rootProject.subprojects.forEach { subproject ->
+        subproject.plugins.withId("java") {
+            javadoc(subproject)
+        }
+    }
+
+    // workaround from https://github.com/freefair/gradle-plugins/issues/1522
+    javadocClasspath(libs.spigot.api)
+    javadocClasspath(libs.placeholderapi)
+}
+
+tasks.javadoc {
+    configureJavadoc()
+}
 
 fun Javadoc.configureJavadoc() {
 	val options = options as StandardJavadocDocletOptions
@@ -23,10 +38,6 @@ fun Javadoc.configureJavadoc() {
 	options.links("https://helpch.at/docs/1.8.8/")
 	options.links("https://javadoc.io/doc/net.kyori/adventure-api/latest/")
 	options.links("https://google.github.io/guice/api-docs/latest/javadoc/")
-}
-
-tasks.aggregateJavadoc {
-	configureJavadoc()
 }
 
 subprojects {
@@ -91,14 +102,15 @@ subprojects {
 
 
 	tasks.withType<JavaCompile> {
-		options.encoding = "UTF-8"
-		options.isFork = true
+        options.encoding = "UTF-8"
+        options.isFork = true
 
-		options.errorprone.disableWarningsInGeneratedCode.set(true)
-	}
-	tasks.javadoc {
-		configureJavadoc()
-	}
+        options.errorprone.disableWarningsInGeneratedCode.set(true)
+    }
+
+    tasks.withType<Javadoc> {
+        configureJavadoc()
+    }
 
 	publishing {
 		repositories {
