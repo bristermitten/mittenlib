@@ -4,11 +4,6 @@ import me.bristermitten.mittenlib.gui.GUIBase;
 import me.bristermitten.mittenlib.gui.UpdateResult;
 import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
-import me.bristermitten.mittenlib.gui.command.CommandContextFactory;
-import me.bristermitten.mittenlib.gui.event.EventBus;
-import me.bristermitten.mittenlib.gui.event.Subscription;
-import me.bristermitten.mittenlib.gui.spigot.InventoryStorage;
-import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
 
@@ -26,148 +21,130 @@ public class GUISession<Model,
         Viewer extends InventoryViewer<Msg, V>,
         Ctx extends CommandContext> {
 
+    /**
+     * The unique session ID.
+     */
     private final SessionID<Model, Msg, V, Viewer> sessionId;
-    private final GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui;
+
+    /**
+     * The viewer (e.g. player) interacting with the GUI.
+     */
     private final Viewer viewer;
-    private final EventBus eventBus;
-    private final InventoryStorage inventoryStorage;
-    private final CommandContextFactory<Ctx, Msg, V, Viewer> contextFactory;
+
+    /**
+     * The GUI itself
+     */
+    private final GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui;
+
+    /**
+     * Renderer for a view
+     */
+    private final Consumer<V> renderer;
+
+    private final CommandRunner<Ctx, Msg> commandRunner;
+
+    // State
     private final AtomicReference<Model> currentModel;
-    private final AtomicReference<V> currentView;
+    private final AtomicReference<V> currentLayout;
     private final CompletableFuture<Model> completionFuture;
 
     private volatile boolean active = true;
     private volatile boolean transitioning = false;
-    private Subscription commandSubscription;
 
     public GUISession(SessionID<Model, Msg, V, Viewer> sessionId,
                       GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
                       Viewer viewer,
-                      EventBus eventBus,
-                      InventoryStorage inventoryStorage,
-                      CommandContextFactory<Ctx, Msg, V, Viewer> contextFactory) {
+                      Model initialModel,
+                      Consumer<V> renderer,
+                      CommandRunner<Ctx, Msg> commandRunner) {
         this.sessionId = sessionId;
         this.gui = gui;
         this.viewer = viewer;
-        this.eventBus = eventBus;
-        this.inventoryStorage = inventoryStorage;
-        this.contextFactory = contextFactory;
-        this.currentModel = new AtomicReference<>();
-        this.currentView = new AtomicReference<>();
+        this.renderer = renderer;
+
+        this.currentModel = new AtomicReference<>(initialModel);
+        this.commandRunner = commandRunner;
+        this.currentLayout = new AtomicReference<>();
         this.completionFuture = new CompletableFuture<>();
     }
 
+
     /**
-     * Starts the GUI session by initializing the model and rendering the initial view.
+     * Starts the GUI session by rendering the initial view.
+     * Note: The model is assumed to be initialized before passing to constructor
+     * (or you can move init() here).
      */
     public void start() {
         if (!active) {
             throw new IllegalStateException("Cannot start an inactive session");
         }
 
-        // Initialize the model
-        Model initialModel = gui.init();
-        currentModel.set(initialModel);
-
-        // Render the initial view
-        V initialView = gui.render(initialModel);
-        currentView.set(initialView);
-
-        // Display the view
-        initialView.display(viewer);
-
-        // Store in inventory storage if it's a SpigotGUIView
-        if (initialView instanceof SpigotGUIView) {
-            ((SpigotGUIView<?>) initialView).storeInInventoryStorage(inventoryStorage);
-        }
-
-        // Subscribe to command events for this session
-        setupCommandHandling();
+        // 1. Render initial state
+        renderAndFlush(currentModel.get());
     }
 
+
     /**
-     * Processes a message and updates the GUI state.
+     * The core "Game Loop".
+     * Processes a message, updates the model, renders the view, and runs commands.
      *
      * @param msg the message to process
-     * @return true if the message was processed successfully
+     * @return true if processed, false if session is inactive
      */
     public boolean processMessage(Msg msg) {
         if (!active) {
             return false;
         }
 
-        try {
-            Model oldModel = currentModel.get();
+        // 1. Update (Pure Logic)
+        // We synchronize to ensure messages are processed in order
+        synchronized (this) {
+            try {
+                Model oldModel = currentModel.get();
 
-            // Update the model
-            UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> update = gui.update(oldModel, msg);
-            if (update.getCommand() != null) {
-                throw new UnsupportedOperationException("Commands are not supported in this GUIExecutor implementation.");
+                UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result = gui.update(oldModel, msg);
+
+                Model newModel = result.getModel();
+                currentModel.set(newModel);
+
+                // 2. Render & Display (Side Effect -> Screen)
+                transitioning = true;
+                renderAndFlush(newModel);
+                transitioning = false;
+
+                // 3. Run Commands (Side Effect -> Logic)
+                if (result.getCommand() != null) {
+                    // Commands might emit new messages (e.g. "DataLoaded"), so we pass a dispatcher
+                    commandRunner.run(result.getCommand(), this::processMessage);
+                }
+
+                return true;
+
+            } catch (Exception e) {
+                // In a robust system, you might send a Msg.Error here instead of closing
+                e.printStackTrace();
+                close();
+                return false;
             }
-
-            Model newModel = update.getModel();
-            currentModel.set(newModel);
-
-            // Render the new view
-            V newView = gui.render(newModel);
-            currentView.set(newView);
-
-            transitioning = true;
-            // Display the updated view
-            newView.display(viewer);
-            transitioning = false;
-
-            // Store in inventory storage if it's a SpigotGUIView
-            if (newView instanceof SpigotGUIView) {
-                ((SpigotGUIView<?>) newView).storeInInventoryStorage(inventoryStorage);
-            }
-
-            // Execute any command produced by the update
-            if (update.getCommand() != null) {
-                Consumer<Msg> dispatch = this::processMessage;
-                Ctx ctx = contextFactory.create(viewer, newView);
-                update.getCommand().run(ctx, dispatch);
-            }
-
-            return true;
-        } catch (Exception e) {
-
-            close();
-            return false;
         }
     }
 
-    /**
-     * Closes the session and cleans up resources.
-     */
+    private void renderAndFlush(Model model) {
+        // Calculate the Layout (Pure)
+        V layout = gui.render(model);
+        currentLayout.set(layout);
+
+        // Push to screen (Impure)
+        renderer.accept(layout);
+    }
+
     public void close() {
         if (active) {
             active = false;
-
-            if (commandSubscription != null) {
-                commandSubscription.cancel();
-            }
-
-            Model finalModel = currentModel.get();
-            completionFuture.complete(finalModel);
+            completionFuture.complete(currentModel.get());
         }
     }
 
-    /**
-     * Returns a future that completes when the session ends.
-     *
-     * @return the completion future with the final model
-     */
-    public CompletableFuture<Model> getCompletionFuture() {
-        return completionFuture;
-    }
-
-    private void setupCommandHandling() {
-        // This will be implemented when we have command events defined
-        // For now, we'll rely on external command sending via processCommand
-    }
-
-    // Getters
     public SessionID<Model, Msg, V, Viewer> getSessionId() {
         return sessionId;
     }
@@ -176,19 +153,28 @@ public class GUISession<Model,
         return viewer;
     }
 
-    public Model getCurrentModel() {
-        return currentModel.get();
-    }
-
-    public V getCurrentView() {
-        return currentView.get();
-    }
-
     public boolean isActive() {
         return active;
     }
 
+    public CompletableFuture<Model> getCompletionFuture() {
+        return completionFuture;
+    }
+
+    public V getCurrentLayout() {
+        return currentLayout.get();
+    }
+
+    public Model getCurrentModel() {
+        return currentModel.get();
+    }
+
     public boolean isTransitioning() {
         return transitioning;
+    }
+
+    @FunctionalInterface
+    public interface CommandRunner<Ctx extends CommandContext, Msg> {
+        void run(Command<Ctx, Msg> cmd, Consumer<Msg> dispatcher);
     }
 }

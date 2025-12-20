@@ -4,7 +4,7 @@ import me.bristermitten.mittenlib.gui.command.Command;
 
 import java.util.function.Consumer;
 
-public class SendCommand<T> implements Command<SpigotCommandContext<T>, T> {
+public class SendCommand<T> implements Command<SpigotCommandContext, T> {
     private final T value;
     private final String rawMessage;
 
@@ -14,8 +14,7 @@ public class SendCommand<T> implements Command<SpigotCommandContext<T>, T> {
     }
 
     @Override
-    public void run(SpigotCommandContext<T> context, Consumer<T> dispatch) {
-        // TODO: Use context (e.g., player, plugin) to send rawMessage if needed
+    public void run(SpigotCommandContext context, Consumer<T> dispatch) {
         if (dispatch != null) {
             dispatch.accept(value);
         }

@@ -5,7 +5,4 @@ public interface View<Msg,
         Viewer
                 extends InventoryViewer<Msg, ThisView>> {
 
-    void display(Viewer inventoryViewer);
-
-    Msg waitForCommand();
 }

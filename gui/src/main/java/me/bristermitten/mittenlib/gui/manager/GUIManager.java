@@ -14,7 +14,7 @@ import java.util.Optional;
  * Manages GUI sessions and their lifecycles.
  * Provides a centralised way to create, manage, and clean up GUI instances.
  */
-public interface GUIManager {
+public interface GUIManager<Ctx extends CommandContext> {
 
     /**
      * Creates and starts a new GUI session for the given viewer.
@@ -27,7 +27,7 @@ public interface GUIManager {
      * @param <Viewer> the viewer type
      * @return a unique session ID for this GUI instance
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Ctx, Msg>, Viewer extends InventoryViewer<Msg, V>>
     SessionID<Model, Msg, V, Viewer> startSession(GUIBase<Model, Msg, V, Ctx, Cmd> gui, Viewer viewer);
 
     /**
@@ -37,7 +37,7 @@ public interface GUIManager {
      * @param command   the command to send
      * @return true if the command was sent successfully, false if the session doesn't exist
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Ctx, Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command);
 
     /**
@@ -46,7 +46,7 @@ public interface GUIManager {
      * @param sessionId the session ID to close
      * @return true if the session was closed, false if it didn't exist
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Cmd extends Command<Ctx, Msg>, Viewer extends InventoryViewer<Msg, V>>
     boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId);
 
     /**
@@ -55,7 +55,7 @@ public interface GUIManager {
      * @param sessionId the session ID
      * @return the session if it exists and is active
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Ctx extends CommandContext, Viewer extends InventoryViewer<Msg, V>>
+    <Model, Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>>
     Optional<GUISession<Model, Msg, V, Viewer, Ctx>> getSession(SessionID<Model, Msg, V, Viewer> sessionId);
 
     /**
@@ -64,8 +64,8 @@ public interface GUIManager {
      * @param viewer the viewer to search for
      * @return the session if found
      */
-    <Model, Msg, V extends View<Msg, V, Viewer>, Ctx extends CommandContext, Viewer extends InventoryViewer<Msg, V>>
-    Optional<GUISession<Model, Msg, V, Viewer, Ctx>> getSessionByViewer(Viewer viewer);
+    <Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>>
+    Optional<GUISession<?, ?, ?, ?, Ctx>> getSessionByViewer(Viewer viewer);
 
     /**
      * Closes all active sessions and shuts down the manager.

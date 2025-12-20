@@ -2,9 +2,10 @@ package me.bristermitten.mittenlib.gui.spigot;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import me.bristermitten.mittenlib.gui.command.CommandContext;
-import me.bristermitten.mittenlib.gui.manager.GUIManager;
+import me.bristermitten.mittenlib.gui.manager.SpigotGUIManager;
 import me.bristermitten.mittenlib.gui.session.GUISession;
+import me.bristermitten.mittenlib.gui.session.SessionID;
+import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,15 +23,14 @@ import java.util.Optional;
 @Singleton
 public class SpigotEventHandler implements Listener {
 
-    private final GUIManager guiManager;
-    private final InventoryStorage inventoryStorage;
+    private final SpigotGUIManager guiManager;
 
     @Inject
-    public SpigotEventHandler(GUIManager guiManager, InventoryStorage inventoryStorage) {
+    public SpigotEventHandler(SpigotGUIManager guiManager) {
         this.guiManager = guiManager;
-        this.inventoryStorage = inventoryStorage;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) {
@@ -44,10 +44,14 @@ public class SpigotEventHandler implements Listener {
         }
 
         // Check if this is a GUI inventory
-        Optional<SpigotGUIView<?>> guiView = inventoryStorage.getView(clickedInventory);
-        if (!guiView.isPresent()) {
+        Optional<GUISession<?, ?, ?, ?, SpigotCommandContext>> sessionByViewer = guiManager.getSessionByViewer(
+                new SpigotInventoryViewer<>(player)
+        );
+        if (!sessionByViewer.isPresent()) {
             return;
         }
+
+        GUISession<?, ?, ?, ?, ?> session = sessionByViewer.get();
 
         // Cancel the event to prevent item movement
         event.setCancelled(true);
@@ -59,33 +63,19 @@ public class SpigotEventHandler implements Listener {
         }
 
 
-        // noinspection unchecked
-        this.processSession(
-                player,
-                (SpigotGUIView<Object>) guiView.get(), slot);
+        Object layoutObj = session.getCurrentLayout();
+
+        // 4. Check for Button
+        if (layoutObj instanceof SpigotGUIView) {
+            SpigotGUIView<?> layout = (SpigotGUIView<?>) layoutObj;
+
+            layout.getButton(slot).ifPresent(button -> {
+                // 5. Send Message (The Manager handles the unchecked cast internally)
+                guiManager.sendMessage((SessionID) session.getSessionId(), button.getMessage());
+            });
+        }
     }
 
-    private <Msg> void processSession(Player player, SpigotGUIView<Msg> view, int slot) {
-        // Find the GUI session for this player
-
-        Optional<GUISession<Object, Object, SpigotGUIView<Object>, SpigotInventoryViewer<Object>, CommandContext>> session = guiManager.getSessionByViewer(
-                new SpigotInventoryViewer<>(player)
-        );
-        if (!session.isPresent()) {
-            return;
-        }
-        // Get the button for this slot
-
-        Optional<? extends InventoryButton<Msg>> button = view.getButton(slot);
-
-        if (!button.isPresent()) {
-            return;
-        }
-
-        // Send the command to the session
-        Msg command = button.get().getMessage();
-        guiManager.sendMessage(session.get().getSessionId(), command);
-    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
@@ -94,21 +84,12 @@ public class SpigotEventHandler implements Listener {
         }
 
         Player player = (Player) event.getPlayer();
-        Inventory closedInventory = event.getInventory();
 
-        // Check if this was a GUI inventory
-        Optional<SpigotGUIView<?>> guiView = inventoryStorage.getView(closedInventory);
-        if (!guiView.isPresent()) {
-            return;
-        }
-
-        // Find and close the GUI session for this player
-        Optional<GUISession<Object, Object, SpigotGUIView<Object>, SpigotInventoryViewer<Object>, CommandContext>> session = guiManager.getSessionByViewer(
-                new SpigotInventoryViewer<>(player)
-        );
-
-        session.filter(s -> !s.isTransitioning())
-                .ifPresent(guiSession ->
-                        guiManager.closeSession(guiSession.getSessionId()));
+        guiManager.getSessionByViewer(new SpigotInventoryViewer<>(player))
+                .ifPresent(session -> {
+                    if (!session.isTransitioning()) {
+                        guiManager.closeSession(session.getSessionId());
+                    }
+                });
     }
 }

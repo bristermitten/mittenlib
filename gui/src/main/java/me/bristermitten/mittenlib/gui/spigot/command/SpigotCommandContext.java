@@ -1,18 +1,18 @@
 package me.bristermitten.mittenlib.gui.spigot.command;
 
 import me.bristermitten.mittenlib.gui.command.CommandContext;
-import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
-import me.bristermitten.mittenlib.gui.spigot.SpigotInventoryViewer;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
-
-public interface SpigotCommandContext<Msg> extends CommandContext {
+public interface SpigotCommandContext extends CommandContext {
+    /**
+     * The player executing the command.
+     */
     Player player();
 
-    SpigotInventoryViewer<Msg> viewer();
-
-    Optional<SpigotGUIView<Msg>> currentView();
-
-    void open(SpigotGUIView<Msg> view);
+    /**
+     * Helper to close the inventory (Valid side effect).
+     * Note: In most cases, you should let the Session handle closing via Model updates,
+     * but this is useful for "Force Close" commands.
+     */
+    void closeInventory();
 }

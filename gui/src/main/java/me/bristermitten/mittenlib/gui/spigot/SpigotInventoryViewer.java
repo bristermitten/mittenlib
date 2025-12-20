@@ -10,10 +10,6 @@ public class SpigotInventoryViewer<Msg> implements InventoryViewer<Msg, SpigotGU
         this.player = player;
     }
 
-    @Override
-    public void display(SpigotGUIView<Msg> view) {
-        player.openInventory(view.inventory);
-    }
 
     public Player getPlayer() {
         return player;

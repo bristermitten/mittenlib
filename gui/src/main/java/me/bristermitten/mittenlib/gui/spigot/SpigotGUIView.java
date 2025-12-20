@@ -3,8 +3,6 @@ package me.bristermitten.mittenlib.gui.spigot;
 import me.bristermitten.mittenlib.collections.MLImmutableMap;
 import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.gui.view.View;
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -16,7 +14,6 @@ public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotI
     private final String title;
 
     private final @Unmodifiable MLImmutableMap<Integer, InventoryButton<Msg>> buttons;
-    Inventory inventory;
     private final @Nullable Msg onClose;
 
     public SpigotGUIView(int size, String title, @Unmodifiable Map<Integer, InventoryButton<Msg>> buttons, @Nullable Msg onClose) {
@@ -42,29 +39,15 @@ public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotI
         return Optional.ofNullable(buttons.get(slot));
     }
 
-    @Override
-    public void display(SpigotInventoryViewer<Msg> inventoryViewer) {
-        Inventory inventory = Bukkit.createInventory(
-                null,
-                size,
-                title
-        );
-        buttons.forEach((slot, button) -> {
-            inventory.setItem(slot, button.getItemStack());
-        });
-        this.inventory = inventory;
-
-        inventoryViewer.display(this);
+    public MLImmutableMap<Integer, InventoryButton<Msg>> getButtons() {
+        return buttons;
     }
 
-    public void storeInInventoryStorage(InventoryStorage storage) {
-        if (inventory != null) {
-            storage.storeInventory(inventory, this);
-        }
+    public String getTitle() {
+        return title;
     }
 
-    @Override
-    public Msg waitForCommand() {
-        return null;
+    public int getSize() {
+        return size;
     }
 }
