@@ -19,9 +19,9 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build Javadocs with Gradle
-        run: ./gradlew aggregateJavadoc
+        run: ./gradlew javadoc
 
       - name: Deploy to Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build/docs/aggregateJavadoc
+          folder: build/docs/javadoc
