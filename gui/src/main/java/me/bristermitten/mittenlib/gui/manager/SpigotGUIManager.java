@@ -76,7 +76,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void closeExistingSession(Player player) {
-        SessionID id = viewerToSession.get(player);
+        SessionID id = viewerToSession.get(new SpigotInventoryViewer<>(player));
         if (id != null) closeSession(id);
     }
 
