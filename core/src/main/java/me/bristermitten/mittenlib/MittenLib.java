@@ -36,6 +36,7 @@ public class MittenLib<T extends Plugin> {
         addModule(new LangModule());
         addModule(new FileWatcherModule());
         addModule(new FileTypeModule());
+        addModule(new ListenersModule());
         return this;
     }
 
