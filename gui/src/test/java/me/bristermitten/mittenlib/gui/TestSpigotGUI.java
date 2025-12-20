@@ -4,11 +4,12 @@ import me.bristermitten.mittenlib.gui.spigot.InventoryButton;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUI;
 import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommand;
+import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class TestSpigotGUI extends SpigotGUI<Counter, CounterMessage, Object> {
+public class TestSpigotGUI extends SpigotGUI<Counter, CounterMessage> {
 
 
     @Override
@@ -17,11 +18,12 @@ public class TestSpigotGUI extends SpigotGUI<Counter, CounterMessage, Object> {
     }
 
     @Override
-    public @NotNull UpdateResult<Counter, CounterMessage, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
+    public @NotNull UpdateResult<Counter, CounterMessage, SpigotCommandContext<CounterMessage>, SpigotCommand<CounterMessage>> update(Counter counter, CounterMessage message) {
         return message.matchTo(
                 increment -> UpdateResult.pure(counter.withValue(counter.value() + 1)),
                 decrement -> UpdateResult.pure(counter.withValue(counter.value() - 1)),
-                setValue -> UpdateResult.pure(counter.withValue(setValue.value()))
+                setValue -> UpdateResult.pure(counter.withValue(setValue.value())),
+                ask -> UpdateResult.pure(counter) // TODO
         );
     }
 

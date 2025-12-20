@@ -1,8 +1,10 @@
 package me.bristermitten.mittenlib.gui.spigot.command;
 
-import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
+import me.bristermitten.mittenlib.gui.command.Command;
 
-public class SendCommand<T> implements SpigotCommand<T> {
+import java.util.function.Consumer;
+
+public class SendCommand<T> implements Command<SpigotCommandContext<T>, T> {
     private final T value;
     private final String rawMessage;
 
@@ -12,7 +14,10 @@ public class SendCommand<T> implements SpigotCommand<T> {
     }
 
     @Override
-    public T run(SpigotGUIView<?> view) {
-        return null;
+    public void run(SpigotCommandContext<T> context, Consumer<T> dispatch) {
+        // TODO: Use context (e.g., player, plugin) to send rawMessage if needed
+        if (dispatch != null) {
+            dispatch.accept(value);
+        }
     }
 }

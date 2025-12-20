@@ -1,7 +1,10 @@
 package me.bristermitten.mittenlib.gui.session;
 
 import me.bristermitten.mittenlib.gui.GUIBase;
+import me.bristermitten.mittenlib.gui.UpdateResult;
 import me.bristermitten.mittenlib.gui.command.Command;
+import me.bristermitten.mittenlib.gui.command.CommandContext;
+import me.bristermitten.mittenlib.gui.command.CommandContextFactory;
 import me.bristermitten.mittenlib.gui.event.EventBus;
 import me.bristermitten.mittenlib.gui.event.Subscription;
 import me.bristermitten.mittenlib.gui.spigot.InventoryStorage;
@@ -11,18 +14,24 @@ import me.bristermitten.mittenlib.gui.view.View;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * Represents an active GUI session with state management and event handling.
  * Follows the Elm architecture pattern with immutable state updates.
  */
-public class GUISession<Model, Msg, Cmd extends Command<Msg>, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
+public class GUISession<Model,
+        Msg,
+        V extends View<Msg, V, Viewer>,
+        Viewer extends InventoryViewer<Msg, V>,
+        Ctx extends CommandContext> {
 
     private final SessionID<Model, Msg, V, Viewer> sessionId;
-    private final GUIBase<Model, Msg, V, Cmd> gui;
+    private final GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui;
     private final Viewer viewer;
     private final EventBus eventBus;
     private final InventoryStorage inventoryStorage;
+    private final CommandContextFactory<Ctx, Msg, V, Viewer> contextFactory;
     private final AtomicReference<Model> currentModel;
     private final AtomicReference<V> currentView;
     private final CompletableFuture<Model> completionFuture;
@@ -31,12 +40,18 @@ public class GUISession<Model, Msg, Cmd extends Command<Msg>, V extends View<Msg
     private volatile boolean transitioning = false;
     private Subscription commandSubscription;
 
-    public GUISession(SessionID<Model, Msg, V, Viewer> sessionId, GUIBase<Model, Msg, V, Cmd> gui, Viewer viewer, EventBus eventBus, InventoryStorage inventoryStorage) {
+    public GUISession(SessionID<Model, Msg, V, Viewer> sessionId,
+                      GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
+                      Viewer viewer,
+                      EventBus eventBus,
+                      InventoryStorage inventoryStorage,
+                      CommandContextFactory<Ctx, Msg, V, Viewer> contextFactory) {
         this.sessionId = sessionId;
         this.gui = gui;
         this.viewer = viewer;
         this.eventBus = eventBus;
         this.inventoryStorage = inventoryStorage;
+        this.contextFactory = contextFactory;
         this.currentModel = new AtomicReference<>();
         this.currentView = new AtomicReference<>();
         this.completionFuture = new CompletableFuture<>();
@@ -71,12 +86,12 @@ public class GUISession<Model, Msg, Cmd extends Command<Msg>, V extends View<Msg
     }
 
     /**
-     * Processes a command and updates the GUI state.
+     * Processes a message and updates the GUI state.
      *
-     * @param msg the command to process
-     * @return true if the command was processed successfully
+     * @param msg the message to process
+     * @return true if the message was processed successfully
      */
-    public boolean processCommand(Msg msg) {
+    public boolean processMessage(Msg msg) {
         if (!active) {
             return false;
         }
@@ -85,8 +100,12 @@ public class GUISession<Model, Msg, Cmd extends Command<Msg>, V extends View<Msg
             Model oldModel = currentModel.get();
 
             // Update the model
-            Model newModel = null;
-//                    gui.update(oldModel, msg); TODO:
+            UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> update = gui.update(oldModel, msg);
+            if (update.getCommand() != null) {
+                throw new UnsupportedOperationException("Commands are not supported in this GUIExecutor implementation.");
+            }
+
+            Model newModel = update.getModel();
             currentModel.set(newModel);
 
             // Render the new view
@@ -101,6 +120,13 @@ public class GUISession<Model, Msg, Cmd extends Command<Msg>, V extends View<Msg
             // Store in inventory storage if it's a SpigotGUIView
             if (newView instanceof SpigotGUIView) {
                 ((SpigotGUIView<?>) newView).storeInInventoryStorage(inventoryStorage);
+            }
+
+            // Execute any command produced by the update
+            if (update.getCommand() != null) {
+                Consumer<Msg> dispatch = this::processMessage;
+                Ctx ctx = contextFactory.create(viewer, newView);
+                update.getCommand().run(ctx, dispatch);
             }
 
             return true;

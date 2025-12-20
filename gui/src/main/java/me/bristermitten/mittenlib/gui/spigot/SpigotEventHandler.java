@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.gui.spigot;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import me.bristermitten.mittenlib.gui.command.Command;
+import me.bristermitten.mittenlib.gui.command.CommandContext;
 import me.bristermitten.mittenlib.gui.manager.GUIManager;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import org.bukkit.entity.Player;
@@ -68,10 +68,9 @@ public class SpigotEventHandler implements Listener {
     private <Msg> void processSession(Player player, SpigotGUIView<Msg> view, int slot) {
         // Find the GUI session for this player
 
-        Optional<GUISession<Object, Msg, Command<Msg>, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>>> session =
-                guiManager.getSessionByViewer(
-                        new SpigotInventoryViewer<>(player)
-                );
+        Optional<GUISession<Object, Object, SpigotGUIView<Object>, SpigotInventoryViewer<Object>, CommandContext>> session = guiManager.getSessionByViewer(
+                new SpigotInventoryViewer<>(player)
+        );
         if (!session.isPresent()) {
             return;
         }
@@ -104,7 +103,7 @@ public class SpigotEventHandler implements Listener {
         }
 
         // Find and close the GUI session for this player
-        Optional<GUISession<Object, Object, Command<Object>, SpigotGUIView<Object>, SpigotInventoryViewer<Object>>> session = guiManager.getSessionByViewer(
+        Optional<GUISession<Object, Object, SpigotGUIView<Object>, SpigotInventoryViewer<Object>, CommandContext>> session = guiManager.getSessionByViewer(
                 new SpigotInventoryViewer<>(player)
         );
 

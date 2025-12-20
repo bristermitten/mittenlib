@@ -10,6 +10,8 @@ interface CounterMessageSpec {
     CounterMessageSpec Decrement();
 
     CounterMessageSpec Set(int value);
+
+    CounterMessageSpec AskForValue();
 }
 
 @RecordSpec

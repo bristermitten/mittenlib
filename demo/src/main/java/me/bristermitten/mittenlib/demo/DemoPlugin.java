@@ -38,6 +38,9 @@ public class DemoPlugin extends JavaPlugin implements Listener {
             SessionID<Counter, CounterMessage, SpigotGUIView<CounterMessage>, SpigotInventoryViewer<CounterMessage>> sessionID = guiManager
                     .startSession(counterGUI, viewer);
 
+            guiManager.getSession(sessionID)
+                    .get()
+                    .start();
 
         }, 3 * 20L);
     }

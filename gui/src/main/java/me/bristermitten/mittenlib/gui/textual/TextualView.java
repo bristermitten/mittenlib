@@ -1,4 +1,6 @@
-package me.bristermitten.mittenlib.gui.view;
+package me.bristermitten.mittenlib.gui.textual;
+
+import me.bristermitten.mittenlib.gui.view.ViewerlessView;
 
 import java.util.Map;
 import java.util.Scanner;

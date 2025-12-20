@@ -15,6 +15,10 @@ public class SpigotInventoryViewer<Msg> implements InventoryViewer<Msg, SpigotGU
         player.openInventory(view.inventory);
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

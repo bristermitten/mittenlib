@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.gui;
 
 import me.bristermitten.mittenlib.gui.command.Command;
+import me.bristermitten.mittenlib.gui.command.CommandContext;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
 
@@ -8,8 +9,9 @@ public class GUIExecutor<Model,
         V extends View<Msg, V, Viewer>,
         Viewer extends InventoryViewer<Msg, V>,
         Msg,
-        Cmd extends Command<Msg>,
-        GUI extends GUIBase<Model, Msg, V, Cmd>> {
+        Ctx extends CommandContext,
+        Cmd extends Command<Ctx, Msg>,
+        GUI extends GUIBase<Model, Msg, V, Ctx, Cmd>> {
 
     private final GUI gui;
 
@@ -29,7 +31,7 @@ public class GUIExecutor<Model,
             if (command == null) {
                 break; // Exit if no command is received
             }
-            UpdateResult<Model, Msg, Cmd> cmd = gui.update(model, command);
+            UpdateResult<Model, Msg, Ctx, Cmd> cmd = gui.update(model, command);
             model = cmd.getModel();
 
             if (cmd.getCommand() != null) {
