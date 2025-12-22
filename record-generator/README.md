@@ -10,7 +10,9 @@ import me.bristermitten.mittenlib.codegen.RecordSpec;
 
 @RecordSpec
 interface TestRecordSpec {
-    TestRecordSpec create(String a, int b);
+    String a();
+
+    int b();
 }
 ```
 
@@ -52,14 +54,17 @@ interface TestUnionSpec {
 This will generate a "sealed" class named `TestUnion` with the following methods:
 
 ```java
+// Static Factory Methods
 static TestUnion Child1();
 
 static TestUnion Child2(int value);
 
+// Safe downcasting
 Optional<Child1> asChild1();
 
 Optional<Child2> asChild2();
 
+// Pattern Matching
 void match(
         Consumer<Child1> child1Case,
         Consumer<Child2> child2Case
@@ -72,7 +77,7 @@ void match(
 ```
 
 The `Child1` and `Child2` classes are generated as subclasses of `TestUnion`, generated as if they were annotated with
-`@Record`
+`@RecordSpec`
 
 The class is "sealed" in the sense that the constructor is private, preventing implementation outside the generated
 class.

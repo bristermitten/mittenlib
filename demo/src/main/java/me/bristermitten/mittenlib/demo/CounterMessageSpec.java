@@ -16,5 +16,5 @@ interface CounterMessageSpec {
 
 @RecordSpec
 interface CounterSpec {
-    CounterSpec create(int value);
+    int value();
 }

@@ -8,7 +8,7 @@ public class RecordSpecTest {
 
     @Test
     void test() {
-        TestRecord r = TestRecord.create("test", 42);
+        TestRecord r = new TestRecord("test", 42);
 
         assertEquals("test", r.a());
         assertEquals(42, r.b());
@@ -25,7 +25,8 @@ public class RecordSpecTest {
 
     @RecordSpec
     interface TestRecordSpec {
-        @PrimaryConstructor
-        TestRecordSpec create(String a, int b);
+        String a();
+
+        int b();
     }
 }

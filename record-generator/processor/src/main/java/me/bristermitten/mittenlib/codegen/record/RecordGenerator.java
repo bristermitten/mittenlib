@@ -66,7 +66,7 @@ public class RecordGenerator {
         );
     }
 
-    public static void addStaticFactoryMethod(RecordConstructorSpec constructor, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
+    public static void addFactoryMethod(RecordConstructorSpec constructor, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
         typeSpecBuilder.addMethod(
                 MethodSpec.methodBuilder(constructor.name())
                         .addModifiers(PUBLIC, STATIC)
@@ -84,11 +84,14 @@ public class RecordGenerator {
         );
     }
 
-    public static @NotNull RecordGenerator.GeneratedRecord generateBasicRecordTypeSpec(RecordSpecLike record) {
+    public static @NotNull RecordGenerator.GeneratedRecord generateBasicRecordTypeSpec(RecordSpecLike record, boolean extendSpec) {
         ClassName recordImplName = record.name();
 
         var typeSpecBuilder = TypeSpec.classBuilder(recordImplName);
         typeSpecBuilder.addModifiers(PUBLIC, FINAL);
+        if (extendSpec) {
+            typeSpecBuilder.addSuperinterface(record.source());
+        }
         typeSpecBuilder.addAnnotation(AnnotationSpec.builder(me.bristermitten.mittenlib.codegen.GeneratedRecord.class)
                 .addMember("source", "$T.class", record.source())
                 .build());
@@ -118,8 +121,8 @@ public class RecordGenerator {
     }
 
     public JavaFile generate(RecordSpec record) {
-        GeneratedRecord result = generateBasicRecordTypeSpec(record);
-        addStaticFactoryMethod(record.constructor(), record.name(), result.typeSpecBuilder());
+        GeneratedRecord result = generateBasicRecordTypeSpec(record, true);
+        addFactoryMethod(record.constructor(), record.name(), result.typeSpecBuilder());
 
         return JavaFile.builder(result.recordImplName().packageName(), result.typeSpecBuilder().build())
                 .build();

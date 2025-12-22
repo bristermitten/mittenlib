@@ -24,7 +24,7 @@ public class UnionSpecTest {
     @Test
     void testNominal() {
         TestNominalUnion record = new TestNominalUnion.Child2(1);
-        assertEquals(TestNominalUnion.Child2(1), record);
+        assertEquals(new TestNominalUnion.Child2(1), record);
 
         record.match(child1 -> {
             throw new AssertionError("Should not match Child1");

@@ -87,7 +87,7 @@ public class UnionGenerator {
 
 
         for (var toGenerate : resolved.constructors()) {
-            var generatedRecord = RecordGenerator.generateBasicRecordTypeSpec(toGenerate);
+            var generatedRecord = RecordGenerator.generateBasicRecordTypeSpec(toGenerate, false);
 
             var constructorTypeSpecBuilder =
                     generatedRecord.typeSpecBuilder()
@@ -95,7 +95,7 @@ public class UnionGenerator {
 
             constructorTypeSpecBuilder.superclass(recordImplName);
 
-            RecordGenerator.addStaticFactoryMethod(toGenerate.constructor(), toGenerate.name(), typeSpecBuilder);
+            RecordGenerator.addFactoryMethod(toGenerate.constructor(), toGenerate.name(), typeSpecBuilder);
             generateAsMethod(toGenerate.name(), toGenerate.constructor(), typeSpecBuilder);
 
             constructorTypeSpecBuilder.addMethod(MatchGenerator.implementVoidMatchMethod(resolved, toGenerate));
