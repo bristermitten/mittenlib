@@ -103,9 +103,12 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.inventory.ItemStack,Msg)" class="member-name-link">InventoryButton</a><wbr>(<a href="https://helpch.at/docs/1.8.8/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
- <a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a>&nbsp;message)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.inventory.ItemStack,me.bristermitten.mittenlib.util.lambda.PureFunction)" class="member-name-link">InventoryButton</a><wbr>(<a href="https://helpch.at/docs/1.8.8/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
+ <a href="../../util/lambda/PureFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">PureFunction</a>&lt;me.bristermitten.mittenlib.gui.spigot.ClickInput,<wbr><a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a>&gt;&nbsp;messageFunction)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(org.bukkit.inventory.ItemStack,Msg)" class="member-name-link">InventoryButton</a><wbr>(<a href="https://helpch.at/docs/1.8.8/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
+ <a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a>&nbsp;message)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -123,8 +126,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://helpch.at/docs/1.8.8/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemStack()" class="member-name-link">getItemStack</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessage()" class="member-name-link">getMessage</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../util/lambda/PureFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">PureFunction</a><wbr>&lt;me.bristermitten.mittenlib.gui.spigot.ClickInput,<wbr><a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessageFunction()" class="member-name-link">getMessageFunction</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -144,6 +147,13 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="&lt;init&gt;(org.bukkit.inventory.ItemStack,me.bristermitten.mittenlib.util.lambda.PureFunction)">
+<h3>InventoryButton</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryButton</span><wbr><span class="parameters">(<a href="https://helpch.at/docs/1.8.8/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
+ <a href="../../util/lambda/PureFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">PureFunction</a>&lt;me.bristermitten.mittenlib.gui.spigot.ClickInput,<wbr><a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a>&gt;&nbsp;messageFunction)</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="&lt;init&gt;(org.bukkit.inventory.ItemStack,Msg)">
 <h3 id="&lt;init&gt;(org.bukkit.inventory.ItemStack,java.lang.Object)">InventoryButton</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryButton</span><wbr><span class="parameters">(<a href="https://helpch.at/docs/1.8.8/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;itemStack,
@@ -159,9 +169,9 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getMessage()">
-<h3>getMessage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a></span>&nbsp;<span class="element-name">getMessage</span>()</div>
+<section class="detail" id="getMessageFunction()">
+<h3>getMessageFunction</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../util/lambda/PureFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">PureFunction</a>&lt;me.bristermitten.mittenlib.gui.spigot.ClickInput,<wbr><a href="InventoryButton.html" title="type parameter in InventoryButton">Msg</a>&gt;</span>&nbsp;<span class="element-name">getMessageFunction</span>()</div>
 </section>
 </li>
 <li>
