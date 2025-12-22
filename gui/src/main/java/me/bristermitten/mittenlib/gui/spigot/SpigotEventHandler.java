@@ -6,6 +6,7 @@ import me.bristermitten.mittenlib.gui.manager.SpigotGUIManager;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext;
+import me.bristermitten.mittenlib.util.lambda.PureFunction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Handles Spigot inventory events and connects them to the GUI framework.
@@ -65,13 +67,19 @@ public class SpigotEventHandler implements Listener {
 
         Object layoutObj = session.getCurrentView();
 
-        // 4. Check for Button
-        if (layoutObj instanceof SpigotGUIView) {
+
+        if (layoutObj instanceof SpigotGUIView) { // should we error if this is not the case?
             SpigotGUIView<?> layout = (SpigotGUIView<?>) layoutObj;
 
             layout.getButton(slot).ifPresent(button -> {
-                // 5. Send Message (The Manager handles the unchecked cast internally)
-                guiManager.sendMessage((SessionID) session.getSessionId(), button.getMessage());
+                ClickInput clickInput = new ClickInput(
+                        event.getClick(),
+                        event.getAction(),
+                        event.getHotbarButton() == -1 ? OptionalInt.empty() : OptionalInt.of(event.getHotbarButton()),
+                        event.getCursor()
+                );
+                PureFunction<ClickInput, ?> messageFunction = button.getMessageFunction();
+                guiManager.sendMessage((SessionID) session.getSessionId(), messageFunction.apply(clickInput));
             });
         }
     }

@@ -1,6 +1,7 @@
 dependencies {
     implementation(project(":core"))
     implementation(project(":record-generator:api"))
+    annotationProcessor(project(":record-generator:processor"))
 
     testAnnotationProcessor(project(":record-generator:processor"))
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
