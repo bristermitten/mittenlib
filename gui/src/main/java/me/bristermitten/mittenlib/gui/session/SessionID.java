@@ -15,7 +15,7 @@ public class SessionID<Model, Msg, V extends View<Msg, V, Viewer>, Viewer extend
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!(obj instanceof SessionID)) return false;
 
         SessionID<?, ?, ?, ?> sessionID = (SessionID<?, ?, ?, ?>) obj;
 
