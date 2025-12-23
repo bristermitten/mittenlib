@@ -140,9 +140,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://helpch.at/docs/1.8.8/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&gt;<br><a href="MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a><wbr>&lt;T&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#empty(T)" class="member-name-link">empty</a><wbr>(T&nbsp;plugin)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://helpch.at/docs/1.8.8/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&gt;<br><a href="MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a><wbr>&lt;T&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#withDefaults(T)" class="member-name-link">withDefaults</a><wbr>(T&nbsp;plugin)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a><wbr>&lt;<a href="MittenLib.html" title="type parameter in MittenLib">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeModule(java.lang.Class)" class="member-name-link">removeModule</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Module.html" title="class or interface in com.google.inject" class="external-link">Module</a>&gt;&nbsp;moduleClass)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Removes a module by class.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://helpch.at/docs/1.8.8/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&gt;<br><a href="MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a><wbr>&lt;T&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#withDefaults(T)" class="member-name-link">withDefaults</a><wbr>(T&nbsp;plugin)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -216,6 +221,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addModules(com.google.inject.Module...)">
 <h3>addModules</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a>&lt;<a href="MittenLib.html" title="type parameter in MittenLib">T</a>&gt;</span>&nbsp;<span class="element-name">addModules</span><wbr><span class="parameters">(<a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Module.html" title="class or interface in com.google.inject" class="external-link">Module</a>...&nbsp;modules)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="removeModule(java.lang.Class)">
+<h3>removeModule</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib</a>&lt;<a href="MittenLib.html" title="type parameter in MittenLib">T</a>&gt;</span>&nbsp;<span class="element-name">removeModule</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Module.html" title="class or interface in com.google.inject" class="external-link">Module</a>&gt;&nbsp;moduleClass)</span></div>
+<div class="block">Removes a module by class. Prefer overriding where possible, but this can be useful in tests.</div>
 </section>
 </li>
 <li>
