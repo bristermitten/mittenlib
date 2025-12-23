@@ -26,7 +26,6 @@ public class MittenLibCoreModule<T extends Plugin> extends AbstractModule {
      * Create a new MittenLibModule
      *
      * @param plugin  the plugin instance
-     * @param modules child modules to install
      */
     public MittenLibCoreModule(@Nullable T plugin) {
         this.plugin = plugin;
