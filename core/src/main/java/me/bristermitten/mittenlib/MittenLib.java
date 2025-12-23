@@ -14,14 +14,16 @@ import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class MittenLib<T extends Plugin> {
 
-    private final Map<Class<? extends Module>, Module> modules = new HashMap<>();
+    private final Map<Class<? extends Module>, Module> modules = new LinkedHashMap<>();
 
     public MittenLib(T plugin) {
-        addModule(new MittenLibModule<>(plugin, Sets.of()));
+        addModule(new MittenLibCoreModule<>(plugin));
     }
 
     public static <T extends Plugin> MittenLib<T> withDefaults(@NotNull T plugin) {
@@ -41,14 +43,13 @@ public class MittenLib<T extends Plugin> {
     }
 
     public MittenLib<T> addConfigModules(Set<Configuration<?>> configs) {
-        return addModule(
-                Modules.override(new ConfigModule(configs))
-                .with(new PluginConfigModule())
-        );
+        Module combined = Modules.override(new ConfigModule(configs))
+                .with(new PluginConfigModule());
+        return addModule(combined);
     }
 
     public MittenLib<T> addConfigModules(Configuration<?>... configs) {
-        return addConfigModules(new HashSet<>(Arrays.asList(configs)));
+        return addConfigModules(Sets.of(configs));
     }
 
     public MittenLib<T> addModule(Module module) {
@@ -63,23 +64,19 @@ public class MittenLib<T extends Plugin> {
         return this;
     }
 
+    /**
+     * Removes a module by class. Prefer overriding where possible, but this can be useful in tests.
+     */
+    public MittenLib<T> removeModule(Class<? extends Module> moduleClass) {
+        this.modules.remove(moduleClass);
+        return this;
+    }
+
     public @NotNull Injector build() {
-        return Guice.createInjector(new HashSet<>(modules.values()));
+        return Guice.createInjector(modules.values());
     }
 
     private void addModule0(Module module) {
-        Class<? extends Module> moduleClass = module.getClass();
-        boolean superClass = false;
-        for (Map.Entry<Class<? extends Module>, Module> entry : new HashSet<>(modules.entrySet())) {
-            if (entry.getKey().isAssignableFrom(moduleClass)) {
-                final Module overriding = Modules.override(entry.getValue()).with(module);
-                modules.put(entry.getKey(), overriding);
-                superClass = true;
-            }
-        }
-        if (superClass) {
-            return;
-        }
-        modules.put(module.getClass(), module);
+        this.modules.put(module.getClass(), module);
     }
 }

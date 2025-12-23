@@ -1,12 +1,8 @@
 package me.bristermitten.mittenlib;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * Main Guice Module for MittenLib.
@@ -19,14 +15,12 @@ import java.util.Set;
  *     <li>{@link Plugin} to the plugin type</li>
  *     <li>The plugin type to the plugin instance</li>
  *     <li>{@link MittenLibConsumer} to a new instance of {@link MittenLibConsumer}, using the given plugin name</li>
- *     <li>Any child modules provide</li>
  * </ul>
  *
  * @param <T> the type of the plugin
  */
-public class MittenLibModule<T extends Plugin> extends AbstractModule {
+public class MittenLibCoreModule<T extends Plugin> extends AbstractModule {
     private final T plugin;
-    private final Set<Module> modules;
 
     /**
      * Create a new MittenLibModule
@@ -34,9 +28,8 @@ public class MittenLibModule<T extends Plugin> extends AbstractModule {
      * @param plugin  the plugin instance
      * @param modules child modules to install
      */
-    public MittenLibModule(@Nullable T plugin, @NotNull Set<Module> modules) {
+    public MittenLibCoreModule(@Nullable T plugin) {
         this.plugin = plugin;
-        this.modules = modules;
     }
 
     @Override
@@ -46,10 +39,6 @@ public class MittenLibModule<T extends Plugin> extends AbstractModule {
             //noinspection unchecked
             bind((Class<T>) plugin.getClass()).toInstance(plugin);
             bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer(plugin.getName()));
-        }
-
-        for (Module module : modules) {
-            install(module);
         }
     }
 }
