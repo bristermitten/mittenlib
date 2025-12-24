@@ -129,3 +129,29 @@ will use the key `some-field-name`
 
 For further customization, you can manually set the key with `@ConfigName("key-name")`
 
+### Saving Default Values
+
+When a config file is loaded, fields that are not present in the file will use their default values (if specified in the DTO class).
+To save these default values back to the config file, you can use the `save()` method on the `ReadingConfigProvider`.
+
+```java
+// Inject a ConfigProvider (or ReadingConfigProvider specifically)
+@Inject
+private Provider<ConfigProvider<SQLConfig>> configProvider;
+
+public void saveDefaults() {
+    ConfigProvider<SQLConfig> provider = configProvider.get();
+    if (provider instanceof ReadingConfigProvider<SQLConfig> readingProvider) {
+        SQLConfig config = provider.get();
+        // Save the config back to the file with all default values filled in
+        readingProvider.save(config).getOrThrow();
+    }
+}
+```
+
+This is useful for "upgrading" config files when you add new fields with defaults to your DTO class.
+After loading an old config file, calling `save()` will write it back with the new fields included.
+
+The generated config class includes both deserialization and serialization methods,
+making it easy to save configs back to files.
+
