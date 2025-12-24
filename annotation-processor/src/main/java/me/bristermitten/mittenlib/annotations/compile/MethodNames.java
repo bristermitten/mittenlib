@@ -109,4 +109,29 @@ public class MethodNames {
     public String getDeserializeMethodName(AbstractConfigStructure ast) {
         return getDeserializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
     }
+
+    /**
+     * Gets the name of the serialization method for a type.
+     * This should only be used when the type is known to be a configuration implementation class.
+     *
+     * @param name The type name
+     * @return The serialization method name
+     */
+    public String getSerializeMethodName(TypeName name) {
+        if (name instanceof ClassName cn) {
+            return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + cn.simpleName();
+        }
+        return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + name;
+    }
+
+    /**
+     * Gets the name of the serialization method for a configuration structure.
+     * This method uses the implementation class name derived from the structure.
+     *
+     * @param ast The abstract configuration structure
+     * @return The serialization method name for the structure
+     */
+    public String getSerializeMethodName(AbstractConfigStructure ast) {
+        return getSerializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
+    }
 }

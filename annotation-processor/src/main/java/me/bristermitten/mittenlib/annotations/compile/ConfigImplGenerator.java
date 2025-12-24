@@ -28,6 +28,7 @@ public class ConfigImplGenerator {
 
     private final AccessorGenerator accessorGenerator;
     private final DeserializationCodeGenerator deserializationCodeGenerator;
+    private final SerializationCodeGenerator serializationCodeGenerator;
     private final ToStringGenerator toStringGenerator;
     private final EqualsHashCodeGenerator equalsHashCodeGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
@@ -35,9 +36,10 @@ public class ConfigImplGenerator {
     private final MethodNames methodNames;
 
     @Inject
-    public ConfigImplGenerator(AccessorGenerator accessorGenerator, DeserializationCodeGenerator deserializationCodeGenerator, ToStringGenerator toStringGenerator, EqualsHashCodeGenerator equalsHashCodeGenerator, ConfigurationClassNameGenerator configurationClassNameGenerator, ConfigNameCache configNameCache, MethodNames methodNames) {
+    public ConfigImplGenerator(AccessorGenerator accessorGenerator, DeserializationCodeGenerator deserializationCodeGenerator, SerializationCodeGenerator serializationCodeGenerator, ToStringGenerator toStringGenerator, EqualsHashCodeGenerator equalsHashCodeGenerator, ConfigurationClassNameGenerator configurationClassNameGenerator, ConfigNameCache configNameCache, MethodNames methodNames) {
         this.accessorGenerator = accessorGenerator;
         this.deserializationCodeGenerator = deserializationCodeGenerator;
+        this.serializationCodeGenerator = serializationCodeGenerator;
         this.toStringGenerator = toStringGenerator;
         this.equalsHashCodeGenerator = equalsHashCodeGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
@@ -90,6 +92,7 @@ public class ConfigImplGenerator {
             case ConfigTypeSource.InterfaceConfigTypeSource ignored -> innerDaoName.orElse(null);
             case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
         });
+        addSerializationMethods(ast, source);
         addStandardObjectMethods(ast, configImplClassName, source);
         addChildClasses(ast, source);
 
@@ -101,6 +104,7 @@ public class ConfigImplGenerator {
     private void addSourceElement(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
+            ClassName implClassName = configurationClassNameGenerator.translateConfigClassName(ast);
             builder.addField(
                     FieldSpec.builder(
                                     ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
@@ -108,11 +112,13 @@ public class ConfigImplGenerator {
                             )
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                             .initializer(
-                                    "new $T<>($S, $T.class, $T::$L)", Configuration.class,
+                                    "new $T<>($S, $T.class, $T::$L, $T::$L)", Configuration.class,
                                     ast.settings().source().value(),
                                     publicClassName,
-                                    configurationClassNameGenerator.translateConfigClassName(ast),
-                                    methodNames.getDeserializeMethodName(ast)
+                                    implClassName,
+                                    methodNames.getDeserializeMethodName(ast),
+                                    implClassName,
+                                    methodNames.getSerializeMethodName(ast)
                             ).build()
             );
         }
@@ -162,6 +168,10 @@ public class ConfigImplGenerator {
                                            @Nullable ClassName daoName
     ) {
         deserializationCodeGenerator.createDeserializeMethods(source, ast, daoName);
+    }
+
+    private void addSerializationMethods(AbstractConfigStructure ast, TypeSpec.Builder source) {
+        serializationCodeGenerator.createSerializeMethods(source, ast);
     }
 
     private void addStandardObjectMethods(AbstractConfigStructure ast,
