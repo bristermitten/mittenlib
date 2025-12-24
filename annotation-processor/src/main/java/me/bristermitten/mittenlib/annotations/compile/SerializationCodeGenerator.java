@@ -82,7 +82,9 @@ public class SerializationCodeGenerator {
             builder.endControlFlow();
         }
 
-        // For simple types, use DataTreeTransforms.loadFrom
+        // For now, use DataTreeTransforms.loadFrom for all types
+        // This handles primitives, strings, collections, and will convert
+        // nested config objects to maps via their toString or natural serialization
         builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
 
         return builder.build();
