@@ -8,6 +8,7 @@ import me.bristermitten.mittenlib.config.provider.ReadingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.StringReadingConfigProvider;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.files.FileType;
+import me.bristermitten.mittenlib.files.yaml.YamlObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,12 +20,14 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
     private final ConfigReader reader;
     private final ConfigInitializationStrategy initializationStrategy;
     private final ConfigPathResolver pathResolver;
+    private final YamlObjectWriter writer;
 
     @Inject
-    public SimpleConfigProviderFactory(ConfigReader reader, ConfigInitializationStrategy initializationStrategy, ConfigPathResolver pathResolver) {
+    public SimpleConfigProviderFactory(ConfigReader reader, ConfigInitializationStrategy initializationStrategy, ConfigPathResolver pathResolver, YamlObjectWriter writer) {
         this.reader = reader;
         this.initializationStrategy = initializationStrategy;
         this.pathResolver = pathResolver;
+        this.writer = writer;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
         return initializationStrategy.initializeConfig(configuration.getFileName())
                 .map(unit -> {
                     final Path configPath = pathResolver.getConfigPath(configuration.getFileName());
-                    return new ReadingConfigProvider<>(configPath, configuration, reader);
+                    return new ReadingConfigProvider<>(configPath, configuration, reader, writer);
                 });
 
     }
