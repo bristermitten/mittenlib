@@ -337,6 +337,18 @@ public interface Result<T> {
      */
     T recover(Function<Exception, T> exceptionHandler);
 
+
+    /**
+     * Like {@link #flatMap(SafeFunction)}, but handles the exception case with a function.
+     * If the {@link Result} is {@link Ok}, the function is applied to the value and the result is returned.
+     * If the {@link Result} is {@link Fail}, the function is applied to the exception and the result is returned.
+     *
+     * @param exceptionHandler The function to apply if the {@link Result} is {@link Fail}
+     * @return A new {@link Result} containing the result of the function applied to the value or exception
+     */
+    Result<T> flatMapException(Function<Exception, Result<T>> exceptionHandler);
+
+
     /**
      * Checks if the {@link Result} is a success.
      *
@@ -346,6 +358,7 @@ public interface Result<T> {
 
     /**
      * Checks if the {@link Result} is a failure.
+     *
      * @return If the {@link Result} is {@link Fail}. This should be equivalent to {@code !isSuccess()}
      */
     boolean isFailure();
@@ -404,6 +417,11 @@ public interface Result<T> {
         }
 
         @Override
+        public Result<T> flatMapException(Function<Exception, Result<T>> exceptionHandler) {
+            return exceptionHandler.apply(exception);
+        }
+
+        @Override
         public boolean isSuccess() {
             return false;
         }
@@ -429,8 +447,8 @@ public interface Result<T> {
         @Override
         public String toString() {
             return "Fail{" +
-                   "exception=" + exception +
-                   '}';
+                    "exception=" + exception +
+                    '}';
         }
     }
 
@@ -485,6 +503,11 @@ public interface Result<T> {
         }
 
         @Override
+        public Result<T> flatMapException(Function<Exception, Result<T>> exceptionHandler) {
+            return this;
+        }
+
+        @Override
         public boolean isSuccess() {
             return true;
         }
@@ -510,8 +533,8 @@ public interface Result<T> {
         @Override
         public String toString() {
             return "Ok{" +
-                   "value=" + value +
-                   '}';
+                    "value=" + value +
+                    '}';
         }
     }
 }
