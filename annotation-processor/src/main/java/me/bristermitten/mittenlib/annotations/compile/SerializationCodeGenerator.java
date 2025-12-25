@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +55,7 @@ public class SerializationCodeGenerator {
     public void createSerializeMethods(TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
         // Generate serialize methods for each property
         for (Property property : ast.properties()) {
-            MethodSpec serializeMethod = createSerializeMethodFor(property, ast);
+            MethodSpec serializeMethod = createSerializeMethodFor(property);
             typeSpecBuilder.addMethod(serializeMethod);
         }
 
@@ -67,10 +68,9 @@ public class SerializationCodeGenerator {
      * Creates a serialization method for a specific property.
      *
      * @param property The property to create a serialization method for
-     * @param ast      The configuration structure
      * @return A method spec for the serialization method
      */
-    private MethodSpec createSerializeMethodFor(Property property, AbstractConfigStructure ast) {
+    private MethodSpec createSerializeMethodFor(Property property) {
         String methodName = SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
         TypeName propertyType = configurationClassNameGenerator.publicPropertyClassName(property);
 
@@ -119,7 +119,6 @@ public class SerializationCodeGenerator {
         var elementType = wrappedType.getTypeArguments().getFirst();
         
         if (typesUtil.isConfigType(elementType)) {
-            // List of config objects - need to serialize each one
             TypeName configClassName = configurationClassNameGenerator.getConfigClassName(elementType, null);
             String serializeMethodName = methodNames.getSerializeMethodName(configClassName);
             
@@ -129,7 +128,6 @@ public class SerializationCodeGenerator {
             builder.endControlFlow();
             builder.addStatement("return $T.array(array)", DataTree.class);
         } else {
-            // List of primitives or other types - use DataTreeTransforms
             builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
         }
     }

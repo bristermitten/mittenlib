@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
-import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.ReadingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
@@ -60,7 +59,7 @@ public class SaveDefaultsIntegrationTest {
                         new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl::deserializeClassConfigImpl, ClassConfigImpl::serializeClassConfigImpl)
                 ).getOrThrow();
 
-        ClassConfigImpl classConfig = (ClassConfigImpl) stringReaderProvider.get();
+        ClassConfigImpl classConfig = stringReaderProvider.get();
 
         // Verify default value was applied (defaultValue field is not in the YAML file)
         assertThat(classConfig.defaultValue()).isEqualTo(1);

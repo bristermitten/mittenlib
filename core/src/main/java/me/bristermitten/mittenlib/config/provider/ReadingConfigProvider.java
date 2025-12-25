@@ -77,22 +77,19 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
             return Result.fail(new UnsupportedOperationException("No serialization function provided for " + config.getType()));
         }
 
-        // Serialize the config instance to a DataTree
         DataTree serializedTree = config.getSerializeFunction().apply(instance);
 
         if (overrideExisting) {
-            // Simply write the entire serialized config
             return writer.write(serializedTree, path);
-        } else {
-            // Read existing file and merge with new values (only add missing fields)
-            return reader.load(DataTree.class, path, x -> Result.ok(x.getData()))
-                    .map(existingTree -> mergeDataTrees(existingTree, serializedTree))
-                    .flatMap(mergedTree -> writer.write(mergedTree, path))
-                    .flatMapException(error -> {
-                        // If file doesn't exist or can't be read, just write the new config
-                        return writer.write(serializedTree, path);
-                    });
         }
+        // Read existing file and merge with new values
+        return reader.load(DataTree.class, path, x -> Result.ok(x.getData()))
+                .map(existingTree -> mergeDataTrees(existingTree, serializedTree))
+                .flatMap(mergedTree -> writer.write(mergedTree, path))
+                .flatMapException(error -> {
+                    // If file doesn't exist or can't be read, just write the new config
+                    return writer.write(serializedTree, path);
+                });
     }
 
     /**
@@ -105,17 +102,14 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
      */
     private DataTree mergeDataTrees(DataTree existingTree, DataTree newTree) {
         if (!(existingTree instanceof DataTree.DataTreeMap) || !(newTree instanceof DataTree.DataTreeMap)) {
-            // If either is not a map, return the existing tree
             return existingTree;
         }
 
         DataTree.DataTreeMap existingMap = (DataTree.DataTreeMap) existingTree;
         DataTree.DataTreeMap newMap = (DataTree.DataTreeMap) newTree;
 
-        // Create a new map with existing values
         Map<DataTree, DataTree> mergedValues = new LinkedHashMap<>(existingMap.values());
 
-        // Add only missing fields from newMap
         for (Map.Entry<DataTree, DataTree> entry : newMap.values().entrySet()) {
             if (!mergedValues.containsKey(entry.getKey())) {
                 mergedValues.put(entry.getKey(), entry.getValue());
