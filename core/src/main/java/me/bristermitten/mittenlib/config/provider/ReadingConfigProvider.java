@@ -77,7 +77,8 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
             return Result.fail(new UnsupportedOperationException("No serialization function provided for " + config.getType()));
         }
 
-        DataTree serializedTree = config.getSerializeFunction().apply(instance);
+        // Get the ObjectMapper from the reader
+        DataTree serializedTree = config.getSerializeFunction().apply(instance, reader.getMapper());
 
         if (overrideExisting) {
             return writer.write(serializedTree, path);

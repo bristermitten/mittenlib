@@ -1,11 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
+import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
@@ -74,10 +77,20 @@ public class SerializationCodeGenerator {
         String methodName = SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
         TypeName propertyType = configurationClassNameGenerator.publicPropertyClassName(property);
 
+        // Check if the property is annotated with @UseObjectMapperSerialization
+        boolean useObjectMapper = property.source().element().getAnnotation(UseObjectMapperSerialization.class) != null;
+
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(DataTree.class)
                 .addParameter(ParameterSpec.builder(propertyType, "value").build());
+        
+        // Add ObjectMapper parameter if needed
+        if (useObjectMapper) {
+            builder.addParameter(ParameterSpec.builder(
+                    ClassName.get("me.bristermitten.mittenlib.config.reader", "ObjectMapper"), 
+                    "mapper").build());
+        }
 
         // Handle null values
         if (property.settings().isNullable()) {
@@ -87,6 +100,13 @@ public class SerializationCodeGenerator {
         }
 
         TypeMirror propertyTypeMirror = property.propertyType();
+        
+        if (useObjectMapper) {
+            // Use ObjectMapper for serialization
+            handleObjectMapperSerialization(builder);
+            return builder.build();
+        }
+        
         TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(propertyTypeMirror);
         
         // Check if it's a generic type (List, Map, etc.)
@@ -100,6 +120,15 @@ public class SerializationCodeGenerator {
                 handleMapSerialization(builder, wrappedType);
                 return builder.build();
             }
+            // Unknown generic type without @UseObjectMapperSerialization
+            MessagerUtils.error(property.source().element(),
+                    "Cannot serialize generic type '" + canonicalName + "'. " +
+                    "Only List and Map are supported by default. " +
+                    "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization.");
+            // Generate a fallback to prevent further compilation errors
+            builder.addStatement("throw new $T($S)", UnsupportedOperationException.class, 
+                    "Serialization not supported for type: " + canonicalName);
+            return builder.build();
         }
         
         // Check if it's a config type
@@ -107,12 +136,66 @@ public class SerializationCodeGenerator {
             handleConfigTypeSerialization(builder, propertyTypeMirror);
             return builder.build();
         }
+        
+        // Check if it's a known serializable type
+        if (!isKnownSerializableType(wrappedType)) {
+            // Unknown type without @UseObjectMapperSerialization
+            MessagerUtils.error(property.source().element(),
+                    "Cannot serialize type '" + propertyTypeMirror + "'. " +
+                    "Supported types are: primitives, String, Boolean, Number types, enums, @Config types, Map, and List. " +
+                    "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization for custom types.");
+            // Generate a fallback to prevent further compilation errors
+            builder.addStatement("throw new $T($S)", UnsupportedOperationException.class, 
+                    "Serialization not supported for type: " + propertyTypeMirror);
+            return builder.build();
+        }
 
-        // For primitive types, strings, and other basic types, use DataTreeTransforms.loadFrom
-        // This only handles POJOs: primitives, String, Boolean, Number, Map, List
+        // For primitive types, strings, enums, and other basic types, use DataTreeTransforms.loadFrom
+        // This only handles POJOs: primitives, String, Boolean, Number, Map, List, enums
         builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
 
         return builder.build();
+    }
+
+    /**
+     * Checks if a type is a known serializable type (primitives, String, Boolean, Number, enums).
+     */
+    private boolean isKnownSerializableType(TypeMirrorWrapper wrappedType) {
+        // Primitives
+        if (wrappedType.getTypeElement().isEmpty() && wrappedType.getTypeMirror().getKind().isPrimitive()) {
+            return true;
+        }
+
+        // Check for basic types that DataTreeTransforms can handle
+        String qualifiedName = wrappedType.getQualifiedName();
+        if (qualifiedName != null) {
+            // String, Boolean, and boxed primitives
+            if (qualifiedName.equals(String.class.getName()) ||
+                qualifiedName.equals(Boolean.class.getName()) ||
+                qualifiedName.equals(Integer.class.getName()) ||
+                qualifiedName.equals(Long.class.getName()) ||
+                qualifiedName.equals(Short.class.getName()) ||
+                qualifiedName.equals(Byte.class.getName()) ||
+                qualifiedName.equals(Float.class.getName()) ||
+                qualifiedName.equals(Double.class.getName()) ||
+                qualifiedName.equals(Character.class.getName())) {
+                return true;
+            }
+        }
+
+        // Enums
+        if (wrappedType.isEnum()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void handleObjectMapperSerialization(MethodSpec.Builder builder) {
+        // Use ObjectMapper to map the value and then load it as DataTree
+        // We use mapper.map(value) which returns an Object (likely a Map or List)
+        // then pass that to DataTreeTransforms.loadFrom
+        builder.addStatement("return $T.loadFrom(mapper.map(value))", DataTreeTransforms.class);
     }
 
     private void handleListSerialization(MethodSpec.Builder builder, TypeMirrorWrapper wrappedType) {
@@ -171,10 +254,21 @@ public class SerializationCodeGenerator {
         String methodName = methodNames.getSerializeMethodName(ast);
         ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
 
+        // Check if any property needs ObjectMapper
+        boolean needsObjectMapper = ast.properties().stream()
+                .anyMatch(p -> p.source().element().getAnnotation(UseObjectMapperSerialization.class) != null);
+
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(DataTree.class)
                 .addParameter(ParameterSpec.builder(publicClassName, "config", Modifier.FINAL).build());
+
+        // Add ObjectMapper parameter if any property needs it
+        if (needsObjectMapper) {
+            builder.addParameter(ParameterSpec.builder(
+                    ClassName.get("me.bristermitten.mittenlib.config.reader", "ObjectMapper"), 
+                    "mapper", Modifier.FINAL).build());
+        }
 
         // Create a map to hold the serialized values
         builder.addStatement("$T<$T, $T> map = new $T<>()",
@@ -184,6 +278,7 @@ public class SerializationCodeGenerator {
         for (Property property : ast.properties()) {
             String key = fieldNameGenerator.getConfigFieldName(property);
             String serializeMethodName = SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
+            boolean propertyUsesObjectMapper = property.source().element().getAnnotation(UseObjectMapperSerialization.class) != null;
             
             // Get the property value based on source type
             CodeBlock propertyAccess = switch (ast.source()) {
@@ -193,11 +288,20 @@ public class SerializationCodeGenerator {
                         CodeBlock.of("config.$L()", methodNames.safeMethodName(property));
             };
 
-            builder.addStatement("map.put($T.string($S), $L($L))",
-                    DataTree.class,
-                    key,
-                    serializeMethodName,
-                    propertyAccess);
+            // Call the serialize method with or without ObjectMapper parameter
+            if (propertyUsesObjectMapper) {
+                builder.addStatement("map.put($T.string($S), $L($L, mapper))",
+                        DataTree.class,
+                        key,
+                        serializeMethodName,
+                        propertyAccess);
+            } else {
+                builder.addStatement("map.put($T.string($S), $L($L))",
+                        DataTree.class,
+                        key,
+                        serializeMethodName,
+                        propertyAccess);
+            }
         }
 
         builder.addStatement("return $T.map(map)", DataTree.class);
