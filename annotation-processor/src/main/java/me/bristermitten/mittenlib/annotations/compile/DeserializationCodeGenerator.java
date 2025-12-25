@@ -15,6 +15,7 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
+import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Enums;
@@ -439,6 +440,20 @@ public class DeserializationCodeGenerator {
 
     private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
                                            TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+        // Check if the property is annotated with @UseObjectMapperSerialization
+        // If so, use ObjectMapper as a fallback for deserialization
+        if (property.source().element().getAnnotation(UseObjectMapperSerialization.class) != null) {
+            // Use ObjectMapper to deserialize the value
+            TypeName propertyTypeName = configurationClassNameGenerator.publicPropertyClassName(property);
+            builder.addStatement("return context.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
+                    DataTreeTransforms.class,
+                    DataTreeTransforms.class,
+                    fromMapName,
+                    TypeToken.class,
+                    propertyTypeName);
+            return;
+        }
+        
         if (!property.settings().hasDefaultValue()) {
             return; // no need to check this
         }
