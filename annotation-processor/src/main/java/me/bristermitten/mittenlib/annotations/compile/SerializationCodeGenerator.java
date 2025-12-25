@@ -1,9 +1,11 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
@@ -11,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.type.TypeMirror;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +33,18 @@ public class SerializationCodeGenerator {
     private final FieldNameGenerator fieldNameGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final MethodNames methodNames;
+    private final TypesUtil typesUtil;
 
     @Inject
     public SerializationCodeGenerator(
             FieldNameGenerator fieldNameGenerator,
             ConfigurationClassNameGenerator configurationClassNameGenerator,
-            MethodNames methodNames) {
+            MethodNames methodNames,
+            TypesUtil typesUtil) {
         this.fieldNameGenerator = fieldNameGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.methodNames = methodNames;
+        this.typesUtil = typesUtil;
     }
 
     /**
@@ -82,12 +88,81 @@ public class SerializationCodeGenerator {
             builder.endControlFlow();
         }
 
-        // For now, use DataTreeTransforms.loadFrom for all types
-        // This handles primitives, strings, collections, and will convert
-        // nested config objects to maps via their toString or natural serialization
+        TypeMirror propertyTypeMirror = property.propertyType();
+        TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(propertyTypeMirror);
+        
+        // Check if it's a generic type (List, Map, etc.)
+        if (wrappedType.hasTypeArguments()) {
+            String canonicalName = wrappedType.erasure().getQualifiedName();
+            
+            if (canonicalName.equals(List.class.getName())) {
+                handleListSerialization(builder, wrappedType);
+                return builder.build();
+            } else if (canonicalName.equals(Map.class.getName())) {
+                handleMapSerialization(builder, wrappedType);
+                return builder.build();
+            }
+        }
+        
+        // Check if it's a config type
+        if (typesUtil.isConfigType(propertyTypeMirror)) {
+            handleConfigTypeSerialization(builder, propertyTypeMirror);
+            return builder.build();
+        }
+
+        // For primitive types, strings, and other basic types, use DataTreeTransforms.loadFrom
+        // This only handles POJOs: primitives, String, Boolean, Number, Map, List
         builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
 
         return builder.build();
+    }
+
+    private void handleListSerialization(MethodSpec.Builder builder, TypeMirrorWrapper wrappedType) {
+        var elementType = wrappedType.getTypeArguments().getFirst();
+        
+        if (typesUtil.isConfigType(elementType)) {
+            // List of config objects - need to serialize each one
+            TypeName configClassName = configurationClassNameGenerator.getConfigClassName(elementType, null);
+            String serializeMethodName = methodNames.getSerializeMethodName(configClassName);
+            
+            builder.addStatement("$T[] array = new $T[value.size()]", DataTree.class, DataTree.class);
+            builder.beginControlFlow("for (int i = 0; i < value.size(); i++)");
+            builder.addStatement("array[i] = $T.$L(value.get(i))", configClassName, serializeMethodName);
+            builder.endControlFlow();
+            builder.addStatement("return $T.array(array)", DataTree.class);
+        } else {
+            // List of primitives or other types - use DataTreeTransforms
+            builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
+        }
+    }
+
+    private void handleMapSerialization(MethodSpec.Builder builder, TypeMirrorWrapper wrappedType) {
+        var typeArguments = wrappedType.getTypeArguments();
+        var valueType = typeArguments.get(1);
+        
+        if (typesUtil.isConfigType(valueType)) {
+            // Map with config object values - need to serialize each value
+            TypeName configClassName = configurationClassNameGenerator.getConfigClassName(valueType, null);
+            String serializeMethodName = methodNames.getSerializeMethodName(configClassName);
+            
+            builder.addStatement("$T<$T, $T> map = new $T<>()", 
+                    Map.class, DataTree.class, DataTree.class, LinkedHashMap.class);
+            builder.beginControlFlow("for ($T<?, ?> entry : value.entrySet())", Map.Entry.class);
+            builder.addStatement("map.put($T.loadFrom(entry.getKey()), $T.$L(($T) entry.getValue()))", 
+                    DataTreeTransforms.class, configClassName, serializeMethodName, configClassName);
+            builder.endControlFlow();
+            builder.addStatement("return $T.map(map)", DataTree.class);
+        } else {
+            // Map with primitive values - use DataTreeTransforms
+            builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
+        }
+    }
+
+    private void handleConfigTypeSerialization(MethodSpec.Builder builder, TypeMirror configType) {
+        // Direct config object - call its serialize method
+        TypeName configClassName = configurationClassNameGenerator.getConfigClassName(configType, null);
+        String serializeMethodName = methodNames.getSerializeMethodName(configClassName);
+        builder.addStatement("return $T.$L(value)", configClassName, serializeMethodName);
     }
 
     /**
