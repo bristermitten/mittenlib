@@ -7,18 +7,16 @@ import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
-import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Generates serialization code for configuration classes.
  * This class is responsible for creating methods that convert from strongly typed
- * configuration objects to DataTree/Map representations.
+ * configuration objects to {@link DataTree} representations.
  */
 public class SerializationCodeGenerator {
     /**
