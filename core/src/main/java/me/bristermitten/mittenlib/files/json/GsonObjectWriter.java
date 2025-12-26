@@ -20,7 +20,7 @@ public class GsonObjectWriter implements ObjectWriter {
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer output) {
         return Result.runCatching(() -> {
-            gson.toJson(tree, output);
+            gson.toJson(tree, output); // we don't need to transform to POJO since we have a TypeAdapter for DataTree
             return null;
         });
     }
