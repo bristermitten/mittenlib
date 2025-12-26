@@ -11,6 +11,8 @@ import com.squareup.javapoet.TypeName;
 public record Variable(String name, TypeName type) {
     /**
      * Creates a CodeBlock that references this variable.
+     * Uses JavaPoet's $N format specifier which is designed for names
+     * (variables, methods, types) and handles proper escaping.
      *
      * @return A CodeBlock containing this variable's name
      */

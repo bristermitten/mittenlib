@@ -73,6 +73,10 @@ public class Scope {
     /**
      * Creates a child scope that inherits all variables from this scope.
      * Variables declared in the child scope will not affect the parent.
+     * 
+     * Note: Child scopes allow variable shadowing - a child can declare a variable
+     * with the same name as a parent variable. The child's declaration will take
+     * precedence within the child scope.
      *
      * @return A new child Scope
      */

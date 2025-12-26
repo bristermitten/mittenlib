@@ -562,14 +562,15 @@ public class DeserializationCodeGenerator {
         var deserialiseMethodArguments = (daoName != null) ? CodeGenNames.Variables.CONTEXT + ", " + CodeGenNames.Variables.DAO : CodeGenNames.Variables.CONTEXT;
         for (MethodSpec deserializeMethod : deserializeMethods) {
             // Infer the return type from the method's return type
+            // All deserialize methods return Result<T> where T is the config property type
             TypeName returnType = deserializeMethod.returnType;
             if (returnType instanceof ParameterizedTypeName paramType) {
-                // Extract the type parameter from Result<T>
-                // We expect Result<T> where T is the config type
-                if (!paramType.typeArguments.isEmpty()) {
+                // Validate that this looks like Result<T>
+                if (paramType.rawType.equals(ClassName.get(Result.class)) && !paramType.typeArguments.isEmpty()) {
+                    // Extract T from Result<T>
                     returnType = paramType.typeArguments.get(0);
                 } else {
-                    throw new IllegalStateException("Expected Result<T> with type parameter, got: " + returnType);
+                    throw new IllegalStateException("Expected Result<T> return type, got: " + returnType);
                 }
             }
             Variable methodVar = scope.declareAnonymous(returnType);

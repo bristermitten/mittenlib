@@ -55,7 +55,7 @@ class ScopeTest {
         Variable var1 = scope.declare("first", TypeName.INT);
         Variable var2 = scope.declare("second", TypeName.get(String.class));
         
-        var allVars = scope.allVariables();
+        List<Variable> allVars = scope.allVariables();
         assertEquals(2, allVars.size());
         assertEquals(var1, allVars.get(0));
         assertEquals(var2, allVars.get(1));
