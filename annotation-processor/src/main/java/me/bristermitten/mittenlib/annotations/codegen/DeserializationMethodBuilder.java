@@ -1,11 +1,9 @@
 package me.bristermitten.mittenlib.annotations.codegen;
 
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * A builder for creating deserialization method implementations using a strategy pattern.

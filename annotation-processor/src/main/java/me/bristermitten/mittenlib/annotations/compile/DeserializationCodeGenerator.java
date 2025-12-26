@@ -326,19 +326,23 @@ public class DeserializationCodeGenerator {
         /*
          Uses a declarative strategy pattern to handle different deserialization cases.
          Each strategy is tried in order, and the first one that succeeds completes the method.
+         
+         Note: handleDirectTypeMatch and handleDataTreeTypeMatch add conditional returns but don't
+         necessarily complete the method, so they're called unconditionally before strategies.
         */
         final String fromMapName = getFromMapVariableName(property);
         final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
 
         DeserializationMethodBuilder methodBuilder = new DeserializationMethodBuilder(builder);
         
-        // Add conditional checks that don't necessarily return
+        // Add conditional checks that may short-circuit but don't guarantee completion
+        // These add "if (x instanceof Y) return ..." statements
         handleDirectTypeMatch(builder, property, fromMapName, safeType);
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
         
         Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
         
-        // Try non-fallback custom deserializer
+        // Try non-fallback custom deserializer (adds unconditional return if present)
         methodBuilder.tryStrategy(() -> {
             if (customDeserializerOptional.isPresent()) {
                 return handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false);
@@ -346,14 +350,15 @@ public class DeserializationCodeGenerator {
             return false;
         });
         
-        // Handle enum or config types (these add conditional returns but don't necessarily complete)
+        // Handle enum or config types (add conditional returns)
+        // These are executed conditionally based on the type
         if (wrappedElementType.isEnum()) {
             handleEnumType(builder, property, fromMapName, safeType);
         } else if (typesUtil.isConfigType(elementType)) {
             handleConfigType(builder, dtoType, elementType, fromMapName);
         }
         
-        // Try fallback custom deserializer
+        // Try fallback custom deserializer (adds unconditional return if present)
         methodBuilder.tryStrategy(() -> {
             if (customDeserializerOptional.isPresent()) {
                 return handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true);
@@ -361,7 +366,7 @@ public class DeserializationCodeGenerator {
             return false;
         });
         
-        // Final fallback
+        // Final fallback - handles any remaining cases
         methodBuilder.orElse(() -> {
             handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
         });
