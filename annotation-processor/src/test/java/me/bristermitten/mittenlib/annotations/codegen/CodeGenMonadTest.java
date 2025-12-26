@@ -201,13 +201,102 @@ class CodeGenMonadTest {
     }
 
     @Test
-    void testGetMethodBuilder() {
+    void testPureFirstCaseSucceeds() {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("test")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(TypeName.VOID);
+                .returns(int.class);
         
-        CodeGenMonad monad = CodeGenMonad.builder(builder);
+        AtomicInteger callCount = new AtomicInteger(0);
         
-        assertSame(builder, monad.getMethodBuilder());
+        CodeGenMonad.pure(builder)
+            .tryCaseDirect(() -> {
+                callCount.incrementAndGet();
+                return CodeGenDSL.returnValue("$L", 1);
+            })
+            .tryCaseDirect(() -> {
+                callCount.incrementAndGet();
+                return CodeGenDSL.returnValue("$L", 2); // Should not be called
+            })
+            .orElse(() -> {
+                callCount.incrementAndGet(); // Should not be called
+                return CodeGenDSL.returnValue("$L", 3);
+            });
+        
+        // Only first case should have been called
+        assertEquals(1, callCount.get());
+        
+        MethodSpec method = builder.build();
+        String code = method.toString();
+        assertTrue(code.contains("return 1"));
+        assertFalse(code.contains("return 2"));
+    }
+
+    @Test
+    void testPureTerminalExecuted() {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("test")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(int.class);
+        
+        AtomicBoolean terminalCalled = new AtomicBoolean(false);
+        
+        CodeGenMonad.pure(builder)
+            .tryCase(() -> java.util.Optional.empty()) // Fails
+            .tryCase(() -> java.util.Optional.empty()) // Fails
+            .orElse(() -> {
+                terminalCalled.set(true);
+                return CodeGenDSL.returnValue("$L", 42);
+            });
+        
+        // Terminal should have been called
+        assertTrue(terminalCalled.get());
+        
+        MethodSpec method = builder.build();
+        String code = method.toString();
+        assertTrue(code.contains("return 42"));
+    }
+
+    @Test
+    void testPureWithCondition() {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("test")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(int.class);
+        
+        AtomicBoolean actionCalled = new AtomicBoolean(false);
+        
+        CodeGenMonad.pure(builder)
+            .tryCase(true, () -> {
+                actionCalled.set(true);
+                return CodeGenDSL.returnValue("$L", 1);
+            })
+            .apply();
+        
+        assertTrue(actionCalled.get());
+        
+        MethodSpec method = builder.build();
+        String code = method.toString();
+        assertTrue(code.contains("return 1"));
+    }
+
+    @Test
+    void testPureComposability() {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("test")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(int.class);
+        
+        // Create pure results without applying them
+        CodeGenDSL.CodeGenResult result1 = CodeGenDSL.statement("int x = $L", 10);
+        CodeGenDSL.CodeGenResult result2 = CodeGenDSL.statement("int y = $L", 20);
+        CodeGenDSL.CodeGenResult combined = result1.combine(result2).combine(CodeGenDSL.returnValue("x + y"));
+        
+        // Use in monad
+        CodeGenMonad.pure(builder)
+            .tryCaseDirect(() -> combined)
+            .apply();
+        
+        MethodSpec method = builder.build();
+        String code = method.toString();
+        assertTrue(code.contains("int x = 10"));
+        assertTrue(code.contains("int y = 20"));
+        assertTrue(code.contains("return x + y"));
     }
 }
