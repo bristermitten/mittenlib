@@ -105,22 +105,39 @@ public class ConfigImplGenerator {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
             ClassName implClassName = configurationClassNameGenerator.translateConfigClassName(ast);
-            builder.addField(
-                    FieldSpec.builder(
-                                    ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
-                                    "CONFIG"
-                            )
-                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                            .initializer(
-                                    "new $T<>($S, $T.class, $T::$L, $T::$L)", Configuration.class,
-                                    ast.settings().source().value(),
-                                    publicClassName,
-                                    implClassName,
-                                    methodNames.getDeserializeMethodName(ast),
-                                    implClassName,
-                                    methodNames.getSerializeMethodName(ast)
-                            ).build()
-            );
+            
+            // Check if serialization is fully supported for this config
+            boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
+            
+            FieldSpec.Builder configFieldBuilder = FieldSpec.builder(
+                            ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
+                            "CONFIG"
+                    )
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
+            
+            if (serializationSupported) {
+                // Include both deserialize and serialize functions
+                configFieldBuilder.initializer(
+                        "new $T<>($S, $T.class, $T::$L, $T::$L)", Configuration.class,
+                        ast.settings().source().value(),
+                        publicClassName,
+                        implClassName,
+                        methodNames.getDeserializeMethodName(ast),
+                        implClassName,
+                        methodNames.getSerializeMethodName(ast)
+                );
+            } else {
+                // Only include deserialize function (serialize is null)
+                configFieldBuilder.initializer(
+                        "new $T<>($S, $T.class, $T::$L)", Configuration.class,
+                        ast.settings().source().value(),
+                        publicClassName,
+                        implClassName,
+                        methodNames.getDeserializeMethodName(ast)
+                );
+            }
+            
+            builder.addField(configFieldBuilder.build());
         }
     }
 
@@ -171,7 +188,12 @@ public class ConfigImplGenerator {
     }
 
     private void addSerializationMethods(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        serializationCodeGenerator.createSerializeMethods(source, ast);
+        // Only generate serialization methods if all properties support serialization
+        if (serializationCodeGenerator.isSerializationSupported(ast)) {
+            serializationCodeGenerator.createSerializeMethods(source, ast);
+        }
+        // If serialization is not supported, skip generation
+        // The Configuration will be created without a serialize function
     }
 
     private void addStandardObjectMethods(AbstractConfigStructure ast,
