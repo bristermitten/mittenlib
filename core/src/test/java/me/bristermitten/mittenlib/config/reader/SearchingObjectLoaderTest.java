@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.json.GsonObjectLoader;
+import me.bristermitten.mittenlib.files.json.GsonObjectWriter;
 import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlObjectLoader;
+import me.bristermitten.mittenlib.files.yaml.YamlObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,11 +24,12 @@ public class SearchingObjectLoaderTest {
 
     @BeforeEach
     void setUp() {
-        var gson = new GsonObjectLoader(new Gson());
-        var yaml = new YamlObjectLoader(new Yaml());
+        var gson = new Gson();
+        var yaml = new Yaml();
 
         searchingObjectLoader = new SearchingObjectLoader(
-                Set.of(new JSONFileType(gson), new YamlFileType(yaml)), Logger.getLogger("SearchingObjectLoader")
+                Set.of(new JSONFileType(new GsonObjectLoader(gson), new GsonObjectWriter(gson)),
+                        new YamlFileType(new YamlObjectLoader(yaml), new YamlObjectWriter(yaml))), Logger.getLogger("SearchingObjectLoader")
         );
     }
 
