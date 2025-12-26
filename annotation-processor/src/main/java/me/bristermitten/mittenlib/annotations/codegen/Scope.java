@@ -78,7 +78,9 @@ public class Scope {
      */
     public Scope createChild() {
         Scope child = new Scope();
+        // Copy parent variables to child
         child.variables.putAll(this.variables);
+        // Child inherits the parent's counter to continue the sequence
         child.anonymousVarCounter = this.anonymousVarCounter;
         return child;
     }

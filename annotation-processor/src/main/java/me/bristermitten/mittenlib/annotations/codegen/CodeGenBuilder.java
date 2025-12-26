@@ -155,7 +155,7 @@ public class CodeGenBuilder {
      */
     public CodeGenBuilder unindent() {
         if (indentLevel <= 0) {
-            throw new IllegalStateException("Cannot unindent below zero");
+            throw new IllegalStateException("Cannot unindent: already at zero indentation level");
         }
         builder.unindent();
         indentLevel--;

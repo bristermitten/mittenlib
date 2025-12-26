@@ -565,7 +565,12 @@ public class DeserializationCodeGenerator {
             TypeName returnType = deserializeMethod.returnType;
             if (returnType instanceof ParameterizedTypeName paramType) {
                 // Extract the type parameter from Result<T>
-                returnType = paramType.typeArguments.get(0);
+                // We expect Result<T> where T is the config type
+                if (!paramType.typeArguments.isEmpty()) {
+                    returnType = paramType.typeArguments.get(0);
+                } else {
+                    throw new IllegalStateException("Expected Result<T> with type parameter, got: " + returnType);
+                }
             }
             Variable methodVar = scope.declareAnonymous(returnType);
             expressionBuilder.add("$N($L).flatMap($L -> \n", deserializeMethod, deserialiseMethodArguments, methodVar.name());
@@ -580,7 +585,8 @@ public class DeserializationCodeGenerator {
             }
         }
         expressionBuilder.add("))"); // Close ok and new parens
-        expressionBuilder.add(")".repeat(allVars.size())); // close all the flatMap parens
+        // Close all the flatMap parentheses - one for each variable declared
+        expressionBuilder.add(")".repeat(allVars.size()));
 
         builder.addStatement(expressionBuilder.build());
 
