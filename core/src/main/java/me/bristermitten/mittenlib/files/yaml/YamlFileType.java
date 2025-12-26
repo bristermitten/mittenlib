@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.files.yaml;
 
 import com.google.common.io.Files;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
+import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,10 +13,12 @@ public class YamlFileType implements FileType {
     private static final String YAML_SHORT_EXTENSION = "yml";
     private static final String YAML_LONG_EXTENSION = "yaml";
     private final YamlObjectLoader yamlObjectLoader;
+    private final YamlObjectWriter yamlObjectWriter;
 
     @Inject
-    public YamlFileType(YamlObjectLoader objectLoader) {
+    public YamlFileType(YamlObjectLoader objectLoader, YamlObjectWriter yamlObjectWriter) {
         this.yamlObjectLoader = objectLoader;
+        this.yamlObjectWriter = yamlObjectWriter;
     }
 
     @Override
@@ -29,4 +32,11 @@ public class YamlFileType implements FileType {
     public @NotNull ObjectLoader loader() {
         return yamlObjectLoader;
     }
+
+    @Override
+    public @NotNull ObjectWriter writer() {
+        return yamlObjectWriter;
+    }
+
+
 }

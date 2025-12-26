@@ -1,9 +1,13 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -17,6 +21,9 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Helper class for working with {@link TypeMirror}s
@@ -110,7 +117,8 @@ public class TypesUtil {
      * @return The annotation value, if present, else null
      */
     public <A extends Annotation> @Nullable A getAnnotation(Element e, Class<A> type) {
-        @Nullable A onElem = e.getAnnotation(type);
+        A onElem = e.getAnnotation(type);
+        //noinspection ConstantValue I don't know why intellij thinks getAnnotation can never return null
         if (onElem != null) {
             return onElem;
         }
@@ -137,6 +145,31 @@ public class TypesUtil {
             throw new DTOReferenceException(mirror, generatedTypeCache, null, null);
         }
         return mirror instanceof DeclaredType declaredType &&
-               declaredType.asElement().getAnnotation(Config.class) != null;
+                getAnnotation(declaredType.asElement(), Config.class) != null;
+    }
+
+    public Optional<TypeName> getDataTreeType(TypeName type) {
+        type = type.isBoxedPrimitive() ? type.unbox() : type;
+        if (type.equals(TypeName.INT) || type.equals(TypeName.LONG) || type.equals(TypeName.SHORT) || type.equals(TypeName.BYTE)) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralInt.class));
+        }
+        if (type.equals(TypeName.FLOAT) || type.equals(TypeName.DOUBLE)) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralFloat.class));
+        }
+        if (type.equals(TypeName.BOOLEAN)) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralBoolean.class));
+        }
+        if (type.equals(ClassName.get(String.class))) {
+            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralString.class));
+        }
+        if (type instanceof ParameterizedTypeName p) {
+            if (p.rawType.equals(ClassName.get(Map.class))) {
+                return Optional.of(ClassName.get(DataTree.DataTreeMap.class));
+            }
+            if (p.rawType.equals(ClassName.get(List.class))) {
+                return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
+            }
+        }
+        return Optional.empty();
     }
 }

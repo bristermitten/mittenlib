@@ -129,3 +129,38 @@ will use the key `some-field-name`
 
 For further customization, you can manually set the key with `@ConfigName("key-name")`
 
+### Saving Default Values
+
+When a config file is loaded, fields that are not present in the file will use their default values (if specified in the DTO class).
+To save these default values back to the config file, you can use the `save()` method on the `ReadingConfigProvider`.
+
+By default, `save()` only adds missing fields to the config file without overriding existing values. This ensures that user modifications are preserved.
+
+```java
+// Inject a ConfigProvider (or ReadingConfigProvider specifically)
+@Inject
+private Provider<ConfigProvider<SQLConfig>> configProvider;
+
+public void saveDefaults() {
+    ConfigProvider<SQLConfig> provider = configProvider.get();
+    if (provider instanceof ReadingConfigProvider<SQLConfig> readingProvider) {
+        SQLConfig config = provider.get();
+        // Save only missing default values to the file (preserves existing values)
+        readingProvider.save(config).getOrThrow();
+        
+        // Or, to override the entire file with the in-memory config:
+        readingProvider.save(config, true).getOrThrow();
+    }
+}
+```
+
+**Behavior:**
+- `save(config)` or `save(config, false)`: Merges the serialized config with the existing file, only adding fields that don't already exist. This is useful for upgrading config files when you add new fields with defaults.
+- `save(config, true)`: Overwrites the entire file with the serialized config, replacing all existing values.
+
+This is particularly useful for "upgrading" config files when you add new fields with defaults to your DTO class.
+After loading an old config file, calling `save()` will write it back with the new fields included while preserving user customizations.
+
+The generated config class includes both deserialization and serialization methods,
+making it easy to save configs back to files.
+

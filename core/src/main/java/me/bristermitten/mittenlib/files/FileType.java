@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.files;
 
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
+import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,4 +29,11 @@ public interface FileType {
      * @return an Object Loader for this file type
      */
     @NotNull ObjectLoader loader();
+
+    /**
+     * Returns an {@link ObjectWriter} for this file type.
+     *
+     * @return an {@link ObjectWriter} for this file type
+     */
+    @NotNull ObjectWriter writer();
 }

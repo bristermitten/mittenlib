@@ -86,4 +86,13 @@ public class ConfigReader {
     public ConfigReader withLoader(ObjectLoader loader) {
         return new ConfigReader(loader, mapper);
     }
+
+    /**
+     * Get the {@link ObjectMapper} used by this reader
+     *
+     * @return the object mapper
+     */
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
 }

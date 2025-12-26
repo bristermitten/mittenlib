@@ -32,7 +32,7 @@ class BigBenchmarkGeneratorTest {
                 .addAnnotation(Config.class);
 
         alphabetNames
-                .limit(254) // Higher than this will generally crash the compiler for varying reasons
+                .limit(250) // Higher than this will generally crash the compiler for varying reasons
                 .forEach(name -> builder.addField(TypeName.INT, name));
 
         TypeSpec build = builder.build();

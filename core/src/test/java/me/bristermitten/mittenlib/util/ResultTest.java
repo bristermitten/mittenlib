@@ -311,4 +311,22 @@ class ResultTest {
         assertTrue(result2.isFailure());
     }
 
+    @Test
+    void flatMapException_success() {
+        Result<String> result = Result.ok("Hello");
+        var result2 = result.flatMapException(e -> Result.ok("Recovered"));
+        assertTrue(result2.isSuccess());
+        assertFalse(result2.isFailure());
+        assertEquals("Hello", result2.getOrThrow());
+    }
+
+    @Test
+    void flatMapException_failure() {
+        Result<String> result = Result.fail(new IllegalArgumentException());
+        var result2 = result.flatMapException(e -> Result.ok("Recovered"));
+        assertTrue(result2.isSuccess());
+        assertFalse(result2.isFailure());
+        assertEquals("Recovered", result2.getOrThrow());
+    }
+
 }

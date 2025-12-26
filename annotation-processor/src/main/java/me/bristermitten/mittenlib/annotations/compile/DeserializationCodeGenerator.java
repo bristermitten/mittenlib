@@ -15,6 +15,7 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
+import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Enums;
@@ -75,30 +76,6 @@ public class DeserializationCodeGenerator {
         throw new IllegalArgumentException("idk non-static is hard");
     }
 
-    private Optional<TypeName> getDataTreeType(TypeName type) {
-        type = type.isBoxedPrimitive() ? type.unbox() : type;
-        if (type.equals(TypeName.INT) || type.equals(TypeName.LONG) || type.equals(TypeName.SHORT) || type.equals(TypeName.BYTE)) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralInt.class));
-        }
-        if (type.equals(TypeName.FLOAT) || type.equals(TypeName.DOUBLE)) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralFloat.class));
-        }
-        if (type.equals(TypeName.BOOLEAN)) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralBoolean.class));
-        }
-        if (type.equals(ClassName.get(String.class))) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralString.class));
-        }
-        if (type instanceof ParameterizedTypeName p) {
-            if (p.rawType.equals(ClassName.get(Map.class))) {
-                return Optional.of(ClassName.get(DataTree.DataTreeMap.class));
-            }
-            if (p.rawType.equals(ClassName.get(List.class))) {
-                return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
-            }
-        }
-        return Optional.empty();
-    }
 
     public CodeBlock dataTreeConvert(TypeName type, TypeName dataTreeType, CodeBlock value) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
@@ -362,9 +339,7 @@ public class DeserializationCodeGenerator {
             }
         }
 
-        handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
-
-        return false;
+        return handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,
@@ -381,7 +356,7 @@ public class DeserializationCodeGenerator {
     private void handleDataTreeTypeMatch(MethodSpec.Builder builder, String fromMapName, TypeName safeType) {
         // now check if the tree type would directly match any of the primitives (int, string, etc)
         // and add a short-circuit for that
-        var treeType = getDataTreeType(safeType);
+        var treeType = typesUtil.getDataTreeType(safeType);
         if (treeType.isPresent()) {
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, treeType.get());
             var convert = dataTreeConvert(safeType, treeType.get(), CodeBlock
@@ -437,10 +412,25 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
-                                           TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+    private boolean handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+                                              TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+
+        // Check if the property is annotated with @UseObjectMapperSerialization
+        // If so, use ObjectMapper as a fallback for deserialization
+        var useObjectMapperSerialization = typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class);
+        if (useObjectMapperSerialization != null) {
+            // Use ObjectMapper to deserialize the value
+            TypeName propertyTypeName = configurationClassNameGenerator.publicPropertyClassName(property);
+            builder.addStatement("return context.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
+                    DataTreeTransforms.class,
+                    DataTreeTransforms.class,
+                    fromMapName,
+                    TypeToken.class,
+                    propertyTypeName);
+            return true;
+        }
         if (!property.settings().hasDefaultValue()) {
-            return; // no need to check this
+            return false; // no need to check this
         }
         builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
         builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
@@ -452,6 +442,7 @@ public class DeserializationCodeGenerator {
                 fromMapName
         );
         builder.endControlFlow();
+        return false;
     }
 
     private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
