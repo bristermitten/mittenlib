@@ -12,7 +12,6 @@ import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import javax.annotation.processing.Generated;
@@ -65,7 +64,7 @@ public class ConfigImplGenerator {
      * @param ast The abstract configuration structure to generate an implementation for
      * @return A JavaFile containing the generated implementation class
      */
-    public @NonNull JavaFile emit(@NonNull AbstractConfigStructure ast) {
+    public JavaFile emit(AbstractConfigStructure ast) {
         ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
         TypeSpec.Builder source = TypeSpec.classBuilder(configImplClassName);
 
@@ -80,7 +79,7 @@ public class ConfigImplGenerator {
      * @param ast    The abstract configuration structure to generate an implementation for
      * @param source The TypeSpec.Builder to add elements to
      */
-    private void emitInto(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
+    private void emitInto(AbstractConfigStructure ast, TypeSpec.Builder source) {
         ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
         source.addModifiers(Modifier.PUBLIC);
         makeAbstractIfUnion(ast, source);
@@ -201,7 +200,7 @@ public class ConfigImplGenerator {
             List<String> unsupportedProperties = serializationCodeGenerator.getUnsupportedSerializationProperties(ast);
             
             // Check if serialization is required
-            Config configAnnotation = ast.source().element().getAnnotation(Config.class);
+            Config configAnnotation = typesUtil.getAnnotation(ast.source().element(), Config.class);
             boolean requireSerialization = configAnnotation != null && configAnnotation.requireSerialization();
             
             String message = "Serialization cannot be generated for config '" + ast.name().simpleName() + "'. " +
@@ -228,7 +227,7 @@ public class ConfigImplGenerator {
         source.addMethod(equalsHashCodeGenerator.generateHashCode(ast.properties()));
     }
 
-    private void addChildClasses(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
+    private void addChildClasses(AbstractConfigStructure ast, TypeSpec.Builder source) {
         for (AbstractConfigStructure child : ast.enclosed()) {
             var childClassName = configurationClassNameGenerator.translateConfigClassName(child);
             TypeSpec.Builder childBuilder = TypeSpec.classBuilder(childClassName);
@@ -237,7 +236,7 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addProperty(@NonNull Property property, TypeSpec.@NonNull Builder source) {
+    private void addProperty(Property property, TypeSpec.Builder source) {
         FieldSpec field = FieldSpec.builder(
                 configurationClassNameGenerator.publicPropertyClassName(property)
                         .annotated(Nullity.getNullityAnnotationSpec(property)),
@@ -255,20 +254,20 @@ public class ConfigImplGenerator {
         }
     }
 
-    private Optional<TypeMirror> getSuperClass(@NonNull AbstractConfigStructure ast) {
+    private Optional<TypeMirror> getSuperClass(AbstractConfigStructure ast) {
         if (ast.source() instanceof ConfigTypeSource.ClassConfigTypeSource classParent) {
             return classParent.parent();
         }
         return Optional.empty();
     }
 
-    private @NonNull Optional<TypeMirror> getSuperClass(@NonNull TypeMirror ast) {
+    private Optional<TypeMirror> getSuperClass(TypeMirror ast) {
         return configNameCache
                 .lookupAST(ast)
                 .flatMap(this::getSuperClass);
     }
 
-    private void addAllArgsConstructor(TypeSpec.@NonNull Builder source, @NonNull AbstractConfigStructure ast) {
+    private void addAllArgsConstructor(TypeSpec.Builder source, AbstractConfigStructure ast) {
         MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
 
@@ -278,7 +277,7 @@ public class ConfigImplGenerator {
         source.addMethod(constructor.build());
     }
 
-    private void addSuperClassParameter(@NonNull AbstractConfigStructure ast, MethodSpec.@NonNull Builder constructor) {
+    private void addSuperClassParameter(AbstractConfigStructure ast, MethodSpec.Builder constructor) {
         // when we have a super_class_
         // we accept an instance of it as a parent
         // and then call `super(parent.a(), parent.b(), ...)`
@@ -303,7 +302,7 @@ public class ConfigImplGenerator {
         });
     }
 
-    private void addSuperClassField(@NonNull AbstractConfigStructure ast, TypeSpec.Builder builder) {
+    private void addSuperClassField(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         var parentMirror = getSuperClass(ast);
 
         parentMirror.ifPresent(parent -> {
@@ -316,7 +315,7 @@ public class ConfigImplGenerator {
         });
     }
 
-    private @NonNull List<String> buildSuperConstructorParams(@NonNull TypeMirror parent, @NonNull AbstractConfigStructure parentConfig, @NonNull String superParameterName) {
+    private List<String> buildSuperConstructorParams(TypeMirror parent, AbstractConfigStructure parentConfig, String superParameterName) {
         var parentParams = parentConfig.properties().stream()
                 .map(variableElement -> superParameterName + "." + methodNames.safeMethodName(variableElement) + "()")
                 .toList();
@@ -332,7 +331,7 @@ public class ConfigImplGenerator {
         return parentParams;
     }
 
-    private void addPropertyParameters(@NonNull AbstractConfigStructure ast, MethodSpec.@NonNull Builder constructor) {
+    private void addPropertyParameters(AbstractConfigStructure ast, MethodSpec.Builder constructor) {
         for (Property property : ast.properties()) {
             ParameterSpec parameter = createPropertyParameter(property);
             constructor.addParameter(parameter);
@@ -340,7 +339,7 @@ public class ConfigImplGenerator {
         }
     }
 
-    private @NonNull ParameterSpec createPropertyParameter(@NonNull Property property) {
+    private ParameterSpec createPropertyParameter(Property property) {
         var nullityAnnotation = Nullity.getNullityAnnotation(property);
         ParameterSpec.Builder builder = ParameterSpec.builder(
                 configurationClassNameGenerator.publicPropertyClassName(property)
@@ -352,7 +351,7 @@ public class ConfigImplGenerator {
         return builder.build();
     }
 
-    private Optional<ClassName> addInnerDefaultMethodImpl(TypeSpec.@NonNull Builder typeSpecBuilder, @NonNull AbstractConfigStructure ast) {
+    private Optional<ClassName> addInnerDefaultMethodImpl(TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
         if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
             return Optional.empty(); // nothing to do
         }
