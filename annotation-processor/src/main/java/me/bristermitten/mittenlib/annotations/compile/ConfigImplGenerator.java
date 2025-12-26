@@ -7,6 +7,7 @@ import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.util.Nullity;
+import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
@@ -36,9 +37,10 @@ public class ConfigImplGenerator {
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final ConfigNameCache configNameCache;
     private final MethodNames methodNames;
+    private final TypesUtil typesUtil;
 
     @Inject
-    public ConfigImplGenerator(AccessorGenerator accessorGenerator, DeserializationCodeGenerator deserializationCodeGenerator, SerializationCodeGenerator serializationCodeGenerator, ToStringGenerator toStringGenerator, EqualsHashCodeGenerator equalsHashCodeGenerator, ConfigurationClassNameGenerator configurationClassNameGenerator, ConfigNameCache configNameCache, MethodNames methodNames) {
+    public ConfigImplGenerator(AccessorGenerator accessorGenerator, DeserializationCodeGenerator deserializationCodeGenerator, SerializationCodeGenerator serializationCodeGenerator, ToStringGenerator toStringGenerator, EqualsHashCodeGenerator equalsHashCodeGenerator, ConfigurationClassNameGenerator configurationClassNameGenerator, ConfigNameCache configNameCache, MethodNames methodNames, TypesUtil typesUtil) {
         this.accessorGenerator = accessorGenerator;
         this.deserializationCodeGenerator = deserializationCodeGenerator;
         this.serializationCodeGenerator = serializationCodeGenerator;
@@ -47,6 +49,7 @@ public class ConfigImplGenerator {
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.configNameCache = configNameCache;
         this.methodNames = methodNames;
+        this.typesUtil = typesUtil;
     }
 
     private static void makeAbstractIfUnion(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -103,7 +106,7 @@ public class ConfigImplGenerator {
     /**
      * When the element has a @{@link me.bristermitten.mittenlib.config.Source} marked, turn it into a {@link Configuration} field
      */
-    private void addSourceElement(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder builder) {
+    private void addSourceElement(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
             ClassName implClassName = configurationClassNameGenerator.translateConfigClassName(ast);
@@ -143,7 +146,7 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addInheritance(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
+    private void addInheritance(AbstractConfigStructure ast, TypeSpec.Builder source) {
         if (ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource) {
             source.addSuperinterface(ast.name());
         }
@@ -155,7 +158,7 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addGeneratedConfigAnnotations(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
+    private void addGeneratedConfigAnnotations(AbstractConfigStructure ast, TypeSpec.Builder source) {
         source.addAnnotation(AnnotationSpec.builder(GeneratedConfig.class)
                 .addMember("source", "$T.class", ast.name())
                 .build());
@@ -169,7 +172,7 @@ public class ConfigImplGenerator {
         );
     }
 
-    private void addNestedClassModifiers(@NonNull AbstractConfigStructure ast, TypeSpec.@NonNull Builder source) {
+    private void addNestedClassModifiers(AbstractConfigStructure ast, TypeSpec.Builder source) {
         // if it's enclosed in a class, make sure it's a nested class rather than an inner class
         if (ast.enclosedIn() != null) {
             source.addModifiers(Modifier.STATIC);
@@ -190,14 +193,11 @@ public class ConfigImplGenerator {
     }
 
     private void addSerializationMethods(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        // Check if serialization is supported
         boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
         
         if (serializationSupported) {
-            // Generate serialization methods
             serializationCodeGenerator.createSerializeMethods(source, ast);
         } else {
-            // Serialization cannot be generated
             List<String> unsupportedProperties = serializationCodeGenerator.getUnsupportedSerializationProperties(ast);
             
             // Check if serialization is required
@@ -209,10 +209,8 @@ public class ConfigImplGenerator {
                     "Consider adding @UseObjectMapperSerialization to these properties or providing CustomSerializers.";
             
             if (requireSerialization) {
-                // Emit error if serialization is required
                 MessagerUtils.error(ast.source().element(), message);
             } else {
-                // Emit warning if serialization is not required
                 MessagerUtils.warning(ast.source().element(), message);
             }
         }

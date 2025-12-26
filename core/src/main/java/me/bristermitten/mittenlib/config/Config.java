@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config;
 
+import me.bristermitten.mittenlib.config.extension.CustomDeserializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
@@ -26,7 +27,7 @@ public @interface Config {
 
     /**
      * Whether to require that serialization methods are generated for this config.
-     * If true and serialization cannot be generated (e.g., due to properties with CustomDeserializers
+     * If true and serialization cannot be generated (e.g., due to properties with {@link CustomDeserializer}s
      * that don't support serialization), a compilation error will be emitted.
      * If false (default), a warning will be emitted instead.
      *

@@ -76,30 +76,6 @@ public class DeserializationCodeGenerator {
         throw new IllegalArgumentException("idk non-static is hard");
     }
 
-    private Optional<TypeName> getDataTreeType(TypeName type) {
-        type = type.isBoxedPrimitive() ? type.unbox() : type;
-        if (type.equals(TypeName.INT) || type.equals(TypeName.LONG) || type.equals(TypeName.SHORT) || type.equals(TypeName.BYTE)) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralInt.class));
-        }
-        if (type.equals(TypeName.FLOAT) || type.equals(TypeName.DOUBLE)) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralFloat.class));
-        }
-        if (type.equals(TypeName.BOOLEAN)) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralBoolean.class));
-        }
-        if (type.equals(ClassName.get(String.class))) {
-            return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralString.class));
-        }
-        if (type instanceof ParameterizedTypeName p) {
-            if (p.rawType.equals(ClassName.get(Map.class))) {
-                return Optional.of(ClassName.get(DataTree.DataTreeMap.class));
-            }
-            if (p.rawType.equals(ClassName.get(List.class))) {
-                return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
-            }
-        }
-        return Optional.empty();
-    }
 
     public CodeBlock dataTreeConvert(TypeName type, TypeName dataTreeType, CodeBlock value) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
@@ -380,7 +356,7 @@ public class DeserializationCodeGenerator {
     private void handleDataTreeTypeMatch(MethodSpec.Builder builder, String fromMapName, TypeName safeType) {
         // now check if the tree type would directly match any of the primitives (int, string, etc)
         // and add a short-circuit for that
-        var treeType = getDataTreeType(safeType);
+        var treeType = typesUtil.getDataTreeType(safeType);
         if (treeType.isPresent()) {
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, treeType.get());
             var convert = dataTreeConvert(safeType, treeType.get(), CodeBlock

@@ -17,6 +17,7 @@ import me.bristermitten.mittenlib.util.Strings;
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class SerializationCodeGenerator {
      * - Are natively supported types
      * - Are @Config types
      * - Have @UseObjectMapperSerialization annotation
-     * 
+     * <p>
      * Properties with CustomDeserializers that don't have serialization support will prevent
      * full serialization from being generated.
      *
@@ -68,7 +69,7 @@ public class SerializationCodeGenerator {
      */
     public boolean isSerializationSupported(AbstractConfigStructure ast) {
         for (Property property : ast.properties()) {
-            if (!canSerializeProperty(property)) {
+            if (propertyIsUnserializable(property)) {
                 return false;
             }
         }
@@ -83,9 +84,9 @@ public class SerializationCodeGenerator {
      * @return List of property names that cannot be serialized
      */
     public List<String> getUnsupportedSerializationProperties(AbstractConfigStructure ast) {
-        List<String> unsupported = new java.util.ArrayList<>();
+        List<String> unsupported = new ArrayList<>();
         for (Property property : ast.properties()) {
-            if (!canSerializeProperty(property)) {
+            if (propertyIsUnserializable(property)) {
                 unsupported.add(property.name() + " (" + property.propertyType() + ")");
             }
         }
@@ -95,10 +96,10 @@ public class SerializationCodeGenerator {
     /**
      * Checks if a single property can be serialized.
      */
-    private boolean canSerializeProperty(Property property) {
-        // Check if @UseObjectMapperSerialization is present - always serializable
-        if (property.source().element().getAnnotation(UseObjectMapperSerialization.class) != null) {
-            return true;
+    private boolean propertyIsUnserializable(Property property) {
+        // explicitly marked as using ObjectMapper serialization - always serializable
+        if (typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class) != null) {
+            return false;
         }
 
         TypeMirror propertyTypeMirror = property.propertyType();
@@ -107,27 +108,35 @@ public class SerializationCodeGenerator {
         // Check generic types
         if (wrappedType.hasTypeArguments()) {
             String canonicalName = wrappedType.erasure().getQualifiedName();
-            
+
             if (canonicalName.equals(List.class.getName()) || canonicalName.equals(Map.class.getName())) {
-                // List and Map are supported if their element types are supported
-                return true;  // Simplified - actual check would need to be recursive
+                var typeArguments = wrappedType.getTypeArguments();
+                for (TypeMirror typeArgument : typeArguments) {
+                    if (propertyIsUnserializable(new Property(
+                            property.name(),
+                            typeArgument,
+                            property.source(),
+                            property.settings()
+                    ))) {
+                        return true;
+                    }
+                }
+                return false;
             }
-            // Unknown generic type - not serializable unless CustomDeserializer present
-            return customDeserializers.getCustomDeserializer(propertyTypeMirror).isPresent();
+            return false; // we only support List and Map generics
         }
 
         // Config types are always serializable
         if (typesUtil.isConfigType(propertyTypeMirror)) {
-            return true;
+            return false;
         }
 
-        // Known basic types are serializable
         if (isKnownSerializableType(wrappedType)) {
-            return true;
+            return false;
         }
 
         // Unknown type - only serializable if CustomDeserializer is present
-        return customDeserializers.getCustomDeserializer(propertyTypeMirror).isPresent();
+        return customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty();
     }
 
     /**
@@ -219,7 +228,7 @@ public class SerializationCodeGenerator {
 
         // Check if it's a known serializable type
         if (!isKnownSerializableType(wrappedType)) {
-            // Check if it has a CustomDeserializer
+
             if (customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty()) {
                 // Unknown type without @UseObjectMapperSerialization and without CustomDeserializer
                 MessagerUtils.error(property.source().element(),
@@ -247,29 +256,18 @@ public class SerializationCodeGenerator {
      * Checks if a type is a known serializable type (primitives, String, Boolean, Number, enums).
      */
     private boolean isKnownSerializableType(TypeMirrorWrapper wrappedType) {
-        // Primitives
         if (wrappedType.getTypeElement().isEmpty() && wrappedType.isPrimitive()) {
             return true;
         }
 
-        // Check for basic types that DataTreeTransforms can handle
-        String qualifiedName = wrappedType.getQualifiedName();
-        if (qualifiedName != null) {
-            // String, Boolean, and boxed primitives
-            if (qualifiedName.equals(String.class.getName()) ||
-                    qualifiedName.equals(Boolean.class.getName()) ||
-                    qualifiedName.equals(Integer.class.getName()) ||
-                    qualifiedName.equals(Long.class.getName()) ||
-                    qualifiedName.equals(Short.class.getName()) ||
-                    qualifiedName.equals(Byte.class.getName()) ||
-                    qualifiedName.equals(Float.class.getName()) ||
-                    qualifiedName.equals(Double.class.getName()) ||
-                    qualifiedName.equals(Character.class.getName())) {
-                return true;
-            }
+        if (typesUtil.getDataTreeType(TypeName.get(wrappedType.unwrap()))
+                .isPresent()) {
+            return true;
         }
 
-        // Enums
+        if (wrappedType.getQualifiedName().equals(Character.class.getName())) { // TODO: do we actually know how to support Character?
+            return true;
+        }
         return wrappedType.isEnum();
     }
 
@@ -359,7 +357,6 @@ public class SerializationCodeGenerator {
                         CodeBlock.of("config.$L()", methodNames.safeMethodName(property));
             };
 
-            // Call the serialize method with or without ObjectMapper parameter
             builder.addStatement("map.put($T.string($S), $L($L, mapper))",
                     DataTree.class,
                     key,
