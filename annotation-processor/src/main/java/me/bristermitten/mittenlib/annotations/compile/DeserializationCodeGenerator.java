@@ -10,8 +10,8 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenMonad;
 import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
-import me.bristermitten.mittenlib.annotations.codegen.DeserializationMethodBuilder;
 import me.bristermitten.mittenlib.annotations.codegen.FlatMapChainBuilder;
 import me.bristermitten.mittenlib.annotations.codegen.Scope;
 import me.bristermitten.mittenlib.annotations.codegen.Variable;
@@ -324,52 +324,32 @@ public class DeserializationCodeGenerator {
                                       TypeElement dtoType, TypeMirror elementType,
                                       TypeMirrorWrapper wrappedElementType) {
         /*
-         Uses a declarative strategy pattern to handle different deserialization cases.
-         Each strategy is tried in order, and the first one that succeeds completes the method.
+         Uses a functional monad pattern to handle different code generation cases.
+         Each case is tried in order using a declarative, composable approach.
          
          Note: handleDirectTypeMatch and handleDataTreeTypeMatch add conditional returns but don't
-         necessarily complete the method, so they're called unconditionally before strategies.
+         necessarily complete the method, so they're called unconditionally before the monad.
         */
         final String fromMapName = getFromMapVariableName(property);
         final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
 
-        DeserializationMethodBuilder methodBuilder = new DeserializationMethodBuilder(builder);
-        
-        // Add conditional checks that may short-circuit but don't guarantee completion
-        // These add "if (x instanceof Y) return ..." statements
+        // Add conditional checks that may short-circuit
         handleDirectTypeMatch(builder, property, fromMapName, safeType);
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
         
         Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
         
-        // Try non-fallback custom deserializer (adds unconditional return if present)
-        methodBuilder.tryStrategy(() -> {
-            if (customDeserializerOptional.isPresent()) {
-                return handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false);
-            }
-            return false;
-        });
-        
-        // Handle enum or config types (add conditional returns)
-        // These are executed conditionally based on the type
-        if (wrappedElementType.isEnum()) {
-            handleEnumType(builder, property, fromMapName, safeType);
-        } else if (typesUtil.isConfigType(elementType)) {
-            handleConfigType(builder, dtoType, elementType, fromMapName);
-        }
-        
-        // Try fallback custom deserializer (adds unconditional return if present)
-        methodBuilder.tryStrategy(() -> {
-            if (customDeserializerOptional.isPresent()) {
-                return handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true);
-            }
-            return false;
-        });
-        
-        // Final fallback - handles any remaining cases
-        methodBuilder.orElse(() -> {
-            handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
-        });
+        // Use functional monad pattern for composable case handling
+        CodeGenMonad.builder(builder)
+            .tryCase(() -> customDeserializerOptional.isPresent() && 
+                          handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false))
+            .tryCase(CodeGenMonad.when(wrappedElementType.isEnum(), 
+                    () -> handleEnumType(builder, property, fromMapName, safeType)))
+            .tryCase(CodeGenMonad.when(typesUtil.isConfigType(elementType),
+                    () -> handleConfigType(builder, dtoType, elementType, fromMapName)))
+            .tryCase(() -> customDeserializerOptional.isPresent() && 
+                          handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true))
+            .orElse(() -> handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName));
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,

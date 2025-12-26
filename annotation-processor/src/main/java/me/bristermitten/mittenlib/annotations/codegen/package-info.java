@@ -11,7 +11,7 @@
  *   <li>{@link me.bristermitten.mittenlib.annotations.codegen.Scope} - Manages variable scoping</li>
  *   <li>{@link me.bristermitten.mittenlib.annotations.codegen.CodeGenBuilder} - Higher-level code building</li>
  *   <li>{@link me.bristermitten.mittenlib.annotations.codegen.FlatMapChainBuilder} - Builds flatMap chains automatically</li>
- *   <li>{@link me.bristermitten.mittenlib.annotations.codegen.DeserializationMethodBuilder} - Declarative strategy-based method building</li>
+ *   <li>{@link me.bristermitten.mittenlib.annotations.codegen.CodeGenMonad} - Functional monad for composable code generation</li>
  *   <li>{@link me.bristermitten.mittenlib.annotations.codegen.CodeGenNames} - Centralized name constants</li>
  * </ul>
  */
