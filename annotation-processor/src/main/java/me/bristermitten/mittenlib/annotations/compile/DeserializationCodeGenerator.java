@@ -11,6 +11,7 @@ import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
+import me.bristermitten.mittenlib.annotations.codegen.FlatMapChainBuilder;
 import me.bristermitten.mittenlib.annotations.codegen.Scope;
 import me.bristermitten.mittenlib.annotations.codegen.Variable;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
@@ -542,10 +543,7 @@ public class DeserializationCodeGenerator {
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
 
-        final CodeBlock.Builder expressionBuilder = CodeBlock.builder();
-        final Scope scope = new Scope();
-
-        expressionBuilder.add("return ");
+        final FlatMapChainBuilder chain = new FlatMapChainBuilder();
 
         var superClass = switch (ast.source()) {
             case ConfigTypeSource.ClassConfigTypeSource c -> c.parent();
@@ -555,10 +553,15 @@ public class DeserializationCodeGenerator {
         // Add the superclass deserialization first, if it exists
         if (superClass.isPresent()) {
             var superConfigName = getConfigClassName(superClass.get(), dtoType);
-            Variable superVar = scope.declareAnonymous(superConfigName);
-            expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
-            expressionBuilder.add("($L).flatMap($L -> \n", CodeGenNames.Variables.CONTEXT, superVar.name());
+            chain.addOperation(
+                "$T.$L($L)",
+                superConfigName,
+                superConfigName,
+                methodNames.getDeserializeMethodName(superConfigName),
+                CodeGenNames.Variables.CONTEXT
+            );
         }
+        
         var deserialiseMethodArguments = (daoName != null) ? CodeGenNames.Variables.CONTEXT + ", " + CodeGenNames.Variables.DAO : CodeGenNames.Variables.CONTEXT;
         for (MethodSpec deserializeMethod : deserializeMethods) {
             // Infer the return type from the method's return type
@@ -573,23 +576,20 @@ public class DeserializationCodeGenerator {
                     throw new IllegalStateException("Expected Result<T> return type, got: " + returnType);
                 }
             }
-            Variable methodVar = scope.declareAnonymous(returnType);
-            expressionBuilder.add("$N($L).flatMap($L -> \n", deserializeMethod, deserialiseMethodArguments, methodVar.name());
+            chain.addOperation(
+                "$N($L)",
+                returnType,
+                deserializeMethod,
+                deserialiseMethodArguments
+            );
         }
-        expressionBuilder.add("$T.ok(new $T(", Result.class, configurationClassNameGenerator.translateConfigClassName(ast));
         
-        List<Variable> allVars = scope.allVariables();
-        for (int i = 0; i < allVars.size(); i++) {
-            expressionBuilder.add("$L", allVars.get(i).name());
-            if (i != allVars.size() - 1) {
-                expressionBuilder.add(", ");
-            }
-        }
-        expressionBuilder.add("))"); // Close ok and new parens
-        // Close all the flatMap parentheses - one for each variable declared
-        expressionBuilder.add(")".repeat(allVars.size()));
+        CodeBlock chainExpression = chain.buildWithConstructor(
+            Result.class,
+            configurationClassNameGenerator.translateConfigClassName(ast)
+        );
 
-        builder.addStatement(expressionBuilder.build());
+        builder.addStatement(chainExpression);
 
         typeSpecBuilder.addMethod(builder.build());
     }
