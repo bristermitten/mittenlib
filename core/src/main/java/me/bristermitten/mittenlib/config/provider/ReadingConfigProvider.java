@@ -3,7 +3,7 @@ package me.bristermitten.mittenlib.config.provider;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.files.yaml.YamlObjectWriter;
+import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 
 import java.nio.file.Path;
@@ -20,7 +20,7 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
     private final Configuration<T> config;
     private final ConfigReader reader;
     private final Path path;
-    private final YamlObjectWriter writer;
+    private final ObjectWriter writer; // TODO: merge into ConfigReader?
 
     /**
      * Create a new ReadingConfigProvider
@@ -30,7 +30,7 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
      * @param reader the reader to use
      * @param writer the writer to use for saving
      */
-    public ReadingConfigProvider(Path path, Configuration<T> config, ConfigReader reader, YamlObjectWriter writer) {
+    public ReadingConfigProvider(Path path, Configuration<T> config, ConfigReader reader, ObjectWriter writer) {
         this.path = path;
         this.config = config;
         this.reader = reader;
