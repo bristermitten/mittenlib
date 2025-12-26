@@ -5,6 +5,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 
 import javax.inject.Inject;
@@ -94,9 +95,9 @@ public class MethodNames {
      */
     public String getDeserializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
-            return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + cn.simpleName();
+            return CodeGenNames.Methods.DESERIALIZE_PREFIX + cn.simpleName();
         }
-        return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + name;
+        return CodeGenNames.Methods.DESERIALIZE_PREFIX + name;
     }
 
     /**
@@ -119,9 +120,9 @@ public class MethodNames {
      */
     public String getSerializeMethodName(TypeName name) {
         if (name instanceof ClassName cn) {
-            return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + cn.simpleName();
+            return CodeGenNames.Methods.SERIALIZE_PREFIX + cn.simpleName();
         }
-        return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + name;
+        return CodeGenNames.Methods.SERIALIZE_PREFIX + name;
     }
 
     /**

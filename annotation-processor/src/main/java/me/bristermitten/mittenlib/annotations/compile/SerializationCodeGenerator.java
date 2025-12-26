@@ -6,6 +6,7 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
@@ -32,7 +33,7 @@ public class SerializationCodeGenerator {
      * The prefix for all generated serialization methods.
      * For example, a method to serialize a field called "test" would be called serializeTest
      */
-    public static final String SERIALIZE_METHOD_PREFIX = "serialize";
+    public static final String SERIALIZE_METHOD_PREFIX = CodeGenNames.Methods.SERIALIZE_PREFIX;
 
     private final FieldNameGenerator fieldNameGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
