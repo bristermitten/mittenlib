@@ -8,6 +8,12 @@ import java.util.stream.Collectors;
  * Provides detailed information including all valid enum values and suggestions.
  */
 public class InvalidEnumValueException extends ConfigDeserialisationException {
+    /** Maximum Levenshtein distance for a close match suggestion */
+    private static final int MAX_DISTANCE_THRESHOLD = 2;
+    
+    /** Maximum distance as a percentage of string length for a close match */
+    private static final double MAX_DISTANCE_PERCENTAGE = 0.3;
+    
     private final Class<? extends Enum<?>> enumClass;
     private final String propertyName;
     private final Object actualValue;
@@ -32,7 +38,7 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
         String suggestion = findClosestMatch(actualValue.toString(), constants);
         
         String suggestionText = suggestion != null 
-                ? String.format("\n│  💡 Did you mean '%s'?", suggestion)
+                ? String.format("\n│  Suggestion: Did you mean '%s'?", suggestion)
                 : "";
         
         return String.format("""
@@ -74,15 +80,19 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
             return null;
         }
         
+        String inputLower = input.toLowerCase();
         String bestMatch = null;
         int minDistance = Integer.MAX_VALUE;
         
         for (Enum<?> constant : constants) {
             String constantName = constant.name();
-            int distance = levenshteinDistance(input.toLowerCase(), constantName.toLowerCase());
+            String constantLower = constantName.toLowerCase();
+            int distance = levenshteinDistance(inputLower, constantLower);
             
-            // Consider it a close match if distance is <= 2 or <= 30% of the length
-            if (distance < minDistance && (distance <= 2 || distance <= constantName.length() * 0.3)) {
+            // Consider it a close match if distance is <= threshold or <= percentage of the length
+            if (distance < minDistance && 
+                (distance <= MAX_DISTANCE_THRESHOLD || 
+                 distance <= constantName.length() * MAX_DISTANCE_PERCENTAGE)) {
                 minDistance = distance;
                 bestMatch = constantName;
             }
