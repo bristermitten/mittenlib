@@ -1,16 +1,77 @@
 # Config Generator Refactoring Summary
 
 ## Overview
-This refactoring introduces a strongly-typed, functional DSL for code generation that:
-1. Eliminates manual integer counters for variable tracking
-2. Replaces hardcoded strings with centralized constants
-3. **Replaces boolean returns with functional monad pattern**
-4. **Provides composable, reusable abstractions for all code generation**
-5. **Applied consistently across both Serialization and Deserialization generators**
+This refactoring introduces a **pure, strongly-typed, functional DSL** for code generation that:
+1. Separates pure specification from impure execution
+2. Eliminates manual integer counters for variable tracking
+3. Replaces hardcoded strings with centralized constants
+4. **Replaces boolean returns and early returns with functional monad pattern**
+5. **Provides composable, reusable abstractions with a single impure boundary**
+6. **Applied consistently across both Serialization and Deserialization generators**
 
 ## Key Innovations
 
-### 1. FlatMapChainBuilder - Automatic Scope Derivation
+### 1. CodeGenDSL - Pure Data Structures for Code Operations
+
+**The Core Problem:**
+Previous approach mixed functional design with impure code - operations directly mutated builders inside lambda expressions, making it "fancy syntax sugar for impure stuff" rather than truly declarative.
+
+**The Solution:**
+Separate pure specification (data) from impure execution (effects).
+
+**Pure operations:**
+```java
+// Statements (pure data)
+CodeGenResult stmt = CodeGenDSL.statement("int x = $L", 10);
+
+// Control flow (pure composition)
+CodeGenResult flow = CodeGenDSL.controlFlow("if ($L)", "condition")
+    .addStatement("return success()")
+    .build();
+
+// Returns (pure data)
+CodeGenResult ret = CodeGenDSL.returnValue("$T.success($L)", Result.class, "value");
+
+// Composition (pure)
+CodeGenResult combined = result1.combine(result2);
+```
+
+**Single impure boundary:**
+```java
+// Create pure specification
+CodeGenResult result = CodeGenDSL.statement("int x = $L", 10)
+    .combine(CodeGenDSL.returnValue("x * 2"));
+
+// Apply once (only place where mutation happens)
+result.apply(methodBuilder);
+```
+
+### 2. CodeGenMonad - Truly Functional Code Generation
+
+**Now works with pure CodeGenResult operations:**
+
+**Before (impure):**
+```java
+CodeGenMonad.builder(builder)
+    .tryCase(() -> {
+        builder.addStatement(...);  // Directly mutating! (impure)
+        return true;
+    })
+    .orElse(() -> builder.addStatement(...));  // More mutation
+```
+
+**After (pure):**
+```java
+CodeGenMonad.pure(builder)
+    .tryCase(() -> Optional.of(CodeGenDSL.statement("return $T.success($L)", Result.class, "value")))
+    .tryCase(() -> Optional.of(CodeGenDSL.controlFlow("if ($L)", "condition")
+                    .addStatement("return $T.success($L)", Result.class, "value")
+                    .build()))
+    .orElse(() -> CodeGenDSL.returnValue("$T.error($S)", Result.class, "Unsupported"))
+    .apply();  // Single point where mutation happens
+```
+
+### 3. FlatMapChainBuilder - Automatic Scope Derivation
 Eliminates manual variable management in flatMap chains:
 
 **Before:**
@@ -28,9 +89,7 @@ chain.addOperation("method()", returnType);
 CodeBlock result = chain.buildWithConstructor(Result.class, ConfigClass.class);
 ```
 
-### 2. CodeGenMonad - Functional, Composable Code Generation
-A general-purpose monad inspired by functional programming patterns (Option/Maybe monads).
-**Now used in BOTH Serialization and Deserialization generators.**
+### 4. Applied to Both Generators
 
 **DeserializationCodeGenerator - Before:**
 ```java
@@ -50,7 +109,7 @@ private boolean handleNonGenericType(...) {
 **DeserializationCodeGenerator - After:**
 ```java
 private void handleNonGenericType(...) {
-    CodeGenMonad.builder(builder)
+    CodeGenMonad.builder(builder)  // Can migrate to .pure() for even purer approach
         .tryCase(() -> tryCustomDeserializer(...))
         .tryCase(wrappedElementType.isEnum(), () -> handleEnumType(...))
         .tryCase(typesUtil.isConfigType(elementType), () -> handleConfigType(...))
@@ -73,10 +132,6 @@ private MethodSpec createSerializeMethodFor(Property property) {
         }
         // ... more early returns
     }
-    if (typesUtil.isConfigType(propertyTypeMirror)) {
-        handleConfigTypeSerialization(builder, propertyTypeMirror);
-        return builder.build();
-    }
     // ... more conditionals and early returns
 }
 ```
@@ -85,7 +140,7 @@ private MethodSpec createSerializeMethodFor(Property property) {
 ```java
 private MethodSpec createSerializeMethodFor(Property property) {
     // ... setup code
-    CodeGenMonad.builder(builder)
+    CodeGenMonad.builder(builder)  // Can migrate to .pure() for even purer approach
         .tryCase(useObjectMapper, () -> handleObjectMapperSerialization(builder))
         .tryCase(() -> tryHandleGenericType(builder, property, wrappedType))
         .tryCase(typesUtil.isConfigType(propertyTypeMirror), () -> handleConfigTypeSerialization(builder, propertyTypeMirror))
@@ -96,37 +151,61 @@ private MethodSpec createSerializeMethodFor(Property property) {
 }
 ```
 
-### 3. Functional Design Principles
+### 5. CodeGenNames - Centralized Constants
+Replaced hardcoded strings:
+- `"context"` → `CodeGenNames.Variables.CONTEXT`
+- `"dao"` → `CodeGenNames.Variables.DAO`
+- `"$data"` → `CodeGenNames.Variables.DATA`
+
+## Architecture: Pure vs Impure
+
+### Pure Layer (Data)
+- **CodeGenDSL**: Pure data structures
+- **CodeGenResult**: Immutable operations
+- **Composition**: Functional, no side effects
+- **Reusable**: Can be stored, passed, combined
+
+### Impure Boundary (Effects)
+- **Single point**: `CodeGenResult.apply(builder)`
+- **Explicit**: Clear where mutations happen
+- **Contained**: All effects in one place
+
+### Benefits of Separation
+✅ **Truly declarative** - Operations are data, not effects  
+✅ **Composable** - Results combine functionally  
+✅ **Testable** - Can inspect without side effects  
+✅ **Reusable** - Operations independent of execution  
+✅ **Reasoning** - Easy to understand: data in, data out  
+✅ **Single boundary** - Mutations explicit and contained
+
+## Functional Design Principles
 
 The monad follows functional programming patterns:
 - **Composable**: Cases can be chained declaratively
 - **Reusable**: Works for any code generation scenario
 - **Type-safe**: Compile-time validation
 - **Lazy evaluation**: Only executes until first success
-- **Immutable**: No side effects in the monad itself
+- **Pure specification**: Operations are data structures
+- **Single impure boundary**: Only `apply()` mutates
 - **General-purpose**: Not tied to deserialization or serialization
-
-Helper methods for different patterns:
-- `tryCase(Supplier<Boolean>)` - For cases that return true if handled
-- `tryCase(boolean, Runnable)` - For conditional execution
-- `when(boolean, Runnable)` - Static helper for readable conditions
-
-### 4. CodeGenNames - Centralized Constants
-Replaced hardcoded strings:
-- `"context"` → `CodeGenNames.Variables.CONTEXT`
-- `"dao"` → `CodeGenNames.Variables.DAO`
-- `"$data"` → `CodeGenNames.Variables.DATA`
 
 ## DSL Components
 
+- **CodeGenDSL**: Pure data structures for code operations (NEW)
+- **CodeGenMonad**: Functional monad with pure API (UPDATED)
 - **Variable**: Type-safe variable representation
 - **Scope**: Automatic unique name generation (var0, var1...)
 - **CodeGenBuilder**: Control flow tracking with validation
 - **FlatMapChainBuilder**: High-level flatMap chain building with automatic scope derivation
-- **CodeGenMonad**: Functional monad for composable code generation (used in both generators)
 - **CodeGenNames**: Centralized naming constants
 
 ## Benefits
+
+### Pure & Declarative
+- ✅ Operations are immutable data structures
+- ✅ Pure specification separated from impure execution
+- ✅ Single, explicit impure boundary
+- ✅ Easy to reason about - data in, data out
 
 ### Consistent Across Generators
 - ✅ Same pattern used in Serialization and Deserialization
@@ -155,27 +234,41 @@ Replaced hardcoded strings:
 
 ### Backward Compatible
 - ✅ Generated code remains functionally identical
+- ✅ Legacy impure API still works (deprecated)
 - ✅ Can be adopted incrementally
 
 ## Testing
 
 Comprehensive unit tests for all DSL classes:
+- `CodeGenDSLTest` - Pure operations and composition (NEW)
+- `CodeGenMonadTest` - Both pure and legacy APIs (UPDATED)
 - `ScopeTest` - Variable declaration and scoping
 - `CodeGenBuilderTest` - Control flow and indentation
 - `VariableTest` - Variable operations
 - `FlatMapChainBuilderTest` - Chain building and scope inheritance
-- `CodeGenMonadTest` - Monad composition and functional patterns
 - `CodeGenNamesTest` - Constant validation
+
+## Migration Path
+
+The new pure API coexists with the legacy API:
+- **New code**: Use `CodeGenMonad.pure()` with `CodeGenDSL` operations
+- **Legacy code**: Existing `CodeGenMonad.builder()` still works (deprecated)
+- **Gradual migration**: Can migrate incrementally as needed
+- **Both generators**: Already use the monad pattern, can adopt pure API incrementally
 
 ## Conclusion
 
-This refactoring achieves all goals with a functional, general-purpose approach:
+This refactoring achieves all goals with a pure, functional approach:
+- ✅ **Pure specification separated from impure execution**
+- ✅ **Single, explicit impure boundary**
 - ✅ Eliminated manual integer counters with automatic scope derivation
 - ✅ Replaced hardcoded strings with centralized constants
-- ✅ **Eliminated boolean returns with functional monad pattern**
+- ✅ **Eliminated boolean returns and early returns with functional monad pattern**
 - ✅ **Created general-purpose, composable abstractions**
 - ✅ **Applied consistently to BOTH Serialization and Deserialization**
 - ✅ Operations specified once - variables and control flow managed automatically
 - ✅ Backward compatible - generated code remains functionally identical
 
-The DSL is inspired by functional programming patterns and provides a unified foundation for all code generation scenarios.
+**This is no longer "fancy syntax sugar for impure stuff" - it's a truly functional, declarative DSL where code generation is specified as pure data structures with a single, explicit impure boundary.**
+
+The DSL is inspired by functional programming patterns and provides a unified, pure foundation for all code generation scenarios.
