@@ -39,7 +39,23 @@ public class CustomDeserializers {
             return Optional.empty();
         }
         if (fromMap.size() > 1) {
-            throw new IllegalArgumentException("Not sure how to handle multiple yet");
+            throw new IllegalArgumentException(String.format("""
+                    
+                    ╔════════════════════════════════════════════════════════════════════════════════╗
+                    ║                  MULTIPLE CUSTOM DESERIALIZERS FOUND                           ║
+                    ╚════════════════════════════════════════════════════════════════════════════════╝
+                    
+                    Multiple custom deserializers were found for the same type.
+                    
+                    ┌─ What to do:
+                    │
+                    │  Ensure only one custom deserializer is registered per type.
+                    │  Remove or consolidate duplicate @CustomDeserializerFor annotations.
+                    │
+                    └─ Note: This is a current limitation that may be addressed in future versions.
+                    
+                    ════════════════════════════════════════════════════════════════════════════════
+                    """));
         }
 
         return Optional.of(fromMap.iterator().next());
@@ -51,7 +67,31 @@ public class CustomDeserializers {
     public void registerCustomDeserializer(TypeElement customDeserializerType) {
         CustomDeserializerForWrapper deserializerTypeAnnotation = CustomDeserializerForWrapper.wrap(customDeserializerType);
         if (deserializerTypeAnnotation == null) {
-            throw new IllegalArgumentException("CustomDeserializer must be annotated with @CustomDeserializerFor");
+            throw new IllegalArgumentException(String.format("""
+                    
+                    ╔════════════════════════════════════════════════════════════════════════════════╗
+                    ║                  MISSING @CustomDeserializerFor ANNOTATION                     ║
+                    ╚════════════════════════════════════════════════════════════════════════════════╝
+                    
+                    A custom deserializer class must be annotated with @CustomDeserializerFor.
+                    
+                    Type: %s
+                    
+                    ┌─ What to do:
+                    │
+                    │  Add the @CustomDeserializerFor annotation to specify the target type:
+                    │
+                    │  @CustomDeserializerFor(MyType.class)
+                    │  public class MyTypeDeserializer {
+                    │      public static Result<MyType> deserialize(DeserializationContext context) {
+                    │          // Your deserialization logic
+                    │      }
+                    │  }
+                    │
+                    └─ Note: The annotation tells the processor which type this deserializer handles.
+                    
+                    ════════════════════════════════════════════════════════════════════════════════
+                    """, customDeserializerType.getQualifiedName()));
         }
 
         var implementsCustomDeserializer = TypeElementWrapper.wrap(customDeserializerType)
@@ -66,7 +106,41 @@ public class CustomDeserializers {
             return;
         }
         if (deserializeMethodOpt.isEmpty()) {
-            throw new IllegalArgumentException("CustomDeserializer must implement CustomDeserializer or have a static method Result<T> deserialize(DeserializationContext)");
+            throw new IllegalArgumentException(String.format("""
+                    
+                    ╔════════════════════════════════════════════════════════════════════════════════╗
+                    ║                  INVALID CUSTOM DESERIALIZER STRUCTURE                         ║
+                    ╚════════════════════════════════════════════════════════════════════════════════╝
+                    
+                    A custom deserializer must either:
+                    1. Implement the CustomDeserializer interface, OR
+                    2. Have a static method: Result<T> deserialize(DeserializationContext)
+                    
+                    Type: %s
+                    
+                    ┌─ What to do:
+                    │
+                    │  Option 1 - Static method approach (recommended):
+                    │
+                    │  @CustomDeserializerFor(MyType.class)
+                    │  public class MyTypeDeserializer {
+                    │      public static Result<MyType> deserialize(DeserializationContext context) {
+                    │          // Your deserialization logic
+                    │          return Result.ok(myValue);
+                    │      }
+                    │  }
+                    │
+                    │  Option 2 - Interface approach:
+                    │
+                    │  @CustomDeserializerFor(MyType.class)
+                    │  public class MyTypeDeserializer implements CustomDeserializer<MyType> {
+                    │      // Implement interface methods
+                    │  }
+                    │
+                    └─ Note: The static method approach is preferred for simplicity.
+                    
+                    ════════════════════════════════════════════════════════════════════════════════
+                    """, customDeserializerType.getQualifiedName()));
         }
 
 

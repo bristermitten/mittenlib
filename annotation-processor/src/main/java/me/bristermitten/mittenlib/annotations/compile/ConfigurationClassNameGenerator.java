@@ -289,7 +289,27 @@ public class ConfigurationClassNameGenerator {
 
         final PackageElement packageElement = elements.getPackageOf(element);
         if (packageElement.isUnnamed()) {
-            throw new IllegalArgumentException("Unnamed packages are not supported");
+            throw new IllegalArgumentException(String.format("""
+                    
+                    ╔════════════════════════════════════════════════════════════════════════════════╗
+                    ║                      UNNAMED PACKAGE NOT SUPPORTED                             ║
+                    ╚════════════════════════════════════════════════════════════════════════════════╝
+                    
+                    Configuration classes must be in a named package.
+                    
+                    Type: %s
+                    
+                    ┌─ What to do:
+                    │
+                    │  Add a package declaration at the top of your file:
+                    │
+                    │  package com.example.config;
+                    │
+                    └─ Why: The annotation processor needs to generate classes in the same package,
+                       which requires a named package.
+                    
+                    ════════════════════════════════════════════════════════════════════════════════
+                    """, element.getSimpleName()));
         }
         return generateConfigurationClassName(element);
     }
