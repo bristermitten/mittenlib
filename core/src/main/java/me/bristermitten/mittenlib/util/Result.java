@@ -340,7 +340,7 @@ public interface Result<T> {
 
     /**
      * Like {@link #flatMap(SafeFunction)}, but handles the exception case with a function.
-     * If the {@link Result} is {@link Ok}, the function is applied to the value and the result is returned.
+     * If the {@link Result} is {@link Ok}, the value is returned unchanged in a new {@link Ok}.
      * If the {@link Result} is {@link Fail}, the function is applied to the exception and the result is returned.
      *
      * @param exceptionHandler The function to apply if the {@link Result} is {@link Fail}
