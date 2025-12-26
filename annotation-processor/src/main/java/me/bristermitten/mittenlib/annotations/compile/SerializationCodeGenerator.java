@@ -6,6 +6,7 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenMonad;
 import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
@@ -187,71 +188,80 @@ public class SerializationCodeGenerator {
         }
 
         TypeMirror propertyTypeMirror = property.propertyType();
-
-        if (useObjectMapper) {
-            // Use ObjectMapper for serialization
-            handleObjectMapperSerialization(builder);
-            return builder.build();
-        }
-
         TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(propertyTypeMirror);
 
-        // Check if it's a generic type (List, Map, etc.)
-        if (wrappedType.hasTypeArguments()) {
-            String canonicalName = wrappedType.erasure().getQualifiedName();
+        // Use CodeGenMonad for composable case handling
+        CodeGenMonad.builder(builder)
+            .tryCase(useObjectMapper, () -> handleObjectMapperSerialization(builder))
+            .tryCase(() -> tryHandleGenericType(builder, property, wrappedType))
+            .tryCase(typesUtil.isConfigType(propertyTypeMirror), () -> handleConfigTypeSerialization(builder, propertyTypeMirror))
+            .tryCase(isKnownSerializableType(wrappedType), () -> handleKnownTypeSerialization(builder))
+            .orElse(() -> handleUnsupportedType(builder, property, propertyTypeMirror, wrappedType));
 
-            if (canonicalName.equals(List.class.getName())) {
-                handleListSerialization(builder, wrappedType);
-                return builder.build();
-            } else if (canonicalName.equals(Map.class.getName())) {
-                handleMapSerialization(builder, wrappedType);
-                return builder.build();
-            }
-            // Unknown generic type - check if it has a CustomDeserializer
-            if (customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty()) {
-                // No CustomDeserializer and no @UseObjectMapperSerialization
-                MessagerUtils.error(property.source().element(),
-                        "Cannot serialize generic type '" + canonicalName + "'. " +
-                                "Only List and Map are supported by default. " +
-                                "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization, " +
-                                "or provide a CustomDeserializer with serialization support.");
-            }
-            // Generate a fallback to prevent further compilation errors
-            builder.addStatement("throw new $T($S)", UnsupportedOperationException.class,
-                    "Serialization not supported for type: " + canonicalName);
-            return builder.build();
+        return builder.build();
+    }
+    
+    /**
+     * Tries to handle generic types (List, Map, etc.).
+     * Returns true if handled, false otherwise.
+     */
+    private boolean tryHandleGenericType(MethodSpec.Builder builder, Property property, TypeMirrorWrapper wrappedType) {
+        if (!wrappedType.hasTypeArguments()) {
+            return false;
         }
-
-        // Check if it's a config type
-        if (typesUtil.isConfigType(propertyTypeMirror)) {
-            handleConfigTypeSerialization(builder, propertyTypeMirror);
-            return builder.build();
+        
+        String canonicalName = wrappedType.erasure().getQualifiedName();
+        TypeMirror propertyTypeMirror = property.propertyType();
+        
+        if (canonicalName.equals(List.class.getName())) {
+            handleListSerialization(builder, wrappedType);
+            return true;
+        } else if (canonicalName.equals(Map.class.getName())) {
+            handleMapSerialization(builder, wrappedType);
+            return true;
         }
-
-        // Check if it's a known serializable type
-        if (!isKnownSerializableType(wrappedType)) {
-
-            if (customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty()) {
-                // Unknown type without @UseObjectMapperSerialization and without CustomDeserializer
-                MessagerUtils.error(property.source().element(),
-                        "Cannot serialize type '" + propertyTypeMirror + "'. " +
-                                "Supported types are: primitives, String, Boolean, Number types, enums, @Config types, Map, and List. " +
-                                "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization for custom types, " +
-                                "or provide a CustomDeserializer with serialization support.");
-            }
-            // If it has a CustomDeserializer, skip serialization generation for this property
-            // The serialization will be skipped at the config level
-            // Generate a fallback to prevent further compilation errors
-            builder.addStatement("throw new $T($S)", UnsupportedOperationException.class,
-                    "Serialization not supported for type: " + propertyTypeMirror);
-            return builder.build();
+        
+        // Unknown generic type - check if it has a CustomDeserializer
+        if (customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty()) {
+            // No CustomDeserializer and no @UseObjectMapperSerialization
+            MessagerUtils.error(property.source().element(),
+                    "Cannot serialize generic type '" + canonicalName + "'. " +
+                            "Only List and Map are supported by default. " +
+                            "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization, " +
+                            "or provide a CustomDeserializer with serialization support.");
         }
-
+        // Generate a fallback to prevent further compilation errors
+        builder.addStatement("throw new $T($S)", UnsupportedOperationException.class,
+                "Serialization not supported for type: " + canonicalName);
+        return true;
+    }
+    
+    /**
+     * Handles known serializable types (primitives, String, Boolean, Number, enums).
+     */
+    private void handleKnownTypeSerialization(MethodSpec.Builder builder) {
         // For primitive types, strings, enums, and other basic types, use DataTreeTransforms.loadFrom
         // This only handles POJOs: primitives, String, Boolean, Number, Map, List, enums
         builder.addStatement("return $T.loadFrom(value)", DataTreeTransforms.class);
-
-        return builder.build();
+    }
+    
+    /**
+     * Handles unsupported types by logging an error and generating a fallback.
+     */
+    private void handleUnsupportedType(MethodSpec.Builder builder, Property property, TypeMirror propertyTypeMirror, TypeMirrorWrapper wrappedType) {
+        if (customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty()) {
+            // Unknown type without @UseObjectMapperSerialization and without CustomDeserializer
+            MessagerUtils.error(property.source().element(),
+                    "Cannot serialize type '" + propertyTypeMirror + "'. " +
+                            "Supported types are: primitives, String, Boolean, Number types, enums, @Config types, Map, and List. " +
+                            "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization for custom types, " +
+                            "or provide a CustomDeserializer with serialization support.");
+        }
+        // If it has a CustomDeserializer, skip serialization generation for this property
+        // The serialization will be skipped at the config level
+        // Generate a fallback to prevent further compilation errors
+        builder.addStatement("throw new $T($S)", UnsupportedOperationException.class,
+                "Serialization not supported for type: " + propertyTypeMirror);
     }
 
     /**
