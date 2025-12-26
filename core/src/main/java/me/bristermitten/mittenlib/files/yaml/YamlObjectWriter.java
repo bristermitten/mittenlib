@@ -32,6 +32,7 @@ public class YamlObjectWriter implements ObjectWriter {
      * @param writer The writer to write to
      * @return A Result indicating success or failure
      */
+    @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer writer) {
         return runCatching(() -> {
             Object pojo = DataTreeTransforms.toPOJO(tree);
