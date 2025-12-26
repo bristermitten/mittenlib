@@ -127,7 +127,7 @@ dependencyResolutionManagement {
 			).versionRef("aptk")
 
 
-			library("cute", "io.toolisticon.cute", "cute").version("1.8.0")
+            library("cute", "io.toolisticon.cute", "cute").version("1.9.0")
 			library("chalk", "com.github.tomas-langer", "chalk").version("1.0.2")
 		}
 	}
