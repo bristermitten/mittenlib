@@ -18,6 +18,8 @@ import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
 import me.bristermitten.mittenlib.config.tree.DataTreeTypeAdapter;
 import me.bristermitten.mittenlib.config.tree.DataTreeTypeAdapterFactory;
+import me.bristermitten.mittenlib.config.writer.ObjectWriter;
+import me.bristermitten.mittenlib.config.writer.SearchingObjectWriter;
 import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 import me.bristermitten.mittenlib.util.CompositeType;
 
@@ -56,6 +58,7 @@ public class ConfigModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ObjectLoader.class).to(SearchingObjectLoader.class);
+        bind(ObjectWriter.class).to(SearchingObjectWriter.class);
         bind(ConfigInitializationStrategy.class).to(NoOpConfigInitializationStrategy.class);
         bind(ConfigPathResolver.class).to(JarResourcesConfigPathResolver.class);
         bind(ConfigProviderFactory.class).to(SimpleConfigProviderFactory.class);
