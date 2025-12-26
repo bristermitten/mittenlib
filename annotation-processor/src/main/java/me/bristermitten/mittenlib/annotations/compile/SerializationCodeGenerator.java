@@ -76,6 +76,23 @@ public class SerializationCodeGenerator {
     }
 
     /**
+     * Gets a list of properties that cannot be serialized.
+     * Useful for generating helpful error/warning messages.
+     *
+     * @param ast The configuration structure to check
+     * @return List of property names that cannot be serialized
+     */
+    public List<String> getUnsupportedSerializationProperties(AbstractConfigStructure ast) {
+        List<String> unsupported = new java.util.ArrayList<>();
+        for (Property property : ast.properties()) {
+            if (!canSerializeProperty(property)) {
+                unsupported.add(property.name() + " (" + property.propertyType() + ")");
+            }
+        }
+        return unsupported;
+    }
+
+    /**
      * Checks if a single property can be serialized.
      */
     private boolean canSerializeProperty(Property property) {

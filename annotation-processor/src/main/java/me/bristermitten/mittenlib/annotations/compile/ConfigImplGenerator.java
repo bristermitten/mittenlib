@@ -1,11 +1,13 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.MessagerUtils;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.util.Nullity;
+import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
@@ -188,12 +190,32 @@ public class ConfigImplGenerator {
     }
 
     private void addSerializationMethods(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        // Only generate serialization methods if all properties support serialization
-        if (serializationCodeGenerator.isSerializationSupported(ast)) {
+        // Check if serialization is supported
+        boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
+        
+        if (serializationSupported) {
+            // Generate serialization methods
             serializationCodeGenerator.createSerializeMethods(source, ast);
+        } else {
+            // Serialization cannot be generated
+            List<String> unsupportedProperties = serializationCodeGenerator.getUnsupportedSerializationProperties(ast);
+            
+            // Check if serialization is required
+            Config configAnnotation = ast.source().element().getAnnotation(Config.class);
+            boolean requireSerialization = configAnnotation != null && configAnnotation.requireSerialization();
+            
+            String message = "Serialization cannot be generated for config '" + ast.name().simpleName() + "'. " +
+                    "The following properties do not support serialization: " + String.join(", ", unsupportedProperties) + ". " +
+                    "Consider adding @UseObjectMapperSerialization to these properties or providing CustomSerializers.";
+            
+            if (requireSerialization) {
+                // Emit error if serialization is required
+                MessagerUtils.error(ast.source().element(), message);
+            } else {
+                // Emit warning if serialization is not required
+                MessagerUtils.warning(ast.source().element(), message);
+            }
         }
-        // If serialization is not supported, skip generation
-        // The Configuration will be created without a serialize function
     }
 
     private void addStandardObjectMethods(AbstractConfigStructure ast,
