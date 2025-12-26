@@ -39,16 +39,12 @@ public class SearchingObjectWriter implements ObjectWriter {
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer output) {
         logger.warning(() -> "SearchingObjectWriter used with write(DataTree, Writer). " +
-                "This is not recommended as we can't efficiently determine which Writer to use, and so must try all of them." +
-                "Consider using a specific ObjectWriter for better performance.");
+                "This method is not supported because multiple ObjectWriters cannot safely share the same Writer. " +
+                "Use write(DataTree, Path) or a specific ObjectWriter implementation instead.");
 
-        for (FileType fileType : fileTypes) {
-            Result<Void> res = fileType.writer().write(tree, output); // TODO this won't actually work as the writer is already consumed
-            if (res.isSuccess()) {
-                return res;
-            }
-        }
-        return fail(new IllegalStateException("Could not find a matching file type for writer " + output));
+        return fail(new UnsupportedOperationException(
+                "SearchingObjectWriter does not support write(DataTree, Writer). " +
+                "Use write(DataTree, Path) or a specific ObjectWriter instead."));
     }
 
     @Override
