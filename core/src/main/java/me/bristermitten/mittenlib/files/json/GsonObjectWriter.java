@@ -9,6 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Writer;
 
+/**
+ * An {@link ObjectWriter} implementation that writes {@link DataTree} instances
+ * to JSON using a provided {@link Gson} instance.
+ * <p>
+ * This relies on a registered {@code TypeAdapter} for {@link DataTree} so that
+ * the tree can be written directly without transforming it to an intermediate POJO.
+ */
 public class GsonObjectWriter implements ObjectWriter {
     private final Gson gson;
 
