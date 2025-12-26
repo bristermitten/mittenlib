@@ -100,18 +100,6 @@ public class CodeGenBuilder {
     }
 
     /**
-     * Begins a control flow block using a CodeBlock.
-     *
-     * @param controlFlow The control flow statement
-     * @return This builder
-     */
-    public CodeGenBuilder beginControlFlow(CodeBlock controlFlow) {
-        builder.beginControlFlow(controlFlow);
-        indentLevel++;
-        return this;
-    }
-
-    /**
      * Ends the current control flow block.
      *
      * @return This builder
