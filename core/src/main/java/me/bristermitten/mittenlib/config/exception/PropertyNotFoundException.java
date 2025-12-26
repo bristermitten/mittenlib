@@ -1,5 +1,9 @@
 package me.bristermitten.mittenlib.config.exception;
 
+/**
+ * Exception thrown when a required property is not found in a configuration file.
+ * Provides detailed information to help users identify and fix the missing property.
+ */
 public class PropertyNotFoundException extends ConfigDeserialisationException {
     private final Class<?> configClass;
     private final String propertyName;
@@ -15,11 +19,40 @@ public class PropertyNotFoundException extends ConfigDeserialisationException {
 
     @Override
     public String getMessage() {
-        return "\n====================================================\n" +
-               "Property not found in config: " + configClass.getName() + "\n" +
-               "Property name: " + propertyName + "\n" +
-               "Property type: " + propertyType + "\n\n" +
-               "We expected to see a key named " + keyName + ", but there was nothing present under this key\n" +
-               "====================================================\n";
+        String className = configClass.getSimpleName();
+        
+        return String.format("""
+                
+                ╔════════════════════════════════════════════════════════════════════════════════╗
+                ║                          MISSING CONFIGURATION PROPERTY                        ║
+                ╚════════════════════════════════════════════════════════════════════════════════╝
+                
+                A required property is missing from your configuration file.
+                
+                Configuration Class: %s
+                Missing Property:    %s
+                Expected Type:       %s
+                Expected Key Name:   '%s'
+                
+                ┌─ What to do:
+                │
+                │  Add the missing property to your configuration file:
+                │
+                │  %s: <value>
+                │
+                │  Where <value> should be of type: %s
+                │
+                └─ Note: If this property is optional, add @Nullable annotation to the field
+                   in your DTO class.
+                
+                ════════════════════════════════════════════════════════════════════════════════
+                """,
+                className,
+                propertyName,
+                propertyType,
+                keyName,
+                keyName,
+                propertyType
+        );
     }
 }
