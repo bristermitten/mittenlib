@@ -136,7 +136,8 @@ class DTOSuperclassTransformationTest {
                                         import java.util.Map;
                                         
                                         import me.bristermitten.mittenlib.config.*;
-                                        import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;import me.bristermitten.mittenlib.config.names.*;
+                                        import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
+                                        import me.bristermitten.mittenlib.config.names.*;
                                         import org.bukkit.Material;
                                         import org.bukkit.enchantments.Enchantment;
                                         import org.bukkit.inventory.ItemFlag;
@@ -177,7 +178,7 @@ class DTOSuperclassTransformationTest {
         assertThat(compilation)
                 .generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
                 .contentsAsUtf8String()
-                    .contains("super(parent");
+                .contains("super(parent");
 
     }
 }
