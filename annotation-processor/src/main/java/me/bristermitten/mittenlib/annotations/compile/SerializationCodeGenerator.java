@@ -123,7 +123,8 @@ public class SerializationCodeGenerator {
                 }
                 return false;
             }
-            return false; // we only support List and Map generics
+            // Unknown generic type: treat as unserializable unless explicitly opted in via UseObjectMapperSerialization
+            return true;
         }
 
         // Config types are always serializable
