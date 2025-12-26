@@ -9,6 +9,7 @@ import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.provider.ReadingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
+import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
@@ -65,7 +66,7 @@ public class SaveDefaultsIntegrationTest {
         assertThat(classConfig.defaultValue()).isEqualTo(1);
 
         // Serialize the config back to a DataTree
-        DataTree serialized = ClassConfigImpl.serializeClassConfigImpl(classConfig);
+        DataTree serialized = ClassConfigImpl.serializeClassConfigImpl(classConfig, injector.getInstance(ObjectMapper.class));
         
         // Verify the serialized data contains all fields including the default
         assertThat(serialized).isInstanceOf(DataTree.DataTreeMap.class);

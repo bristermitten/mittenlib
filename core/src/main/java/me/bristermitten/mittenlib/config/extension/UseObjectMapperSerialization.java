@@ -1,5 +1,8 @@
 package me.bristermitten.mittenlib.config.extension;
 
+import me.bristermitten.mittenlib.config.Config;
+import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,7 +17,7 @@ import java.lang.annotation.Target;
  *   <li>Primitives and their boxed versions</li>
  *   <li>String</li>
  *   <li>Enums</li>
- *   <li>@Config annotated types</li>
+ *   <li>@{@link Config} annotated types</li>
  *   <li>List and Map of supported types</li>
  * </ul>
  * <p>
@@ -31,6 +34,7 @@ import java.lang.annotation.Target;
  * </pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
+@CascadeToInnerClasses
 public @interface UseObjectMapperSerialization {
 }

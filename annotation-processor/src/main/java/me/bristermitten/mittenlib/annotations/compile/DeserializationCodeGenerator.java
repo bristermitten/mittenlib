@@ -363,9 +363,7 @@ public class DeserializationCodeGenerator {
             }
         }
 
-        handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
-
-        return false;
+        return handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,
@@ -438,11 +436,13 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
-                                           TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+    private boolean handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+                                              TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+
         // Check if the property is annotated with @UseObjectMapperSerialization
         // If so, use ObjectMapper as a fallback for deserialization
-        if (property.source().element().getAnnotation(UseObjectMapperSerialization.class) != null) {
+        var useObjectMapperSerialization = typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class);
+        if (useObjectMapperSerialization != null) {
             // Use ObjectMapper to deserialize the value
             TypeName propertyTypeName = configurationClassNameGenerator.publicPropertyClassName(property);
             builder.addStatement("return context.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
@@ -451,11 +451,10 @@ public class DeserializationCodeGenerator {
                     fromMapName,
                     TypeToken.class,
                     propertyTypeName);
-            return;
+            return true;
         }
-        
         if (!property.settings().hasDefaultValue()) {
-            return; // no need to check this
+            return false; // no need to check this
         }
         builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
         builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
@@ -467,6 +466,7 @@ public class DeserializationCodeGenerator {
                 fromMapName
         );
         builder.endControlFlow();
+        return false;
     }
 
     private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
