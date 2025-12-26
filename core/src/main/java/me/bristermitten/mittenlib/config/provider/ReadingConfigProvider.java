@@ -112,8 +112,15 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
         Map<DataTree, DataTree> mergedValues = new LinkedHashMap<>(existingMap.values());
 
         for (Map.Entry<DataTree, DataTree> entry : newMap.values().entrySet()) {
-            if (!mergedValues.containsKey(entry.getKey())) {
-                mergedValues.put(entry.getKey(), entry.getValue());
+            DataTree key = entry.getKey();
+            DataTree newValue = entry.getValue();
+
+            if (!mergedValues.containsKey(key)) {
+                mergedValues.put(key, newValue);
+            } else {
+                DataTree existingValue = mergedValues.get(key);
+                DataTree mergedValue = mergeDataTrees(existingValue, newValue);
+                mergedValues.put(key, mergedValue);
             }
         }
 
