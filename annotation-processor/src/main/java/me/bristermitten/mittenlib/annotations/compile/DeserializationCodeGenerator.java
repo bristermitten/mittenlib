@@ -341,15 +341,25 @@ public class DeserializationCodeGenerator {
         
         // Use functional monad pattern for composable case handling
         CodeGenMonad.builder(builder)
-            .tryCase(() -> customDeserializerOptional.isPresent() && 
-                          handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false))
-            .tryCase(CodeGenMonad.when(wrappedElementType.isEnum(), 
-                    () -> handleEnumType(builder, property, fromMapName, safeType)))
-            .tryCase(CodeGenMonad.when(typesUtil.isConfigType(elementType),
-                    () -> handleConfigType(builder, dtoType, elementType, fromMapName)))
-            .tryCase(() -> customDeserializerOptional.isPresent() && 
-                          handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true))
+            .tryCase(() -> tryCustomDeserializer(builder, fromMapName, customDeserializerOptional, false))
+            .tryCase(wrappedElementType.isEnum(), 
+                    () -> handleEnumType(builder, property, fromMapName, safeType))
+            .tryCase(typesUtil.isConfigType(elementType),
+                    () -> handleConfigType(builder, dtoType, elementType, fromMapName))
+            .tryCase(() -> tryCustomDeserializer(builder, fromMapName, customDeserializerOptional, true))
             .orElse(() -> handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName));
+    }
+    
+    /**
+     * Helper method to try a custom deserializer if present.
+     */
+    private boolean tryCustomDeserializer(MethodSpec.Builder builder, String fromMapName,
+                                         Optional<CustomDeserializerInfo> customDeserializerOptional,
+                                         boolean isFallback) {
+        return customDeserializerOptional
+                .filter(info -> info.isFallback() == isFallback)
+                .map(info -> handleCustomDeserializer(builder, fromMapName, info, isFallback))
+                .orElse(false);
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,

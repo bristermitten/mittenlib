@@ -169,21 +169,35 @@ class CodeGenMonadTest {
     }
 
     @Test
-    void testFromBooleanHelper() {
+    void testTryCaseWithCondition() {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("test")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(TypeName.VOID);
         
-        AtomicBoolean called = new AtomicBoolean(false);
+        AtomicBoolean actionCalled = new AtomicBoolean(false);
         
         CodeGenMonad.builder(builder)
-            .tryCase(CodeGenMonad.fromBoolean(() -> {
-                called.set(true);
-                return true;
-            }))
+            .tryCase(true, () -> actionCalled.set(true))
             .build();
         
-        assertTrue(called.get());
+        assertTrue(actionCalled.get());
+    }
+
+    @Test
+    void testTryCaseWithConditionFalse() {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("test")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(TypeName.VOID);
+        
+        AtomicBoolean actionCalled = new AtomicBoolean(false);
+        AtomicBoolean terminalCalled = new AtomicBoolean(false);
+        
+        CodeGenMonad.builder(builder)
+            .tryCase(false, () -> actionCalled.set(true))
+            .orElse(() -> terminalCalled.set(true));
+        
+        assertFalse(actionCalled.get());
+        assertTrue(terminalCalled.get());
     }
 
     @Test

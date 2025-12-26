@@ -1,12 +1,9 @@
 package me.bristermitten.mittenlib.annotations.codegen;
 
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -30,32 +27,8 @@ import java.util.function.Supplier;
  */
 public class CodeGenMonad {
     private final MethodSpec.Builder methodBuilder;
-    private final List<Case> cases;
+    private final List<Supplier<Boolean>> cases;
     private boolean built = false;
-    
-    /**
-     * Represents a case that may or may not handle the code generation.
-     */
-    @FunctionalInterface
-    public interface Case {
-        /**
-         * Attempts to handle the code generation case.
-         * 
-         * @return Optional.of(result) if this case handled it, Optional.empty() otherwise
-         */
-        Optional<Void> tryHandle();
-    }
-    
-    /**
-     * A terminal operation that always completes the code generation.
-     */
-    @FunctionalInterface
-    public interface Terminal {
-        /**
-         * Completes the code generation.
-         */
-        void complete();
-    }
     
     private CodeGenMonad(MethodSpec.Builder methodBuilder) {
         this.methodBuilder = methodBuilder;
@@ -74,11 +47,12 @@ public class CodeGenMonad {
     
     /**
      * Adds a case to try. Cases are tried in the order they are added.
+     * The case should return true if it handled the code generation, false otherwise.
      * 
-     * @param caseHandler The case handler
+     * @param caseHandler The case handler that returns true if successful
      * @return This monad for chaining
      */
-    public CodeGenMonad tryCase(Case caseHandler) {
+    public CodeGenMonad tryCase(Supplier<Boolean> caseHandler) {
         if (built) {
             throw new IllegalStateException("Cannot add cases after building");
         }
@@ -87,14 +61,20 @@ public class CodeGenMonad {
     }
     
     /**
-     * Adds a case using a boolean-returning function.
-     * This is a convenience method for legacy code.
+     * Adds a case that executes when a condition is true.
      * 
      * @param condition The condition to check
+     * @param action The action to perform if condition is true
      * @return This monad for chaining
      */
-    public CodeGenMonad tryCase(Supplier<Boolean> condition) {
-        return tryCase(() -> condition.get() ? Optional.of(null) : Optional.empty());
+    public CodeGenMonad tryCase(boolean condition, Runnable action) {
+        return tryCase(() -> {
+            if (condition) {
+                action.run();
+                return true;
+            }
+            return false;
+        });
     }
     
     /**
@@ -103,23 +83,22 @@ public class CodeGenMonad {
      * 
      * @param terminal The terminal operation
      */
-    public void orElse(Terminal terminal) {
+    public void orElse(Runnable terminal) {
         if (built) {
             throw new IllegalStateException("Already built");
         }
         built = true;
         
         // Try each case in order
-        for (Case caseHandler : cases) {
-            Optional<Void> result = caseHandler.tryHandle();
-            if (result.isPresent()) {
+        for (Supplier<Boolean> caseHandler : cases) {
+            if (caseHandler.get()) {
                 // Case succeeded, we're done
                 return;
             }
         }
         
         // No case succeeded, execute terminal
-        terminal.complete();
+        terminal.run();
     }
     
     /**
@@ -133,9 +112,8 @@ public class CodeGenMonad {
         built = true;
         
         // Try each case in order
-        for (Case caseHandler : cases) {
-            Optional<Void> result = caseHandler.tryHandle();
-            if (result.isPresent()) {
+        for (Supplier<Boolean> caseHandler : cases) {
+            if (caseHandler.get()) {
                 // Case succeeded, we're done
                 return;
             }
@@ -152,29 +130,19 @@ public class CodeGenMonad {
     }
     
     /**
-     * Convenience method to create a Case that returns success if a boolean condition is true.
+     * Convenience method to create a case handler that executes when a condition is true.
      * 
      * @param condition The condition
      * @param action The action to perform if condition is true
-     * @return A Case
+     * @return A case handler
      */
-    public static Case when(boolean condition, Runnable action) {
+    public static Supplier<Boolean> when(boolean condition, Runnable action) {
         return () -> {
             if (condition) {
                 action.run();
-                return Optional.of(null);
+                return true;
             }
-            return Optional.empty();
+            return false;
         };
-    }
-    
-    /**
-     * Convenience method to create a Case from a boolean supplier.
-     * 
-     * @param supplier The supplier that returns true if it handled the case
-     * @return A Case
-     */
-    public static Case fromBoolean(Supplier<Boolean> supplier) {
-        return () -> supplier.get() ? Optional.of(null) : Optional.empty();
     }
 }
