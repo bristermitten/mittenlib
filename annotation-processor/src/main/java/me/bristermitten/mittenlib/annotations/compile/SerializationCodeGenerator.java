@@ -203,7 +203,13 @@ public class SerializationCodeGenerator {
     
     /**
      * Tries to handle generic types (List, Map, etc.).
-     * Returns true if handled, false otherwise.
+     * This method checks if the property type has type arguments and handles
+     * supported generic types like List and Map.
+     * 
+     * @param builder The method builder to add code to
+     * @param property The property being serialized
+     * @param wrappedType The wrapped type mirror of the property
+     * @return true if the generic type was handled, false otherwise
      */
     private boolean tryHandleGenericType(MethodSpec.Builder builder, Property property, TypeMirrorWrapper wrappedType) {
         if (!wrappedType.hasTypeArguments()) {
@@ -238,6 +244,9 @@ public class SerializationCodeGenerator {
     
     /**
      * Handles known serializable types (primitives, String, Boolean, Number, enums).
+     * These types can be directly serialized using DataTreeTransforms.loadFrom.
+     * 
+     * @param builder The method builder to add code to
      */
     private void handleKnownTypeSerialization(MethodSpec.Builder builder) {
         // For primitive types, strings, enums, and other basic types, use DataTreeTransforms.loadFrom
@@ -247,6 +256,13 @@ public class SerializationCodeGenerator {
     
     /**
      * Handles unsupported types by logging an error and generating a fallback.
+     * This method is called when a type cannot be serialized through any of the
+     * supported mechanisms.
+     * 
+     * @param builder The method builder to add code to
+     * @param property The property that cannot be serialized
+     * @param propertyTypeMirror The type mirror of the property
+     * @param wrappedType The wrapped type mirror
      */
     private void handleUnsupportedType(MethodSpec.Builder builder, Property property, TypeMirror propertyTypeMirror, TypeMirrorWrapper wrappedType) {
         if (customDeserializers.getCustomDeserializer(propertyTypeMirror).isEmpty()) {
