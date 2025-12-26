@@ -37,6 +37,7 @@ public class YamlObjectWriter implements ObjectWriter {
         return runCatching(() -> {
             Object pojo = DataTreeTransforms.toPOJO(tree);
             yaml.dump(pojo, writer);
+            writer.flush();
             return null;
         });
     }
