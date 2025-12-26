@@ -555,8 +555,8 @@ public class DeserializationCodeGenerator {
             var superConfigName = getConfigClassName(superClass.get(), dtoType);
             chain.addOperation(
                 "$T.$L($L)",
-                superConfigName,
-                superConfigName,
+                superConfigName, // This is the result type
+                superConfigName, // This is the first format argument (the class)
                 methodNames.getDeserializeMethodName(superConfigName),
                 CodeGenNames.Variables.CONTEXT
             );

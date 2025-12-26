@@ -69,6 +69,7 @@ public class FlatMapChainBuilder {
     /**
      * Builds the complete flatMap chain that ends with a constructor call.
      * Automatically manages variable scoping and parentheses balancing.
+     * Uses only the variables created by operations in this chain.
      *
      * @param resultClass The Result class
      * @param constructorClass The class to construct with all accumulated variables
@@ -90,11 +91,11 @@ public class FlatMapChainBuilder {
         // Add the final constructor call
         builder.add("$T.ok(new $T(", resultClass, constructorClass);
         
-        // Add all variables as constructor parameters
-        List<Variable> allVars = scope.allVariables();
-        for (int i = 0; i < allVars.size(); i++) {
-            builder.add("$L", allVars.get(i).name());
-            if (i != allVars.size() - 1) {
+        // Add all variables from operations as constructor parameters
+        List<Variable> operationVars = getVariables();
+        for (int i = 0; i < operationVars.size(); i++) {
+            builder.add("$L", operationVars.get(i).name());
+            if (i != operationVars.size() - 1) {
                 builder.add(", ");
             }
         }
