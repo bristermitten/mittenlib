@@ -103,7 +103,8 @@ public class ConfigImplGenerator {
     }
 
     /**
-     * When the element has a @{@link me.bristermitten.mittenlib.config.Source} marked, turn it into a {@link Configuration} field
+     * When the element has a @{@link me.bristermitten.mittenlib.config.Source} marked, turn it into a {@link Configuration}
+     * field, wiring in deserialization and, when supported for the type, serialization.
      */
     private void addSourceElement(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         if (ast.settings().source() != null) {
