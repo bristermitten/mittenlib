@@ -11,6 +11,7 @@ import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
+import me.bristermitten.mittenlib.annotations.codegen.DeserializationMethodBuilder;
 import me.bristermitten.mittenlib.annotations.codegen.FlatMapChainBuilder;
 import me.bristermitten.mittenlib.annotations.codegen.Scope;
 import me.bristermitten.mittenlib.annotations.codegen.Variable;
@@ -142,14 +143,13 @@ public class DeserializationCodeGenerator {
                 return methodSpec.get();
             }
         } else if (!isGenericType) {
-            if (handleNonGenericType(builder, property, dtoType, elementType, wrappedElementType)) {
-                return builder.build();
-            }
+            handleNonGenericType(builder, property, dtoType, elementType, wrappedElementType);
+            return builder.build();
         }
 
         // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
-        String fromMapName = property.name() + "FromMap";
-        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class,
+        String fromMapName = getFromMapVariableName(property);
+        builder.addStatement("return $L.getMapper().map($N, new $T<$T>(){})", CodeGenNames.Variables.CONTEXT, fromMapName, TypeToken.class,
                 elementResultType
         );
         return builder.build();
@@ -320,42 +320,51 @@ public class DeserializationCodeGenerator {
         return Optional.empty();
     }
 
-    private boolean handleNonGenericType(MethodSpec.Builder builder, Property property,
-                                         TypeElement dtoType, TypeMirror elementType,
-                                         TypeMirrorWrapper wrappedElementType) {
+    private void handleNonGenericType(MethodSpec.Builder builder, Property property,
+                                      TypeElement dtoType, TypeMirror elementType,
+                                      TypeMirrorWrapper wrappedElementType) {
         /*
-         Construct a simple check that does
-           if (fromMap instanceof X) return fromMap;
-         Useful when the type is a primitive or String
-         This is only safe to do with non-parameterized types, what with type erasure and all
+         Uses a declarative strategy pattern to handle different deserialization cases.
+         Each strategy is tried in order, and the first one that succeeds completes the method.
         */
         final String fromMapName = getFromMapVariableName(property);
         final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
 
+        DeserializationMethodBuilder methodBuilder = new DeserializationMethodBuilder(builder);
+        
+        // Add conditional checks that don't necessarily return
         handleDirectTypeMatch(builder, property, fromMapName, safeType);
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
-
+        
         Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
-        if (customDeserializerOptional.isPresent()) {
-            if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false)) {
-                return true;
+        
+        // Try non-fallback custom deserializer
+        methodBuilder.tryStrategy(() -> {
+            if (customDeserializerOptional.isPresent()) {
+                return handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false);
             }
-        }
-
+            return false;
+        });
+        
+        // Handle enum or config types (these add conditional returns but don't necessarily complete)
         if (wrappedElementType.isEnum()) {
             handleEnumType(builder, property, fromMapName, safeType);
         } else if (typesUtil.isConfigType(elementType)) {
             handleConfigType(builder, dtoType, elementType, fromMapName);
         }
-
-
-        if (customDeserializerOptional.isPresent()) {
-            if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true)) {
-                return true;
+        
+        // Try fallback custom deserializer
+        methodBuilder.tryStrategy(() -> {
+            if (customDeserializerOptional.isPresent()) {
+                return handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true);
             }
-        }
-
-        return handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
+            return false;
+        });
+        
+        // Final fallback
+        methodBuilder.orElse(() -> {
+            handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
+        });
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,
@@ -428,9 +437,8 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private boolean handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
-                                              TypeElement dtoType, TypeMirror elementType, String fromMapName) {
-
+    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+                                          TypeElement dtoType, TypeMirror elementType, String fromMapName) {
         // Check if the property is annotated with @UseObjectMapperSerialization
         // If so, use ObjectMapper as a fallback for deserialization
         var useObjectMapperSerialization = typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class);
@@ -444,22 +452,20 @@ public class DeserializationCodeGenerator {
                     fromMapName,
                     TypeToken.class,
                     propertyTypeName);
-            return true;
+            return;
         }
-        if (!property.settings().hasDefaultValue()) {
-            return false; // no need to check this
+        if (property.settings().hasDefaultValue()) {
+            builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
+            builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
+                    Result.class,
+                    ConfigLoadingErrors.class,
+                    dtoType,
+                    property.name(),
+                    elementType,
+                    fromMapName
+            );
+            builder.endControlFlow();
         }
-        builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
-        builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
-                Result.class,
-                ConfigLoadingErrors.class,
-                dtoType,
-                property.name(),
-                elementType,
-                fromMapName
-        );
-        builder.endControlFlow();
-        return false;
     }
 
     private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
