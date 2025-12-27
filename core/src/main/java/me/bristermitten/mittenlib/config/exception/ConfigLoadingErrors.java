@@ -96,23 +96,35 @@ public class ConfigLoadingErrors {
     }
     
     private static String getFriendlyTypeName(String typeName) {
-        return switch (typeName.toLowerCase()) {
-            case "int", "integer", "long", "short", "byte" -> "a number";
-            case "double", "float" -> "a decimal number";
-            case "string" -> "text";
-            case "boolean" -> "true or false";
-            default -> "a " + typeName;
-        };
+        String lowerType = typeName.toLowerCase();
+        if (lowerType.equals("int") || lowerType.equals("integer") || 
+            lowerType.equals("long") || lowerType.equals("short") || lowerType.equals("byte")) {
+            return "a number";
+        } else if (lowerType.equals("double") || lowerType.equals("float")) {
+            return "a decimal number";
+        } else if (lowerType.equals("string")) {
+            return "text";
+        } else if (lowerType.equals("boolean")) {
+            return "true or false";
+        } else {
+            return "a " + typeName;
+        }
     }
     
     private static String getExampleValues(String typeName) {
-        return switch (typeName.toLowerCase()) {
-            case "int", "integer", "long", "short", "byte" -> "  - 1, 10, 100, 9999";
-            case "double", "float" -> "  - 1.5, 10.0, 99.99";
-            case "string" -> "  - \"hello\", \"world\", \"localhost\"";
-            case "boolean" -> "  - true, false";
-            default -> "  - (check plugin documentation)";
-        };
+        String lowerType = typeName.toLowerCase();
+        if (lowerType.equals("int") || lowerType.equals("integer") || 
+            lowerType.equals("long") || lowerType.equals("short") || lowerType.equals("byte")) {
+            return "  - 1, 10, 100, 9999";
+        } else if (lowerType.equals("double") || lowerType.equals("float")) {
+            return "  - 1.5, 10.0, 99.99";
+        } else if (lowerType.equals("string")) {
+            return "  - \"hello\", \"world\", \"localhost\"";
+        } else if (lowerType.equals("boolean")) {
+            return "  - true, false";
+        } else {
+            return "  - (check plugin documentation)";
+        }
     }
 
     public static RuntimeException noUnionMatch() {
