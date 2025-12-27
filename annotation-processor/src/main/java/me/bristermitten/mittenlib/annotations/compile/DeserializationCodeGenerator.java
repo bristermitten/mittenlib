@@ -407,25 +407,57 @@ public class DeserializationCodeGenerator {
         return false;
     }
 
-    private void handleEnumType(MethodSpec.Builder builder, Property property,
-                                String fromMapName, TypeName safeType) {
+    /**
+     * Pure function to handle enum deserialization.
+     * 
+     * @return Pure CodeGenResult representing enum deserialization logic
+     */
+    private CodeGenResult handleEnumTypePure(Property property, String fromMapName, TypeName safeType) {
+        CodeGenResult result = CodeGenDSL.empty();
+        
         // try to load it as a string
         if (property.settings().hasDefaultValue()) {
-            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, String.class);
-            addEnumDeserialisation(property, builder, fromMapName, safeType, CodeBlock.of("$L", fromMapName));
-            builder.endControlFlow();
+            result = result.combine(
+                CodeGenDSL.controlFlow("if ($L instanceof $T)", body -> {
+                    body.add(addEnumDeserialisationPure(property, fromMapName, safeType, CodeBlock.of("$L", fromMapName)));
+                }, fromMapName, String.class)
+            );
         }
 
-        builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class);
-        {
-            var convert = CodeBlock.of("(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
-            addEnumDeserialisation(property, builder, fromMapName, safeType, convert);
-        }
-        builder.endControlFlow();
+        result = result.combine(
+            CodeGenDSL.controlFlow("if ($L instanceof $T)", body -> {
+                var convert = CodeBlock.of("(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
+                body.add(addEnumDeserialisationPure(property, fromMapName, safeType, convert));
+            }, fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class)
+        );
+        
+        return result;
+    }
+
+    private void handleEnumType(MethodSpec.Builder builder, Property property,
+                                String fromMapName, TypeName safeType) {
+        handleEnumTypePure(property, fromMapName, safeType).apply(builder);
+    }
+    
+    /**
+     * Pure function to handle config type deserialization.
+     * 
+     * @return Pure CodeGenResult representing config type deserialization logic
+     */
+    private CodeGenResult handleConfigTypePure(TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+        TypeName configClassName = getConfigClassName(elementType, dtoType);
+        return CodeGenDSL.controlFlow("if ($L instanceof $T)", body -> {
+            body.addStatement("$1T $2L = ($1T) $3L", DataTree.DataTreeMap.class, CodeGenNames.Variables.MAP_DATA, fromMapName);
+            body.addReturn("$T.$L($L.withData($L))",
+                    configClassName, methodNames.getDeserializeMethodName(configClassName), 
+                    CodeGenNames.Variables.CONTEXT, CodeGenNames.Variables.MAP_DATA);
+        }, fromMapName, DataTree.DataTreeMap.class);
     }
 
     private void handleConfigType(MethodSpec.Builder builder, TypeElement dtoType,
                                   TypeMirror elementType, String fromMapName) {
+        handleConfigTypePure(dtoType, elementType, fromMapName).apply(builder);
+    }
         // TODO: Migrate to pure DSL - return CodeGenResult
         TypeName configClassName = getConfigClassName(elementType, dtoType);
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
@@ -457,15 +489,15 @@ public class DeserializationCodeGenerator {
                     propertyTypeName);
         }
         if (property.settings().hasDefaultValue()) {
-            return CodeGenDSL.controlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class)
-                    .addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
-                            Result.class,
-                            ConfigLoadingErrors.class,
-                            dtoType,
-                            property.name(),
-                            elementType,
-                            fromMapName)
-                    .build();
+            return CodeGenDSL.controlFlow("if (!($L instanceof $T))", body -> {
+                body.addReturn("$T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        dtoType,
+                        property.name(),
+                        elementType,
+                        fromMapName);
+            }, fromMapName, DataTree.class);
         }
         return CodeGenDSL.empty();
     }
@@ -476,33 +508,45 @@ public class DeserializationCodeGenerator {
         handleInvalidPropertyTypePure(property, dtoType, elementType, fromMapName).apply(builder);
     }
 
-    private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
-        switch (property.settings().enumParsingScheme()) {
-            case EXACT_MATCH -> builder.addStatement("$1T $2L = $3T.valueOfOrNull(($4T) $5L, $1T.class)",
+    /**
+     * Pure function for enum deserialization.
+     * 
+     * @return Pure CodeGenResult representing enum deserialization logic
+     */
+    private CodeGenResult addEnumDeserialisationPure(Property property, String fromMapName, TypeName safeType, CodeBlock convert) {
+        CodeGenResult valueOfStatement = switch (property.settings().enumParsingScheme()) {
+            case EXACT_MATCH -> CodeGenDSL.statement("$1T $2L = $3T.valueOfOrNull(($4T) $5L, $1T.class)",
                     safeType,
                     CodeGenNames.Variables.ENUM_VALUE,
                     Enums.class,
                     String.class,
                     convert
             );
-            case CASE_INSENSITIVE -> builder.addStatement("$1T $2L = $3T.valueOfIgnoreCase(($4T) $5L, $1T.class)",
+            case CASE_INSENSITIVE -> CodeGenDSL.statement("$1T $2L = $3T.valueOfIgnoreCase(($4T) $5L, $1T.class)",
                     safeType,
                     CodeGenNames.Variables.ENUM_VALUE,
                     Enums.class,
                     String.class,
                     convert
             );
-        }
-        builder.beginControlFlow("if ($L == null)", CodeGenNames.Variables.ENUM_VALUE);
-        builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L))",
-                Result.class,
-                ConfigLoadingErrors.class,
-                safeType,
-                property.name(),
-                fromMapName);
-        builder.endControlFlow();
+        };
+        
+        CodeGenResult nullCheck = CodeGenDSL.controlFlow("if ($L == null)", body -> {
+            body.addReturn("$T.fail($T.invalidEnumException($T.class, $S, $L))",
+                    Result.class,
+                    ConfigLoadingErrors.class,
+                    safeType,
+                    property.name(),
+                    fromMapName);
+        }, CodeGenNames.Variables.ENUM_VALUE);
+        
+        CodeGenResult returnStatement = CodeGenDSL.returnValue("$T.ok($L)", Result.class, CodeGenNames.Variables.ENUM_VALUE);
+        
+        return valueOfStatement.combine(nullCheck).combine(returnStatement);
+    }
 
-        builder.addStatement("return $T.ok($L)", Result.class, CodeGenNames.Variables.ENUM_VALUE);
+    private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
+        addEnumDeserialisationPure(property, fromMapName, safeType, convert).apply(builder);
     }
 
     /**

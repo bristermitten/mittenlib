@@ -70,14 +70,38 @@ public class CodeGenDSL {
     }
     
     /**
-     * Begins a control flow block (if, for, while, etc.).
+     * Begins a control flow block (if, for, while, etc.) using a builder.
      * 
      * @param format The control flow format string
      * @param args The format arguments
      * @return A builder for constructing the control flow block
+     * @deprecated Use {@link #controlFlow(String, java.util.function.Consumer, Object...)} for lambda-based API
      */
+    @Deprecated
     public static ControlFlowBuilder controlFlow(String format, Object... args) {
         return new ControlFlowBuilder(CodeBlock.of(format, args));
+    }
+    
+    /**
+     * Creates a control flow block (if, for, while, etc.) using a lambda to define the body.
+     * This mirrors the actual control flow structure more naturally.
+     * 
+     * Example:
+     * <pre>
+     * controlFlow("if ($L != null)", body -> {
+     *     body.add(statement("return $T.success($L)", Result.class, "value"));
+     * }, varName)
+     * </pre>
+     * 
+     * @param format The control flow format string
+     * @param bodyBuilder Consumer that builds the body using a ControlFlowBodyBuilder
+     * @param args The format arguments
+     * @return An immutable CodeGenResult representing this control flow
+     */
+    public static CodeGenResult controlFlow(String format, java.util.function.Consumer<ControlFlowBodyBuilder> bodyBuilder, Object... args) {
+        ControlFlowBodyBuilder builder = new ControlFlowBodyBuilder();
+        bodyBuilder.accept(builder);
+        return new ControlFlow(CodeBlock.of(format, args), builder.getBody());
     }
     
     /**
@@ -193,8 +217,10 @@ public class CodeGenDSL {
     }
     
     /**
-     * Builder for control flow blocks.
+     * Builder for control flow blocks (legacy builder pattern).
+     * @deprecated Use lambda-based controlFlow method instead
      */
+    @Deprecated
     public static class ControlFlowBuilder {
         private final CodeBlock controlStatement;
         private final List<CodeGenResult> body = new ArrayList<>();
@@ -245,6 +271,47 @@ public class CodeGenDSL {
          */
         public CodeGenResult build() {
             return new ControlFlow(controlStatement, body);
+        }
+    }
+    
+    /**
+     * Builder for control flow body using lambda-based API.
+     * This is used internally by the lambda-based controlFlow method.
+     */
+    public static class ControlFlowBodyBuilder {
+        private final List<CodeGenResult> body = new ArrayList<>();
+        
+        /**
+         * Adds a result to the control flow body.
+         * 
+         * @param result The result to add
+         */
+        public void add(CodeGenResult result) {
+            body.add(result);
+        }
+        
+        /**
+         * Adds a statement to the control flow body.
+         * 
+         * @param format The format string
+         * @param args The format arguments
+         */
+        public void addStatement(String format, Object... args) {
+            body.add(new Statement(CodeBlock.of(format, args)));
+        }
+        
+        /**
+         * Adds a return statement to the control flow body.
+         * 
+         * @param format The format string
+         * @param args The format arguments
+         */
+        public void addReturn(String format, Object... args) {
+            body.add(new Return(CodeBlock.of(format, args)));
+        }
+        
+        List<CodeGenResult> getBody() {
+            return body;
         }
     }
 }
