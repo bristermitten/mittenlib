@@ -1,5 +1,8 @@
 package me.bristermitten.mittenlib.config.exception;
 
+import org.jspecify.annotations.Nullable;
+
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -17,11 +20,17 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
     private final Class<? extends Enum<?>> enumClass;
     private final String propertyName;
     private final Object actualValue;
+    private final @Nullable Path configFilePath;
 
     public InvalidEnumValueException(Class<? extends Enum<?>> enumClass, String propertyName, Object actualValue) {
+        this(enumClass, propertyName, actualValue, null);
+    }
+
+    public InvalidEnumValueException(Class<? extends Enum<?>> enumClass, String propertyName, Object actualValue, @Nullable Path configFilePath) {
         this.enumClass = enumClass;
         this.propertyName = propertyName;
         this.actualValue = actualValue;
+        this.configFilePath = configFilePath;
     }
 
     @Override
@@ -41,6 +50,10 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
                 ? String.format("\n│  Suggestion: Did you mean '%s'?", suggestion)
                 : "";
         
+        String fileInfo = configFilePath != null 
+                ? String.format("Configuration File:  %s\n", configFilePath)
+                : "";
+        
         return String.format("""
                 
                 ╔════════════════════════════════════════════════════════════════════════════════╗
@@ -49,7 +62,7 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
                 
                 An invalid value was provided for an enum property in your configuration.
                 
-                Property:      %s
+                %sProperty:      %s
                 Expected Type: %s
                 Provided:      '%s' (type: %s)
                 
@@ -61,6 +74,7 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
+                fileInfo,
                 propertyName,
                 enumTypeName,
                 actualValue,
