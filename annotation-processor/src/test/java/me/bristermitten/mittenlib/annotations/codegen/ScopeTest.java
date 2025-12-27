@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.annotations.codegen;
 import com.squareup.javapoet.TypeName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ScopeTest {

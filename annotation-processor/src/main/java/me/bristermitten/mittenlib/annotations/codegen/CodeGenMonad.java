@@ -125,6 +125,8 @@ public class CodeGenMonad {
     /**
      * Applies the monad without a fallback.
      * The first successful case will be applied.
+     * 
+     * @throws IllegalStateException if no case succeeds (ensure at least one case matches or use orElse)
      */
     public void apply() {
         if (built) {
@@ -141,6 +143,10 @@ public class CodeGenMonad {
                 return;
             }
         }
+        
+        // No case succeeded; this likely indicates a code generation error
+        throw new IllegalStateException("No code generation case succeeded; " +
+                "either add a matching case or use orElse(...) to provide a fallback.");
     }
     
     /**

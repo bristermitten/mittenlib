@@ -327,8 +327,10 @@ public class DeserializationCodeGenerator {
          Uses a functional monad pattern to handle different code generation cases.
          Each case is tried in order using a declarative, composable approach.
          
-         Note: handleDirectTypeMatch and handleDataTreeTypeMatch add conditional returns but don't
-         necessarily complete the method, so they're called unconditionally before the monad.
+         Note: handleDirectTypeMatch and handleDataTreeTypeMatch may add conditional early
+         return statements to the generated method. If their conditions are met, they will
+         complete the method and the monad below will not run. The monad handles the cases
+         where those early-return conditions are not satisfied.
         */
         final String fromMapName = getFromMapVariableName(property);
         final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
@@ -447,7 +449,6 @@ public class DeserializationCodeGenerator {
                     fromMapName,
                     TypeToken.class,
                     propertyTypeName);
-            return;
         }
         if (property.settings().hasDefaultValue()) {
             builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);

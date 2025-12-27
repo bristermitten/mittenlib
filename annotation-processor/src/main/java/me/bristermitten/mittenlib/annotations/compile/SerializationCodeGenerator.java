@@ -236,10 +236,8 @@ public class SerializationCodeGenerator {
                             "Use @UseObjectMapperSerialization to explicitly opt-in to ObjectMapper serialization, " +
                             "or provide a CustomDeserializer with serialization support.");
         }
-        // Generate a fallback to prevent further compilation errors
-        builder.addStatement("throw new $T($S)", UnsupportedOperationException.class,
-                "Serialization not supported for type: " + canonicalName);
-        return true;
+        // Unsupported generic type was not handled here; allow other handlers to try
+        return false;
     }
     
     /**
