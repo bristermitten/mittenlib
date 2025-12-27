@@ -435,7 +435,12 @@ public class DeserializationCodeGenerator {
         builder.endControlFlow();
     }
 
-    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+    /**
+     * Handles invalid property types by either using ObjectMapper or returning a failure.
+     * 
+     * @return Pure CodeGenResult representing the error handling logic
+     */
+    private CodeGenResult handleInvalidPropertyTypePure(Property property,
                                           TypeElement dtoType, TypeMirror elementType, String fromMapName) {
         // Check if the property is annotated with @UseObjectMapperSerialization
         // If so, use ObjectMapper as a fallback for deserialization
@@ -443,7 +448,7 @@ public class DeserializationCodeGenerator {
         if (useObjectMapperSerialization != null) {
             // Use ObjectMapper to deserialize the value
             TypeName propertyTypeName = configurationClassNameGenerator.publicPropertyClassName(property);
-            builder.addStatement("return $L.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
+            return CodeGenDSL.statement("return $L.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
                     CodeGenNames.Variables.CONTEXT,
                     DataTreeTransforms.class,
                     DataTreeTransforms.class,
@@ -452,17 +457,23 @@ public class DeserializationCodeGenerator {
                     propertyTypeName);
         }
         if (property.settings().hasDefaultValue()) {
-            builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
-            builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
-                    Result.class,
-                    ConfigLoadingErrors.class,
-                    dtoType,
-                    property.name(),
-                    elementType,
-                    fromMapName
-            );
-            builder.endControlFlow();
+            return CodeGenDSL.controlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class)
+                    .addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
+                            Result.class,
+                            ConfigLoadingErrors.class,
+                            dtoType,
+                            property.name(),
+                            elementType,
+                            fromMapName)
+                    .build();
         }
+        return CodeGenDSL.empty();
+    }
+
+    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+                                          TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+        // Legacy method - delegates to pure version
+        handleInvalidPropertyTypePure(property, dtoType, elementType, fromMapName).apply(builder);
     }
 
     private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
