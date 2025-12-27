@@ -90,6 +90,8 @@ public class ConfigClassParser {
                 && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
                 MessagerUtils.warning(propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
             }
+            
+            var propertyDoc = typesUtil.getAnnotation(propertyElement, PropertyDoc.class);
 
             var hasDefault = switch (propertySource) {
                 case Property.PropertySource.MethodSource(var m) -> m.isDefault();
@@ -105,7 +107,8 @@ public class ConfigClassParser {
                             configName,
                             enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(),
                             isNullable,
-                            hasDefault));
+                            hasDefault,
+                            propertyDoc));
         }).toList();
     }
 

@@ -39,6 +39,27 @@ public class ConfigLoadingErrors {
         Path sourcePath = context != null ? context.getSourcePath() : null;
         return new PropertyNotFoundException(enclosingClass, fieldName, typeName, keyName, sourcePath);
     }
+    
+    /**
+     * Creates an exception to use when a value cannot be deserialized as it is not found (i.e. is null)
+     * This version includes file path information and custom documentation from PropertyDoc annotation
+     *
+     * @param fieldName      the name of the field that is trying to be deserialized
+     * @param typeName       the name of the type that is trying to be deserialized
+     * @param enclosingClass the name of the enclosing class
+     * @param keyName        the key name in the config file
+     * @param context        the deserialization context containing file path information
+     * @param description    custom description from @PropertyDoc
+     * @param example        custom example from @PropertyDoc
+     * @param note           custom note from @PropertyDoc
+     * @return the exception to throw
+     */
+    public static RuntimeException notFoundException(String fieldName, String typeName, Class<?> enclosingClass, String keyName, 
+                                                     @Nullable DeserializationContext context, @Nullable String description, 
+                                                     @Nullable String example, @Nullable String note) {
+        Path sourcePath = context != null ? context.getSourcePath() : null;
+        return new PropertyNotFoundException(enclosingClass, fieldName, typeName, keyName, sourcePath, description, example, note);
+    }
 
 
     public static RuntimeException invalidPropertyTypeException(Class<?> enclosingClass, String propertyName, String expectedType, Object actualValue) {

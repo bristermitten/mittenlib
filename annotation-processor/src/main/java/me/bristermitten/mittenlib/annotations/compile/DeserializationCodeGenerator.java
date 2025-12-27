@@ -200,13 +200,29 @@ public class DeserializationCodeGenerator {
             builder.endControlFlow();
         } else {
             builder.beginControlFlow("if ($L == null)", fromMapName);
-            builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S, context))",
-                    Result.class,
-                    ConfigLoadingErrors.class,
-                    property.name(),
-                    elementTypeName,
-                    dtoType,
-                    key);
+            var propertyDoc = property.settings().propertyDoc();
+            if (propertyDoc != null && (!propertyDoc.description().isEmpty() || !propertyDoc.example().isEmpty() || !propertyDoc.note().isEmpty())) {
+                // Use the enhanced method with PropertyDoc information
+                builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S, context, $S, $S, $S))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        property.name(),
+                        elementTypeName,
+                        dtoType,
+                        key,
+                        propertyDoc.description(),
+                        propertyDoc.example(),
+                        propertyDoc.note());
+            } else {
+                // Use the standard method without PropertyDoc
+                builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S, context))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        property.name(),
+                        elementTypeName,
+                        dtoType,
+                        key);
+            }
             builder.endControlFlow();
         }
     }
