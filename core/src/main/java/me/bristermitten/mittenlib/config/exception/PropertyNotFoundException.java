@@ -39,22 +39,12 @@ public class PropertyNotFoundException extends ConfigDeserialisationException {
                 ║                         CONFIG ERROR: Missing Setting                          ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                %sYour configuration file is missing a required setting.
+                %sMissing required setting: %s
                 
-                Missing setting: %s
+                Add this to your config:
+                    %s: <value>
                 
-                ┌─ How to fix:
-                │
-                │  1. Open your config file
-                │  2. Add this line:
-                │
-                │     %s: <put value here>
-                │
-                │  3. Replace <put value here> with an appropriate value
-                │  4. Save the file and restart your server
-                │
-                └─ Example: If this is a database hostname, you might use:
-                   %s: localhost
+                Example: %s: localhost
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,

@@ -46,7 +46,7 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
         String suggestion = findClosestMatch(actualValue.toString(), constants);
         
         String suggestionText = suggestion != null 
-                ? String.format("\n│  Did you mean '%s'?", suggestion)
+                ? String.format(" (Did you mean '%s'?)", suggestion)
                 : "";
         
         String fileInfo = configFilePath != null 
@@ -59,35 +59,19 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
                 ║                         CONFIG ERROR: Invalid Value                            ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                %sYour configuration has an invalid value.
+                %sInvalid value '%s' for setting: %s%s
                 
-                Setting: %s
-                Your value: '%s'
+                Valid options: %s
                 
-                ┌─ Valid options:
-                │
-                │  %s%s
-                │
-                ├─ How to fix:
-                │
-                │  1. Open your config file
-                │  2. Find the line: %s: %s
-                │  3. Change '%s' to one of the valid options above
-                │  4. Make sure you match the spelling exactly (including uppercase/lowercase)
-                │  5. Save the file and restart your server
-                │
-                └─ Note: The options are case-sensitive, so 'OPTION' is different from 'option'
+                Note: Values are case-sensitive
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
                 fileInfo,
-                propertyName,
                 actualValue,
-                validValues,
+                propertyName,
                 suggestionText,
-                propertyName,
-                actualValue,
-                actualValue
+                validValues
         );
     }
     

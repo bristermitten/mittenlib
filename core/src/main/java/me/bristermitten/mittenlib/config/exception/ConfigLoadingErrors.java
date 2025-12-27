@@ -60,36 +60,22 @@ public class ConfigLoadingErrors {
                 ║                         CONFIG ERROR: Wrong Type                               ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                %sYour configuration has the wrong type of value for a setting.
+                %sSetting '%s' has wrong type
                 
-                Setting: %s
-                Your value: %s
-                The problem: This needs to be %s, but you provided %s
+                Expected: %s
+                Got: %s (value: %s)
                 
-                ┌─ How to fix:
-                │
-                │  1. Open your config file
-                │  2. Find the line: %s: %s
-                │  3. Change the value to be %s
-                │
-                ├─ Examples of %s values:
-                │  %s
-                │
-                └─ Common mistakes:
-                   - Numbers should NOT have quotes: use 123 not "123"
-                   - Text SHOULD have quotes: use "hello" not hello
-                   - True/false should NOT have quotes: use true not "true"
+                Examples of %s: %s
+                
+                Tip: Numbers shouldn't have quotes, text should have quotes
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
                 fileInfo,
                 propertyName,
-                actualValue,
                 friendlyExpectedType,
                 friendlyActualType,
-                propertyName,
                 actualValue,
-                friendlyExpectedType,
                 friendlyExpectedType,
                 getExampleValues(expectedType)
         ));
@@ -142,18 +128,9 @@ public class ConfigLoadingErrors {
                 ║                         CONFIG ERROR: Invalid Format                           ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                %sYour configuration file has an invalid format or structure.
+                %sConfiguration structure doesn't match any expected format
                 
-                ┌─ How to fix:
-                │
-                │  1. Check the plugin's documentation or example config
-                │  2. Make sure your config structure matches the examples
-                │  3. Verify all required settings are present
-                │  4. Check for typos in setting names
-                │  5. Make sure indentation is correct (YAML files are indent-sensitive)
-                │
-                └─ Tip: You can usually find an example config file on the plugin's page
-                   or in the plugin's folder. Try comparing your config to the example.
+                Check your config against the plugin's example or documentation
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
