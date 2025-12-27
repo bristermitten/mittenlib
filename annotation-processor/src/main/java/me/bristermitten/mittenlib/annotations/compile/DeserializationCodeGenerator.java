@@ -426,6 +426,7 @@ public class DeserializationCodeGenerator {
 
     private void handleConfigType(MethodSpec.Builder builder, TypeElement dtoType,
                                   TypeMirror elementType, String fromMapName) {
+        // TODO: Migrate to pure DSL - return CodeGenResult
         TypeName configClassName = getConfigClassName(elementType, dtoType);
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
         builder.addStatement("$1T $2L = ($1T) $3L", DataTree.DataTreeMap.class, CodeGenNames.Variables.MAP_DATA, fromMapName);

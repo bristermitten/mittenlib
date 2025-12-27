@@ -59,6 +59,17 @@ public class CodeGenDSL {
     }
     
     /**
+     * Creates an operation from a pre-built CodeBlock.
+     * Useful for complex code that's already been constructed.
+     * 
+     * @param code The code block to add as a statement
+     * @return An immutable CodeGenResult representing this code
+     */
+    public static CodeGenResult addCode(CodeBlock code) {
+        return new Statement(code);
+    }
+    
+    /**
      * Begins a control flow block (if, for, while, etc.).
      * 
      * @param format The control flow format string
