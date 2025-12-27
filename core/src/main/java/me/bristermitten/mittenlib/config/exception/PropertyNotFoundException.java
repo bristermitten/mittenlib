@@ -51,7 +51,7 @@ public class PropertyNotFoundException extends ConfigDeserialisationException {
         
         String exampleValue = example != null && !example.isEmpty()
                 ? example
-                : "localhost";
+                : "<value>";
         
         String noteInfo = note != null && !note.isEmpty()
                 ? String.format("\nNote: %s\n", note)

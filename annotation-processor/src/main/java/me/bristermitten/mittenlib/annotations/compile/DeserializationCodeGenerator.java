@@ -14,6 +14,7 @@ import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
+import me.bristermitten.mittenlib.config.PropertyDoc;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
@@ -201,7 +202,7 @@ public class DeserializationCodeGenerator {
         } else {
             builder.beginControlFlow("if ($L == null)", fromMapName);
             var propertyDoc = property.settings().propertyDoc();
-            if (propertyDoc != null && (!propertyDoc.description().isEmpty() || !propertyDoc.example().isEmpty() || !propertyDoc.note().isEmpty())) {
+            if (hasPropertyDocContent(propertyDoc)) {
                 // Use the enhanced method with PropertyDoc information
                 builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S, context, $S, $S, $S))",
                         Result.class,
@@ -225,6 +226,11 @@ public class DeserializationCodeGenerator {
             }
             builder.endControlFlow();
         }
+    }
+    
+    private boolean hasPropertyDocContent(PropertyDoc propertyDoc) {
+        return propertyDoc != null && 
+               (!propertyDoc.description().isEmpty() || !propertyDoc.example().isEmpty() || !propertyDoc.note().isEmpty());
     }
 
     private Optional<MethodSpec> handleGenericType(MethodSpec.Builder builder, Property property,
