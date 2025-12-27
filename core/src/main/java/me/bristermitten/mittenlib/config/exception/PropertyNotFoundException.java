@@ -29,44 +29,39 @@ public class PropertyNotFoundException extends ConfigDeserialisationException {
 
     @Override
     public String getMessage() {
-        String className = configClass.getSimpleName();
         String fileInfo = configFilePath != null 
-                ? String.format("Configuration File:  %s\n", configFilePath)
+                ? String.format("File: %s\n\n", configFilePath)
                 : "";
         
         return String.format("""
                 
                 ╔════════════════════════════════════════════════════════════════════════════════╗
-                ║                          MISSING CONFIGURATION PROPERTY                        ║
+                ║                         CONFIG ERROR: Missing Setting                          ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                A required property is missing from your configuration file.
+                %sYour configuration file is missing a required setting.
                 
-                %sConfiguration Class: %s
-                Missing Property:    %s
-                Expected Type:       %s
-                Expected Key Name:   '%s'
+                Missing setting: %s
                 
-                ┌─ What to do:
+                ┌─ How to fix:
                 │
-                │  Add the missing property to your configuration file:
+                │  1. Open your config file
+                │  2. Add this line:
                 │
-                │  %s: <value>
+                │     %s: <put value here>
                 │
-                │  Where <value> should be of type: %s
+                │  3. Replace <put value here> with an appropriate value
+                │  4. Save the file and restart your server
                 │
-                └─ Note: If this property is optional, add @Nullable annotation to the field
-                   in your DTO class.
+                └─ Example: If this is a database hostname, you might use:
+                   %s: localhost
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
                 fileInfo,
-                className,
-                propertyName,
-                propertyType,
                 keyName,
                 keyName,
-                propertyType
+                keyName
         );
     }
 }

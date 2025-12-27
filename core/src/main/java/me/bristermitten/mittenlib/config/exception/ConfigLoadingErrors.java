@@ -46,45 +46,73 @@ public class ConfigLoadingErrors {
     }
 
     public static RuntimeException invalidPropertyTypeException(Class<?> enclosingClass, String propertyName, String expectedType, Object actualValue, @Nullable Path configFilePath) {
-        String actualTypeName = actualValue.getClass().getSimpleName();
-        String className = enclosingClass.getSimpleName();
         String fileInfo = configFilePath != null 
-                ? String.format("Configuration File:  %s\n", configFilePath)
+                ? String.format("File: %s\n\n", configFilePath)
                 : "";
+        
+        // Simplify type names for common types
+        String friendlyExpectedType = getFriendlyTypeName(expectedType);
+        String friendlyActualType = getFriendlyTypeName(actualValue.getClass().getSimpleName());
         
         return new IllegalArgumentException(String.format("""
                 
                 ╔════════════════════════════════════════════════════════════════════════════════╗
-                ║                          INVALID PROPERTY TYPE                                 ║
+                ║                         CONFIG ERROR: Wrong Type                               ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                A property has an incorrect type in your configuration file.
+                %sYour configuration has the wrong type of value for a setting.
                 
-                %sConfiguration Class: %s
-                Property:            %s
-                Expected Type:       %s
-                Actual Value:        %s
-                Actual Type:         %s
+                Setting: %s
+                Your value: %s
+                The problem: This needs to be %s, but you provided %s
                 
-                ┌─ What to do:
+                ┌─ How to fix:
                 │
-                │  Update the value in your configuration file to match the expected type.
+                │  1. Open your config file
+                │  2. Find the line: %s: %s
+                │  3. Change the value to be %s
                 │
-                │  For %s, provide a value of type: %s
+                ├─ Examples of %s values:
+                │  %s
                 │
-                └─ Tip: Check that quotes, numbers, and boolean values are formatted correctly.
+                └─ Common mistakes:
+                   - Numbers should NOT have quotes: use 123 not "123"
+                   - Text SHOULD have quotes: use "hello" not hello
+                   - True/false should NOT have quotes: use true not "true"
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
                 fileInfo,
-                className,
                 propertyName,
-                expectedType,
                 actualValue,
-                actualTypeName,
+                friendlyExpectedType,
+                friendlyActualType,
                 propertyName,
-                expectedType
+                actualValue,
+                friendlyExpectedType,
+                friendlyExpectedType,
+                getExampleValues(expectedType)
         ));
+    }
+    
+    private static String getFriendlyTypeName(String typeName) {
+        return switch (typeName.toLowerCase()) {
+            case "int", "integer", "long", "short", "byte" -> "a number";
+            case "double", "float" -> "a decimal number";
+            case "string" -> "text";
+            case "boolean" -> "true or false";
+            default -> "a " + typeName;
+        };
+    }
+    
+    private static String getExampleValues(String typeName) {
+        return switch (typeName.toLowerCase()) {
+            case "int", "integer", "long", "short", "byte" -> "  - 1, 10, 100, 9999";
+            case "double", "float" -> "  - 1.5, 10.0, 99.99";
+            case "string" -> "  - \"hello\", \"world\", \"localhost\"";
+            case "boolean" -> "  - true, false";
+            default -> "  - (check plugin documentation)";
+        };
     }
 
     public static RuntimeException noUnionMatch() {
@@ -93,25 +121,27 @@ public class ConfigLoadingErrors {
 
     public static RuntimeException noUnionMatch(@Nullable Path configFilePath) {
         String fileInfo = configFilePath != null 
-                ? String.format("Configuration File:  %s\n", configFilePath)
+                ? String.format("File: %s\n\n", configFilePath)
                 : "";
         
         return new IllegalArgumentException(String.format("""
                 
                 ╔════════════════════════════════════════════════════════════════════════════════╗
-                ║                          NO UNION ALTERNATIVE MATCHED                          ║
+                ║                         CONFIG ERROR: Invalid Format                           ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                None of the union alternatives matched the provided configuration data.
+                %sYour configuration file has an invalid format or structure.
                 
-                %s┌─ What to do:
+                ┌─ How to fix:
                 │
-                │  A union type requires that the data matches at least one of its alternatives.
-                │  Check your configuration structure and ensure it matches one of the expected
-                │  formats for this union type.
+                │  1. Check the plugin's documentation or example config
+                │  2. Make sure your config structure matches the examples
+                │  3. Verify all required settings are present
+                │  4. Check for typos in setting names
+                │  5. Make sure indentation is correct (YAML files are indent-sensitive)
                 │
-                └─ Tip: Review the documentation for this configuration to see what alternative
-                   formats are supported.
+                └─ Tip: You can usually find an example config file on the plugin's page
+                   or in the plugin's folder. Try comparing your config to the example.
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,

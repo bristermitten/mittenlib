@@ -35,7 +35,6 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
 
     @Override
     public String getMessage() {
-        String enumTypeName = enumClass.getSimpleName();
         Enum<?>[] constants = enumClass.getEnumConstants();
         
         // Get all valid values
@@ -47,41 +46,48 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
         String suggestion = findClosestMatch(actualValue.toString(), constants);
         
         String suggestionText = suggestion != null 
-                ? String.format("\n│  Suggestion: Did you mean '%s'?", suggestion)
+                ? String.format("\n│  Did you mean '%s'?", suggestion)
                 : "";
         
         String fileInfo = configFilePath != null 
-                ? String.format("Configuration File:  %s\n", configFilePath)
+                ? String.format("File: %s\n\n", configFilePath)
                 : "";
         
         return String.format("""
                 
                 ╔════════════════════════════════════════════════════════════════════════════════╗
-                ║                          INVALID ENUM VALUE                                    ║
+                ║                         CONFIG ERROR: Invalid Value                            ║
                 ╚════════════════════════════════════════════════════════════════════════════════╝
                 
-                An invalid value was provided for an enum property in your configuration.
+                %sYour configuration has an invalid value.
                 
-                %sProperty:      %s
-                Expected Type: %s
-                Provided:      '%s' (type: %s)
+                Setting: %s
+                Your value: '%s'
                 
-                ┌─ Valid values for %s:
+                ┌─ Valid options:
                 │
                 │  %s%s
                 │
-                └─ Note: Enum values are case-sensitive unless configured otherwise.
+                ├─ How to fix:
+                │
+                │  1. Open your config file
+                │  2. Find the line: %s: %s
+                │  3. Change '%s' to one of the valid options above
+                │  4. Make sure you match the spelling exactly (including uppercase/lowercase)
+                │  5. Save the file and restart your server
+                │
+                └─ Note: The options are case-sensitive, so 'OPTION' is different from 'option'
                 
                 ════════════════════════════════════════════════════════════════════════════════
                 """,
                 fileInfo,
                 propertyName,
-                enumTypeName,
                 actualValue,
-                actualValue.getClass().getSimpleName(),
-                enumTypeName,
                 validValues,
-                suggestionText
+                suggestionText,
+                propertyName,
+                actualValue,
+                actualValue
         );
     }
     
