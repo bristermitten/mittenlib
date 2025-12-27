@@ -93,7 +93,7 @@ public class ConfigLoadingErrors {
 
     public static RuntimeException noUnionMatch(@Nullable Path configFilePath) {
         String fileInfo = configFilePath != null 
-                ? String.format("Configuration File:  %s\n\n", configFilePath)
+                ? String.format("Configuration File:  %s\n", configFilePath)
                 : "";
         
         return new IllegalArgumentException(String.format("""
