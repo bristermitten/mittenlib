@@ -10,6 +10,11 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenMonad;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
+import me.bristermitten.mittenlib.annotations.codegen.FlatMapChainBuilder;
+import me.bristermitten.mittenlib.annotations.codegen.Scope;
+import me.bristermitten.mittenlib.annotations.codegen.Variable;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
@@ -42,7 +47,7 @@ public class DeserializationCodeGenerator {
      * The prefix for all generated deserialization methods.
      * For example, a method to deserialize a field called "test" would be called deserializeTest
      */
-    public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
+    public static final String DESERIALIZE_METHOD_PREFIX = CodeGenNames.Methods.DESERIALIZE_PREFIX;
     public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
@@ -64,7 +69,7 @@ public class DeserializationCodeGenerator {
 
     private CodeBlock getDeserializationFunction(CustomDeserializerInfo info, CodeBlock withDataExpression) {
         if (info.isStatic()) {
-            return CodeBlock.of("$T.deserialize(context.withData($L))", info.deserializerClass(), withDataExpression);
+            return CodeBlock.of("$T.deserialize($L.withData($L))", info.deserializerClass(), CodeGenNames.Variables.CONTEXT, withDataExpression);
         }
         throw new IllegalArgumentException("idk non-static is hard");
     }
@@ -138,14 +143,13 @@ public class DeserializationCodeGenerator {
                 return methodSpec.get();
             }
         } else if (!isGenericType) {
-            if (handleNonGenericType(builder, property, dtoType, elementType, wrappedElementType)) {
-                return builder.build();
-            }
+            handleNonGenericType(builder, property, dtoType, elementType, wrappedElementType);
+            return builder.build();
         }
 
         // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
-        String fromMapName = property.name() + "FromMap";
-        builder.addStatement("return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class,
+        String fromMapName = getFromMapVariableName(property);
+        builder.addStatement("return $L.getMapper().map($N, new $T<$T>(){})", CodeGenNames.Variables.CONTEXT, fromMapName, TypeToken.class,
                 elementResultType
         );
         return builder.build();
@@ -157,32 +161,43 @@ public class DeserializationCodeGenerator {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
-                .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build());
+                .addParameter(ParameterSpec.builder(DeserializationContext.class, CodeGenNames.Variables.CONTEXT).build());
 
         // add the dao as a parameter if necessary
         if (daoName != null) {
-            builder.addParameter(ParameterSpec.builder(daoName, "dao", Modifier.FINAL).build());
+            builder.addParameter(ParameterSpec.builder(daoName, CodeGenNames.Variables.DAO, Modifier.FINAL).build());
         }
 
         return builder;
     }
 
+    /**
+     * Gets the name of the "fromMap" variable for a property.
+     * This variable holds the value extracted from the DataTree.
+     *
+     * @param property The property
+     * @return The fromMap variable name
+     */
+    private String getFromMapVariableName(Property property) {
+        return property.name() + CodeGenNames.Suffixes.FROM_MAP;
+    }
+
     private void setupInitialStatements(MethodSpec.Builder builder,
                                         AbstractConfigStructure propertyAST,
                                         Property property) {
-        builder.addStatement("$T $$data = context.getData()", DataTree.class);
+        builder.addStatement("$T $L = $L.getData()", DataTree.class, CodeGenNames.Variables.DATA, CodeGenNames.Variables.CONTEXT);
         final String key = fieldNameGenerator.getConfigFieldName(property);
-        final String fromMapName = property.name() + "FromMap";
+        final String fromMapName = getFromMapVariableName(property);
         if (property.settings().hasDefaultValue()) {
 
             var defaultString = switch (propertyAST.source()) {
-                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("dao.$L()", property.name());
-                case ConfigTypeSource.ClassConfigTypeSource ignored -> CodeBlock.of("dao.$L", property.name());
+                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("$L.$L()", CodeGenNames.Variables.DAO, property.name());
+                case ConfigTypeSource.ClassConfigTypeSource ignored -> CodeBlock.of("$L.$L", CodeGenNames.Variables.DAO, property.name());
             };
 
-            builder.addStatement("Object $L = $$data.getOrDefault($S, $L)", fromMapName, key, defaultString);
+            builder.addStatement("Object $L = $L.getOrDefault($S, $L)", fromMapName, CodeGenNames.Variables.DATA, key, defaultString);
         } else {
-            builder.addStatement("$T $L = $$data.get($S)", DataTree.class, fromMapName, key);
+            builder.addStatement("$T $L = $L.get($S)", DataTree.class, fromMapName, CodeGenNames.Variables.DATA, key);
         }
     }
 
@@ -191,7 +206,7 @@ public class DeserializationCodeGenerator {
                                   TypeElement dtoType,
                                   TypeName elementTypeName) {
         final String key = fieldNameGenerator.getConfigFieldName(property);
-        final String fromMapName = property.name() + "FromMap";
+        final String fromMapName = getFromMapVariableName(property);
 
         if (property.settings().isNullable()) {
             // Short circuit the null rather than trying any deserialization
@@ -236,7 +251,7 @@ public class DeserializationCodeGenerator {
                         .hasOneOf(elementType.unwrap(), List.class, Map.class))
                 .validateAndIssueMessages();
 
-        final String fromMapName = property.name() + "FromMap";
+        final String fromMapName = getFromMapVariableName(property);
 
         if (canonicalName.equals(List.class.getName())) {
             return handleListType(builder, wrappedElementType, fromMapName);
@@ -257,8 +272,8 @@ public class DeserializationCodeGenerator {
             CustomDeserializerInfo info = optional.get();
             // TODO fallback
             CodeBlock deserializationFunction = getDeserializationFunctionReference(info);
-            builder.addStatement("return $T.deserializeList($L, context, $L)",
-                    CollectionsUtils.class, fromMapName, deserializationFunction);
+            builder.addStatement("return $T.deserializeList($L, $L, $L)",
+                    CollectionsUtils.class, fromMapName, CodeGenNames.Variables.CONTEXT, deserializationFunction);
             return Optional.of(builder.build());
         }
 
@@ -267,7 +282,7 @@ public class DeserializationCodeGenerator {
             var deserializeCodeBlock = CodeBlock.of("$T::$L", listTypeName,
                     methodNames.getDeserializeMethodName(listTypeName));
 
-            builder.addStatement("return $T.deserializeList($L, context, $L)", CollectionsUtils.class, fromMapName, deserializeCodeBlock);
+            builder.addStatement("return $T.deserializeList($L, $L, $L)", CollectionsUtils.class, fromMapName, CodeGenNames.Variables.CONTEXT, deserializeCodeBlock);
             return Optional.of(builder.build());
         }
 
@@ -285,17 +300,18 @@ public class DeserializationCodeGenerator {
             CustomDeserializerInfo info = optional.get();
             // TODO fallback
             CodeBlock deserializationFunction = getDeserializationFunctionReference(info);
-            builder.addStatement("return $T.deserializeMap($L, context, $L)",
-                    CollectionsUtils.class, fromMapName, deserializationFunction);
+            builder.addStatement("return $T.deserializeMap($L, $L, $L)",
+                    CollectionsUtils.class, fromMapName, CodeGenNames.Variables.CONTEXT, deserializationFunction);
             return Optional.of(builder.build());
         }
 
         if (typesUtil.isConfigType(valueType)) {
             TypeName mapTypeName = getConfigClassName(valueType, null);
-            builder.addStatement("return $T.deserializeMap($T.class, $L, context, $T::$L)",
+            builder.addStatement("return $T.deserializeMap($T.class, $L, $L, $T::$L)",
                     CollectionsUtils.class,
                     typesUtil.getSafeType(keyType),
                     fromMapName,
+                    CodeGenNames.Variables.CONTEXT,
                     mapTypeName,
                     methodNames.getDeserializeMethodName(mapTypeName));
             return Optional.of(builder.build());
@@ -304,42 +320,48 @@ public class DeserializationCodeGenerator {
         return Optional.empty();
     }
 
-    private boolean handleNonGenericType(MethodSpec.Builder builder, Property property,
-                                         TypeElement dtoType, TypeMirror elementType,
-                                         TypeMirrorWrapper wrappedElementType) {
+    private void handleNonGenericType(MethodSpec.Builder builder, Property property,
+                                      TypeElement dtoType, TypeMirror elementType,
+                                      TypeMirrorWrapper wrappedElementType) {
         /*
-         Construct a simple check that does
-           if (fromMap instanceof X) return fromMap;
-         Useful when the type is a primitive or String
-         This is only safe to do with non-parameterized types, what with type erasure and all
+         Uses a functional monad pattern to handle different code generation cases.
+         Each case is tried in order using a declarative, composable approach.
+         
+         Note: handleDirectTypeMatch and handleDataTreeTypeMatch may add conditional early
+         return statements to the generated method. If their conditions are met, they will
+         complete the method and the monad below will not run. The monad handles the cases
+         where those early-return conditions are not satisfied.
         */
-        final String fromMapName = property.name() + "FromMap";
+        final String fromMapName = getFromMapVariableName(property);
         final TypeName safeType = configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
 
+        // Add conditional checks that may short-circuit
         handleDirectTypeMatch(builder, property, fromMapName, safeType);
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
-
+        
         Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
-        if (customDeserializerOptional.isPresent()) {
-            if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false)) {
-                return true;
-            }
-        }
-
-        if (wrappedElementType.isEnum()) {
-            handleEnumType(builder, property, fromMapName, safeType);
-        } else if (typesUtil.isConfigType(elementType)) {
-            handleConfigType(builder, dtoType, elementType, fromMapName);
-        }
-
-
-        if (customDeserializerOptional.isPresent()) {
-            if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), true)) {
-                return true;
-            }
-        }
-
-        return handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
+        
+        // Use functional monad pattern for composable case handling
+        CodeGenMonad.builder(builder)
+            .tryCase(() -> tryCustomDeserializer(builder, fromMapName, customDeserializerOptional, false))
+            .tryCase(wrappedElementType.isEnum(), 
+                    () -> handleEnumType(builder, property, fromMapName, safeType))
+            .tryCase(typesUtil.isConfigType(elementType),
+                    () -> handleConfigType(builder, dtoType, elementType, fromMapName))
+            .tryCase(() -> tryCustomDeserializer(builder, fromMapName, customDeserializerOptional, true))
+            .orElse(() -> handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName));
+    }
+    
+    /**
+     * Helper method to try a custom deserializer if present.
+     */
+    private boolean tryCustomDeserializer(MethodSpec.Builder builder, String fromMapName,
+                                         Optional<CustomDeserializerInfo> customDeserializerOptional,
+                                         boolean isFallback) {
+        return customDeserializerOptional
+                .filter(info -> info.isFallback() == isFallback)
+                .map(info -> handleCustomDeserializer(builder, fromMapName, info, isFallback))
+                .orElse(false);
     }
 
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,
@@ -385,91 +407,146 @@ public class DeserializationCodeGenerator {
         return false;
     }
 
-    private void handleEnumType(MethodSpec.Builder builder, Property property,
-                                String fromMapName, TypeName safeType) {
+    /**
+     * Pure function to handle enum deserialization.
+     * 
+     * @return Pure CodeGenResult representing enum deserialization logic
+     */
+    private CodeGenResult handleEnumTypePure(Property property, String fromMapName, TypeName safeType) {
+        CodeGenResult result = CodeGenDSL.empty();
+        
         // try to load it as a string
         if (property.settings().hasDefaultValue()) {
-            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, String.class);
-            addEnumDeserialisation(property, builder, fromMapName, safeType, CodeBlock.of("$L", fromMapName));
-            builder.endControlFlow();
+            result = result.combine(
+                CodeGenDSL.controlFlow("if ($L instanceof $T)", body -> {
+                    body.add(addEnumDeserialisationPure(property, fromMapName, safeType, CodeBlock.of("$L", fromMapName)));
+                }, fromMapName, String.class)
+            );
         }
 
-        builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class);
-        {
-            var convert = CodeBlock.of("(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
-            addEnumDeserialisation(property, builder, fromMapName, safeType, convert);
-        }
-        builder.endControlFlow();
+        result = result.combine(
+            CodeGenDSL.controlFlow("if ($L instanceof $T)", body -> {
+                var convert = CodeBlock.of("(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
+                body.add(addEnumDeserialisationPure(property, fromMapName, safeType, convert));
+            }, fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class)
+        );
+        
+        return result;
+    }
+
+    private void handleEnumType(MethodSpec.Builder builder, Property property,
+                                String fromMapName, TypeName safeType) {
+        handleEnumTypePure(property, fromMapName, safeType).apply(builder);
+    }
+    
+    /**
+     * Pure function to handle config type deserialization.
+     * 
+     * @return Pure CodeGenResult representing config type deserialization logic
+     */
+    private CodeGenResult handleConfigTypePure(TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+        TypeName configClassName = getConfigClassName(elementType, dtoType);
+        return CodeGenDSL.controlFlow("if ($L instanceof $T)", body -> {
+            body.addStatement("$1T $2L = ($1T) $3L", DataTree.DataTreeMap.class, CodeGenNames.Variables.MAP_DATA, fromMapName);
+            body.addReturn("$T.$L($L.withData($L))",
+                    configClassName, methodNames.getDeserializeMethodName(configClassName), 
+                    CodeGenNames.Variables.CONTEXT, CodeGenNames.Variables.MAP_DATA);
+        }, fromMapName, DataTree.DataTreeMap.class);
     }
 
     private void handleConfigType(MethodSpec.Builder builder, TypeElement dtoType,
                                   TypeMirror elementType, String fromMapName) {
+        handleConfigTypePure(dtoType, elementType, fromMapName).apply(builder);
+    }
+        // TODO: Migrate to pure DSL - return CodeGenResult
         TypeName configClassName = getConfigClassName(elementType, dtoType);
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
-        builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
-        builder.addStatement("return $T.$L(context.withData(mapData))",
-                configClassName, methodNames.getDeserializeMethodName(configClassName));
+        builder.addStatement("$1T $2L = ($1T) $3L", DataTree.DataTreeMap.class, CodeGenNames.Variables.MAP_DATA, fromMapName);
+        builder.addStatement("return $T.$L($L.withData($L))",
+                configClassName, methodNames.getDeserializeMethodName(configClassName), CodeGenNames.Variables.CONTEXT, CodeGenNames.Variables.MAP_DATA);
         builder.endControlFlow();
     }
 
-    private boolean handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
-                                              TypeElement dtoType, TypeMirror elementType, String fromMapName) {
-
+    /**
+     * Handles invalid property types by either using ObjectMapper or returning a failure.
+     * 
+     * @return Pure CodeGenResult representing the error handling logic
+     */
+    private CodeGenResult handleInvalidPropertyTypePure(Property property,
+                                          TypeElement dtoType, TypeMirror elementType, String fromMapName) {
         // Check if the property is annotated with @UseObjectMapperSerialization
         // If so, use ObjectMapper as a fallback for deserialization
         var useObjectMapperSerialization = typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class);
         if (useObjectMapperSerialization != null) {
             // Use ObjectMapper to deserialize the value
             TypeName propertyTypeName = configurationClassNameGenerator.publicPropertyClassName(property);
-            builder.addStatement("return context.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
+            return CodeGenDSL.statement("return $L.getMapper().map($T.toPOJO($T.loadFrom($L)), $T.get($T.class))",
+                    CodeGenNames.Variables.CONTEXT,
                     DataTreeTransforms.class,
                     DataTreeTransforms.class,
                     fromMapName,
                     TypeToken.class,
                     propertyTypeName);
-            return true;
         }
-        if (!property.settings().hasDefaultValue()) {
-            return false; // no need to check this
+        if (property.settings().hasDefaultValue()) {
+            return CodeGenDSL.controlFlow("if (!($L instanceof $T))", body -> {
+                body.addReturn("$T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        dtoType,
+                        property.name(),
+                        elementType,
+                        fromMapName);
+            }, fromMapName, DataTree.class);
         }
-        builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
-        builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
-                Result.class,
-                ConfigLoadingErrors.class,
-                dtoType,
-                property.name(),
-                elementType,
-                fromMapName
-        );
-        builder.endControlFlow();
-        return false;
+        return CodeGenDSL.empty();
+    }
+
+    private void handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
+                                          TypeElement dtoType, TypeMirror elementType, String fromMapName) {
+        // Legacy method - delegates to pure version
+        handleInvalidPropertyTypePure(property, dtoType, elementType, fromMapName).apply(builder);
+    }
+
+    /**
+     * Pure function for enum deserialization.
+     * 
+     * @return Pure CodeGenResult representing enum deserialization logic
+     */
+    private CodeGenResult addEnumDeserialisationPure(Property property, String fromMapName, TypeName safeType, CodeBlock convert) {
+        CodeGenResult valueOfStatement = switch (property.settings().enumParsingScheme()) {
+            case EXACT_MATCH -> CodeGenDSL.statement("$1T $2L = $3T.valueOfOrNull(($4T) $5L, $1T.class)",
+                    safeType,
+                    CodeGenNames.Variables.ENUM_VALUE,
+                    Enums.class,
+                    String.class,
+                    convert
+            );
+            case CASE_INSENSITIVE -> CodeGenDSL.statement("$1T $2L = $3T.valueOfIgnoreCase(($4T) $5L, $1T.class)",
+                    safeType,
+                    CodeGenNames.Variables.ENUM_VALUE,
+                    Enums.class,
+                    String.class,
+                    convert
+            );
+        };
+        
+        CodeGenResult nullCheck = CodeGenDSL.controlFlow("if ($L == null)", body -> {
+            body.addReturn("$T.fail($T.invalidEnumException($T.class, $S, $L))",
+                    Result.class,
+                    ConfigLoadingErrors.class,
+                    safeType,
+                    property.name(),
+                    fromMapName);
+        }, CodeGenNames.Variables.ENUM_VALUE);
+        
+        CodeGenResult returnStatement = CodeGenDSL.returnValue("$T.ok($L)", Result.class, CodeGenNames.Variables.ENUM_VALUE);
+        
+        return valueOfStatement.combine(nullCheck).combine(returnStatement);
     }
 
     private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
-        switch (property.settings().enumParsingScheme()) {
-            case EXACT_MATCH -> builder.addStatement("$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
-                    safeType,
-                    Enums.class,
-                    String.class,
-                    convert
-            );
-            case CASE_INSENSITIVE -> builder.addStatement("$1T enumValue = $2T.valueOfIgnoreCase(($3T) $4L, $1T.class)",
-                    safeType,
-                    Enums.class,
-                    String.class,
-                    convert
-            );
-        }
-        builder.beginControlFlow("if (enumValue == null)");
-        builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L))",
-                Result.class,
-                ConfigLoadingErrors.class,
-                safeType,
-                property.name(),
-                fromMapName);
-        builder.endControlFlow();
-
-        builder.addStatement("return $T.ok(enumValue)", Result.class);
+        addEnumDeserialisationPure(property, fromMapName, safeType, convert).apply(builder);
     }
 
     /**
@@ -486,7 +563,7 @@ public class DeserializationCodeGenerator {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, configurationClassNameGenerator.getPublicClassName(ast)))
                 .addParameter(
-                        ParameterSpec.builder(DeserializationContext.class, "context", Modifier.FINAL).build()
+                        ParameterSpec.builder(DeserializationContext.class, CodeGenNames.Variables.CONTEXT, Modifier.FINAL).build()
                 );
 
         if (ast instanceof AbstractConfigStructure.Union union) {
@@ -497,9 +574,10 @@ public class DeserializationCodeGenerator {
                 ClassName alternativeClassName = configurationClassNameGenerator.translateConfigClassName(alternative);
                 String deserializeMethodName = methodNames.getDeserializeMethodName(alternativeClassName);
 
-                deserialiseBuilder.add("$T.$L(context).map($T.class::cast).orElse(() -> \n",
+                deserialiseBuilder.add("$T.$L($L).map($T.class::cast).orElse(() -> \n",
                         alternativeClassName,
                         deserializeMethodName,
+                        CodeGenNames.Variables.CONTEXT,
                         configurationClassNameGenerator.getPublicClassName(ast));
                 deserialiseBuilder.indent();
             }
@@ -514,7 +592,7 @@ public class DeserializationCodeGenerator {
         var dtoType = ast.source().element();
 
         if (daoName != null) {
-            builder.addStatement("$1T dao = new $1T()", daoName);
+            builder.addStatement("$1T $2L = new $1T()", daoName, CodeGenNames.Variables.DAO);
         }
 
         final List<MethodSpec> deserializeMethods = ast.properties().stream()
@@ -523,10 +601,7 @@ public class DeserializationCodeGenerator {
 
         deserializeMethods.forEach(typeSpecBuilder::addMethod);
 
-        final CodeBlock.Builder expressionBuilder = CodeBlock.builder();
-
-        expressionBuilder.add("return ");
-        int i = 0;
+        final FlatMapChainBuilder chain = new FlatMapChainBuilder();
 
         var superClass = switch (ast.source()) {
             case ConfigTypeSource.ClassConfigTypeSource c -> c.parent();
@@ -536,24 +611,43 @@ public class DeserializationCodeGenerator {
         // Add the superclass deserialization first, if it exists
         if (superClass.isPresent()) {
             var superConfigName = getConfigClassName(superClass.get(), dtoType);
-            expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
-            expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
+            chain.addOperation(
+                "$T.$L($L)",
+                superConfigName, // This is the result type
+                superConfigName, // This is the first format argument (the class)
+                methodNames.getDeserializeMethodName(superConfigName),
+                CodeGenNames.Variables.CONTEXT
+            );
         }
-        var deserialiseMethodArguments = (daoName != null) ? "context, dao" : "context";
+        
+        var deserialiseMethodArguments = (daoName != null) ? CodeGenNames.Variables.CONTEXT + ", " + CodeGenNames.Variables.DAO : CodeGenNames.Variables.CONTEXT;
         for (MethodSpec deserializeMethod : deserializeMethods) {
-            expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
-        }
-        expressionBuilder.add("$T.ok(new $T(", Result.class, configurationClassNameGenerator.translateConfigClassName(ast));
-        for (int i1 = 0; i1 < i; i1++) {
-            expressionBuilder.add("var$L", i1);
-            if (i1 != i - 1) {
-                expressionBuilder.add(", ");
+            // Infer the return type from the method's return type
+            // All deserialize methods return Result<T> where T is the config property type
+            TypeName returnType = deserializeMethod.returnType;
+            if (returnType instanceof ParameterizedTypeName paramType) {
+                // Validate that this looks like Result<T>
+                if (paramType.rawType.equals(ClassName.get(Result.class)) && !paramType.typeArguments.isEmpty()) {
+                    // Extract T from Result<T>
+                    returnType = paramType.typeArguments.get(0);
+                } else {
+                    throw new IllegalStateException("Expected Result<T> return type, got: " + returnType);
+                }
             }
+            chain.addOperation(
+                "$N($L)",
+                returnType,
+                deserializeMethod,
+                deserialiseMethodArguments
+            );
         }
-        expressionBuilder.add("))"); // Close ok and new parens
-        expressionBuilder.add(")".repeat(Math.max(0, i))); // close all the flatMap parens
+        
+        CodeBlock chainExpression = chain.buildWithConstructor(
+            Result.class,
+            configurationClassNameGenerator.translateConfigClassName(ast)
+        );
 
-        builder.addStatement(expressionBuilder.build());
+        builder.addStatement(chainExpression);
 
         typeSpecBuilder.addMethod(builder.build());
     }

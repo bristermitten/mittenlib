@@ -5,6 +5,7 @@ import io.toolisticon.aptk.tools.MessagerUtils;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.codegen.CodeGenNames;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.util.Nullity;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
@@ -289,7 +290,7 @@ public class ConfigImplGenerator {
                     .orElseThrow(() -> new IllegalStateException("could not determine a config for parent class " + parent));
             ClassName parentName = configurationClassNameGenerator.translateConfigClassName(parentConfig);
 
-            String superParameterName = "parent";
+            String superParameterName = CodeGenNames.Variables.PARENT;
             constructor.addParameter(
                     ParameterSpec.builder(
                             parentName, superParameterName,
@@ -299,7 +300,7 @@ public class ConfigImplGenerator {
 
             List<String> parentParams = buildSuperConstructorParams(parent, parentConfig, superParameterName);
             constructor.addStatement("super($L)", String.join(", ", parentParams));
-            constructor.addStatement("this.parent = parent");
+            constructor.addStatement("this.$L = $L", CodeGenNames.Variables.PARENT, CodeGenNames.Variables.PARENT);
         });
     }
 
@@ -310,7 +311,7 @@ public class ConfigImplGenerator {
             var parentConfig = configNameCache.lookupAST(parent)
                     .orElseThrow(() -> new IllegalStateException("could not determine a config for parent class " + parent));
             ClassName parentName = configurationClassNameGenerator.translateConfigClassName(parentConfig);
-            FieldSpec.Builder field = FieldSpec.builder(parentName, "parent", Modifier.PRIVATE, Modifier.FINAL);
+            FieldSpec.Builder field = FieldSpec.builder(parentName, CodeGenNames.Variables.PARENT, Modifier.PRIVATE, Modifier.FINAL);
 
             builder.addField(field.build());
         });
