@@ -39,7 +39,9 @@ public class CustomDeserializers {
             return Optional.empty();
         }
         if (fromMap.size() > 1) {
-            throw new IllegalArgumentException("Not sure how to handle multiple yet");
+            throw new IllegalArgumentException(
+                    me.bristermitten.mittenlib.annotations.CompileTimeErrors.multipleDeserializersError(TypeName.get(propertyType).toString())
+            );
         }
 
         return Optional.of(fromMap.iterator().next());
@@ -51,7 +53,11 @@ public class CustomDeserializers {
     public void registerCustomDeserializer(TypeElement customDeserializerType) {
         CustomDeserializerForWrapper deserializerTypeAnnotation = CustomDeserializerForWrapper.wrap(customDeserializerType);
         if (deserializerTypeAnnotation == null) {
-            throw new IllegalArgumentException("CustomDeserializer must be annotated with @CustomDeserializerFor");
+            throw new IllegalArgumentException(
+                    me.bristermitten.mittenlib.annotations.CompileTimeErrors.missingCustomDeserializerAnnotation(
+                            customDeserializerType.getQualifiedName().toString()
+                    )
+            );
         }
 
         var implementsCustomDeserializer = TypeElementWrapper.wrap(customDeserializerType)
@@ -66,7 +72,11 @@ public class CustomDeserializers {
             return;
         }
         if (deserializeMethodOpt.isEmpty()) {
-            throw new IllegalArgumentException("CustomDeserializer must implement CustomDeserializer or have a static method Result<T> deserialize(DeserializationContext)");
+            throw new IllegalArgumentException(
+                    me.bristermitten.mittenlib.annotations.CompileTimeErrors.invalidCustomDeserializerStructure(
+                            customDeserializerType.getQualifiedName().toString()
+                    )
+            );
         }
 
 

@@ -37,7 +37,7 @@ public class ConfigReader {
      * @return the result of the mapping
      */
     public <T> Result<? extends T> load(Class<T> type, Path source, @Nullable DeserializationFunction<T> deserializeFunction) {
-        return read(loader.load(source), deserializeFunction, type);
+        return read(loader.load(source), deserializeFunction, type, source);
     }
 
     /**
@@ -50,7 +50,7 @@ public class ConfigReader {
      * @return the result of the mapping
      */
     public <T> Result<? extends T> load(Class<T> type, String source, @Nullable DeserializationFunction<T> deserializeFunction) {
-        return read(loader.load(source), deserializeFunction, type);
+        return read(loader.load(source), deserializeFunction, type, null);
     }
 
     /**
@@ -63,17 +63,17 @@ public class ConfigReader {
      * @return the result of the mapping
      */
     public <T> Result<? extends T> load(Class<T> type, Reader source, @Nullable DeserializationFunction<T> deserializeFunction) {
-        return read(loader.load(source), deserializeFunction, type);
+        return read(loader.load(source), deserializeFunction, type, null);
     }
 
-    private <T> Result<T> read(Result<@NotNull DataTree> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type) {
+    private <T> Result<T> read(Result<@NotNull DataTree> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type, @Nullable Path sourcePath) {
         final Function<DeserializationContext, Result<T>> mappingFunction =
                 deserializeFunction == null
                         ? ctx -> mapper.map(ctx.getData(), TypeToken.get(type))
                         : deserializeFunction;
 
         return rawData
-                .map(data -> new DeserializationContext(mapper, data))
+                .map(data -> new DeserializationContext(mapper, data, sourcePath))
                 .flatMap(mappingFunction::apply);
     }
 
