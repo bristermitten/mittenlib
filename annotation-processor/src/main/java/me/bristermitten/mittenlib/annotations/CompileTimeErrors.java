@@ -54,7 +54,7 @@ public class CompileTimeErrors {
 
     public static String invalidCustomDeserializerStructure(String typeName) {
         return String.format(
-                "Custom deserializer '%s' must either implement CustomDeserializer interface or have a static deserialize method",
+                "Custom deserializer '%s' must either implement CustomDeserializer interface or have a static deserialize method.",
                 typeName
         );
     }
