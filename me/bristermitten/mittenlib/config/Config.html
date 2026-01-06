@@ -106,6 +106,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The class name of the generated class.</div>
 </div>
+<div class="col-first odd-row-color"><code>boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#requireSerialization()" class="member-name-link">requireSerialization</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Whether to require that serialization methods are generated for this config.</div>
+</div>
 </div>
 </section>
 </li>
@@ -132,6 +137,24 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Default:</dt>
 <dd><code>""</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requireSerialization()">
+<h3>requireSerialization</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">requireSerialization</span></div>
+<div class="block">Whether to require that serialization methods are generated for this config.
+ If true and serialization cannot be generated (e.g., due to properties with <a href="extension/CustomDeserializer.html" title="interface in me.bristermitten.mittenlib.config.extension"><code>CustomDeserializer</code></a>s
+ that don't support serialization), a compilation error will be emitted.
+ If false (default), a warning will be emitted instead.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if serialization is required, false otherwise</dd>
+</dl>
+<dl class="notes">
+<dt>Default:</dt>
+<dd><code>false</code></dd>
 </dl>
 </section>
 </li>

@@ -114,6 +114,13 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Create a new Configuration</div>
 </div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,java.lang.Class,me.bristermitten.mittenlib.config.DeserializationFunction,me.bristermitten.mittenlib.config.SerializationFunction)" class="member-name-link">Configuration</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fileName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;&nbsp;type,
+ @Nullable <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;&nbsp;deserializeFunction,
+ @Nullable <a href="SerializationFunction.html" title="interface in me.bristermitten.mittenlib.config">SerializationFunction</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;&nbsp;serializeFunction)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Create a new Configuration</div>
+</div>
 </div>
 </section>
 </li>
@@ -138,9 +145,14 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the name of the file to load.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="SerializationFunction.html" title="interface in me.bristermitten.mittenlib.config">SerializationFunction</a><wbr>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSerializeFunction()" class="member-name-link">getSerializeFunction</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the function to use to serialize the data.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the type to deserialize to.</div>
 </div>
 </div>
@@ -173,6 +185,25 @@ loadScripts(document, 'script');</script>
 <dd><code>fileName</code> - the name of the file to load</dd>
 <dd><code>type</code> - the type to deserialize to</dd>
 <dd><code>deserializeFunction</code> - the function to use to deserialize the data</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(java.lang.String,java.lang.Class,me.bristermitten.mittenlib.config.DeserializationFunction,me.bristermitten.mittenlib.config.SerializationFunction)">
+<h3>Configuration</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Configuration</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fileName,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;&nbsp;type,
+ @Nullable
+ @Nullable <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;&nbsp;deserializeFunction,
+ @Nullable
+ @Nullable <a href="SerializationFunction.html" title="interface in me.bristermitten.mittenlib.config">SerializationFunction</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;&nbsp;serializeFunction)</span></div>
+<div class="block">Create a new Configuration</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>fileName</code> - the name of the file to load</dd>
+<dd><code>type</code> - the type to deserialize to</dd>
+<dd><code>deserializeFunction</code> - the function to use to deserialize the data</dd>
+<dd><code>serializeFunction</code> - the function to use to serialize the data</dd>
 </dl>
 </section>
 </li>
@@ -215,6 +246,18 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the function to use to deserialize the data</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSerializeFunction()">
+<h3>getSerializeFunction</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="SerializationFunction.html" title="interface in me.bristermitten.mittenlib.config">SerializationFunction</a>&lt;<a href="Configuration.html" title="type parameter in Configuration">T</a>&gt;</span>&nbsp;<span class="element-name">getSerializeFunction</span>()</div>
+<div class="block">Returns the function to use to serialize the data.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the function to use to serialize the data</dd>
 </dl>
 </section>
 </li>

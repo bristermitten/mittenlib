@@ -120,6 +120,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the name of the deserialization method for a configuration structure.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSerializeMethodName(com.squareup.javapoet.TypeName)" class="member-name-link">getSerializeMethodName</a><wbr>(com.squareup.javapoet.TypeName&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the name of the serialization method for a type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSerializeMethodName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getSerializeMethodName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the name of the serialization method for a configuration structure.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#safeMethodName(javax.lang.model.element.VariableElement,javax.lang.model.element.TypeElement)" class="member-name-link">safeMethodName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;variableElement,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;enclosingClass)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -204,6 +214,34 @@ loadScripts(document, 'script');</script>
 <dd><code>ast</code> - The abstract configuration structure</dd>
 <dt>Returns:</dt>
 <dd>The deserialization method name for the structure</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSerializeMethodName(com.squareup.javapoet.TypeName)">
+<h3>getSerializeMethodName</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSerializeMethodName</span><wbr><span class="parameters">(com.squareup.javapoet.TypeName&nbsp;name)</span></div>
+<div class="block">Gets the name of the serialization method for a type.
+ This should only be used when the type is known to be a configuration implementation class.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - The type name</dd>
+<dt>Returns:</dt>
+<dd>The serialization method name</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSerializeMethodName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
+<h3>getSerializeMethodName</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSerializeMethodName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="block">Gets the name of the serialization method for a configuration structure.
+ This method uses the implementation class name derived from the structure.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>ast</code> - The abstract configuration structure</dd>
+<dt>Returns:</dt>
+<dd>The serialization method name for the structure</dd>
 </dl>
 </section>
 </li>

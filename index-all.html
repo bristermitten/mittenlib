@@ -427,7 +427,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/ConfigImplGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigImplGenerator</a> - Class in <a href="me/bristermitten/mittenlib/annotations/compile/package-summary.html">me.bristermitten.mittenlib.annotations.compile</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/ConfigImplGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.AccessorGenerator,me.bristermitten.mittenlib.annotations.compile.DeserializationCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ToStringGenerator,me.bristermitten.mittenlib.annotations.compile.EqualsHashCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.MethodNames)" class="member-name-link">ConfigImplGenerator(AccessorGenerator, DeserializationCodeGenerator, ToStringGenerator, EqualsHashCodeGenerator, ConfigurationClassNameGenerator, ConfigNameCache, MethodNames)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/ConfigImplGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigImplGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/ConfigImplGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.AccessorGenerator,me.bristermitten.mittenlib.annotations.compile.DeserializationCodeGenerator,me.bristermitten.mittenlib.annotations.compile.SerializationCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ToStringGenerator,me.bristermitten.mittenlib.annotations.compile.EqualsHashCodeGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.util.TypesUtil)" class="member-name-link">ConfigImplGenerator(AccessorGenerator, DeserializationCodeGenerator, SerializationCodeGenerator, ToStringGenerator, EqualsHashCodeGenerator, ConfigurationClassNameGenerator, ConfigNameCache, MethodNames, TypesUtil)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/ConfigImplGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigImplGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/paths/ConfigInitializationStrategy.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.paths">ConfigInitializationStrategy</a> - Interface in <a href="me/bristermitten/mittenlib/config/paths/package-summary.html">me.bristermitten.mittenlib.config.paths</a></dt>
 <dd>
@@ -526,6 +526,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Represents a loadable configuration which will deserialize to an object of type <a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config"><code>Configuration</code></a></div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/Configuration.html#%3Cinit%3E(java.lang.String,java.lang.Class,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">Configuration(String, Class&lt;T&gt;, DeserializationFunction&lt;T&gt;)</a> - Constructor for class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a></dt>
+<dd>
+<div class="block">Create a new Configuration</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/Configuration.html#%3Cinit%3E(java.lang.String,java.lang.Class,me.bristermitten.mittenlib.config.DeserializationFunction,me.bristermitten.mittenlib.config.SerializationFunction)" class="member-name-link">Configuration(String, Class&lt;T&gt;, DeserializationFunction&lt;T&gt;, SerializationFunction&lt;T&gt;)</a> - Constructor for class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a></dt>
 <dd>
 <div class="block">Create a new Configuration</div>
 </dd>
@@ -653,6 +657,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html#createProvider(me.bristermitten.mittenlib.config.Configuration)" class="member-name-link">createProvider(Configuration&lt;T&gt;)</a> - Method in class me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html#createSerializeMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">createSerializeMethods(TypeSpec.Builder, AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a></dt>
+<dd>
+<div class="block">Creates serialization methods for a config class.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html#createSpigotView(int,java.lang.String)" class="member-name-link">createSpigotView(int, String)</a> - Method in interface me.bristermitten.mittenlib.gui.factory.<a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a></dt>
 <dd>
 <div class="block">Creates a new SpigotGUIView with the specified size and title.</div>
@@ -1146,6 +1154,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)" class="member-name-link">flatMap(SafeFunction&lt;T, Result&lt;R&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Fail.html#flatMapException(java.util.function.Function)" class="member-name-link">flatMapException(Function&lt;Exception, Result&lt;T&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Fail.html" title="class in me.bristermitten.mittenlib.util">Result.Fail</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.html#flatMapException(java.util.function.Function)" class="member-name-link">flatMapException(Function&lt;Exception, Result&lt;T&gt;&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
+<dd>
+<div class="block">Like <a href="me/bristermitten/mittenlib/util/Result.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)"><code>Result.flatMap(SafeFunction)</code></a>, but handles the exception case with a function.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#flatMapException(java.util.function.Function)" class="member-name-link">flatMapException(Function&lt;Exception, Result&lt;T&gt;&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#flatMapPure(java.util.function.Function)" class="member-name-link">flatMapPure(Function&lt;T, Result&lt;R&gt;&gt;)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
 <div class="block">Like <a href="me/bristermitten/mittenlib/util/Result.html#flatMap(me.bristermitten.mittenlib.util.lambda.SafeFunction)"><code>Result.flatMap(SafeFunction)</code></a>, but the function cannot throw checked exceptions</div>
@@ -1373,6 +1389,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the data to deserialize.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/util/TypesUtil.html#getDataTreeType(com.squareup.javapoet.TypeName)" class="member-name-link">getDataTreeType(TypeName)</a> - Method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/DelegatingConfigProvider.html#getDelegate()" class="member-name-link">getDelegate()</a> - Method in class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/DelegatingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">DelegatingConfigProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/Configuration.html#getDeserializeFunction()" class="member-name-link">getDeserializeFunction()</a> - Method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a></dt>
@@ -1418,6 +1436,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/config/DeserializationContext.html#getMapper()" class="member-name-link">getMapper()</a> - Method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a></dt>
 <dd>
 <div class="block">Returns the mapper to use for deserialization.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/reader/ConfigReader.html#getMapper()" class="member-name-link">getMapper()</a> - Method in class me.bristermitten.mittenlib.config.reader.<a href="me/bristermitten/mittenlib/config/reader/ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a></dt>
+<dd>
+<div class="block">Get the <a href="me/bristermitten/mittenlib/config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a> used by this reader</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/exception/DTOReferenceException.html#getMessage()" class="member-name-link">getMessage()</a> - Method in exception class me.bristermitten.mittenlib.annotations.exception.<a href="me/bristermitten/mittenlib/annotations/exception/DTOReferenceException.html" title="class in me.bristermitten.mittenlib.annotations.exception">DTOReferenceException</a></dt>
 <dd>&nbsp;</dd>
@@ -1494,6 +1516,18 @@ loadScripts(document, 'script');</script>
  <code>String -&gt; String</code>
  </div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/config/Configuration.html#getSerializeFunction()" class="member-name-link">getSerializeFunction()</a> - Method in class me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a></dt>
+<dd>
+<div class="block">Returns the function to use to serialize the data.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html#getSerializeMethodName(com.squareup.javapoet.TypeName)" class="member-name-link">getSerializeMethodName(TypeName)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a></dt>
+<dd>
+<div class="block">Gets the name of the serialization method for a type.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html#getSerializeMethodName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getSerializeMethodName(AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a></dt>
+<dd>
+<div class="block">Gets the name of the serialization method for a configuration structure.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/util/Version.html#getServerVersion()" class="member-name-link">getServerVersion()</a> - Static method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></dt>
 <dd>
 <div class="block">Gets the server version.</div>
@@ -1536,6 +1570,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the set of registered <a href="me/bristermitten/mittenlib/files/FileType.html" title="interface in me.bristermitten.mittenlib.files"><code>FileType</code></a> classes.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html#getUnsupportedSerializationProperties(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getUnsupportedSerializationProperties(AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a></dt>
+<dd>
+<div class="block">Gets a list of properties that cannot be serialized.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeArray.html#getValues()" class="member-name-link">getValues()</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeArray.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeArray</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/gui/session/GUISession.html#getViewer()" class="member-name-link">getViewer()</a> - Method in class me.bristermitten.mittenlib.gui.session.<a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession</a></dt>
@@ -1566,6 +1604,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">An <a href="me/bristermitten/mittenlib/config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a> implementation using <code>Gson</code>.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/files/json/GsonObjectWriter.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.json">GsonObjectWriter</a> - Class in <a href="me/bristermitten/mittenlib/files/json/package-summary.html">me.bristermitten.mittenlib.files.json</a></dt>
+<dd>
+<div class="block">An <a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer"><code>ObjectWriter</code></a> implementation that writes <a href="me/bristermitten/mittenlib/config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> instances
+ to JSON using a provided <code>Gson</code> instance.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/files/json/GsonObjectWriter.html#%3Cinit%3E(com.google.gson.Gson)" class="member-name-link">GsonObjectWriter(Gson)</a> - Constructor for class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/GsonObjectWriter.html" title="class in me.bristermitten.mittenlib.files.json">GsonObjectWriter</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/json/GsonProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.json">GsonProvider</a> - Class in <a href="me/bristermitten/mittenlib/files/json/package-summary.html">me.bristermitten.mittenlib.files.json</a></dt>
 <dd>
 <div class="block">Standard provider for <code>Gson</code> instances.</div>
@@ -1803,7 +1848,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html#invalidPropertyTypeException(java.lang.Class,java.lang.String,java.lang.String,java.lang.Object)" class="member-name-link">invalidPropertyTypeException(Class&lt;?&gt;, String, String, Object)</a> - Static method in class me.bristermitten.mittenlib.config.exception.<a href="me/bristermitten/mittenlib/config/exception/ConfigLoadingErrors.html" title="class in me.bristermitten.mittenlib.config.exception">ConfigLoadingErrors</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton&lt;Msg&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/spigot/package-summary.html">me.bristermitten.mittenlib.gui.spigot</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A button in a Spigot GUI Inventory.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html#%3Cinit%3E(org.bukkit.inventory.ItemStack,me.bristermitten.mittenlib.util.lambda.PureFunction)" class="member-name-link">InventoryButton(ItemStack, PureFunction&lt;ClickInput, Msg&gt;)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html#%3Cinit%3E(org.bukkit.inventory.ItemStack,Msg)" class="member-name-link">InventoryButton(ItemStack, Msg)</a> - Constructor for class me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton</a></dt>
@@ -1855,6 +1902,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/util/PrivateAnnotations.html#isPrivate(java.lang.String)" class="member-name-link">isPrivate(String)</a> - Static method in class me.bristermitten.mittenlib.annotations.util.<a href="me/bristermitten/mittenlib/annotations/util/PrivateAnnotations.html" title="class in me.bristermitten.mittenlib.annotations.util">PrivateAnnotations</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html#isSerializationSupported(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">isSerializationSupported(AbstractConfigStructure)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a></dt>
+<dd>
+<div class="block">Checks if serialization is fully supported for the given configuration.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#isStatic()" class="member-name-link">isStatic()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html" title="class in me.bristermitten.mittenlib.annotations.ast">CustomDeserializerInfo</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./me/bristermitten/mittenlib/annotations/ast/CustomDeserializerInfo.html#param-isStatic"><code>isStatic</code></a> record component.</div>
@@ -1898,7 +1949,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/files/json/JSONFileType.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.json">JSONFileType</a> - Class in <a href="me/bristermitten/mittenlib/files/json/package-summary.html">me.bristermitten.mittenlib.files.json</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/files/json/JSONFileType.html#%3Cinit%3E(me.bristermitten.mittenlib.files.json.GsonObjectLoader)" class="member-name-link">JSONFileType(GsonObjectLoader)</a> - Constructor for class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json">JSONFileType</a></dt>
+<dt><a href="me/bristermitten/mittenlib/files/json/JSONFileType.html#%3Cinit%3E(me.bristermitten.mittenlib.files.json.GsonObjectLoader,me.bristermitten.mittenlib.files.json.GsonObjectWriter)" class="member-name-link">JSONFileType(GsonObjectLoader, GsonObjectWriter)</a> - Constructor for class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json">JSONFileType</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:L">L</h2>
@@ -2139,6 +2190,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/package-summary.html">me.bristermitten.mittenlib.config.tree</a> - package me.bristermitten.mittenlib.config.tree</dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/package-summary.html">me.bristermitten.mittenlib.config.writer</a> - package me.bristermitten.mittenlib.config.writer</dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/demo/package-summary.html">me.bristermitten.mittenlib.demo</a> - package me.bristermitten.mittenlib.demo</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/package-summary.html">me.bristermitten.mittenlib.files</a> - package me.bristermitten.mittenlib.files</dt>
@@ -2369,6 +2422,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Interface for mapping objects
  It should hold that <code>map(map(t), T.class).getOrThrow().equals(t)</code>, i.e both map functions are inverses</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a> - Interface in <a href="me/bristermitten/mittenlib/config/writer/package-summary.html">me.bristermitten.mittenlib.config.writer</a></dt>
+<dd>
+<div class="block">Inverse to <a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a></div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/collections/Maps.html#of()" class="member-name-link">of()</a> - Static method in class me.bristermitten.mittenlib.collections.<a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></dt>
 <dd>&nbsp;</dd>
@@ -2658,7 +2715,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> that reads from a file, using a <a href="me/bristermitten/mittenlib/config/reader/ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader"><code>ConfigReader</code></a></div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html#%3Cinit%3E(java.nio.file.Path,me.bristermitten.mittenlib.config.Configuration,me.bristermitten.mittenlib.config.reader.ConfigReader)" class="member-name-link">ReadingConfigProvider(Path, Configuration&lt;T&gt;, ConfigReader)</a> - Constructor for class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">ReadingConfigProvider</a></dt>
+<dt><a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html#%3Cinit%3E(java.nio.file.Path,me.bristermitten.mittenlib.config.Configuration,me.bristermitten.mittenlib.config.reader.ConfigReader,me.bristermitten.mittenlib.config.writer.ObjectWriter)" class="member-name-link">ReadingConfigProvider(Path, Configuration&lt;T&gt;, ConfigReader, ObjectWriter)</a> - Constructor for class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">ReadingConfigProvider</a></dt>
 <dd>
 <div class="block">Create a new ReadingConfigProvider</div>
 </dd>
@@ -2737,6 +2794,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/bristermitten/mittenlib/util/Result.html#replace(R)" class="member-name-link">replace(R)</a> - Method in interface me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a></dt>
 <dd>
 <div class="block">Replaces the value of the <a href="me/bristermitten/mittenlib/util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> with a new value.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/Config.html#requireSerialization()" class="member-name-link">requireSerialization()</a> - Element in annotation interface me.bristermitten.mittenlib.config.<a href="me/bristermitten/mittenlib/config/Config.html" title="annotation interface in me.bristermitten.mittenlib.config">Config</a></dt>
+<dd>
+<div class="block">Whether to require that serialization methods are generated for this config.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/union/ResolvedUnionConstructor.html" class="type-name-link" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a> - Record Class in <a href="me/bristermitten/mittenlib/codegen/union/package-summary.html">me.bristermitten.mittenlib.codegen.union</a></dt>
 <dd>&nbsp;</dd>
@@ -2835,9 +2896,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a> that can throw a checked  exception.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html#save(T)" class="member-name-link">save(T)</a> - Method in class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">ReadingConfigProvider</a></dt>
+<dd>
+<div class="block">Saves the given config instance back to the file.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html#save(T,boolean)" class="member-name-link">save(T, boolean)</a> - Method in class me.bristermitten.mittenlib.config.provider.<a href="me/bristermitten/mittenlib/config/provider/ReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">ReadingConfigProvider</a></dt>
+<dd>
+<div class="block">Saves the given config instance back to the file.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/reader/SearchingObjectLoader.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.reader">SearchingObjectLoader</a> - Class in <a href="me/bristermitten/mittenlib/config/reader/package-summary.html">me.bristermitten.mittenlib.config.reader</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/reader/SearchingObjectLoader.html#%3Cinit%3E(java.util.Set,java.util.logging.Logger)" class="member-name-link">SearchingObjectLoader(Set&lt;FileType&gt;, Logger)</a> - Constructor for class me.bristermitten.mittenlib.config.reader.<a href="me/bristermitten/mittenlib/config/reader/SearchingObjectLoader.html" title="class in me.bristermitten.mittenlib.config.reader">SearchingObjectLoader</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.writer">SearchingObjectWriter</a> - Class in <a href="me/bristermitten/mittenlib/config/writer/package-summary.html">me.bristermitten.mittenlib.config.writer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html#%3Cinit%3E(java.util.Set,java.util.logging.Logger)" class="member-name-link">SearchingObjectWriter(Set&lt;FileType&gt;, Logger)</a> - Constructor for class me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html" title="class in me.bristermitten.mittenlib.config.writer">SearchingObjectWriter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/lang/LangService.html#send(org.bukkit.command.CommandSender,me.bristermitten.mittenlib.lang.LangMessage)" class="member-name-link">send(CommandSender, LangMessage)</a> - Method in class me.bristermitten.mittenlib.lang.<a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></dt>
 <dd>&nbsp;</dd>
@@ -2883,6 +2956,20 @@ loadScripts(document, 'script');</script>
 <div class="block">Transform an array of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a>s into a single <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link"><code>CompletableFuture</code></a> holding a <code>Collection&lt;T&gt;</code>
  This is similar to (<a href="https://hackage.haskell.org/package/base-4.16.2.0/docs/GHC-Base.html#v:sequence">Haskell's sequence function</a>),
  but specialised for CompletableFutures because we don't have higher kinded types in Java :(</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a> - Class in <a href="me/bristermitten/mittenlib/annotations/compile/package-summary.html">me.bristermitten.mittenlib.annotations.compile</a></dt>
+<dd>
+<div class="block">Generates serialization code for configuration classes.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.parser.CustomDeserializers)" class="member-name-link">SerializationCodeGenerator(FieldNameGenerator, ConfigurationClassNameGenerator, MethodNames, TypesUtil, CustomDeserializers)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/SerializationFunction.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config">SerializationFunction&lt;T&gt;</a> - Interface in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
+<dd>
+<div class="block">A function that serializes a config object to a <a href="me/bristermitten/mittenlib/config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a></div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html#SERIALIZE_METHOD_PREFIX" class="member-name-link">SERIALIZE_METHOD_PREFIX</a> - Static variable in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a></dt>
+<dd>
+<div class="block">The prefix for all generated serialization methods.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/gui/session/SessionID.html" class="type-name-link" title="class in me.bristermitten.mittenlib.gui.session">SessionID&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer&gt;</a> - Class in <a href="me/bristermitten/mittenlib/gui/session/package-summary.html">me.bristermitten.mittenlib.gui.session</a></dt>
 <dd>&nbsp;</dd>
@@ -2988,7 +3075,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a> - Class in <a href="me/bristermitten/mittenlib/config/provider/construct/package-summary.html">me.bristermitten.mittenlib.config.provider.construct</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html#%3Cinit%3E(me.bristermitten.mittenlib.config.reader.ConfigReader,me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy,me.bristermitten.mittenlib.config.paths.ConfigPathResolver)" class="member-name-link">SimpleConfigProviderFactory(ConfigReader, ConfigInitializationStrategy, ConfigPathResolver)</a> - Constructor for class me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a></dt>
+<dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html#%3Cinit%3E(me.bristermitten.mittenlib.config.reader.ConfigReader,me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy,me.bristermitten.mittenlib.config.paths.ConfigPathResolver,me.bristermitten.mittenlib.config.writer.ObjectWriter)" class="member-name-link">SimpleConfigProviderFactory(ConfigReader, ConfigInitializationStrategy, ConfigPathResolver, ObjectWriter)</a> - Constructor for class me.bristermitten.mittenlib.config.provider.construct.<a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderImprover.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderImprover</a> - Class in <a href="me/bristermitten/mittenlib/config/provider/construct/package-summary.html">me.bristermitten.mittenlib.config.provider.construct</a></dt>
 <dd>&nbsp;</dd>
@@ -3404,6 +3491,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Upper_Snake_Case</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/config/extension/UseObjectMapperSerialization.html" class="type-name-link" title="annotation interface in me.bristermitten.mittenlib.config.extension">UseObjectMapperSerialization</a> - Annotation Interface in <a href="me/bristermitten/mittenlib/config/extension/package-summary.html">me.bristermitten.mittenlib.config.extension</a></dt>
+<dd>
+<div class="block">Marks a configuration property to use ObjectMapper for serialization.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>
 <dl class="index">
@@ -3724,16 +3815,48 @@ the order they are declared.</div>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTreeTypeAdapter.html#write(com.google.gson.stream.JsonWriter,me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">write(JsonWriter, DataTree)</a> - Method in class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTreeTypeAdapter.html" title="class in me.bristermitten.mittenlib.config.tree">DataTreeTypeAdapter</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">write(DataTree)</a> - Method in interface me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree)" class="member-name-link">write(DataTree)</a> - Method in class me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html" title="class in me.bristermitten.mittenlib.config.writer">SearchingObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree,java.io.Writer)" class="member-name-link">write(DataTree, Writer)</a> - Method in interface me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree,java.io.Writer)" class="member-name-link">write(DataTree, Writer)</a> - Method in class me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html" title="class in me.bristermitten.mittenlib.config.writer">SearchingObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/files/json/GsonObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree,java.io.Writer)" class="member-name-link">write(DataTree, Writer)</a> - Method in class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/GsonObjectWriter.html" title="class in me.bristermitten.mittenlib.files.json">GsonObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree,java.io.Writer)" class="member-name-link">write(DataTree, Writer)</a> - Method in class me.bristermitten.mittenlib.files.yaml.<a href="me/bristermitten/mittenlib/files/yaml/YamlObjectWriter.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectWriter</a></dt>
+<dd>
+<div class="block">Writes a DataTree to the given writer as YAML.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree,java.nio.file.Path)" class="member-name-link">write(DataTree, Path)</a> - Method in interface me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html#write(me.bristermitten.mittenlib.config.tree.DataTree,java.nio.file.Path)" class="member-name-link">write(DataTree, Path)</a> - Method in class me.bristermitten.mittenlib.config.writer.<a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html" title="class in me.bristermitten.mittenlib.config.writer">SearchingObjectWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/files/FileType.html#writer()" class="member-name-link">writer()</a> - Method in interface me.bristermitten.mittenlib.files.<a href="me/bristermitten/mittenlib/files/FileType.html" title="interface in me.bristermitten.mittenlib.files">FileType</a></dt>
+<dd>
+<div class="block">Returns an <a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer"><code>ObjectWriter</code></a> for this file type.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/files/json/JSONFileType.html#writer()" class="member-name-link">writer()</a> - Method in class me.bristermitten.mittenlib.files.json.<a href="me/bristermitten/mittenlib/files/json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json">JSONFileType</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html#writer()" class="member-name-link">writer()</a> - Method in class me.bristermitten.mittenlib.files.yaml.<a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlFileType</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:Y">Y</h2>
 <dl class="index">
 <dt><a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.yaml">YamlFileType</a> - Class in <a href="me/bristermitten/mittenlib/files/yaml/package-summary.html">me.bristermitten.mittenlib.files.yaml</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html#%3Cinit%3E(me.bristermitten.mittenlib.files.yaml.YamlObjectLoader)" class="member-name-link">YamlFileType(YamlObjectLoader)</a> - Constructor for class me.bristermitten.mittenlib.files.yaml.<a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlFileType</a></dt>
+<dt><a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html#%3Cinit%3E(me.bristermitten.mittenlib.files.yaml.YamlObjectLoader,me.bristermitten.mittenlib.files.yaml.YamlObjectWriter)" class="member-name-link">YamlFileType(YamlObjectLoader, YamlObjectWriter)</a> - Constructor for class me.bristermitten.mittenlib.files.yaml.<a href="me/bristermitten/mittenlib/files/yaml/YamlFileType.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlFileType</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectLoader.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectLoader</a> - Class in <a href="me/bristermitten/mittenlib/files/yaml/package-summary.html">me.bristermitten.mittenlib.files.yaml</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectLoader.html#%3Cinit%3E(org.yaml.snakeyaml.Yaml)" class="member-name-link">YamlObjectLoader(Yaml)</a> - Constructor for class me.bristermitten.mittenlib.files.yaml.<a href="me/bristermitten/mittenlib/files/yaml/YamlObjectLoader.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectLoader</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectWriter.html" class="type-name-link" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectWriter</a> - Class in <a href="me/bristermitten/mittenlib/files/yaml/package-summary.html">me.bristermitten.mittenlib.files.yaml</a></dt>
+<dd>
+<div class="block">Responsible for writing DataTree objects to YAML format.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectWriter.html#%3Cinit%3E(org.yaml.snakeyaml.Yaml)" class="member-name-link">YamlObjectWriter(Yaml)</a> - Constructor for class me.bristermitten.mittenlib.files.yaml.<a href="me/bristermitten/mittenlib/files/yaml/YamlObjectWriter.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectWriter</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:Y">Y</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="constant-values.html">Constant&nbsp;Field&nbsp;Values</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a></main>

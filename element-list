@@ -22,6 +22,7 @@ me.bristermitten.mittenlib.config.provider
 me.bristermitten.mittenlib.config.provider.construct
 me.bristermitten.mittenlib.config.reader
 me.bristermitten.mittenlib.config.tree
+me.bristermitten.mittenlib.config.writer
 me.bristermitten.mittenlib.demo
 me.bristermitten.mittenlib.files
 me.bristermitten.mittenlib.files.json

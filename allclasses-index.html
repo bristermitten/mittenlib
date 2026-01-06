@@ -430,183 +430,194 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An <a href="me/bristermitten/mittenlib/config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectMapper</code></a> implementation using <code>Gson</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/json/GsonProvider.html" title="class in me.bristermitten.mittenlib.files.json">GsonProvider</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/json/GsonObjectWriter.html" title="class in me.bristermitten.mittenlib.files.json">GsonObjectWriter</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">An <a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer"><code>ObjectWriter</code></a> implementation that writes <a href="me/bristermitten/mittenlib/config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> instances
+ to JSON using a provided <code>Gson</code> instance.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/json/GsonProvider.html" title="class in me.bristermitten.mittenlib.files.json">GsonProvider</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Standard provider for <code>Gson</code> instances.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/GUIBase.html" title="interface in me.bristermitten.mittenlib.gui">GUIBase&lt;Model,<wbr>Msg,<wbr>View,<wbr>Ctx,<wbr>Cmd&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/GUIBase.html" title="interface in me.bristermitten.mittenlib.gui">GUIBase&lt;Model,<wbr>Msg,<wbr>View,<wbr>Ctx,<wbr>Cmd&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Base interface for GUI applications, based on the Elm Architecture (Model-View-Update / TEA).</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager&lt;Ctx&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/manager/GUIManager.html" title="interface in me.bristermitten.mittenlib.gui.manager">GUIManager&lt;Ctx&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Manages GUI sessions and their lifecycles.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/GUIModule.html" title="class in me.bristermitten.mittenlib.gui">GUIModule</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/GUIModule.html" title="class in me.bristermitten.mittenlib.gui">GUIModule</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Guice module for the GUI framework.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer,<wbr>Ctx&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/session/GUISession.html" title="class in me.bristermitten.mittenlib.gui.session">GUISession&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer,<wbr>Ctx&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Represents an active GUI session with state management and event handling.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/session/GUISession.CommandRunner.html" title="interface in me.bristermitten.mittenlib.gui.session">GUISession.CommandRunner&lt;Ctx,<wbr>Msg&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/HexColorFixerHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">HexColorFixerHook</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/session/GUISession.CommandRunner.html" title="interface in me.bristermitten.mittenlib.gui.session">GUISession.CommandRunner&lt;Ctx,<wbr>Msg&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/HexColorFixerHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">HexColorFixerHook</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">This is a truly outrageous hack
  Essentially, when a papi expansion returns a hex color, it doesn't get parsed properly by MiniMessage
  and instead it just takes it to the nearest legacy color
  This class tries to parse the §x§a...</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/HookModule.html" title="class in me.bristermitten.mittenlib.lang.format.hook">HookModule</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/HookModule.html" title="class in me.bristermitten.mittenlib.lang.format.hook">HookModule</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Guice module for registering common <a href="me/bristermitten/mittenlib/lang/format/hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab5"><a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html" title="class in me.bristermitten.mittenlib.config.exception">InvalidEnumValueException</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton&lt;Msg&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/view/InventoryViewer.html" title="interface in me.bristermitten.mittenlib.gui.view">InventoryViewer&lt;Msg,<wbr>V&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction&lt;T,<wbr>R&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab5"><a href="me/bristermitten/mittenlib/config/exception/InvalidEnumValueException.html" title="class in me.bristermitten.mittenlib.config.exception">InvalidEnumValueException</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab5">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/InventoryButton.html" title="class in me.bristermitten.mittenlib.gui.spigot">InventoryButton&lt;Msg&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">A button in a Spigot GUI Inventory.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/view/InventoryViewer.html" title="interface in me.bristermitten.mittenlib.gui.view">InventoryViewer&lt;Msg,<wbr>V&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/util/lambda/IOFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda">IOFunction&lt;T,<wbr>R&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Like <a href="me/bristermitten/mittenlib/util/lambda/SafeFunction.html" title="interface in me.bristermitten.mittenlib.util.lambda"><code>SafeFunction</code></a> but only for <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link"><code>IOException</code></a></div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/IssuerAwareArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers">IssuerAwareArgumentContext&lt;T&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/IssuerAwareArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers">IssuerAwareArgumentContext&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">An <a href="me/bristermitten/mittenlib/commands/handlers/ArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers"><code>ArgumentContext</code></a> that is aware of the issuer of the command and the argument's value.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/IssuerOnlyArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers">IssuerOnlyArgumentContext&lt;T&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/IssuerOnlyArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers">IssuerOnlyArgumentContext&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">An <a href="me/bristermitten/mittenlib/commands/handlers/ArgumentContext.html" title="interface in me.bristermitten.mittenlib.commands.handlers"><code>ArgumentContext</code></a> that is only aware of the issuer of the command, and not the argument's value.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/paths/JarResourcesConfigPathResolver.html" title="class in me.bristermitten.mittenlib.config.paths">JarResourcesConfigPathResolver</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json">JSONFileType</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/paths/JarResourcesConfigPathResolver.html" title="class in me.bristermitten.mittenlib.config.paths">JarResourcesConfigPathResolver</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/json/JSONFileType.html" title="class in me.bristermitten.mittenlib.files.json">JSONFileType</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html" title="class in me.bristermitten.mittenlib.lang">LangMessage.SoundConfig</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessage.html" title="class in me.bristermitten.mittenlib.lang">LangMessage</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessageBuilder.html" title="class in me.bristermitten.mittenlib.lang">LangMessageBuilder</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessage.SoundConfig.html" title="class in me.bristermitten.mittenlib.lang">LangMessage.SoundConfig</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessageTypeAdapterFactory.html" title="class in me.bristermitten.mittenlib.lang">LangMessageTypeAdapterFactory</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessageBuilder.html" title="class in me.bristermitten.mittenlib.lang">LangMessageBuilder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangMessageTypeAdapterFactory.html" title="class in me.bristermitten.mittenlib.lang">LangMessageTypeAdapterFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates a <code>TypeAdapter</code> that can serialize elements with just a message to plain
  Strings (i.e not complex objects), and vice versa</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangModule.html" title="class in me.bristermitten.mittenlib.lang">LangModule</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangModule.html" title="class in me.bristermitten.mittenlib.lang">LangModule</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/LangService.html" title="class in me.bristermitten.mittenlib.lang">LangService</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A basic service for sending language messages to command senders.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/LegacyCodeUpdaterHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">LegacyCodeUpdaterHook</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/LegacyCodeUpdaterHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">LegacyCodeUpdaterHook</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <a href="me/bristermitten/mittenlib/lang/format/hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a> that replaces legacy color codes with their MiniMessage equivalent.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/ListenerRegistration.html" title="class in me.bristermitten.mittenlib">ListenerRegistration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/ListenersModule.html" title="class in me.bristermitten.mittenlib">ListenersModule</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/ListenerRegistration.html" title="class in me.bristermitten.mittenlib">ListenerRegistration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/ListenersModule.html" title="class in me.bristermitten.mittenlib">ListenersModule</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates a new empty <a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/multibindings/Multibinder.html" title="class or interface in com.google.inject.multibindings" class="external-link"><code>Multibinder</code></a> for Bukkit <a href="https://helpch.at/docs/1.8.8/org/bukkit/event/Listener.html" title="class or interface in org.bukkit.event" class="external-link"><code>Listener</code></a>s and binds <a href="me/bristermitten/mittenlib/ListenerRegistration.html" title="class in me.bristermitten.mittenlib"><code>ListenerRegistration</code></a> as an eager singleton.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/MapImpls.html" title="class in me.bristermitten.mittenlib.collections">MapImpls</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/MapImpls.html" title="class in me.bristermitten.mittenlib.collections">MapImpls</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Implementations for immutable Maps used in <a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections"><code>Maps</code></a></div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/Maps.html" title="class in me.bristermitten.mittenlib.collections">Maps</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Utility functions for creating immutable maps
  Unnecessary in Java 9+</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/codegen/union/MatchGenerator.html" title="class in me.bristermitten.mittenlib.codegen.union">MatchGenerator</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="me/bristermitten/mittenlib/codegen/MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/codegen/MatchStrategy.html" title="annotation interface in me.bristermitten.mittenlib.codegen">MatchStrategy</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab6">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/codegen/union/MatchGenerator.html" title="class in me.bristermitten.mittenlib.codegen.union">MatchGenerator</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="me/bristermitten/mittenlib/codegen/MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/codegen/MatchStrategy.html" title="annotation interface in me.bristermitten.mittenlib.codegen">MatchStrategy</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab6">
 <div class="block">Specifies how match methods should be generated for a union.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/lang/format/MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/lang/format/MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format">MessageFormatter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A MessageFormatter is responsible for formatting a String into a <a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a>,
  applying some <a href="me/bristermitten/mittenlib/lang/format/hook/FormattingHook.html" title="interface in me.bristermitten.mittenlib.lang.format.hook"><code>FormattingHook</code></a>s to the String.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/compile/MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Manages method names for configuration classes to ensure they don't conflict with existing methods.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/factory/MinecraftGUIFactory.html" title="interface in me.bristermitten.mittenlib.gui.factory">MinecraftGUIFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Factory interface for creating GUI components.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/MiniMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format">MiniMessageFormatter</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/MiniMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format">MiniMessageFormatter</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An <a href="me/bristermitten/mittenlib/lang/format/AbstractMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format"><code>AbstractMessageFormatter</code></a> that uses MiniMessage to create a <a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a>
  from a String</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/minimessage/MiniMessageModule.html" title="class in me.bristermitten.mittenlib.minimessage">MiniMessageModule</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/minimessage/MiniMessageModule.html" title="class in me.bristermitten.mittenlib.minimessage">MiniMessageModule</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An extension of <a href="me/bristermitten/mittenlib/lang/LangModule.html" title="class in me.bristermitten.mittenlib.lang"><code>LangModule</code></a> that adds support for MiniMessage.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib&lt;T&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/codegen/MittenLibCodegenProcessor.html" title="class in me.bristermitten.mittenlib.codegen">MittenLibCodegenProcessor</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/MittenLib.html" title="class in me.bristermitten.mittenlib">MittenLib&lt;T&gt;</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/MittenLibConsumer.html" title="class in me.bristermitten.mittenlib">MittenLibConsumer</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/codegen/MittenLibCodegenProcessor.html" title="class in me.bristermitten.mittenlib.codegen">MittenLibCodegenProcessor</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/MittenLibConsumer.html" title="class in me.bristermitten.mittenlib">MittenLibConsumer</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Stores the name of the consumer of MittenLib (usually the plugin name).</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/MittenLibCoreModule.html" title="class in me.bristermitten.mittenlib">MittenLibCoreModule&lt;T&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/MittenLibCoreModule.html" title="class in me.bristermitten.mittenlib">MittenLibCoreModule&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Main Guice Module for MittenLib.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableMap&lt;K,<wbr>V&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet&lt;E&gt;</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/MLImmutableMap.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableMap&lt;K,<wbr>V&gt;</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab5"><a href="me/bristermitten/mittenlib/util/MultipleFailuresException.html" title="class in me.bristermitten.mittenlib.util">MultipleFailuresException</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab5">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/MLImmutableSet.html" title="class in me.bristermitten.mittenlib.collections">MLImmutableSet&lt;E&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab5"><a href="me/bristermitten/mittenlib/util/MultipleFailuresException.html" title="class in me.bristermitten.mittenlib.util">MultipleFailuresException</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab5">
 <div class="block">Exception representing multiple failures that occur simultaneously.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/NamedCondition.html" title="interface in me.bristermitten.mittenlib.commands.handlers">NamedCondition</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/NamedCondition.html" title="interface in me.bristermitten.mittenlib.commands.handlers">NamedCondition</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A command condition that is referenced by name on the full command rather than an argument.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab6">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/config/names/NamingPattern.html" title="annotation interface in me.bristermitten.mittenlib.config.names">NamingPattern</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab6">
 <div class="block">Defines a naming pattern for a class or field.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names">NamingPatterns</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names">NamingPatterns</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Patterns for naming fields in a config.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/names/NamingPatternTransformer.html" title="class in me.bristermitten.mittenlib.config.names">NamingPatternTransformer</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/names/NamingPatternTransformer.html" title="class in me.bristermitten.mittenlib.config.names">NamingPatternTransformer</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Transforms strings into different formats based on a <a href="me/bristermitten/mittenlib/config/names/NamingPatterns.html" title="enum class in me.bristermitten.mittenlib.config.names"><code>NamingPatterns</code></a></div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/paths/NoOpConfigInitializationStrategy.html" title="class in me.bristermitten.mittenlib.config.paths">NoOpConfigInitializationStrategy</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/construct/NoOpConfigProviderImprover.html" title="class in me.bristermitten.mittenlib.config.provider.construct">NoOpConfigProviderImprover</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/paths/NoOpConfigInitializationStrategy.html" title="class in me.bristermitten.mittenlib.config.paths">NoOpConfigInitializationStrategy</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/construct/NoOpConfigProviderImprover.html" title="class in me.bristermitten.mittenlib.config.provider.construct">NoOpConfigProviderImprover</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <a href="me/bristermitten/mittenlib/config/provider/construct/ConfigProviderImprover.html" title="interface in me.bristermitten.mittenlib.config.provider.construct"><code>ConfigProviderImprover</code></a> that does nothing.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Null.html" title="class in me.bristermitten.mittenlib.util">Null</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Null.html" title="class in me.bristermitten.mittenlib.util">Null</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Utility class for working with nullable values without having to use <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/Nullity.html" title="class in me.bristermitten.mittenlib.annotations.util">Nullity</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/Nullity.html" title="class in me.bristermitten.mittenlib.annotations.util">Nullity</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectLoader</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Responsible for parsing a tree-like file (JSON, YAML, etc) into a Map of <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> keys and <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a> values.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/config/reader/ObjectMapper.html" title="interface in me.bristermitten.mittenlib.config.reader">ObjectMapper</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Interface for mapping objects
  It should hold that <code>map(map(t), T.class).getOrThrow().equals(t)</code>, i.e both map functions are inverses</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/config/writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Inverse to <a href="me/bristermitten/mittenlib/config/reader/ObjectLoader.html" title="interface in me.bristermitten.mittenlib.config.reader"><code>ObjectLoader</code></a></div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/hook/PAPIFormattingHook.html" title="class in me.bristermitten.mittenlib.lang.hook">PAPIFormattingHook</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -710,112 +721,126 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/reader/SearchingObjectLoader.html" title="class in me.bristermitten.mittenlib.config.reader">SearchingObjectLoader</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">SendMessageCommand&lt;T&gt;</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/writer/SearchingObjectWriter.html" title="class in me.bristermitten.mittenlib.config.writer">SearchingObjectWriter</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/session/SessionID.html" title="class in me.bristermitten.mittenlib.gui.session">SessionID&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer&gt;</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/command/SendMessageCommand.html" title="class in me.bristermitten.mittenlib.gui.spigot.command">SendMessageCommand&lt;T&gt;</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/SetImpls.html" title="class in me.bristermitten.mittenlib.collections">SetImpls</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/compile/SerializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">SerializationCodeGenerator</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Generates serialization code for configuration classes.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/config/SerializationFunction.html" title="interface in me.bristermitten.mittenlib.config">SerializationFunction&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">A function that serializes a config object to a <a href="me/bristermitten/mittenlib/config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a></div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/session/SessionID.html" title="class in me.bristermitten.mittenlib.gui.session">SessionID&lt;Model,<wbr>Msg,<wbr>V,<wbr>Viewer&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/SetImpls.html" title="class in me.bristermitten.mittenlib.collections">SetImpls</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Implementations for immutable sets used in <a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections"><code>Sets</code></a></div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/collections/Sets.html" title="class in me.bristermitten.mittenlib.collections">Sets</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Utility functions for creating immutable sets.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/SimpleColorCodeHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">SimpleColorCodeHook</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/SimpleColorCodeHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">SimpleColorCodeHook</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderImprover.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderImprover</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderFactory.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderFactory</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/SimpleFormattingHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">SimpleFormattingHook</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/construct/SimpleConfigProviderImprover.html" title="class in me.bristermitten.mittenlib.config.provider.construct">SimpleConfigProviderImprover</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/SimpleFormattingHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">SimpleFormattingHook</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A formatting hook that is always applied, and uses a lambda to format the string.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/SimpleMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format">SimpleMessageFormatter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/SimpleMessageFormatter.html" title="class in me.bristermitten.mittenlib.lang.format">SimpleMessageFormatter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Default implementation of <a href="me/bristermitten/mittenlib/lang/format/MessageFormatter.html" title="interface in me.bristermitten.mittenlib.lang.format"><code>MessageFormatter</code></a> that uses <code>LegacyComponentSerializer</code> to create <a href="https://javadoc.io/doc/net.kyori/adventure-api/latest/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a>s.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab6">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/config/Source.html" title="annotation interface in me.bristermitten.mittenlib.config">Source</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab6">
 <div class="block">Marks a <a href="me/bristermitten/mittenlib/config/Config.html" title="annotation interface in me.bristermitten.mittenlib.config"><code>Config</code></a> class as being loaded from a file.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommand&lt;Msg&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommand.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommand&lt;Msg&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A command that can be executed in a Spigot GUI context.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommandContext</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/gui/spigot/command/SpigotCommandContext.html" title="interface in me.bristermitten.mittenlib.gui.spigot.command">SpigotCommandContext</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">The context for a Spigot command execution.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotEventHandler</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotEventHandler.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotEventHandler</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Handles Spigot inventory events and connects them to the GUI framework.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUI.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUI&lt;Model,<wbr>Msg&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUI.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUI&lt;Model,<wbr>Msg&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Base class for Spigot GUIs.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/manager/SpigotGUIManager.html" title="class in me.bristermitten.mittenlib.gui.manager">SpigotGUIManager</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Spigot implementation of the GUIManager.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView&lt;Msg&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotGUIView.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotGUIView&lt;Msg&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A view of a Spigot GUI - not a real inventory, but a description of one.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer&lt;Msg&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/spigot/SpigotInventoryViewer.html" title="class in me.bristermitten.mittenlib.gui.spigot">SpigotInventoryViewer&lt;Msg&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/factory/SpigotMinecraftGUIFactory.html" title="class in me.bristermitten.mittenlib.gui.factory">SpigotMinecraftGUIFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Spigot implementation of GUIFactory for creating GUI components.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/Stringify.html" title="class in me.bristermitten.mittenlib.annotations.util">Stringify</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/Stringify.html" title="class in me.bristermitten.mittenlib.annotations.util">Stringify</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Generic utilities for converting objects to strings.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/StringReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">StringReadingConfigProvider&lt;T&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/config/provider/StringReadingConfigProvider.html" title="class in me.bristermitten.mittenlib.config.provider">StringReadingConfigProvider&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <a href="me/bristermitten/mittenlib/config/provider/ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a> that reads a String to load a config</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/StringReplacingHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">StringReplacingHook</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/lang/format/hook/StringReplacingHook.html" title="class in me.bristermitten.mittenlib.lang.format.hook">StringReplacingHook</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A formatting hook that applies string replacements</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Strings.html" title="class in me.bristermitten.mittenlib.util">Strings</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/TabCompleter.html" title="interface in me.bristermitten.mittenlib.commands.handlers">TabCompleter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Strings.html" title="class in me.bristermitten.mittenlib.util">Strings</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="me/bristermitten/mittenlib/commands/handlers/TabCompleter.html" title="interface in me.bristermitten.mittenlib.commands.handlers">TabCompleter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A tab completer for a command argument.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataDTO.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataDTO</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataDTO.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataDTO</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.LGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson.LGson</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/compile/ToStringGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ToStringGenerator</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotation/benchmark/TestDataGson.LGson.html" title="class in me.bristermitten.mittenlib.annotation.benchmark">TestDataGson.LGson</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/compile/ToStringGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ToStringGenerator</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Generates toString methods for configuration classes.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/TypeSpecUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypeSpecUtil</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/TypeSpecUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypeSpecUtil</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/annotations/util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Helper class for working with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link"><code>TypeMirror</code></a>s</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/codegen/union/UnionGenerator.html" title="class in me.bristermitten.mittenlib.codegen.union">UnionGenerator</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="me/bristermitten/mittenlib/codegen/union/UnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">UnionSpec</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/codegen/UnionSpec.html" title="annotation interface in me.bristermitten.mittenlib.codegen">UnionSpec</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab6">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/codegen/union/UnionGenerator.html" title="class in me.bristermitten.mittenlib.codegen.union">UnionGenerator</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="me/bristermitten/mittenlib/codegen/union/UnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">UnionSpec</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/codegen/UnionSpec.html" title="annotation interface in me.bristermitten.mittenlib.codegen">UnionSpec</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab6">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Unit.html" title="class in me.bristermitten.mittenlib.util">Unit</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Unit value</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult&lt;Model,<wbr>Msg,<wbr>Ctx,<wbr>Cmd&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/gui/UpdateResult.html" title="class in me.bristermitten.mittenlib.gui">UpdateResult&lt;Model,<wbr>Msg,<wbr>Ctx,<wbr>Cmd&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab6"><a href="me/bristermitten/mittenlib/config/extension/UseObjectMapperSerialization.html" title="annotation interface in me.bristermitten.mittenlib.config.extension">UseObjectMapperSerialization</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab6">
+<div class="block">Marks a configuration property to use ObjectMapper for serialization.</div>
+</div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/util/Version.html" title="class in me.bristermitten.mittenlib.util">Version</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Minecraft versions "enum"</div>
@@ -832,6 +857,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectLoader.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectLoader</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="me/bristermitten/mittenlib/files/yaml/YamlObjectWriter.html" title="class in me.bristermitten.mittenlib.files.yaml">YamlObjectWriter</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Responsible for writing DataTree objects to YAML format.</div>
+</div>
 </div>
 </div>
 </div>

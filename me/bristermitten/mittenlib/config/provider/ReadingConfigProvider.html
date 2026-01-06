@@ -113,9 +113,10 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.nio.file.Path,me.bristermitten.mittenlib.config.Configuration,me.bristermitten.mittenlib.config.reader.ConfigReader)" class="member-name-link">ReadingConfigProvider</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.nio.file.Path,me.bristermitten.mittenlib.config.Configuration,me.bristermitten.mittenlib.config.reader.ConfigReader,me.bristermitten.mittenlib.config.writer.ObjectWriter)" class="member-name-link">ReadingConfigProvider</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path,
  <a href="../Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a>&lt;<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&gt;&nbsp;config,
- <a href="../reader/ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a>&nbsp;reader)</code></div>
+ <a href="../reader/ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a>&nbsp;reader,
+ <a href="../writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a>&nbsp;writer)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Create a new ReadingConfigProvider</div>
 </div>
@@ -146,6 +147,17 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The path of the source for the config, if available</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(T)" class="member-name-link">save</a><wbr>(<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&nbsp;instance)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Saves the given config instance back to the file.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(T,boolean)" class="member-name-link">save</a><wbr>(<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&nbsp;instance,
+ boolean&nbsp;overrideExisting)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Saves the given config instance back to the file.</div>
+</div>
 </div>
 </div>
 </div>
@@ -164,17 +176,19 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.nio.file.Path,me.bristermitten.mittenlib.config.Configuration,me.bristermitten.mittenlib.config.reader.ConfigReader)">
+<section class="detail" id="&lt;init&gt;(java.nio.file.Path,me.bristermitten.mittenlib.config.Configuration,me.bristermitten.mittenlib.config.reader.ConfigReader,me.bristermitten.mittenlib.config.writer.ObjectWriter)">
 <h3>ReadingConfigProvider</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ReadingConfigProvider</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path,
  <a href="../Configuration.html" title="class in me.bristermitten.mittenlib.config">Configuration</a>&lt;<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&gt;&nbsp;config,
- <a href="../reader/ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a>&nbsp;reader)</span></div>
+ <a href="../reader/ConfigReader.html" title="class in me.bristermitten.mittenlib.config.reader">ConfigReader</a>&nbsp;reader,
+ <a href="../writer/ObjectWriter.html" title="interface in me.bristermitten.mittenlib.config.writer">ObjectWriter</a>&nbsp;writer)</span></div>
 <div class="block">Create a new ReadingConfigProvider</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>path</code> - the path to read from</dd>
 <dd><code>config</code> - the configuration to read</dd>
 <dd><code>reader</code> - the reader to use</dd>
+<dd><code>writer</code> - the writer to use for saving</dd>
 </dl>
 </section>
 </li>
@@ -228,6 +242,37 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="ConfigProvider.html#clearCache()">clearCache</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="save(T)">
+<h3 id="save(java.lang.Object)">save</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&nbsp;instance)</span></div>
+<div class="block">Saves the given config instance back to the file.
+ This can be used to save default values for missing fields.
+ By default, this only adds missing fields and does not override existing ones.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>instance</code> - the config instance to save</dd>
+<dt>Returns:</dt>
+<dd>a Result indicating success or failure</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="save(T,boolean)">
+<h3 id="save(java.lang.Object,boolean)">save</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(<a href="ReadingConfigProvider.html" title="type parameter in ReadingConfigProvider">T</a>&nbsp;instance,
+ boolean&nbsp;overrideExisting)</span></div>
+<div class="block">Saves the given config instance back to the file.
+ This can be used to save default values for missing fields.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>instance</code> - the config instance to save</dd>
+<dd><code>overrideExisting</code> - if true, overwrites the entire file; if false, only adds missing fields</dd>
+<dt>Returns:</dt>
+<dd>a Result indicating success or failure</dd>
 </dl>
 </section>
 </li>
