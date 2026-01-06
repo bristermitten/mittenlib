@@ -14,6 +14,7 @@ import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationContext;
+import me.bristermitten.mittenlib.config.PropertyDoc;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
@@ -200,15 +201,36 @@ public class DeserializationCodeGenerator {
             builder.endControlFlow();
         } else {
             builder.beginControlFlow("if ($L == null)", fromMapName);
-            builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S))",
-                    Result.class,
-                    ConfigLoadingErrors.class,
-                    property.name(),
-                    elementTypeName,
-                    dtoType,
-                    key);
+            var propertyDoc = property.settings().propertyDoc();
+            if (hasPropertyDocContent(propertyDoc)) {
+                // Use the enhanced method with PropertyDoc information
+                builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S, context, $S, $S, $S))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        property.name(),
+                        elementTypeName,
+                        dtoType,
+                        key,
+                        propertyDoc.description(),
+                        propertyDoc.example(),
+                        propertyDoc.note());
+            } else {
+                // Use the standard method without PropertyDoc
+                builder.addStatement("return $T.fail($T.notFoundException($S, $S, $T.class, $S, context))",
+                        Result.class,
+                        ConfigLoadingErrors.class,
+                        property.name(),
+                        elementTypeName,
+                        dtoType,
+                        key);
+            }
             builder.endControlFlow();
         }
+    }
+    
+    private boolean hasPropertyDocContent(PropertyDoc propertyDoc) {
+        return propertyDoc != null && 
+               (!propertyDoc.description().isEmpty() || !propertyDoc.example().isEmpty() || !propertyDoc.note().isEmpty());
     }
 
     private Optional<MethodSpec> handleGenericType(MethodSpec.Builder builder, Property property,
@@ -433,7 +455,7 @@ public class DeserializationCodeGenerator {
             return false; // no need to check this
         }
         builder.beginControlFlow("if (!($L instanceof $T))", fromMapName, DataTree.class);
-        builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L))",
+        builder.addStatement("return $T.fail($T.invalidPropertyTypeException($T.class, $S, $S, $L, context.getSourcePath()))",
                 Result.class,
                 ConfigLoadingErrors.class,
                 dtoType,
@@ -461,7 +483,7 @@ public class DeserializationCodeGenerator {
             );
         }
         builder.beginControlFlow("if (enumValue == null)");
-        builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L))",
+        builder.addStatement("return $T.fail($T.invalidEnumException($T.class, $S, $L, context.getSourcePath()))",
                 Result.class,
                 ConfigLoadingErrors.class,
                 safeType,
@@ -503,7 +525,7 @@ public class DeserializationCodeGenerator {
                         configurationClassNameGenerator.getPublicClassName(ast));
                 deserialiseBuilder.indent();
             }
-            deserialiseBuilder.add("$T.fail($T.noUnionMatch())", Result.class, ConfigLoadingErrors.class);
+            deserialiseBuilder.add("$T.fail($T.noUnionMatch(context.getSourcePath()))", Result.class, ConfigLoadingErrors.class);
             deserialiseBuilder.add(")".repeat(union.alternatives().size())); // close all the flatMap parens
 
             builder.addStatement(deserialiseBuilder.build());
