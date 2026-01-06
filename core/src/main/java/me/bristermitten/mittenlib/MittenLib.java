@@ -77,6 +77,16 @@ public class MittenLib<T extends Plugin> {
     }
 
     private void addModule0(Module module) {
+        for (Map.Entry<Class<? extends Module>, Module> entry : modules.entrySet()) {
+            Class<? extends Module> existingKey = entry.getKey();
+
+            if (existingKey.isAssignableFrom(module.getClass())) {
+                Module merged = Modules.override(entry.getValue()).with(module);
+                entry.setValue(merged);
+                return;
+            }
+        }
+
         this.modules.put(module.getClass(), module);
     }
 }
