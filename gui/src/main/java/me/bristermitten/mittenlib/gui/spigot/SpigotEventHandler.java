@@ -79,7 +79,11 @@ public class SpigotEventHandler implements Listener {
                         event.getCursor()
                 );
                 PureFunction<ClickInput, ?> messageFunction = button.getMessageFunction();
-                guiManager.sendMessage((SessionID) session.getSessionId(), messageFunction.apply(clickInput));
+                Object message = messageFunction.apply(clickInput);
+                if (message != null) {
+                    guiManager.sendMessage((SessionID) session.getSessionId(), message);
+                }
+
             });
         }
     }
