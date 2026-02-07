@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib;
 
 import com.google.inject.AbstractModule;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -35,6 +36,14 @@ public class MittenLibCoreModule<T extends Plugin> extends AbstractModule {
     protected void configure() {
         if (plugin != null) {
             bind(Plugin.class).to(plugin.getClass());
+            if (plugin instanceof JavaPlugin) {
+                // I know we should avoid conditional bindings
+                // but binding JavaPlugin is a sensible default for plugins that extend it
+                // but we also don't want to require it
+                // in cases of testing etc
+                //noinspection unchecked
+                bind(JavaPlugin.class).to((Class<? extends JavaPlugin>) plugin.getClass());
+            }
             //noinspection unchecked
             bind((Class<T>) plugin.getClass()).toInstance(plugin);
             bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer(plugin.getName()));

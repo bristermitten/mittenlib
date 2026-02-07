@@ -48,7 +48,7 @@ subprojects {
 
 	val libs = rootProject.libs
 	group = "me.bristermitten"
-	version = "5.0.2-SNAPSHOT"
+	version = "5.0.3-SNAPSHOT"
 
 	java {
 		sourceCompatibility = JavaVersion.VERSION_1_8
@@ -99,7 +99,7 @@ subprojects {
         options.isFork = true
 
 		options.errorprone.disableWarningsInGeneratedCode.set(true)
-		options.setIncremental(true)
+        options.isIncremental = true
 	}
 
 
