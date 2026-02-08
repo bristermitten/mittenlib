@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.util;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -220,6 +219,12 @@ public class Version implements Comparable<Version> {
     public static final Version VER_1_20_1 = new Version(1, 20, 1);
 
 
+    /**
+     * Version 1.21
+     */
+    public static final Version VER_1_21_1 = new Version(1, 21, 1);
+
+
     private static final Cached<Version> serverVersion;
     private static final Splitter DASH_SPLITTER = Splitter.on('-').omitEmptyStrings().trimResults();
     private static final Splitter DOT_SPLITTER = Splitter.on('.').omitEmptyStrings().trimResults();
@@ -227,7 +232,7 @@ public class Version implements Comparable<Version> {
     static {
         serverVersion = new Cached<>(() -> {
             try {
-                final String version = Iterables.getOnlyElement(DASH_SPLITTER.split(Bukkit.getBukkitVersion()));
+                final String version = DASH_SPLITTER.split(Bukkit.getBukkitVersion()).iterator().next();
                 final List<String> parts = DOT_SPLITTER.splitToList(version);
                 int majorVer = Integer.parseInt(parts.get(0));
                 int minorVer = Integer.parseInt(parts.get(1));
@@ -307,5 +312,10 @@ public class Version implements Comparable<Version> {
     @Override
     public int hashCode() {
         return Objects.hash(getMajor(), getMinor(), getPatch());
+    }
+
+    @Override
+    public String toString() {
+        return getMajor() + "." + getMinor() + "." + getPatch();
     }
 }

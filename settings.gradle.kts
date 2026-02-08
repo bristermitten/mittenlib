@@ -93,6 +93,7 @@ dependencyResolutionManagement {
 
 			version("mockito", "4.8.0")
 			library("mockito-core", "org.mockito", "mockito-core").versionRef("mockito")
+			library("mockito-inline", "org.mockito", "mockito-inline").versionRef("mockito")
 
 			library(
 				"mockbukkit",

@@ -48,7 +48,7 @@ subprojects {
 
 	val libs = rootProject.libs
 	group = "me.bristermitten"
-	version = "5.0.3-SNAPSHOT"
+	version = "5.0.4-SNAPSHOT"
 
 	java {
 		sourceCompatibility = JavaVersion.VERSION_1_8
@@ -67,7 +67,7 @@ subprojects {
 
 		testImplementation(libs.spigot.api)
 		testImplementation(libs.junit.api)
-		testImplementation(libs.mockito.core)
+		testImplementation(libs.mockito.inline)
 		testImplementation(libs.assertj.core)
 		testRuntimeOnly(libs.junit.engine)
 		testRuntimeOnly(libs.junit.launcher)
