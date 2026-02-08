@@ -13,6 +13,7 @@ import me.bristermitten.mittenlib.gui.spigot.command.DefaultSpigotCommandContext
 import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
+import me.bristermitten.mittenlib.lang.format.MessageFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -36,8 +37,11 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     // Map of viewers to their corresponding SessionID
     private final Map<SpigotInventoryViewer<?>, SessionID<?, ?, ?, ?>> viewerToSession;
 
+    private final MessageFormatter messageFormatter;
+
     @Inject
-    public SpigotGUIManager() {
+    public SpigotGUIManager(MessageFormatter messageFormatter) {
+        this.messageFormatter = messageFormatter;
         this.activeSessions = new ConcurrentHashMap<>();
         this.viewerToSession = new ConcurrentHashMap<>();
     }
@@ -139,7 +143,8 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
         if (canReuse) {
             target = current;
         } else {
-            target = Bukkit.createInventory(player, size, title);
+            String formattedTitle = messageFormatter.preFormat(title, player);
+            target = Bukkit.createInventory(player, size, formattedTitle);
             player.openInventory(target);
         }
 
