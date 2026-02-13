@@ -289,7 +289,9 @@ public class ConfigurationClassNameGenerator {
 
         final PackageElement packageElement = elements.getPackageOf(element);
         if (packageElement.isUnnamed()) {
-            throw new IllegalArgumentException("Unnamed packages are not supported");
+            throw new IllegalArgumentException(
+                    me.bristermitten.mittenlib.annotations.CompileTimeErrors.unnamedPackageError(element.getSimpleName().toString())
+            );
         }
         return generateConfigurationClassName(element);
     }

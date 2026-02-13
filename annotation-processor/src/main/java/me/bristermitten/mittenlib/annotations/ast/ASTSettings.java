@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.ast;
 
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.EnumParsingSchemes;
+import me.bristermitten.mittenlib.config.PropertyDoc;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
@@ -24,7 +25,8 @@ public sealed interface ASTSettings {
             @Nullable ConfigName configName,
             EnumParsingSchemes enumParsingScheme,
             boolean isNullable,
-            boolean hasDefaultValue
+            boolean hasDefaultValue,
+            @Nullable PropertyDoc propertyDoc
     ) implements ASTSettings {
     }
 }
