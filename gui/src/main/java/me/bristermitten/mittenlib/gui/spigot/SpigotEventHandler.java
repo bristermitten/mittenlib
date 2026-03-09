@@ -55,6 +55,10 @@ public class SpigotEventHandler implements Listener {
 
         GUISession<?, ?, ?, ?, ?> session = sessionByViewer.get();
 
+        if (!clickedInventory.equals(event.getView().getTopInventory())) {
+            return;
+        }
+
         // Cancel the event to prevent item movement
         event.setCancelled(true);
 
