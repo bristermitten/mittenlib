@@ -16,6 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
 
+    private static final int INVENTORY_ROW_SIZE = 9;
+    private static final int MAX_INVENTORY_SIZE = 54;
     private final MessageFormatter messageFormatter;
 
     @Inject
@@ -26,11 +28,11 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
 
     @Override
     public <Command> SpigotGUIView<Command> createSpigotView(int size, String title) {
-        if (size <= 0 || size % 9 != 0) {
-            throw new IllegalArgumentException("Inventory size must be a positive multiple of 9");
+        if (size <= 0 || size % INVENTORY_ROW_SIZE != 0) {
+            throw new IllegalArgumentException("Inventory size must be a positive multiple of " + INVENTORY_ROW_SIZE);
         }
-        if (size > 54) {
-            throw new IllegalArgumentException("Inventory size cannot exceed 54 slots");
+        if (size > MAX_INVENTORY_SIZE) {
+            throw new IllegalArgumentException("Inventory size cannot exceed " + MAX_INVENTORY_SIZE + " slots");
         }
         Component formattedTitle = messageFormatter.format(title, null);
 
