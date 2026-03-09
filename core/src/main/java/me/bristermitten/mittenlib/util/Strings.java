@@ -3,6 +3,7 @@ package me.bristermitten.mittenlib.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -63,10 +64,10 @@ public class Strings {
      * @param <T>        The type of the collection
      * @return A joined string
      */
-    public static <T> String joinWith(@NotNull Collection<T> collection, @NotNull Function<T, Object> toString, @NotNull String separator) {
+    public static <T> String joinWith(@NotNull Collection<T> collection, @NotNull Function<? super T, ? extends CharSequence> toString, @NotNull String separator) {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
-            stringJoiner.add(toString.apply(t).toString());
+            stringJoiner.add(Objects.requireNonNull(toString.apply(t)));
         }
         return stringJoiner.toString();
     }
@@ -76,10 +77,10 @@ public class Strings {
      *
      * @see #joinWith(Collection, Function, String)
      */
-    public static <T> String joinWith(@NotNull T[] collection, @NotNull Function<T, Object> toString, @NotNull String separator) {
+    public static <T> String joinWith(@NotNull T[] collection, @NotNull Function<? super T, ? extends CharSequence> toString, @NotNull String separator) {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
-            stringJoiner.add(toString.apply(t).toString());
+            stringJoiner.add(Objects.requireNonNull(toString.apply(t)));
         }
         return stringJoiner.toString();
     }
