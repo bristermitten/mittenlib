@@ -261,24 +261,32 @@ public class SetImpls {
      * Union of 2 sets
      */
     static class UnionOf<E> extends AbstractSet<E> { //NOSONAR
-        private final @Unmodifiable Set<E> first;
-        private final @Unmodifiable Set<E> second;
+        final Set<E>[] sets;
         private final int size;
 
-        UnionOf(Set<E> first, Set<E> second) {
-            this.first = first;
-            this.second = second;
-            this.size = first.size() + second.size();
+        @SafeVarargs
+        UnionOf(Set<E>... sets) {
+            this.sets = sets;
+            int s = 0;
+            for (Set<E> set : sets) {
+                s += set.size();
+            }
+            this.size = s;
         }
 
         @Override
         public boolean contains(Object o) {
-            return first.contains(o) || second.contains(o);
+            for (Set<E> set : sets) {
+                if (set.contains(o)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override
         public boolean isEmpty() {
-            return first.isEmpty() && second.isEmpty();
+            return size == 0;
         }
 
         @Override
@@ -289,7 +297,11 @@ public class SetImpls {
         @Override
         @NonNull
         public Iterator<E> iterator() {
-            return Iterators.concat(first.iterator(), second.iterator());
+            Iterator<E>[] iterators = new Iterator[sets.length];
+            for (int i = 0; i < sets.length; i++) {
+                iterators[i] = sets[i].iterator();
+            }
+            return Iterators.concat(iterators);
         }
     }
 }

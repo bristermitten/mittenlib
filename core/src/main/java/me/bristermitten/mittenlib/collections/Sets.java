@@ -127,7 +127,33 @@ public class Sets {
         }
 
 
-        return new SetImpls.UnionOf<>(a, difference(b, a)); // TODO: make more efficient wrt nested unions
+        Set<E> diffB = difference(b, a);
+        if (diffB.isEmpty()) {
+            return a;
+        }
+        if (a instanceof SetImpls.UnionOf) {
+            SetImpls.UnionOf<E> unionA = (SetImpls.UnionOf<E>) a;
+            if (unionA.sets.length > 50) {
+                return Sets.ofAll(new java.util.AbstractSet<E>() {
+                    @Override
+                    public java.util.Iterator<E> iterator() {
+                        return com.google.common.collect.Iterators.concat(unionA.iterator(), diffB.iterator());
+                    }
+                    @Override
+                    public int size() {
+                        return unionA.size() + diffB.size();
+                    }
+                });
+            }
+            @SuppressWarnings("unchecked")
+            Set<E>[] newSetsA = java.util.Arrays.copyOf(unionA.sets, unionA.sets.length + 1);
+            newSetsA[unionA.sets.length] = diffB;
+            return new SetImpls.UnionOf<>(newSetsA);
+        }
+        @SuppressWarnings("unchecked")
+        Set<E>[] newSets = (Set<E>[]) new Set[]{a, diffB};
+        return new SetImpls.UnionOf<>(newSets);
+
     }
 
     /**
