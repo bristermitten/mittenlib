@@ -735,8 +735,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeArray.html#%3Cinit%3E(me.bristermitten.mittenlib.config.tree.DataTree%5B%5D)" class="member-name-link">DataTreeArray(DataTree[])</a> - Constructor for class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeArray.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeArray</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#dataTreeConvert(com.squareup.javapoet.TypeName,com.squareup.javapoet.TypeName,com.squareup.javapoet.CodeBlock)" class="member-name-link">dataTreeConvert(TypeName, TypeName, CodeBlock)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/deserializer/NonGenericTypeDeserializerGenerator.html#dataTreeConvert(com.squareup.javapoet.TypeName,com.squareup.javapoet.TypeName,com.squareup.javapoet.CodeBlock)" class="member-name-link">dataTreeConvert(TypeName, TypeName, CodeBlock)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.deserializer.<a href="me/bristermitten/mittenlib/annotations/compile/deserializer/NonGenericTypeDeserializerGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile.deserializer">NonGenericTypeDeserializerGenerator</a></dt>
+<dd>
+<div class="block">Translates a <a href="me/bristermitten/mittenlib/config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> literal value to its corresponding JVM primitive type.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeLiteral.html#%3Cinit%3E()" class="member-name-link">DataTreeLiteral()</a> - Constructor for class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeLiteral.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeLiteral</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeLiteral.DataTreeLiteralBoolean.html#%3Cinit%3E(boolean)" class="member-name-link">DataTreeLiteralBoolean(boolean)</a> - Constructor for class me.bristermitten.mittenlib.config.tree.<a href="me/bristermitten/mittenlib/config/tree/DataTree.DataTreeLiteral.DataTreeLiteralBoolean.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree.DataTreeLiteral.DataTreeLiteralBoolean</a></dt>
@@ -803,7 +805,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Generates deserialization code for configuration classes.</div>
 </dd>
-<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.parser.CustomDeserializers)" class="member-name-link">DeserializationCodeGenerator(TypesUtil, FieldNameGenerator, ConfigurationClassNameGenerator, MethodNames, CustomDeserializers)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.compile.deserializer.GenericTypeDeserializerGenerator,me.bristermitten.mittenlib.annotations.compile.deserializer.NonGenericTypeDeserializerGenerator)" class="member-name-link">DeserializationCodeGenerator(TypesUtil, FieldNameGenerator, ConfigurationClassNameGenerator, MethodNames, GenericTypeDeserializerGenerator, NonGenericTypeDeserializerGenerator)</a> - Constructor for class me.bristermitten.mittenlib.annotations.compile.<a href="me/bristermitten/mittenlib/annotations/compile/DeserializationCodeGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">DeserializationCodeGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/DeserializationContext.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a> - Class in <a href="me/bristermitten/mittenlib/config/package-summary.html">me.bristermitten.mittenlib.config</a></dt>
 <dd>
@@ -1263,6 +1265,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Instructs the annotation processor to generate a toString method for a generated config class.</div>
 </dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/deserializer/GenericTypeDeserializerGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.compile.deserializer">GenericTypeDeserializerGenerator</a> - Class in <a href="me/bristermitten/mittenlib/annotations/compile/deserializer/package-summary.html">me.bristermitten.mittenlib.annotations.compile.deserializer</a></dt>
+<dd>
+<div class="block">Generates deserialization code for generic collection types (specifically <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> and <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a>)
+ where the element or value types are custom configuration types.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/GenericTypeSpec.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.codegen">GenericTypeSpec</a> - Interface in <a href="me/bristermitten/mittenlib/codegen/package-summary.html">me.bristermitten.mittenlib.codegen</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/BoilerplateGenerator.html#genHashCode(me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec)" class="member-name-link">genHashCode(RecordConstructorSpec)</a> - Static method in class me.bristermitten.mittenlib.codegen.<a href="me/bristermitten/mittenlib/codegen/BoilerplateGenerator.html" title="class in me.bristermitten.mittenlib.codegen">BoilerplateGenerator</a></dt>
@@ -1649,6 +1656,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/util/Result.Ok.html#handle(java.util.function.Function,java.util.function.Function)" class="member-name-link">handle(Function&lt;T, R&gt;, Function&lt;Exception, R&gt;)</a> - Method in class me.bristermitten.mittenlib.util.<a href="me/bristermitten/mittenlib/util/Result.Ok.html" title="class in me.bristermitten.mittenlib.util">Result.Ok</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/deserializer/GenericTypeDeserializerGenerator.html#handleGenericType(com.squareup.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,io.toolisticon.aptk.tools.TypeMirrorWrapper,io.toolisticon.aptk.tools.wrapper.TypeElementWrapper)" class="member-name-link">handleGenericType(MethodSpec.Builder, Property, TypeMirrorWrapper, TypeElementWrapper)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.deserializer.<a href="me/bristermitten/mittenlib/annotations/compile/deserializer/GenericTypeDeserializerGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile.deserializer">GenericTypeDeserializerGenerator</a></dt>
+<dd>
+<div class="block">Generates and appends deserialization logic for generic collection properties.</div>
+</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/deserializer/NonGenericTypeDeserializerGenerator.html#handleNonGenericType(com.squareup.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper)" class="member-name-link">handleNonGenericType(MethodSpec.Builder, Property, TypeElement, TypeMirror, TypeMirrorWrapper)</a> - Method in class me.bristermitten.mittenlib.annotations.compile.deserializer.<a href="me/bristermitten/mittenlib/annotations/compile/deserializer/NonGenericTypeDeserializerGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile.deserializer">NonGenericTypeDeserializerGenerator</a></dt>
+<dd>
+<div class="block">Generate deserialization code for non-generic properties.</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/gui/spigot/ClickInputSpec.html#hasCursor(org.bukkit.Material)" class="member-name-link">hasCursor(Material)</a> - Method in interface me.bristermitten.mittenlib.gui.spigot.<a href="me/bristermitten/mittenlib/gui/spigot/ClickInputSpec.html" title="interface in me.bristermitten.mittenlib.gui.spigot">ClickInputSpec</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html#hasDefaultValue()" class="member-name-link">hasDefaultValue()</a> - Method in record class me.bristermitten.mittenlib.annotations.ast.<a href="me/bristermitten/mittenlib/annotations/ast/ASTSettings.PropertyASTSettings.html" title="class in me.bristermitten.mittenlib.annotations.ast">ASTSettings.PropertyASTSettings</a></dt>
@@ -2146,6 +2161,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/compile/package-summary.html">me.bristermitten.mittenlib.annotations.compile</a> - package me.bristermitten.mittenlib.annotations.compile</dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/deserializer/package-summary.html">me.bristermitten.mittenlib.annotations.compile.deserializer</a> - package me.bristermitten.mittenlib.annotations.compile.deserializer</dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/config/package-summary.html">me.bristermitten.mittenlib.annotations.config</a> - package me.bristermitten.mittenlib.annotations.config</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/annotations/exception/package-summary.html">me.bristermitten.mittenlib.annotations.exception</a> - package me.bristermitten.mittenlib.annotations.exception</dt>
@@ -2385,6 +2402,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/bristermitten/mittenlib/codegen/MatchStrategies.html#NOMINAL" class="member-name-link">NOMINAL</a> - Enum constant in enum class me.bristermitten.mittenlib.codegen.<a href="me/bristermitten/mittenlib/codegen/MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/bristermitten/mittenlib/annotations/compile/deserializer/NonGenericTypeDeserializerGenerator.html" class="type-name-link" title="class in me.bristermitten.mittenlib.annotations.compile.deserializer">NonGenericTypeDeserializerGenerator</a> - Class in <a href="me/bristermitten/mittenlib/annotations/compile/deserializer/package-summary.html">me.bristermitten.mittenlib.annotations.compile.deserializer</a></dt>
+<dd>
+<div class="block">Generates deserialization code for non-generic types (including primitive types, boxed primitives,
+ strings, enums, config-annotated classes, custom-deserialized classes, and objectMapper fallbacks).</div>
+</dd>
 <dt><a href="me/bristermitten/mittenlib/config/paths/NoOpConfigInitializationStrategy.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.paths">NoOpConfigInitializationStrategy</a> - Class in <a href="me/bristermitten/mittenlib/config/paths/package-summary.html">me.bristermitten.mittenlib.config.paths</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/bristermitten/mittenlib/config/paths/NoOpConfigInitializationStrategy.html#%3Cinit%3E()" class="member-name-link">NoOpConfigInitializationStrategy()</a> - Constructor for class me.bristermitten.mittenlib.config.paths.<a href="me/bristermitten/mittenlib/config/paths/NoOpConfigInitializationStrategy.html" title="class in me.bristermitten.mittenlib.config.paths">NoOpConfigInitializationStrategy</a></dt>
