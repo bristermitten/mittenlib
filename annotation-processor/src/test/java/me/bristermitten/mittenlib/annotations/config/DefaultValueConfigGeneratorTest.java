@@ -59,4 +59,30 @@ class DefaultValueConfigGeneratorTest {
                 .exists()
                 .executeTest();
     }
+
+    @Test
+    void testWithInterfaceAllDefault() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("DefaultValueConfigAllDefault", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        
+                        @Config
+                        public interface DefaultValueConfigAllDefault {
+                            default int x() {
+                                return 3;
+                            }
+                            default Integer z() {
+                                return null;
+                            }
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationSucceeds()
+                .andThat()
+                .generatedClass("me.bristermitten.mittenlib.tests.DefaultValueConfigAllDefaultImpl")
+                .exists()
+                .executeTest();
+    }
 }

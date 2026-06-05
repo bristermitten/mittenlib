@@ -74,10 +74,10 @@ public class ConfigImplGenerator {
     }
 
     /**
-     * Adds all necessary elements to the TypeSpec.Builder to create a complete implementation class.
+     * Adds all necessary elements to the {@link TypeSpec.Builder} to create a complete implementation class.
      *
      * @param ast    The abstract configuration structure to generate an implementation for
-     * @param source The TypeSpec.Builder to add elements to
+     * @param source The {@link TypeSpec.Builder} to add elements to
      */
     private void emitInto(AbstractConfigStructure ast, TypeSpec.Builder source) {
         ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
@@ -110,16 +110,16 @@ public class ConfigImplGenerator {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
             ClassName implClassName = configurationClassNameGenerator.translateConfigClassName(ast);
-            
+
             // Check if serialization is fully supported for this config
             boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
-            
+
             FieldSpec.Builder configFieldBuilder = FieldSpec.builder(
                             ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
                             "CONFIG"
                     )
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
-            
+
             if (serializationSupported) {
                 // Include both deserialize and serialize functions
                 configFieldBuilder.initializer(
@@ -141,7 +141,7 @@ public class ConfigImplGenerator {
                         methodNames.getDeserializeMethodName(ast)
                 );
             }
-            
+
             builder.addField(configFieldBuilder.build());
         }
     }
@@ -194,20 +194,20 @@ public class ConfigImplGenerator {
 
     private void addSerializationMethods(AbstractConfigStructure ast, TypeSpec.Builder source) {
         boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
-        
+
         if (serializationSupported) {
             serializationCodeGenerator.createSerializeMethods(source, ast);
         } else {
             List<String> unsupportedProperties = serializationCodeGenerator.getUnsupportedSerializationProperties(ast);
-            
+
             // Check if serialization is required
             Config configAnnotation = typesUtil.getAnnotation(ast.source().element(), Config.class);
             boolean requireSerialization = configAnnotation != null && configAnnotation.requireSerialization();
-            
+
             String message = "Serialization cannot be generated for config '" + ast.name().simpleName() + "'. " +
                     "The following properties do not support serialization: " + String.join(", ", unsupportedProperties) + ". " +
                     "Consider adding @UseObjectMapperSerialization to these properties or providing CustomSerializers.";
-            
+
             if (requireSerialization) {
                 MessagerUtils.error(ast.source().element(), message);
             } else {
@@ -352,11 +352,28 @@ public class ConfigImplGenerator {
         return builder.build();
     }
 
+    /**
+     * Create a dummy interface named "DefaultMethodAccess" which implements the config interface,
+     * but leaves any non-default methods empty. This essentially gives us an easy way to access the default method of an interface.
+     * Any non-default method will be given an implementation that throws {@link ConfigLoadingErrors#defaultValueProxyException(Class, String)}.
+     * <p>
+     * We only need to generate this interface if the given <code>ast</code> is interface and has any properties with default values.
+     *
+     * @param typeSpecBuilder The {@link TypeSpec.Builder} to add elements to. The generated interface will be added here, if it should be generated.
+     * @param ast             the {@link AbstractConfigStructure} that we are generating a config from.
+     * @return the {@link ClassName} of the generated <code>DefaultMethodAccess</code> interface, <i>if and only if</i> it was generated, otherwise an empty {@link Optional}.
+     */
     private Optional<ClassName> addInnerDefaultMethodImpl(TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
         if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
             return Optional.empty(); // nothing to do
         }
 
+        boolean hasAnyDefaultValue = ast.properties().stream()
+                .anyMatch(property -> property.settings().hasDefaultValue());
+        // if no properties have default values, there's nothing to do
+        if (!hasAnyDefaultValue) {
+            return Optional.empty();
+        }
 
         ClassName concreteConfigClassName = configurationClassNameGenerator.getConcreteConfigClassName(ast);
         var innerName = concreteConfigClassName.nestedClass(ast.name().simpleName() + "DefaultMethodAccess");
@@ -384,9 +401,6 @@ public class ConfigImplGenerator {
             );
         }
 
-        if (innerBuilder.methodSpecs.isEmpty()) {
-            return Optional.empty(); // we've effectively done nothing
-        }
         typeSpecBuilder.addType(innerBuilder.build());
         return Optional.of(innerName);
     }

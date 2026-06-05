@@ -125,7 +125,7 @@ public class DeserializationCodeGenerator {
         );
 
         final MethodSpec.Builder builder = createDeserializeMethodBuilder(property, elementResultType, daoName);
-        setupInitialStatements(builder, propertyAST, property);
+        setupInitialStatements(builder, propertyAST, property, daoName);
         handleNullChecks(builder, property, dtoType, elementTypeName);
 
         TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
@@ -169,11 +169,18 @@ public class DeserializationCodeGenerator {
 
     private void setupInitialStatements(MethodSpec.Builder builder,
                                         AbstractConfigStructure propertyAST,
-                                        Property property) {
+                                        Property property,
+                                        @Nullable ClassName daoName) {
         builder.addStatement("$T $$data = context.getData()", DataTree.class);
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
         if (property.settings().hasDefaultValue()) {
+            if (daoName == null) {
+                throw new IllegalStateException(String.format(
+                        "Property %s in %s has a default value, but no DAO class name was provided to resolve it.",
+                        property.name(), propertyAST.name()
+                ));
+            }
 
             var defaultString = switch (propertyAST.source()) {
                 case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("dao.$L()", property.name());
