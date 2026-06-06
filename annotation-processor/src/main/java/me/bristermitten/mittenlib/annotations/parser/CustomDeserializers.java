@@ -61,11 +61,7 @@ public class CustomDeserializers {
         Optional<ExecutableElementWrapper> deserializeMethodOpt = TypeElementWrapper.wrap(customDeserializerType)
                 .getMethod("deserialize", DeserializationContext.class);
 
-        if (implementsCustomDeserializer) {
-            MessagerUtils.error(customDeserializerType, CustomDeserializersCompilerMessages.INVALID_STATIC_METHOD_SIGNATURE);
-            return;
-        }
-        if (deserializeMethodOpt.isEmpty()) {
+        if (!implementsCustomDeserializer && deserializeMethodOpt.isEmpty()) {
             throw new IllegalArgumentException("CustomDeserializer must implement CustomDeserializer or have a static method Result<T> deserialize(DeserializationContext)");
         }
 
@@ -85,7 +81,8 @@ public class CustomDeserializers {
             }
         }
 
-        var isStatic = true; // TODO
+        boolean isStatic = !implementsCustomDeserializer && deserializeMethodOpt.isPresent() &&
+                deserializeMethodOpt.get().unwrap().getModifiers().contains(javax.lang.model.element.Modifier.STATIC);
 
         var isFallback = customDeserializerType.getAnnotation(Fallback.class) != null;
 
