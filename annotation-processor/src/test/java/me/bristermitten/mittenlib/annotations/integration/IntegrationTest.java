@@ -202,5 +202,37 @@ public class IntegrationTest {
                 .isEqualTo("hi");
     }
 
+    @Test
+    void testNoNoArgConstructorClassConfig() {
+        var fileContents = "id: 42\nname: \"hello\"";
 
+        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, NoNoArgConstructorConfigImpl.class, NoNoArgConstructorConfigImpl::deserializeNoNoArgConstructorConfigImpl)
+                ).getOrThrow();
+
+        NoNoArgConstructorConfigImpl config = stringReaderProvider.get();
+
+        assertThat(config).isNotNull();
+        assertThat(config.id()).isEqualTo(42);
+        assertThat(config.name()).isEqualTo("hello");
+    }
+
+    @Test
+    void testConstructorAndDefaultValueConfig() throws IOException {
+        var fileContents = "y: 42";
+
+        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, ConstructorAndDefaultValueConfigImpl.class, ConstructorAndDefaultValueConfigImpl::deserializeConstructorAndDefaultValueConfigImpl)
+                ).getOrThrow();
+
+        ConstructorAndDefaultValueConfigImpl config = stringReaderProvider.get();
+
+        assertThat(config).isNotNull();
+        assertThat(config.x()).isEqualTo(3);
+        assertThat(config.y()).isEqualTo(42);
+    }
 }

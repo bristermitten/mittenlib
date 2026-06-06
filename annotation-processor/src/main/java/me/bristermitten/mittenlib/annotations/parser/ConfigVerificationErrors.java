@@ -19,4 +19,9 @@ public class ConfigVerificationErrors {
             PlainValidationMessage.create("CUSTOM_DESERIALIZER_INVALID_STATIC_METHOD_SIGNATURE",
                     "Custom deserializer method must be static and be of the signature Result<${0}> deserialize(DeserializationContext)"
             );
+
+    public static final ValidationMessage CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR =
+            PlainValidationMessage.create("CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR",
+                    "Class DTO ${0} has fields with default values, but is missing a zero-arguments constructor. Please define a zero-arguments constructor (can be private or package-private) so MittenLib can read the default values."
+            );
 }

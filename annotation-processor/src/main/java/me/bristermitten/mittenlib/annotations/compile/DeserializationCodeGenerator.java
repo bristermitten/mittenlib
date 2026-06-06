@@ -116,7 +116,7 @@ public class DeserializationCodeGenerator {
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build());
 
         // add the dao as a parameter if necessary
-        if (daoName != null) {
+        if (daoName != null && property.settings().hasDefaultValue()) {
             builder.addParameter(ParameterSpec.builder(daoName, "dao", Modifier.FINAL).build());
         }
 
@@ -215,7 +215,9 @@ public class DeserializationCodeGenerator {
         }
         var dtoType = ast.source().element();
 
-        if (daoName != null) {
+        boolean hasAnyDefault = ast.properties().stream()
+                .anyMatch(p -> p.settings().hasDefaultValue());
+        if (daoName != null && hasAnyDefault) {
             builder.addStatement("$1T dao = new $1T()", daoName);
         }
 
@@ -241,8 +243,10 @@ public class DeserializationCodeGenerator {
             expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
             expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
         }
-        var deserialiseMethodArguments = (daoName != null) ? "context, dao" : "context";
-        for (MethodSpec deserializeMethod : deserializeMethods) {
+        for (int idx = 0; idx < deserializeMethods.size(); idx++) {
+            MethodSpec deserializeMethod = deserializeMethods.get(idx);
+            Property property = ast.properties().get(idx);
+            var deserialiseMethodArguments = (daoName != null && property.settings().hasDefaultValue()) ? "context, dao" : "context";
             expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
         }
         expressionBuilder.add("$T.ok(new $T(", Result.class, configurationClassNameGenerator.translateConfigClassName(ast));

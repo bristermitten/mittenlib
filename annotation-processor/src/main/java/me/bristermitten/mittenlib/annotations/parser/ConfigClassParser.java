@@ -17,6 +17,9 @@ import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.util.Null;
 import org.jspecify.annotations.Nullable;
+import com.sun.source.util.Trees;
+import com.sun.source.tree.VariableTree;
+import javax.annotation.processing.ProcessingEnvironment;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
@@ -31,12 +34,20 @@ public class ConfigClassParser {
     private final TypesUtil typesUtil;
     private final ElementsFinder elementsFinder;
     private final ConfigNameCache configNameCache;
+    private final @Nullable Trees trees;
 
     @Inject
-    public ConfigClassParser(TypesUtil typesUtil, ElementsFinder elementsFinder, ConfigNameCache configNameCache) {
+    public ConfigClassParser(TypesUtil typesUtil, ElementsFinder elementsFinder, ConfigNameCache configNameCache, ProcessingEnvironment processingEnv) {
         this.typesUtil = typesUtil;
         this.elementsFinder = elementsFinder;
         this.configNameCache = configNameCache;
+        Trees t;
+        try {
+            t = Trees.instance(processingEnv);
+        } catch (IllegalArgumentException e) {
+            t = null;
+        }
+        this.trees = t;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals") // ok as it always returns bottom
@@ -93,9 +104,16 @@ public class ConfigClassParser {
 
             var hasDefault = switch (propertySource) {
                 case Property.PropertySource.MethodSource(var m) -> m.isDefault();
-                case Property.PropertySource.FieldSource(var ignored) ->
-                    // due to bytecode limitations there's no easy way to determining if this is true or not
-                        true;
+                case Property.PropertySource.FieldSource(var f) -> {
+                    if (trees != null) {
+                        var path = trees.getPath(f);
+                        if (path != null) {
+                            var tree = (VariableTree) path.getLeaf();
+                            yield tree.getInitializer() != null;
+                        }
+                    }
+                    yield true; // can't tell so assume true
+                }
             };
 
             return new Property(propertyElement.getSimpleName().toString(),

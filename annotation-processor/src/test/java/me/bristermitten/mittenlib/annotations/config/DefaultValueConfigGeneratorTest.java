@@ -85,4 +85,108 @@ class DefaultValueConfigGeneratorTest {
                 .exists()
                 .executeTest();
     }
+
+    @Test
+    void testClassDTOWithoutNoArgConstructorAndNoDefaults() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("NoArgConstructorDTO",
+                        """
+                                package me.bristermitten.mittenlib.tests;
+                                
+                                import me.bristermitten.mittenlib.config.Config;
+                                
+                                @Config
+                                public class NoArgConstructorDTO {
+                                    public int x;
+                                
+                                    public NoArgConstructorDTO(int x) {
+                                        this.x = x;
+                                    }
+                                }
+                                """)
+                .whenCompiled()
+                .thenExpectThat().compilationSucceeds()
+                .andThat()
+                .generatedClass("me.bristermitten.mittenlib.tests.NoArgConstructor")
+                .exists()
+                .executeTest();
+    }
+
+    @Test
+    void testClassDTOWithNonPublicConstructor() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("NonPublicConstructorDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        
+                        @Config
+                        public class NonPublicConstructorDTO {
+                            public int x;
+                        
+                            NonPublicConstructorDTO(int x) {
+                                this.x = x;
+                            }
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationSucceeds()
+                .andThat()
+                .generatedClass("me.bristermitten.mittenlib.tests.NonPublicConstructor")
+                .exists()
+                .executeTest();
+    }
+
+    @Test
+    void testClassDTOWithConstructorAndDefaultValueAndNoArgConstructor() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("ConstructorAndDefaultValueDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        
+                        @Config
+                        public class ConstructorAndDefaultValueDTO {
+                            public int x = 3;
+                            public int y;
+                        
+                            ConstructorAndDefaultValueDTO() {}
+                        
+                            public ConstructorAndDefaultValueDTO(int y) {
+                                this.y = y;
+                            }
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationSucceeds()
+                .andThat()
+                .generatedClass("me.bristermitten.mittenlib.tests.ConstructorAndDefaultValue")
+                .exists()
+                .executeTest();
+    }
+
+    @Test
+    void testClassDTOWithConstructorAndDefaultValueAndNoNoArgConstructorFails() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("ConstructorAndDefaultValueNoNoArgDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        
+                        @Config
+                        public class ConstructorAndDefaultValueNoNoArgDTO {
+                            public int x = 3;
+                            public int y;
+                        
+                            public ConstructorAndDefaultValueNoNoArgDTO(int y) {
+                                this.y = y;
+                            }
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationFails()
+                .andThat()
+                .compilerMessage().ofKindError().contains("has fields with default values, but is missing a zero-arguments constructor")
+                .executeTest();
+    }
 }

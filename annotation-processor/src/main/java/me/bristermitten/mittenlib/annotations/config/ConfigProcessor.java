@@ -93,8 +93,16 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         }
 
         ASTVerifier verifier = injector.getInstance(ASTVerifier.class);
-        asts.forEach(verifier::verify);
+        boolean anyErrors = false;
+        for (AbstractConfigStructure ast : asts) {
+            if (!verifier.verify(ast)) {
+                anyErrors = true;
+            }
+        }
 
+        if (anyErrors) {
+            return true;
+        }
 
         var generator = injector.getInstance(ConfigImplGenerator.class);
         for (AbstractConfigStructure ast : asts) {
