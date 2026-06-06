@@ -1,0 +1,46 @@
+package me.bristermitten.mittenlib.annotations.integration;
+
+import me.bristermitten.mittenlib.config.validation.Validator;
+
+import javax.inject.Inject;
+import java.util.Optional;
+
+public class CustomStringValidator implements Validator<String> {
+    private final ValidationDependency dependency;
+
+    @Inject
+    public CustomStringValidator(ValidationDependency dependency) {
+        this.dependency = dependency;
+    }
+
+    public CustomStringValidator() {
+        this(new ValidationDependency());
+    }
+
+    @Override
+    public Optional<String> validate(String value) {
+        if (dependency.check(value)) {
+            return Optional.empty();
+        }
+        return Optional.of("Must start with expected prefix, but was '" + value + "'");
+    }
+
+    /**
+     * A dummy dependency that the Validator needs.
+     */
+    public static class ValidationDependency {
+        private final String prefix;
+
+        public ValidationDependency(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public ValidationDependency() {
+            this("mitten");
+        }
+
+        public boolean check(String val) {
+            return val != null && val.startsWith(prefix);
+        }
+    }
+}

@@ -5,6 +5,11 @@ import io.toolisticon.aptk.tools.MessagerUtils;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
+import me.bristermitten.mittenlib.config.exception.ConfigValidationException;
+import me.bristermitten.mittenlib.config.DeserializationContext;
+import me.bristermitten.mittenlib.util.Result;
+import java.util.ArrayList;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.util.Nullity;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
@@ -29,26 +34,20 @@ public class ConfigImplGenerator {
 
 
     private final AccessorGenerator accessorGenerator;
-    private final DeserializationCodeGenerator deserializationCodeGenerator;
-    private final SerializationCodeGenerator serializationCodeGenerator;
     private final ToStringGenerator toStringGenerator;
     private final EqualsHashCodeGenerator equalsHashCodeGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final ConfigNameCache configNameCache;
     private final MethodNames methodNames;
-    private final TypesUtil typesUtil;
 
     @Inject
-    public ConfigImplGenerator(AccessorGenerator accessorGenerator, DeserializationCodeGenerator deserializationCodeGenerator, SerializationCodeGenerator serializationCodeGenerator, ToStringGenerator toStringGenerator, EqualsHashCodeGenerator equalsHashCodeGenerator, ConfigurationClassNameGenerator configurationClassNameGenerator, ConfigNameCache configNameCache, MethodNames methodNames, TypesUtil typesUtil) {
+    public ConfigImplGenerator(AccessorGenerator accessorGenerator, ToStringGenerator toStringGenerator, EqualsHashCodeGenerator equalsHashCodeGenerator, ConfigurationClassNameGenerator configurationClassNameGenerator, ConfigNameCache configNameCache, MethodNames methodNames) {
         this.accessorGenerator = accessorGenerator;
-        this.deserializationCodeGenerator = deserializationCodeGenerator;
-        this.serializationCodeGenerator = serializationCodeGenerator;
         this.toStringGenerator = toStringGenerator;
         this.equalsHashCodeGenerator = equalsHashCodeGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.configNameCache = configNameCache;
         this.methodNames = methodNames;
-        this.typesUtil = typesUtil;
     }
 
     private static void makeAbstractIfUnion(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -85,18 +84,13 @@ public class ConfigImplGenerator {
         makeAbstractIfUnion(ast, source);
         addSourceElement(ast, source);
         addInheritance(ast, source);
-        Optional<ClassName> innerDaoName = addInnerDefaultMethodImpl(source, ast);
+        addInnerDefaultMethodImpl(source, ast);
         addGeneratedConfigAnnotations(ast, source);
         addNestedClassModifiers(ast, source);
         addProperties(ast, source);
         addSuperClassField(ast, source);
         accessorGenerator.createWithMethods(source, ast);
         addAllArgsConstructor(source, ast);
-        addDeserializationMethods(ast, source, switch (ast.source()) {
-            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> innerDaoName.orElse(null);
-            case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
-        });
-        addSerializationMethods(ast, source);
         addStandardObjectMethods(ast, configImplClassName, source);
         addChildClasses(ast, source);
 
@@ -109,10 +103,6 @@ public class ConfigImplGenerator {
     private void addSourceElement(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
-            ClassName implClassName = configurationClassNameGenerator.translateConfigClassName(ast);
-
-            // Check if serialization is fully supported for this config
-            boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
 
             FieldSpec.Builder configFieldBuilder = FieldSpec.builder(
                             ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
@@ -120,27 +110,11 @@ public class ConfigImplGenerator {
                     )
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
 
-            if (serializationSupported) {
-                // Include both deserialize and serialize functions
-                configFieldBuilder.initializer(
-                        "new $T<>($S, $T.class, $T::$L, $T::$L)", Configuration.class,
-                        ast.settings().source().value(),
-                        publicClassName,
-                        implClassName,
-                        methodNames.getDeserializeMethodName(ast),
-                        implClassName,
-                        methodNames.getSerializeMethodName(ast)
-                );
-            } else {
-                // Only include deserialize function (serialize is null)
-                configFieldBuilder.initializer(
-                        "new $T<>($S, $T.class, $T::$L)", Configuration.class,
-                        ast.settings().source().value(),
-                        publicClassName,
-                        implClassName,
-                        methodNames.getDeserializeMethodName(ast)
-                );
-            }
+            configFieldBuilder.initializer(
+                    "new $T<>($S, $T.class)", Configuration.class,
+                    ast.settings().source().value(),
+                    publicClassName
+            );
 
             builder.addField(configFieldBuilder.build());
         }
@@ -185,36 +159,8 @@ public class ConfigImplGenerator {
         }
     }
 
-    private void addDeserializationMethods(AbstractConfigStructure ast,
-                                           TypeSpec.Builder source,
-                                           @Nullable ClassName daoName
-    ) {
-        deserializationCodeGenerator.createDeserializeMethods(source, ast, daoName);
-    }
 
-    private void addSerializationMethods(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        boolean serializationSupported = serializationCodeGenerator.isSerializationSupported(ast);
 
-        if (serializationSupported) {
-            serializationCodeGenerator.createSerializeMethods(source, ast);
-        } else {
-            List<String> unsupportedProperties = serializationCodeGenerator.getUnsupportedSerializationProperties(ast);
-
-            // Check if serialization is required
-            Config configAnnotation = typesUtil.getAnnotation(ast.source().element(), Config.class);
-            boolean requireSerialization = configAnnotation != null && configAnnotation.requireSerialization();
-
-            String message = "Serialization cannot be generated for config '" + ast.name().simpleName() + "'. " +
-                    "The following properties do not support serialization: " + String.join(", ", unsupportedProperties) + ". " +
-                    "Consider adding @UseObjectMapperSerialization to these properties or providing CustomSerializers.";
-
-            if (requireSerialization) {
-                MessagerUtils.error(ast.source().element(), message);
-            } else {
-                MessagerUtils.warning(ast.source().element(), message);
-            }
-        }
-    }
 
     private void addStandardObjectMethods(AbstractConfigStructure ast,
                                           ClassName configImplClassName,
@@ -277,6 +223,10 @@ public class ConfigImplGenerator {
 
         source.addMethod(constructor.build());
     }
+
+
+
+
 
     private void addSuperClassParameter(AbstractConfigStructure ast, MethodSpec.Builder constructor) {
         // when we have a super_class_
@@ -380,7 +330,7 @@ public class ConfigImplGenerator {
 
 
         var innerBuilder = TypeSpec.classBuilder(innerName);
-        innerBuilder.addModifiers(Modifier.PRIVATE, Modifier.STATIC);
+        innerBuilder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
         innerBuilder.addSuperinterface(ast.name());
 
         for (Property property : ast.properties()) {
@@ -404,4 +354,5 @@ public class ConfigImplGenerator {
         typeSpecBuilder.addType(innerBuilder.build());
         return Optional.of(innerName);
     }
+
 }

@@ -7,6 +7,8 @@ import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
+
 public sealed interface ASTSettings {
     @Nullable
     NamingPattern namingPattern();
@@ -24,7 +26,8 @@ public sealed interface ASTSettings {
             @Nullable ConfigName configName,
             EnumParsingSchemes enumParsingScheme,
             boolean isNullable,
-            boolean hasDefaultValue
+            boolean hasDefaultValue,
+            List<ValidationConstraint> constraints
     ) implements ASTSettings {
     }
 }

@@ -69,4 +69,9 @@ public sealed interface AbstractConfigStructure {
     ) implements AbstractConfigStructure {
     }
 
+    default boolean needsValidation() {
+        return properties().stream()
+                .anyMatch(p -> !p.settings().constraints().isEmpty() || 
+                               (!com.squareup.javapoet.TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable()));
+    }
 }

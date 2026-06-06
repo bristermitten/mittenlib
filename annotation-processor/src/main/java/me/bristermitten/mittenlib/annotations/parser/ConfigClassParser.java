@@ -26,6 +26,8 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -123,7 +125,8 @@ public class ConfigClassParser {
                             configName,
                             enumParsingScheme == null ? EnumParsingSchemes.EXACT_MATCH : enumParsingScheme.value(),
                             isNullable,
-                            hasDefault));
+                            hasDefault,
+                            parseConstraints(propertyElement)));
         }).toList();
     }
 
@@ -195,5 +198,79 @@ public class ConfigClassParser {
         var ast = parseAbstract(element, null);
         configNameCache.put(ast);
         return ast;
+    }
+
+    private List<ValidationConstraint> parseConstraints(Element element) {
+        List<ValidationConstraint> constraints = new ArrayList<>();
+        for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
+            String qName = ((TypeElement) mirror.getAnnotationType().asElement()).getQualifiedName().toString();
+            switch (qName) {
+                case "me.bristermitten.mittenlib.config.validation.Positive":
+                case "jakarta.validation.constraints.Positive":
+                case "javax.validation.constraints.Positive":
+                    constraints.add(new ValidationConstraint.Positive());
+                    break;
+                case "me.bristermitten.mittenlib.config.validation.Negative":
+                case "jakarta.validation.constraints.Negative":
+                case "javax.validation.constraints.Negative":
+                    constraints.add(new ValidationConstraint.Negative());
+                    break;
+                case "me.bristermitten.mittenlib.config.validation.Min":
+                case "jakarta.validation.constraints.Min":
+                case "javax.validation.constraints.Min":
+                    constraints.add(new ValidationConstraint.Min(getDoubleAttributeValue(mirror, "value")));
+                    break;
+                case "me.bristermitten.mittenlib.config.validation.Max":
+                case "jakarta.validation.constraints.Max":
+                case "javax.validation.constraints.Max":
+                    constraints.add(new ValidationConstraint.Max(getDoubleAttributeValue(mirror, "value")));
+                    break;
+                case "me.bristermitten.mittenlib.config.validation.NotBlank":
+                case "jakarta.validation.constraints.NotBlank":
+                case "javax.validation.constraints.NotBlank":
+                    constraints.add(new ValidationConstraint.NotBlank());
+                    break;
+                case "me.bristermitten.mittenlib.config.validation.Range":
+                case "org.hibernate.validator.constraints.Range":
+                    constraints.add(new ValidationConstraint.Range(
+                            getDoubleAttributeValue(mirror, "min"),
+                            getDoubleAttributeValue(mirror, "max")
+                    ));
+                    break;
+                case "me.bristermitten.mittenlib.config.validation.ValidateWith":
+                    TypeMirror validatorType = getTypeAttributeValue(mirror, "value");
+                    if (validatorType != null) {
+                        constraints.add(new ValidationConstraint.Custom(
+                                ClassName.get((TypeElement) ((javax.lang.model.type.DeclaredType) validatorType).asElement())
+                        ));
+                    }
+                    break;
+            }
+        }
+        return constraints;
+    }
+
+    private double getDoubleAttributeValue(AnnotationMirror mirror, String name) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : mirror.getElementValues().entrySet()) {
+            if (entry.getKey().getSimpleName().toString().equals(name)) {
+                Object val = entry.getValue().getValue();
+                if (val instanceof Number num) {
+                    return num.doubleValue();
+                }
+            }
+        }
+        return 0.0;
+    }
+
+    private TypeMirror getTypeAttributeValue(AnnotationMirror mirror, String name) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : mirror.getElementValues().entrySet()) {
+            if (entry.getKey().getSimpleName().toString().equals(name)) {
+                Object val = entry.getValue().getValue();
+                if (val instanceof TypeMirror typeMirror) {
+                    return typeMirror;
+                }
+            }
+        }
+        return null;
     }
 }

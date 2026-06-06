@@ -24,4 +24,9 @@ public class ConfigVerificationErrors {
             PlainValidationMessage.create("CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR",
                     "Class DTO ${0} has fields with default values, but is missing a zero-arguments constructor. Please define a zero-arguments constructor (can be private or package-private) so MittenLib can read the default values."
             );
+
+    public static final ValidationMessage CONSTRAINT_TYPE_MISMATCH =
+            PlainValidationMessage.create("CONSTRAINT_TYPE_MISMATCH",
+                    "Constraint annotation ${0} cannot be applied to type ${1}. Expected a ${2}."
+            );
 }
