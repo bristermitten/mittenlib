@@ -36,7 +36,7 @@ class FieldNameGeneratorTest {
                         pattern == null ? "" : "@NamingPattern(NamingPatterns." + pattern.name() + ")",
                         source)));
 
-        return compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTest")
+        return compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestLoader")
                 .orElseThrow();
     }
 

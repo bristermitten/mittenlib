@@ -320,4 +320,120 @@ public class ConfigurationClassNameGenerator {
         final String packageName = TypeElementWrapper.wrap(configDTOType).getPackageName();
         return ClassName.get(packageName, findConfigClassName(configDTOType));
     }
+
+    /**
+     * Gets the ClassName of the loader for a given configuration structure.
+     * For MyConfigImpl, the loader is MyConfigImplLoader.
+     * For nested class OuterConfigImpl.InnerConfigImpl, the loader is OuterConfigImplLoader.InnerConfigImplLoader.
+     */
+    public ClassName getLoaderClassName(@NonNull AbstractConfigStructure ast) {
+        ClassName implName = translateConfigClassName(ast);
+        if (ast.enclosedIn() != null) {
+            return getLoaderClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + "Loader");
+        }
+        return implName.peerClass(implName.simpleName() + "Loader");
+    }
+
+    private ClassName getLoaderClassName(@NonNull ASTParentReference parent) {
+        ClassName implName = translateConfigClassName(parent);
+        if (parent.parent() != null) {
+            return getLoaderClassName(parent.parent()).nestedClass(implName.simpleName() + "Loader");
+        }
+        return implName.peerClass(implName.simpleName() + "Loader");
+    }
+
+    /**
+     * Gets the ClassName of the loader for a given TypeMirror.
+     */
+    public ClassName getLoaderClassName(@NonNull TypeMirror type) {
+        AbstractConfigStructure ast = configNameCache.lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        return getLoaderClassName(ast);
+    }
+
+    /**
+     * Gets the field name for a loader instance based on the public config type.
+     * E.g., for InterfaceConfig, it returns "interfaceConfigLoader".
+     */
+    public String getLoaderFieldName(@NonNull TypeMirror type) {
+        AbstractConfigStructure ast = configNameCache.lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        ClassName publicName = getPublicClassName(ast);
+        String safePkg = publicName.packageName().replace('.', '_');
+        String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
+        return me.bristermitten.mittenlib.util.Strings.uncapitalize(prefix + publicName.simpleName()) + "Loader";
+    }
+
+    /**
+     * Gets the ClassName of the saver for a given configuration structure.
+     * For MyConfigImpl, the saver is MyConfigImplSaver.
+     * For nested class OuterConfigImpl.InnerConfigImpl, the saver is OuterConfigImplSaver.InnerConfigImplSaver.
+     */
+    public ClassName getSaverClassName(@NonNull AbstractConfigStructure ast) {
+        ClassName implName = translateConfigClassName(ast);
+        if (ast.enclosedIn() != null) {
+            return getSaverClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + "Saver");
+        }
+        return implName.peerClass(implName.simpleName() + "Saver");
+    }
+
+    private ClassName getSaverClassName(@NonNull ASTParentReference parent) {
+        ClassName implName = translateConfigClassName(parent);
+        if (parent.parent() != null) {
+            return getSaverClassName(parent.parent()).nestedClass(implName.simpleName() + "Saver");
+        }
+        return implName.peerClass(implName.simpleName() + "Saver");
+    }
+
+    public ClassName getSaverClassName(@NonNull TypeElement type) {
+        ClassName implName = generateConfigurationClassName(type);
+        if (type.getNestingKind() == NestingKind.MEMBER) {
+            return getSaverClassName((TypeElement) type.getEnclosingElement()).nestedClass(implName.simpleName() + "Saver");
+        }
+        return implName.peerClass(implName.simpleName() + "Saver");
+    }
+
+    /**
+     * Gets the field name for a saver instance based on the public config type.
+     * E.g., for InterfaceConfig, it returns "interfaceConfigSaver".
+     */
+    public String getSaverFieldName(@NonNull TypeMirror type) {
+        AbstractConfigStructure ast = configNameCache.lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        ClassName publicName = getPublicClassName(ast);
+        String safePkg = publicName.packageName().replace('.', '_');
+        String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
+        return me.bristermitten.mittenlib.util.Strings.uncapitalize(prefix + publicName.simpleName()) + "Saver";
+    }
+
+    public ClassName getValidatorClassName(@NonNull AbstractConfigStructure ast) {
+        ClassName implName = translateConfigClassName(ast);
+        if (ast.enclosedIn() != null) {
+            return getValidatorClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + "Validator");
+        }
+        return implName.peerClass(implName.simpleName() + "Validator");
+    }
+
+    private ClassName getValidatorClassName(@NonNull ASTParentReference parent) {
+        ClassName implName = translateConfigClassName(parent);
+        if (parent.parent() != null) {
+            return getValidatorClassName(parent.parent()).nestedClass(implName.simpleName() + "Validator");
+        }
+        return implName.peerClass(implName.simpleName() + "Validator");
+    }
+
+    public ClassName getValidatorClassName(@NonNull TypeMirror type) {
+        AbstractConfigStructure ast = configNameCache.lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        return getValidatorClassName(ast);
+    }
+
+    public String getValidatorFieldName(@NonNull TypeMirror type) {
+        AbstractConfigStructure ast = configNameCache.lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        ClassName publicName = getPublicClassName(ast);
+        String safePkg = publicName.packageName().replace('.', '_');
+        String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
+        return me.bristermitten.mittenlib.util.Strings.uncapitalize(prefix + publicName.simpleName()) + "Validator";
+    }
 }
