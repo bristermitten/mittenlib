@@ -1,6 +1,8 @@
 package me.bristermitten.mittenlib.config.provider.construct;
 
 import me.bristermitten.mittenlib.config.Configuration;
+import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
 import me.bristermitten.mittenlib.files.FileType;
@@ -20,6 +22,8 @@ public interface ConfigProviderFactory {
      * @param <T>           the type of the configuration
      * @return the created provider
      */
+    @NotNull <T> Result<ConfigProvider<T>> createProvider(Configuration<T> configuration, DeserializationFunction<T> deserializer, SerializationFunction<T> serializer);
+
     @NotNull <T> Result<ConfigProvider<T>> createProvider(Configuration<T> configuration);
 
 
@@ -33,8 +37,11 @@ public interface ConfigProviderFactory {
      * @param <T>           the type of the configuration
      * @return the created provider
      * @deprecated This method makes use of {@link SearchingObjectLoader}, which cannot efficiently process Strings.
-     * Use {@link #createStringReaderProvider(FileType, String, Configuration)} instead to manually specify a file type
+     * Use {@link #createStringReaderProvider(FileType, String, Configuration, DeserializationFunction, SerializationFunction)} instead to manually specify a file type
      */
+    @Deprecated
+    @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(String data, Configuration<T> configuration, DeserializationFunction<T> deserializer, SerializationFunction<T> serializer);
+
     @Deprecated
     @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(String data, Configuration<T> configuration);
 
@@ -44,7 +51,7 @@ public interface ConfigProviderFactory {
      * will be irrelevant.
      * <p>
      * This method also accepts a {@link FileType} whose {@link FileType#loader()} will be used to load the data.
-     * If you don't know the file type, use {@link #createStringReaderProvider(String, Configuration)} instead, but
+     * If you don't know the file type, use {@link #createStringReaderProvider(String, Configuration, DeserializationFunction, SerializationFunction)} instead, but
      * be aware that performance may suffer from this approach, as it may have to check multiple {@link FileType}s.
      *
      * @param type          the file type to use
@@ -53,5 +60,7 @@ public interface ConfigProviderFactory {
      * @param <T>           the type of the configuration
      * @return the created provider
      */
+    @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(FileType type, String data, Configuration<T> configuration, DeserializationFunction<T> deserializer, SerializationFunction<T> serializer);
+
     @NotNull <T> Result<ConfigProvider<T>> createStringReaderProvider(FileType type, String data, Configuration<T> configuration);
 }

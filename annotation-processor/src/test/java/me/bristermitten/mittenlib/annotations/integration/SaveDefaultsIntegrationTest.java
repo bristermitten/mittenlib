@@ -4,11 +4,14 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import me.bristermitten.mittenlib.MittenLibConsumer;
-import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
+import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.SerializationContext;
+import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.provider.ReadingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
+import me.bristermitten.mittenlib.config.writer.ConfigSaver;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileTypeModule;
@@ -37,7 +40,7 @@ public class SaveDefaultsIntegrationTest {
     @BeforeEach
     void setup() {
         injector = Guice.createInjector(
-                new ConfigModule(Set.of()),
+                new ConfigLoaderModule(),
                 new FileWatcherModule(),
                 new FileTypeModule(),
                 new AbstractModule() {
@@ -54,10 +57,19 @@ public class SaveDefaultsIntegrationTest {
     void testSerializeClassConfig() throws IOException {
         var fileContents = loadResourceString("integration/InterfaceConfig_dummy.yml");
 
+        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.DeserializationFunction.class, ClassConfigImpl.class)))
+        );
+        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.SerializationFunction.class, ClassConfigImpl.class)))
+        );
+
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl::deserializeClassConfigImpl, ClassConfigImpl::serializeClassConfigImpl)
+                        new Configuration<>(null, ClassConfigImpl.class),
+                        loader,
+                        saverFunc
                 ).getOrThrow();
 
         ClassConfigImpl classConfig = stringReaderProvider.get();
@@ -66,7 +78,10 @@ public class SaveDefaultsIntegrationTest {
         assertThat(classConfig.defaultValue()).isEqualTo(1);
 
         // Serialize the config back to a DataTree
-        DataTree serialized = ClassConfigImpl.serializeClassConfigImpl(classConfig, injector.getInstance(ObjectMapper.class));
+        SerializationFunction<ClassConfigImpl> saver = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.SerializationFunction.class, ClassConfigImpl.class)))
+        );
+        DataTree serialized = saver.apply(classConfig, new SerializationContext(injector.getInstance(ObjectMapper.class)));
         
         // Verify the serialized data contains all fields including the default
         assertThat(serialized).isInstanceOf(DataTree.DataTreeMap.class);
@@ -94,13 +109,18 @@ public class SaveDefaultsIntegrationTest {
         // Create a ReadingConfigProvider
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
+        ConfigSaver saver = injector.getInstance(ConfigSaver.class);
+        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.DeserializationFunction.class, ClassConfigImpl.class)))
+        );
+        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.SerializationFunction.class, ClassConfigImpl.class)))
+        );
         Configuration<ClassConfigImpl> config = new Configuration<>(
                 configFile.getFileName().toString(),
-                ClassConfigImpl.class,
-                ClassConfigImpl::deserializeClassConfigImpl,
-                ClassConfigImpl::serializeClassConfigImpl
+                ClassConfigImpl.class
         );
-        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, writer);
+        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, loader, saver, saverFunc, writer);
 
         // Load the config - defaultValue should be 1 (from the default)
         ClassConfigImpl classConfig = provider.get();
@@ -135,13 +155,18 @@ public class SaveDefaultsIntegrationTest {
 
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
+        ConfigSaver saver = injector.getInstance(ConfigSaver.class);
+        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.DeserializationFunction.class, ClassConfigImpl.class)))
+        );
+        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.SerializationFunction.class, ClassConfigImpl.class)))
+        );
         Configuration<ClassConfigImpl> config = new Configuration<>(
                 configFile.getFileName().toString(),
-                ClassConfigImpl.class,
-                ClassConfigImpl::deserializeClassConfigImpl,
-                ClassConfigImpl::serializeClassConfigImpl
+                ClassConfigImpl.class
         );
-        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, writer);
+        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, loader, saver, saverFunc, writer);
 
         // Load the config
         ClassConfigImpl classConfig = provider.get();
@@ -177,13 +202,18 @@ public class SaveDefaultsIntegrationTest {
 
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
+        ConfigSaver saver = injector.getInstance(ConfigSaver.class);
+        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.DeserializationFunction.class, ClassConfigImpl.class)))
+        );
+        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.SerializationFunction.class, ClassConfigImpl.class)))
+        );
         Configuration<ClassConfigImpl> config = new Configuration<>(
                 configFile.getFileName().toString(),
-                ClassConfigImpl.class,
-                ClassConfigImpl::deserializeClassConfigImpl,
-                ClassConfigImpl::serializeClassConfigImpl
+                ClassConfigImpl.class
         );
-        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, writer);
+        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, loader, saver, saverFunc, writer);
 
         // Load the config - it has defaultValue = 99 (not the default 1)
         ClassConfigImpl classConfig = provider.get();
@@ -209,13 +239,18 @@ public class SaveDefaultsIntegrationTest {
 
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
+        ConfigSaver saver = injector.getInstance(ConfigSaver.class);
+        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.DeserializationFunction.class, ClassConfigImpl.class)))
+        );
+        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                com.google.inject.Key.get(com.google.inject.TypeLiteral.get(com.google.inject.util.Types.newParameterizedType(me.bristermitten.mittenlib.config.SerializationFunction.class, ClassConfigImpl.class)))
+        );
         Configuration<ClassConfigImpl> config = new Configuration<>(
                 configFile.getFileName().toString(),
-                ClassConfigImpl.class,
-                ClassConfigImpl::deserializeClassConfigImpl,
-                ClassConfigImpl::serializeClassConfigImpl
+                ClassConfigImpl.class
         );
-        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, writer);
+        ReadingConfigProvider<ClassConfigImpl> provider = new ReadingConfigProvider<>(configFile, config, reader, loader, saver, saverFunc, writer);
 
         // Create a config instance manually
         ClassConfigImpl classConfig = new ClassConfigImpl("test", 42, 1, java.util.List.of(), null);

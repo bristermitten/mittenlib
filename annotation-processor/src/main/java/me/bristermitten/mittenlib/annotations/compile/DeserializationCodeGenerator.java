@@ -7,6 +7,7 @@ import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.compile.deserializer.GenericTypeDeserializerGenerator;
 import me.bristermitten.mittenlib.annotations.compile.deserializer.NonGenericTypeDeserializerGenerator;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
@@ -41,7 +42,6 @@ public class DeserializationCodeGenerator {
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
-    private final MethodNames methodNames;
     private final GenericTypeDeserializerGenerator genericTypeDeserializerGenerator;
     private final NonGenericTypeDeserializerGenerator nonGenericTypeDeserializerGenerator;
 
@@ -50,13 +50,11 @@ public class DeserializationCodeGenerator {
             TypesUtil typesUtil,
             FieldNameGenerator fieldNameGenerator,
             ConfigurationClassNameGenerator configurationClassNameGenerator,
-            MethodNames methodNames,
             GenericTypeDeserializerGenerator genericTypeDeserializerGenerator,
             NonGenericTypeDeserializerGenerator nonGenericTypeDeserializerGenerator) {
         this.typesUtil = typesUtil;
         this.fieldNameGenerator = fieldNameGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
-        this.methodNames = methodNames;
         this.genericTypeDeserializerGenerator = genericTypeDeserializerGenerator;
         this.nonGenericTypeDeserializerGenerator = nonGenericTypeDeserializerGenerator;
     }
@@ -111,7 +109,7 @@ public class DeserializationCodeGenerator {
                                                                TypeName elementResultType,
                                                                @Nullable ClassName daoName) {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
-                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .addModifiers(Modifier.PRIVATE)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build());
 
@@ -172,107 +170,6 @@ public class DeserializationCodeGenerator {
                     key);
             builder.endControlFlow();
         }
-    }
-
-    /**
-     * Creates the main deserialization method for a config class.
-     *
-     * @param typeSpecBuilder The builder for the config class
-     */
-    public void createDeserializeMethods(TypeSpec.Builder typeSpecBuilder,
-                                         AbstractConfigStructure ast,
-                                         @Nullable ClassName daoName
-    ) {
-
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder(methodNames.getDeserializeMethodName(ast))
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(RESULT_CLASS_NAME, configurationClassNameGenerator.getPublicClassName(ast)))
-                .addParameter(
-                        ParameterSpec.builder(DeserializationContext.class, "context", Modifier.FINAL).build()
-                );
-
-        if (ast instanceof AbstractConfigStructure.Union union) {
-            // union deserialization is very different
-            CodeBlock.Builder deserialiseBuilder = CodeBlock.builder();
-            deserialiseBuilder.add("return ");
-            for (AbstractConfigStructure alternative : union.alternatives()) {
-                ClassName alternativeClassName = configurationClassNameGenerator.translateConfigClassName(alternative);
-                String deserializeMethodName = methodNames.getDeserializeMethodName(alternativeClassName);
-
-                deserialiseBuilder.add("$T.$L(context).map($T.class::cast).orElse(() -> \n",
-                        alternativeClassName,
-                        deserializeMethodName,
-                        configurationClassNameGenerator.getPublicClassName(ast));
-                deserialiseBuilder.indent();
-            }
-            deserialiseBuilder.add("$T.fail($T.noUnionMatch())", Result.class, ConfigLoadingErrors.class);
-            deserialiseBuilder.add(")".repeat(union.alternatives().size())); // close all the flatMap parens
-
-            builder.addStatement(deserialiseBuilder.build());
-
-            typeSpecBuilder.addMethod(builder.build());
-            return;
-        }
-        var dtoType = ast.source().element();
-
-        boolean hasAnyDefault = ast.properties().stream()
-                .anyMatch(p -> p.settings().hasDefaultValue());
-        if (daoName != null && hasAnyDefault) {
-            builder.addStatement("$1T dao = new $1T()", daoName);
-        }
-
-        final List<MethodSpec> deserializeMethods = ast.properties().stream()
-                .map(variableElement -> createDeserializeMethodFor(dtoType, ast, variableElement, daoName))
-                .toList();
-
-        deserializeMethods.forEach(typeSpecBuilder::addMethod);
-
-        final CodeBlock.Builder expressionBuilder = CodeBlock.builder();
-
-        expressionBuilder.add("return ");
-        int i = 0;
-
-        var superClass = switch (ast.source()) {
-            case ConfigTypeSource.ClassConfigTypeSource c -> c.parent();
-            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> Optional.<TypeMirror>empty();//for now
-        };
-
-        // Add the superclass deserialization first, if it exists
-        if (superClass.isPresent()) {
-            var superConfigName = getConfigClassName(superClass.get(), dtoType);
-            expressionBuilder.add("$T.$L", superConfigName, methodNames.getDeserializeMethodName(superConfigName));
-            expressionBuilder.add("(context).flatMap(var$L -> \n", i++);
-        }
-        for (int idx = 0; idx < deserializeMethods.size(); idx++) {
-            MethodSpec deserializeMethod = deserializeMethods.get(idx);
-            Property property = ast.properties().get(idx);
-            var deserialiseMethodArguments = (daoName != null && property.settings().hasDefaultValue()) ? "context, dao" : "context";
-            expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
-        }
-        expressionBuilder.add("$T.ok(new $T(", Result.class, configurationClassNameGenerator.translateConfigClassName(ast));
-        for (int i1 = 0; i1 < i; i1++) {
-            expressionBuilder.add("var$L", i1);
-            if (i1 != i - 1) {
-                expressionBuilder.add(", ");
-            }
-        }
-        expressionBuilder.add("))"); // Close ok and new parens
-        expressionBuilder.add(")".repeat(Math.max(0, i))); // close all the flatMap parens
-
-        builder.addStatement(expressionBuilder.build());
-
-        typeSpecBuilder.addMethod(builder.build());
-    }
-
-    /**
-     * Gets the config class name for a type.
-     *
-     * @param typeMirror The type
-     * @param source     The source element (can be null)
-     * @return The config class name
-     */
-    private TypeName getConfigClassName(TypeMirror typeMirror, @Nullable Element source) {
-        return configurationClassNameGenerator.getConfigClassName(typeMirror, source);
     }
 
 }

@@ -32,18 +32,15 @@ public class GenericTypeDeserializerGenerator {
 
     private final TypesUtil typesUtil;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
-    private final MethodNames methodNames;
     private final CustomDeserializers customDeserializers;
 
     @Inject
     GenericTypeDeserializerGenerator(
             TypesUtil typesUtil,
             ConfigurationClassNameGenerator configurationClassNameGenerator,
-            MethodNames methodNames,
             CustomDeserializers customDeserializers) {
         this.typesUtil = typesUtil;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
-        this.methodNames = methodNames;
         this.customDeserializers = customDeserializers;
     }
 
@@ -51,7 +48,8 @@ public class GenericTypeDeserializerGenerator {
         if (info.isStatic()) {
             return CodeBlock.of("$T::deserialize", info.deserializerClass());
         }
-        throw new IllegalArgumentException("idk non-static is hard");
+        String fieldName = me.bristermitten.mittenlib.util.Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
+        return CodeBlock.of("this.$L", fieldName);
     }
 
     /**
@@ -66,6 +64,10 @@ public class GenericTypeDeserializerGenerator {
     public Optional<MethodSpec> handleGenericType(MethodSpec.Builder builder, Property property,
                                                    TypeMirrorWrapper wrappedElementType,
                                                    TypeElementWrapper elementType) {
+        if (!hasNestedCustomDeserializerOrConfig(wrappedElementType.unwrap())) {
+            return Optional.empty();
+        }
+
         String canonicalName = wrappedElementType.erasure().getQualifiedName();
         ElementWrapper.wrap(property.source().element())
                 .validate()
@@ -86,30 +88,81 @@ public class GenericTypeDeserializerGenerator {
         }
     }
 
+    /**
+     * Recursively checks if a type or any of its nested type arguments contains a custom deserializer
+     * or a config type. Used to decide if custom recursive deserialization code needs to be generated.
+     *
+     * @param type the type to check
+     * @return true if the type or any nested type argument contains a custom deserializer or a config type
+     */
+    private boolean hasNestedCustomDeserializerOrConfig(TypeMirror type) {
+        if (customDeserializers.getCustomDeserializer(type).isPresent() || typesUtil.isConfigType(type)) {
+            return true;
+        }
+        TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
+        if (wrapped.hasTypeArguments()) {
+            for (TypeMirror arg : wrapped.getTypeArguments()) {
+                if (hasNestedCustomDeserializerOrConfig(arg)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recursively generates a CodeBlock representing a {@link me.bristermitten.mittenlib.config.DeserializationFunction}
+     * for the given type. Maps collections recursively and falls back to object mapper mapping for basic types.
+     *
+     * @param type  the type to generate a deserialization function for
+     * @param depth the current nesting depth, used to generate unique context variable names (e.g. ctx0, ctx1)
+     * @return a {@link CodeBlock} lambda expression {@code ctx -> ...}
+     */
+    private CodeBlock getDeserializationFunction(TypeMirror type, int depth) {
+        TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
+
+        // 1. Custom Deserializer
+        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(type);
+        if (customDeserializerOptional.isPresent()) {
+            return getDeserializationFunctionReference(customDeserializerOptional.get());
+        }
+
+        // 2. Config type
+        if (typesUtil.isConfigType(type)) {
+            String loaderField = configurationClassNameGenerator.getLoaderFieldName(type) + "Provider";
+            return CodeBlock.of("this.$L.get()", loaderField);
+        }
+
+        // 3. Generic collections (List, Map)
+        if (wrapped.hasTypeArguments()) {
+            String canonicalName = wrapped.erasure().getQualifiedName();
+            String ctxVar = "ctx" + depth;
+            if (canonicalName.equals(List.class.getName())) {
+                TypeMirror elementType = wrapped.getTypeArguments().getFirst();
+                CodeBlock innerFunction = getDeserializationFunction(elementType, depth + 1);
+                return CodeBlock.of("$L -> $T.deserializeList($L.getData(), $L, $L)", ctxVar, CollectionsUtils.class, ctxVar, ctxVar, innerFunction);
+            } else if (canonicalName.equals(Map.class.getName())) {
+                var arguments = wrapped.getTypeArguments();
+                TypeMirror keyType = arguments.get(0);
+                TypeMirror valueType = arguments.get(1);
+                CodeBlock innerFunction = getDeserializationFunction(valueType, depth + 1);
+                return CodeBlock.of("$L -> $T.deserializeMap($T.class, $L.getData(), $L, $L)", ctxVar, CollectionsUtils.class, typesUtil.getSafeType(keyType), ctxVar, ctxVar, innerFunction);
+            }
+        }
+
+        // 4. Basic fallback using ObjectMapper mapping
+        String ctxVar = "ctx" + depth;
+        return CodeBlock.of("$L -> $L.getMapper().map($L.getData(), new $T<$T>(){})", ctxVar, ctxVar, ctxVar, com.google.gson.reflect.TypeToken.class, typesUtil.getBoxedType(type));
+    }
+
     private Optional<MethodSpec> handleListType(MethodSpec.Builder builder,
                                                 TypeMirrorWrapper wrappedElementType,
                                                 String fromMapName) {
         var listType = wrappedElementType.getTypeArguments().getFirst();
-        Optional<CustomDeserializerInfo> optional = customDeserializers.getCustomDeserializer(listType);
-
-        if (optional.isPresent()) {
-            CustomDeserializerInfo info = optional.get();
-            CodeBlock deserializationFunction = getDeserializationFunctionReference(info);
-            builder.addStatement("return $T.deserializeList($L, context, $L)",
-                    CollectionsUtils.class, fromMapName, deserializationFunction);
-            return Optional.of(builder.build());
-        }
-
-        if (typesUtil.isConfigType(listType)) {
-            TypeName listTypeName = configurationClassNameGenerator.getConfigClassName(listType, null);
-            var deserializeCodeBlock = CodeBlock.of("$T::$L", listTypeName,
-                    methodNames.getDeserializeMethodName(listTypeName));
-
-            builder.addStatement("return $T.deserializeList($L, context, $L)", CollectionsUtils.class, fromMapName, deserializeCodeBlock);
-            return Optional.of(builder.build());
-        }
-
-        return Optional.empty();
+        CodeBlock deserializationFunction = getDeserializationFunction(listType, 0);
+        builder.addStatement("return $T.deserializeList($L, context, $L)",
+                CollectionsUtils.class, fromMapName, deserializationFunction);
+        return Optional.of(builder.build());
     }
 
     private Optional<MethodSpec> handleMapType(MethodSpec.Builder builder,
@@ -118,26 +171,12 @@ public class GenericTypeDeserializerGenerator {
         var keyType = arguments.get(0);
         var valueType = arguments.get(1);
 
-        Optional<CustomDeserializerInfo> optional = customDeserializers.getCustomDeserializer(valueType);
-        if (optional.isPresent()) {
-            CustomDeserializerInfo info = optional.get();
-            CodeBlock deserializationFunction = getDeserializationFunctionReference(info);
-            builder.addStatement("return $T.deserializeMap($L, context, $L)",
-                    CollectionsUtils.class, fromMapName, deserializationFunction);
-            return Optional.of(builder.build());
-        }
-
-        if (typesUtil.isConfigType(valueType)) {
-            TypeName mapTypeName = configurationClassNameGenerator.getConfigClassName(valueType, null);
-            builder.addStatement("return $T.deserializeMap($T.class, $L, context, $T::$L)",
-                    CollectionsUtils.class,
-                    typesUtil.getSafeType(keyType),
-                    fromMapName,
-                    mapTypeName,
-                    methodNames.getDeserializeMethodName(mapTypeName));
-            return Optional.of(builder.build());
-        }
-
-        return Optional.empty();
+        CodeBlock deserializationFunction = getDeserializationFunction(valueType, 0);
+        builder.addStatement("return $T.deserializeMap($T.class, $L, context, $L)",
+                CollectionsUtils.class,
+                typesUtil.getSafeType(keyType),
+                fromMapName,
+                deserializationFunction);
+        return Optional.of(builder.build());
     }
 }

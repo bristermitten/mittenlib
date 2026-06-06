@@ -49,6 +49,20 @@ public class CompositeType implements ParameterizedType {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ParameterizedType)) return false;
+        ParameterizedType that = (ParameterizedType) o;
+        return java.util.Objects.equals(baseClass, that.getRawType()) &&
+                Arrays.equals(parameters, that.getActualTypeArguments());
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(baseClass, Arrays.hashCode(parameters));
+    }
+
+    @Override
     public String getTypeName() {
         return name;
     }

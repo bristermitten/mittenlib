@@ -44,18 +44,15 @@ public class NonGenericTypeDeserializerGenerator {
 
     private final TypesUtil typesUtil;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
-    private final MethodNames methodNames;
     private final CustomDeserializers customDeserializers;
 
     @Inject
     NonGenericTypeDeserializerGenerator(
             TypesUtil typesUtil,
             ConfigurationClassNameGenerator configurationClassNameGenerator,
-            MethodNames methodNames,
             CustomDeserializers customDeserializers) {
         this.typesUtil = typesUtil;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
-        this.methodNames = methodNames;
         this.customDeserializers = customDeserializers;
     }
 
@@ -71,7 +68,8 @@ public class NonGenericTypeDeserializerGenerator {
         if (info.isStatic()) {
             return CodeBlock.of("$T.deserialize(context.withData($L))", info.deserializerClass(), withDataExpression);
         }
-        throw new IllegalArgumentException("idk non-static is hard");
+        String fieldName = me.bristermitten.mittenlib.util.Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
+        return CodeBlock.of("this.$L.apply(context.withData($L))", fieldName, withDataExpression);
     }
 
     /**
@@ -139,7 +137,7 @@ public class NonGenericTypeDeserializerGenerator {
         if (wrappedElementType.isEnum()) {
             handleEnumType(builder, property, fromMapName, safeType);
         } else if (typesUtil.isConfigType(elementType)) {
-            handleConfigType(builder, dtoType, elementType, fromMapName);
+            handleConfigType(builder, elementType, fromMapName);
         }
 
         if (customDeserializerOptional.isPresent()) {
@@ -238,13 +236,12 @@ public class NonGenericTypeDeserializerGenerator {
      * Generates recursive deserialization logic for nested configurations by casting
      * the property value to a {@link DataTree.DataTreeMap} and invoking the nested implementation's deserialize method.
      */
-    private void handleConfigType(MethodSpec.Builder builder, TypeElement dtoType,
+    private void handleConfigType(MethodSpec.Builder builder,
                                   TypeMirror elementType, String fromMapName) {
-        TypeName configClassName = configurationClassNameGenerator.getConfigClassName(elementType, dtoType);
+        String loaderFieldName = configurationClassNameGenerator.getLoaderFieldName(elementType) + "Provider";
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
         builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
-        builder.addStatement("return $T.$L(context.withData(mapData))",
-                configClassName, methodNames.getDeserializeMethodName(configClassName));
+        builder.addStatement("return this.$L.get().apply(context.withData(mapData))", loaderFieldName);
         builder.endControlFlow();
     }
 

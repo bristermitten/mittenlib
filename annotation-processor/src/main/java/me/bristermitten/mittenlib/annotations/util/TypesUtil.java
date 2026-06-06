@@ -172,4 +172,22 @@ public class TypesUtil {
         }
         return Optional.empty();
     }
+
+    public @Nullable TypeMirror getComponentType(TypeMirror typeMirror) {
+        if (!(typeMirror instanceof DeclaredType declaredType)) {
+            return null;
+        }
+        List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+        if (typeArguments.isEmpty()) {
+            return null;
+        }
+        // For List<T>, return T. For Map<K, V>, return V.
+        if (typeArguments.size() == 1) {
+            return typeArguments.get(0);
+        }
+        if (typeArguments.size() == 2) {
+            return typeArguments.get(1);
+        }
+        return null;
+    }
 }

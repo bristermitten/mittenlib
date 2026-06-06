@@ -7,13 +7,20 @@ import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigSaverGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigValidatorGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderModuleGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
 import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.annotations.parser.ASTVerifier;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
+import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
+import me.bristermitten.mittenlib.config.extension.CustomSerializerFor;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -22,10 +29,8 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Annotation processor for generating configuration classes from DTO classes marked with {@link Config}.
@@ -84,6 +89,12 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
                 .map(TypeElement.class::cast)
                 .forEach(customDeserializers::registerCustomDeserializer);
 
+        CustomSerializers customSerializers = injector.getInstance(CustomSerializers.class);
+        roundEnv.getElementsAnnotatedWith(CustomSerializerFor.class)
+                .stream()
+                .map(TypeElement.class::cast)
+                .forEach(customSerializers::registerCustomSerializer);
+
 
         List<AbstractConfigStructure> asts = new ArrayList<>();
         var configClassParser = injector.getInstance(ConfigClassParser.class);
@@ -105,12 +116,36 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         }
 
         var generator = injector.getInstance(ConfigImplGenerator.class);
+        var loaderGenerator = injector.getInstance(ConfigLoaderGenerator.class);
+        var saverGenerator = injector.getInstance(ConfigSaverGenerator.class);
+        var validatorGenerator = injector.getInstance(ConfigValidatorGenerator.class);
         for (AbstractConfigStructure ast : asts) {
             JavaFile emit = generator.emit(ast);
+            JavaFile loaderEmit = loaderGenerator.emit(ast);
+            JavaFile saverEmit = saverGenerator.emit(ast);
+            JavaFile validatorEmit = validatorGenerator.emit(ast);
             try {
                 emit.writeTo(processingEnv.getFiler());
+                loaderEmit.writeTo(processingEnv.getFiler());
+                saverEmit.writeTo(processingEnv.getFiler());
+                validatorEmit.writeTo(processingEnv.getFiler());
             } catch (Exception e) {
                 throw new ConfigProcessingException("Could not create config file", e);
+            }
+        }
+
+        if (!asts.isEmpty()) {
+            var moduleGenerator = injector.getInstance(ConfigLoaderModuleGenerator.class);
+            Map<String, List<AbstractConfigStructure>> groupedByPackage = asts.stream()
+                    .collect(Collectors.groupingBy(ast -> injector.getInstance(ConfigurationClassNameGenerator.class).getPublicClassName(ast).packageName()));
+
+            for (List<AbstractConfigStructure> packageAsts : groupedByPackage.values()) {
+                JavaFile moduleEmit = moduleGenerator.emit(packageAsts);
+                try {
+                    moduleEmit.writeTo(processingEnv.getFiler());
+                } catch (Exception e) {
+                    throw new ConfigProcessingException("Could not create ConfigLoaderModule file", e);
+                }
             }
         }
         return true;

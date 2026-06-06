@@ -189,4 +189,82 @@ class DefaultValueConfigGeneratorTest {
                 .compilerMessage().ofKindError().contains("has fields with default values, but is missing a zero-arguments constructor")
                 .executeTest();
     }
+
+    @Test
+    void testConstraintTypeMismatchNumeric() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("InvalidNumericConstraintDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        import me.bristermitten.mittenlib.config.validation.Positive;
+                        
+                        @Config
+                        public class InvalidNumericConstraintDTO {
+                            @Positive
+                            public String name;
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationFails()
+                .andThat()
+                .compilerMessage().ofKindError().contains("Constraint annotation @Positive cannot be applied to type java.lang.String. Expected a numeric type.")
+                .executeTest();
+    }
+
+    @Test
+    void testConstraintTypeMismatchString() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("InvalidStringConstraintDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        import me.bristermitten.mittenlib.config.validation.NotBlank;
+                        
+                        @Config
+                        public class InvalidStringConstraintDTO {
+                            @NotBlank
+                            public int age;
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationFails()
+                .andThat()
+                .compilerMessage().ofKindError().contains("Constraint annotation @NotBlank cannot be applied to type int. Expected a String or CharSequence.")
+                .executeTest();
+    }
+
+    @Test
+    void testConstraintTypeMismatchValidateWith() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("InvalidValidateWithDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        import me.bristermitten.mittenlib.config.validation.ValidateWith;
+                        
+                        @Config
+                        public class InvalidValidateWithDTO {
+                            @ValidateWith(DummyValidator.class)
+                            public int age;
+                        }
+                        """)
+                .andSourceFile("DummyValidator", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.validation.Validator;
+                        
+                        public class DummyValidator implements Validator<String> {
+                            @Override
+                            public java.util.Optional<String> validate(String value) {
+                                return java.util.Optional.empty();
+                            }
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationFails()
+                .andThat()
+                .compilerMessage().ofKindError().contains("Constraint annotation @ValidateWith(DummyValidator.class) cannot be applied to type int. Expected a Validator compatible with int.")
+                .executeTest();
+    }
 }

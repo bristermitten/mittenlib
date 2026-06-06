@@ -1,17 +1,14 @@
 package me.bristermitten.mittenlib.config.reader;
 
-import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.function.Function;
 
 /**
  * Responsible for both reading and mapping data,
@@ -30,51 +27,39 @@ public class ConfigReader {
     /**
      * Read the data from the given path, and map it to the given type
      *
-     * @param type                the type to map to
+     * @param function            the deserialization function to use
      * @param source              the path to read from
-     * @param deserializeFunction the function to use to deserialize the data
      * @param <T>                 the type to map to
      * @return the result of the mapping
      */
-    public <T> Result<? extends T> load(Class<T> type, Path source, @Nullable DeserializationFunction<T> deserializeFunction) {
-        return read(loader.load(source), deserializeFunction, type);
+    public <T> Result<? extends T> load(DeserializationFunction<T> function, Path source) {
+        return read(loader.load(source), function);
     }
 
-    /**
-     * Read the data from the given string, and map it to the given type
-     *
-     * @param type                the type to map to
-     * @param source              the string to read from
-     * @param deserializeFunction the function to use to deserialize the data
-     * @param <T>                 the type to map to
-     * @return the result of the mapping
-     */
-    public <T> Result<? extends T> load(Class<T> type, String source, @Nullable DeserializationFunction<T> deserializeFunction) {
-        return read(loader.load(source), deserializeFunction, type);
+    public <T> Result<? extends T> load(DeserializationFunction<T> function, String source) {
+        return read(loader.load(source), function);
     }
 
-    /**
-     * Read the data from the given reader, and map it to the given type
-     *
-     * @param type                the type to map to
-     * @param source              the reader to read from
-     * @param deserializeFunction the function to use to deserialize the data
-     * @param <T>                 the type to map to
-     * @return the result of the mapping
-     */
-    public <T> Result<? extends T> load(Class<T> type, Reader source, @Nullable DeserializationFunction<T> deserializeFunction) {
-        return read(loader.load(source), deserializeFunction, type);
+    public <T> Result<? extends T> load(DeserializationFunction<T> function, Reader source) {
+        return read(loader.load(source), function);
     }
 
-    private <T> Result<T> read(Result<@NotNull DataTree> rawData, @Nullable DeserializationFunction<T> deserializeFunction, Class<T> type) {
-        final Function<DeserializationContext, Result<T>> mappingFunction =
-                deserializeFunction == null
-                        ? ctx -> mapper.map(ctx.getData(), TypeToken.get(type))
-                        : deserializeFunction;
-
+    private <T> Result<T> read(Result<@NotNull DataTree> rawData, DeserializationFunction<T> mappingFunction) {
         return rawData
                 .map(data -> new DeserializationContext(mapper, data))
                 .flatMap(mappingFunction::apply);
+    }
+
+    public <T> Result<? extends T> load(Class<T> type, Path source) {
+        return load(ctx -> ctx.getMapper().map(ctx.getData(), com.google.gson.reflect.TypeToken.get(type)), source);
+    }
+
+    public <T> Result<? extends T> load(Class<T> type, String source) {
+        return load(ctx -> ctx.getMapper().map(ctx.getData(), com.google.gson.reflect.TypeToken.get(type)), source);
+    }
+
+    public <T> Result<? extends T> load(Class<T> type, Reader source) {
+        return load(ctx -> ctx.getMapper().map(ctx.getData(), com.google.gson.reflect.TypeToken.get(type)), source);
     }
 
     /**
@@ -94,5 +79,9 @@ public class ConfigReader {
      */
     public ObjectMapper getMapper() {
         return mapper;
+    }
+
+    public ObjectLoader getLoader() {
+        return loader;
     }
 }

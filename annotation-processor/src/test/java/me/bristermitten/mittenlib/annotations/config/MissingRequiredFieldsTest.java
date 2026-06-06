@@ -62,10 +62,10 @@ class MissingRequiredFieldsTest {
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.RequiredFieldsConfig")
                 .isNotNull();
                 
-        // Verify that the generated code includes error handling for missing required fields
+        // Verify that the generated code includes a null check that throws notFoundException
         assertThat(compilation)
-                .generatedSourceFile("me.bristermitten.mittenlib.tests.RequiredFieldsConfig")
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.RequiredFieldsConfigLoader")
                 .contentsAsUtf8String()
                 .contains("ConfigLoadingErrors.notFoundException(\"requiredInt\"");
-    }
-}
+        }
+        }

@@ -30,6 +30,10 @@ dependencies {
 	testImplementation(libs.cute)
 	testImplementation(libs.mockito.core)
 	testImplementation(libs.compile.testing)
+
+	// we use these to test our compatibility with the actual annotations
+	implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+	implementation("javax.validation:validation-api:2.0.1.Final")
 	testAnnotationProcessor(project(":annotation-processor"))
 }
 
