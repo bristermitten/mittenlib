@@ -6,14 +6,11 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource.ClassConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
+import me.bristermitten.mittenlib.annotations.compile.SerializationCodeGenerator;
 import me.bristermitten.mittenlib.config.validation.Validator;
 
 import javax.inject.Inject;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -28,11 +25,13 @@ import java.util.Optional;
 public class ASTVerifier {
     private final Types types;
     private final Elements elements;
+    private final SerializationCodeGenerator serializationCodeGenerator;
 
     @Inject
-    public ASTVerifier(Types types, Elements elements) {
+    public ASTVerifier(Types types, Elements elements, SerializationCodeGenerator serializationCodeGenerator) {
         this.types = types;
         this.elements = elements;
+        this.serializationCodeGenerator = serializationCodeGenerator;
     }
 
     public boolean verify(AbstractConfigStructure structure) {
@@ -68,6 +67,20 @@ public class ASTVerifier {
                             element.getSimpleName());
                     success = false;
                 }
+            }
+        }
+
+        if (!serializationCodeGenerator.isSerializationSupported(structure)) {
+            var unsupported = serializationCodeGenerator.getUnsupportedSerializationProperties(structure);
+            if (structure.settings().config().requireSerialization()) {
+                MessagerUtils.error(structure.source().element(),
+                        ConfigVerificationErrors.SERIALIZATION_NOT_SUPPORTED,
+                        String.join(", ", unsupported));
+                success = false;
+            } else {
+                MessagerUtils.warning(structure.source().element(),
+                        ConfigVerificationErrors.SERIALIZATION_NOT_SUPPORTED_WARNING,
+                        String.join(", ", unsupported));
             }
         }
 

@@ -1,8 +1,5 @@
 package me.bristermitten.mittenlib.config;
 
-import me.bristermitten.mittenlib.config.extension.CustomDeserializer;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,11 +24,10 @@ public @interface Config {
 
     /**
      * Whether to require that serialization methods are generated for this config.
-     * If true and serialization cannot be generated (e.g., due to properties with {@link CustomDeserializer}s
-     * that don't support serialization), a compilation error will be emitted.
-     * If false (default), a warning will be emitted instead.
+     * If true (default) and serialization cannot be generated, a compilation error will be emitted.
+     * If false, a warning will be emitted instead.
      *
      * @return true if serialization is required, false otherwise
      */
-    boolean requireSerialization() default false;
+    boolean requireSerialization() default true;
 }

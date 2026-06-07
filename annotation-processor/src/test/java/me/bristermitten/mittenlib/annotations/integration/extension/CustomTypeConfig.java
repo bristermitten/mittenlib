@@ -4,7 +4,7 @@ import me.bristermitten.mittenlib.config.Config;
 
 import java.util.List;
 
-@Config
+@Config(requireSerialization = false)
 public interface CustomTypeConfig {
     CustomType customType();
 

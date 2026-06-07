@@ -217,7 +217,7 @@ public class ConfigSaverGenerator {
                                 DataTree.class, key, DataTree.class);
                     } else if (canonicalName.equals(Map.class.getName())) {
                         method.addStatement("map.put($T.string($S), $T.map($T.emptyMap()))",
-                                DataTree.class, key, DataTree.class, java.util.Collections.class);
+                                DataTree.class, key, DataTree.class, Collections.class);
                     } else {
                         method.addStatement("map.put($T.string($S), $T.null_())",
                                 DataTree.class, key, DataTree.class);
