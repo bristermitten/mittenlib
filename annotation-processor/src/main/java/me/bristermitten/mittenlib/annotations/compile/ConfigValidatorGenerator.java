@@ -75,8 +75,7 @@ public class ConfigValidatorGenerator {
         // Constructor 1: Guice @Inject constructor
         addGuiceConstructor(ast, builder);
 
-        // Constructor 2: Overloaded/No-args constructor for programmatic usage
-        addOverloadedConstructor(ast, builder);
+
 
         // validate() method
         addValidateMethod(ast, builder, publicClassName);
@@ -121,30 +120,7 @@ public class ConfigValidatorGenerator {
         }
     }
 
-    private void addOverloadedConstructor(AbstractConfigStructure ast, TypeSpec.Builder builder) {
-        List<Property> customValidatedProperties = ast.properties().stream()
-                .filter(p -> p.settings().constraints().stream().anyMatch(c -> c instanceof ValidationConstraint.Custom))
-                .toList();
 
-        if (customValidatedProperties.isEmpty()) {
-            // No custom validators, so the class has a default compiler-generated no-arg constructor
-            return;
-        }
-
-        MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC);
-
-        for (Property property : customValidatedProperties) {
-            for (ValidationConstraint constraint : property.settings().constraints()) {
-                if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
-                    String fieldName = property.name() + "Validator";
-                    constructor.addStatement("this.$L = new $T()", fieldName, validatorClassName);
-                }
-            }
-        }
-
-        builder.addMethod(constructor.build());
-    }
 
     private void addValidateMethod(AbstractConfigStructure ast, TypeSpec.Builder builder, ClassName publicClassName) {
         MethodSpec.Builder validateMethod = MethodSpec.methodBuilder("validate")

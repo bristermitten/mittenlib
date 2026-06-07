@@ -420,7 +420,7 @@ public class IntegrationTest {
                 "not-mitten"   // customValidated (invalid)
         );
 
-        Result<ValidationConfigImpl> result = new ValidationConfigImplValidator().validate(config);
+        Result<ValidationConfigImpl> result = injector.getInstance(ValidationConfigImplValidator.class).validate(config);
         assertThat(result.isFailure()).isTrue();
         Exception exception = result.error().orElseThrow();
         assertThat(exception).isInstanceOf(ConfigValidationException.class);
