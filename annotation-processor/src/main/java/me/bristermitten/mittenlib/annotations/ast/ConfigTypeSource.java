@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
 import me.bristermitten.mittenlib.config.Config;
-import org.jspecify.annotations.NonNull;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -18,7 +17,7 @@ public sealed interface ConfigTypeSource {
 
     record ClassConfigTypeSource(TypeElement element, Optional<TypeMirror> parent) implements ConfigTypeSource {
         @Override
-        public @NonNull List<TypeMirror> parents() {
+        public List<TypeMirror> parents() {
             return parent.stream().toList();
         }
     }

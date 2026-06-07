@@ -1,10 +1,11 @@
 package me.bristermitten.mittenlib.files;
 
-import com.google.common.collect.ImmutableSet;
 import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class FileTypes {
      * @param types the types to register
      */
     public FileTypes(Set<Class<? extends FileType>> types) {
-        this.types = types;
+        this.types = new HashSet<>(types);
     }
 
     /**
@@ -55,7 +56,7 @@ public class FileTypes {
      *
      * @return the set of {@link FileType} classes registered
      */
-    public ImmutableSet<Class<? extends FileType>> getTypes() {
-        return ImmutableSet.copyOf(types);
+    public @Unmodifiable Set<Class<? extends FileType>> getTypes() {
+        return Collections.unmodifiableSet(types);
     }
 }

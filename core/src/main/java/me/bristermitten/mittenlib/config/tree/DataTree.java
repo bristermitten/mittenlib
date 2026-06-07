@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.config.tree;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -200,11 +201,11 @@ public abstract class DataTree {
         public final DataTree[] values;
 
         public DataTreeArray(DataTree[] values) {
-            this.values = values;
+            this.values = values.clone();
         }
 
         public DataTree[] getValues() {
-            return values;
+            return values.clone();
         }
 
         @Override
@@ -220,8 +221,8 @@ public abstract class DataTree {
         }
 
         @Override
-        public List<DataTree> value() {
-            return Arrays.asList(values);
+        public @Unmodifiable List<DataTree> value() {
+            return Collections.unmodifiableList(Arrays.asList(values));
         }
     }
 
@@ -229,16 +230,16 @@ public abstract class DataTree {
         private final Map<DataTree, DataTree> values;
 
         public DataTreeMap(Map<DataTree, DataTree> values) {
-            this.values = values;
+            this.values = Collections.unmodifiableMap(new HashMap<>(values));
         }
 
-        public @UnmodifiableView Map<DataTree, DataTree> values() {
-            return Collections.unmodifiableMap(values);
+        public @Unmodifiable Map<DataTree, DataTree> values() {
+            return values;
         }
 
         @Override
-        public @UnmodifiableView Map<DataTree, DataTree> value() {
-            return Collections.unmodifiableMap(values);
+        public @Unmodifiable Map<DataTree, DataTree> value() {
+            return values;
         }
 
         @Override

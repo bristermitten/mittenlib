@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * A ConfigProvider which caches the config to avoid repeated file reads.
+ * A ConfigProvider that caches the config to avoid repeated file reads.
  *
  * @param <T> The type of the config
  */

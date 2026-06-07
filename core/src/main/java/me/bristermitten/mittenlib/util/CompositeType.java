@@ -27,7 +27,7 @@ public class CompositeType implements ParameterizedType {
      */
     public CompositeType(Class<?> baseClass, Class<?>... arguments) {
         this.baseClass = baseClass;
-        this.parameters = arguments;
+        this.parameters = arguments.clone();
 
         this.name = String.format("%s<%s>", baseClass.getName(),
                 Arrays.stream(arguments)
