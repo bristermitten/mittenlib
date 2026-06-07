@@ -6,14 +6,19 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource.ClassConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
+import me.bristermitten.mittenlib.config.validation.Validator;
 
 import javax.inject.Inject;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * Inspects the AST and sends errors/warnings for invalid setups
@@ -119,20 +124,20 @@ public class ASTVerifier {
                         }
                     }
                     case ValidationConstraint.Custom(ClassName val) -> {
-                        TypeElement validatorElement = elements.getTypeElement("me.bristermitten.mittenlib.config.validation.Validator");
+                        TypeElement validatorElement = elements.getTypeElement(Validator.class.getName());
                         TypeElement customElement = elements.getTypeElement(val.canonicalName());
                         if (customElement == null) {
                             MessagerUtils.error(property.source().element(),
                                     "Custom validator class " + val.canonicalName() + " not found");
                             success = false;
                         } else {
-                            TypeMirror boxedType = type.getKind().isPrimitive() ? types.boxedClass((javax.lang.model.type.PrimitiveType) type).asType() : type;
-                            TypeMirror wildcard = types.getWildcardType(null, boxedType);
-                            TypeMirror expectedValidatorType = types.getDeclaredType(validatorElement, wildcard);
+                            TypeMirror boxedType = type.getKind().isPrimitive() ? types.boxedClass((PrimitiveType) type).asType() : type;
+                            TypeMirror wildcard = types.getWildcardType(null, boxedType); // <?>
+                            TypeMirror expectedValidatorType = types.getDeclaredType(validatorElement, wildcard); // Validator<?>
                             if (!types.isAssignable(customElement.asType(), expectedValidatorType)) {
                                 MessagerUtils.error(property.source().element(),
                                         ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                        "@ValidateWith(" + val.simpleName() + ".class)", type.toString(), "Validator compatible with " + type.toString());
+                                        "@ValidateWith(" + val.simpleName() + ".class)", type.toString(), "Validator compatible with " + type);
                                 success = false;
                             }
                         }
@@ -151,27 +156,27 @@ public class ASTVerifier {
                 default -> false;
             };
         }
-        javax.lang.model.element.Element element = types.asElement(type);
+        Element element = types.asElement(type);
         if (element instanceof TypeElement typeElement) {
             String typeStr = typeElement.getQualifiedName().toString();
-            return typeStr.equals("java.lang.Byte") ||
-                   typeStr.equals("java.lang.Short") ||
-                   typeStr.equals("java.lang.Integer") ||
-                   typeStr.equals("java.lang.Long") ||
-                   typeStr.equals("java.lang.Float") ||
-                   typeStr.equals("java.lang.Double") ||
-                   typeStr.equals("java.math.BigInteger") ||
-                   typeStr.equals("java.math.BigDecimal");
+            return typeStr.equals(Byte.class.getName()) ||
+                   typeStr.equals(Short.class.getName()) ||
+                   typeStr.equals(Integer.class.getName()) ||
+                   typeStr.equals(Long.class.getName()) ||
+                   typeStr.equals(Float.class.getName()) ||
+                   typeStr.equals(Double.class.getName()) ||
+                   typeStr.equals(BigInteger.class.getName()) ||
+                   typeStr.equals(BigDecimal.class.getName());
         }
         return false;
     }
 
     private boolean isStringType(TypeMirror type) {
-        javax.lang.model.element.Element element = types.asElement(type);
+        Element element = types.asElement(type);
         if (element instanceof TypeElement typeElement) {
             String typeStr = typeElement.getQualifiedName().toString();
-            return typeStr.equals("java.lang.String") ||
-                   typeStr.equals("java.lang.CharSequence");
+            return typeStr.equals(String.class.getName()) ||
+                   typeStr.equals(CharSequence.class.getName());
         }
         return false;
     }

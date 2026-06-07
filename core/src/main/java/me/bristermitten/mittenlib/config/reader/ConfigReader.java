@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
@@ -51,15 +52,15 @@ public class ConfigReader {
     }
 
     public <T> Result<? extends T> load(Class<T> type, Path source) {
-        return load(ctx -> ctx.getMapper().map(ctx.getData(), com.google.gson.reflect.TypeToken.get(type)), source);
+        return load(ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)), source);
     }
 
     public <T> Result<? extends T> load(Class<T> type, String source) {
-        return load(ctx -> ctx.getMapper().map(ctx.getData(), com.google.gson.reflect.TypeToken.get(type)), source);
+        return load(ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)), source);
     }
 
     public <T> Result<? extends T> load(Class<T> type, Reader source) {
-        return load(ctx -> ctx.getMapper().map(ctx.getData(), com.google.gson.reflect.TypeToken.get(type)), source);
+        return load(ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)), source);
     }
 
     /**

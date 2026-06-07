@@ -19,6 +19,7 @@ import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
+import me.bristermitten.mittenlib.util.Strings;
 
 import javax.inject.Inject;
 import javax.lang.model.element.TypeElement;
@@ -68,7 +69,7 @@ public class NonGenericTypeDeserializerGenerator {
         if (info.isStatic()) {
             return CodeBlock.of("$T.deserialize(context.withData($L))", info.deserializerClass(), withDataExpression);
         }
-        String fieldName = me.bristermitten.mittenlib.util.Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
+        String fieldName = Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
         return CodeBlock.of("this.$L.apply(context.withData($L))", fieldName, withDataExpression);
     }
 

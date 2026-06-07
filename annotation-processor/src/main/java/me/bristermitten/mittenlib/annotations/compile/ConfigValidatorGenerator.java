@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ConfigValidatorGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;
@@ -226,7 +227,7 @@ public class ConfigValidatorGenerator {
                             String validatorFieldName = "this." + property.name() + "Validator";
                             String errorFieldName = property.name() + "ValidationError";
                             validateMethod.addStatement("$T<$T> $L = $L.validate($L)",
-                                    java.util.Optional.class, String.class, errorFieldName, validatorFieldName, accessorCall);
+                                    Optional.class, String.class, errorFieldName, validatorFieldName, accessorCall);
                             validateMethod.beginControlFlow("if ($L.isPresent())", errorFieldName);
                             validateMethod.addStatement("violations.add(new $T.Violation($S, $L, $L.get()))",
                                     ConfigValidationException.class, configKey, accessorCall, errorFieldName);

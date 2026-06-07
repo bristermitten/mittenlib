@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
@@ -12,6 +13,7 @@ import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Strings;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 
@@ -21,6 +23,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ConfigSaverGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;
@@ -74,8 +77,8 @@ public class ConfigSaverGenerator {
         }
 
         // Add custom serializers as dependencies recursively
-        java.util.Set<TypeName> injectedTypes = new java.util.LinkedHashSet<>();
-        java.util.Map<TypeName, String> injectedFieldNames = new java.util.LinkedHashMap<>();
+        Set<TypeName> injectedTypes = new LinkedHashSet<>();
+        Map<TypeName, String> injectedFieldNames = new LinkedHashMap<>();
         for (Property property : ast.properties()) {
             collectCustomSerializers(property.propertyType(), injectedTypes, injectedFieldNames);
         }
@@ -136,7 +139,7 @@ public class ConfigSaverGenerator {
     private void addSaverDependency(TypeSpec.Builder builder, MethodSpec.Builder constructorBuilder, TypeMirror type) {
         AbstractConfigStructure ast = configNameCache.lookupAST(type).orElse(null);
         if (ast == null) return;
-        
+
         ClassName publicChildClassName = classNameGenerator.getPublicClassName(ast);
         String fieldName = classNameGenerator.getSaverFieldName(type) + "Provider";
 
@@ -145,11 +148,11 @@ public class ConfigSaverGenerator {
         }
 
         builder.addField(ParameterizedTypeName.get(ClassName.get(Provider.class),
-                ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicChildClassName)),
+                        ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicChildClassName)),
                 fieldName, Modifier.PRIVATE, Modifier.FINAL);
 
         constructorBuilder.addParameter(ParameterizedTypeName.get(ClassName.get(Provider.class),
-                ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicChildClassName)),
+                        ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicChildClassName)),
                 fieldName);
         constructorBuilder.addStatement("this.$L = $L", fieldName, fieldName);
     }
@@ -168,7 +171,7 @@ public class ConfigSaverGenerator {
             return;
         }
 
-        io.toolisticon.aptk.tools.TypeMirrorWrapper wrapped = io.toolisticon.aptk.tools.TypeMirrorWrapper.wrap(type);
+        TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
         if (wrapped.hasTypeArguments()) {
             for (TypeMirror arg : wrapped.getTypeArguments()) {
                 collectSaverDependencies(arg, builder, constructorBuilder);
@@ -184,19 +187,19 @@ public class ConfigSaverGenerator {
      * @param injectedTypes      the set of already registered injected Types to add to
      * @param injectedFieldNames the mapping of injected types to their corresponding field names
      */
-    private void collectCustomSerializers(TypeMirror type, java.util.Set<TypeName> injectedTypes, java.util.Map<TypeName, String> injectedFieldNames) {
+    private void collectCustomSerializers(TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
         customSerializers.getCustomSerializer(type).ifPresent(info -> {
             if (!info.isStatic()) {
                 TypeElement serializerClass = info.serializerClass();
                 ClassName serializerClassName = ClassName.get(serializerClass);
-                String fieldName = me.bristermitten.mittenlib.util.Strings.uncapitalize(serializerClass.getSimpleName().toString()) + "Provider";
+                String fieldName = Strings.uncapitalize(serializerClass.getSimpleName().toString()) + "Provider";
                 if (injectedTypes.add(serializerClassName)) {
                     injectedFieldNames.put(serializerClassName, fieldName);
                 }
             }
         });
 
-        io.toolisticon.aptk.tools.TypeMirrorWrapper wrapped = io.toolisticon.aptk.tools.TypeMirrorWrapper.wrap(type);
+        TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
         if (wrapped.hasTypeArguments()) {
             for (TypeMirror arg : wrapped.getTypeArguments()) {
                 collectCustomSerializers(arg, injectedTypes, injectedFieldNames);

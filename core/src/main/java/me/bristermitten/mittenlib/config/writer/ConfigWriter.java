@@ -5,6 +5,7 @@ import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Result;
 
 import java.nio.file.Path;
@@ -54,7 +55,7 @@ public class ConfigWriter {
     }
 
     public <T> Result<DataTree> serialize(T instance, Class<T> type) {
-        return serialize(instance, (val, ctx) -> me.bristermitten.mittenlib.config.tree.DataTreeTransforms.loadFrom(ctx.getMapper().map(val)));
+        return serialize(instance, (val, ctx) -> DataTreeTransforms.loadFrom(ctx.getMapper().map(val)));
     }
 
     /**

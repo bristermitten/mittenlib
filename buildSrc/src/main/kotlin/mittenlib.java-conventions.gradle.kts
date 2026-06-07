@@ -69,7 +69,10 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.isFork = true
 
-    options.errorprone.disableWarningsInGeneratedCode.set(true)
+    options.errorprone {
+        disableWarningsInGeneratedCode.set(true)
+        warn("UnnecessarilyFullyQualified")
+    }
     options.isIncremental = true
 }
 

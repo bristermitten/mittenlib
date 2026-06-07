@@ -26,6 +26,7 @@ import me.bristermitten.mittenlib.config.writer.SearchingObjectWriter;
 import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 import me.bristermitten.mittenlib.util.CompositeType;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ public class ConfigModule extends AbstractModule {
      * Use this when using statically bound modules.
      */
     public ConfigModule() {
-        this.configurations = java.util.Collections.emptySet();
+        this.configurations = Collections.emptySet();
     }
 
     /**

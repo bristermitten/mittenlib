@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 
@@ -71,7 +72,7 @@ public sealed interface AbstractConfigStructure {
 
     default boolean needsValidation() {
         return properties().stream()
-                .anyMatch(p -> !p.settings().constraints().isEmpty() || 
-                               (!com.squareup.javapoet.TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable()));
+                .anyMatch(p -> !p.settings().constraints().isEmpty() ||
+                        !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
     }
 }

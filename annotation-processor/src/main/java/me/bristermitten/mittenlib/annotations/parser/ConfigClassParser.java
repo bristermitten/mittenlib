@@ -23,6 +23,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
@@ -241,7 +242,7 @@ public class ConfigClassParser {
                     TypeMirror validatorType = getTypeAttributeValue(mirror, "value");
                     if (validatorType != null) {
                         constraints.add(new ValidationConstraint.Custom(
-                                ClassName.get((TypeElement) ((javax.lang.model.type.DeclaredType) validatorType).asElement())
+                                ClassName.get((TypeElement) ((DeclaredType) validatorType).asElement())
                         ));
                     }
                     break;

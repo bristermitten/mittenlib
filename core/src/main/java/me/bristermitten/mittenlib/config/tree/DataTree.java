@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.config.tree;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 

@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
-import com.squareup.javapoet.ClassName;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
@@ -11,12 +10,10 @@ import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
-import me.bristermitten.mittenlib.annotations.compile.MethodNames;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
-import me.bristermitten.mittenlib.config.DeserializationContext;
-import org.jspecify.annotations.Nullable;
+import me.bristermitten.mittenlib.util.Strings;
 
 import javax.inject.Inject;
 import javax.lang.model.type.TypeMirror;
@@ -48,7 +45,7 @@ public class GenericTypeDeserializerGenerator {
         if (info.isStatic()) {
             return CodeBlock.of("$T::deserialize", info.deserializerClass());
         }
-        String fieldName = me.bristermitten.mittenlib.util.Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
+        String fieldName = Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
         return CodeBlock.of("this.$L", fieldName);
     }
 
@@ -152,7 +149,7 @@ public class GenericTypeDeserializerGenerator {
 
         // 4. Basic fallback using ObjectMapper mapping
         String ctxVar = "ctx" + depth;
-        return CodeBlock.of("$L -> $L.getMapper().map($L.getData(), new $T<$T>(){})", ctxVar, ctxVar, ctxVar, com.google.gson.reflect.TypeToken.class, typesUtil.getBoxedType(type));
+        return CodeBlock.of("$L -> $L.getMapper().map($L.getData(), new $T<$T>(){})", ctxVar, ctxVar, ctxVar, TypeToken.class, typesUtil.getBoxedType(type));
     }
 
     private Optional<MethodSpec> handleListType(MethodSpec.Builder builder,
