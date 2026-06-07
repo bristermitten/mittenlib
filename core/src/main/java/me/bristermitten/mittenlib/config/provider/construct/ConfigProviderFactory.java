@@ -28,9 +28,9 @@ public interface ConfigProviderFactory {
 
 
     /**
-     * Creates a {@link ConfigProvider} that reads a given String for its data, rather than a file.
+     * Creates a {@link ConfigProvider} that reads a given {@link String} for its data, rather than a file.
      * While implementations may differ, one can safely assume that the value of {@link Configuration#getFileName()}
-     * will be irrelevant.
+     * will be irrelevant to the functionality of this method (aside from for "pure" things like debug logging).
      *
      * @param data          the data to read
      * @param configuration the configuration to create a provider for

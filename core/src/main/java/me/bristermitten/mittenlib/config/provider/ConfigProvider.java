@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.config.provider;
 
 import javax.inject.Provider;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -14,11 +15,11 @@ public interface ConfigProvider<T> extends Provider<T> {
     /**
      * The path of the source for the config, if available
      * <p>
-     * This is not always required - if the config came from a URL or String, for example, then this would be expected
-     * to return an empty Optional
+     * This is not always required - if the config came from a {@link URL} or {@link String}, for example, then this would be expected
+     * to return an {@link Optional#empty()}
      * <p>
-     * However, if it is coming from the Filesystem (in most cases, it will), then a filled optional should
-     * be returned to allow things like {@link FileWatchingConfigProvider}
+     * However, if it is coming from the file system (in most cases, it will), then a filled optional should
+     * be returned to allow things like {@link FileWatchingConfigProvider} to be implemented.
      *
      * @return The path for of the config's source
      */

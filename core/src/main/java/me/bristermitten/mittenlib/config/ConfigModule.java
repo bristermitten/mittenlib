@@ -2,6 +2,8 @@ package me.bristermitten.mittenlib.config;
 
 import com.google.gson.TypeAdapterFactory;
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy;
@@ -24,9 +26,8 @@ import me.bristermitten.mittenlib.config.writer.SearchingObjectWriter;
 import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 import me.bristermitten.mittenlib.util.CompositeType;
 
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Guice module for config handling
@@ -88,21 +89,27 @@ public class ConfigModule extends AbstractModule {
         Multibinder<ConfigProvider<?>> configProviderMultibinder = Multibinder.newSetBinder(binder(), new TypeLiteral<ConfigProvider<?>>() {
         });
 
-        configurations.stream()
-                .collect(Collectors.toMap(Function.identity(), DelegatingConfigProvider::new))
-                .forEach((configuration, provider) -> {
-                    configProviderMultibinder.addBinding().toInstance(provider);
+        configurations.forEach(configuration -> {
+            final Class<?> key = configuration.getType();
 
-                    final Class<?> key = configuration.getType();
-                    // beware of evil generic type erasure hell
-                    bind((Class<? super Object>) key).toProvider(provider); // bind the type itself, T to Provider<T>
+            // Bind Configuration<T> dynamically
+            final TypeLiteral<Configuration<?>> configType =
+                    (TypeLiteral<Configuration<?>>) TypeLiteral.get(new CompositeType(Configuration.class, key));
+            bind(configType).toInstance(configuration);
+            configurationMultibinder.addBinding().toInstance(configuration);
 
-                    // bind the provider to its instance
-                    final TypeLiteral<ConfigProvider<?>> providerType =
-                            (TypeLiteral<ConfigProvider<?>>) TypeLiteral.get(new CompositeType(ConfigProvider.class, key));
-                    bind(providerType).toInstance(provider);
-                    configurationMultibinder.addBinding().toInstance(configuration);
-                });
+            // Bind ConfigProvider<T> to DelegatingConfigProvider<T> in Singleton scope
+            final TypeLiteral<ConfigProvider<?>> providerType =
+                    (TypeLiteral<ConfigProvider<?>>) TypeLiteral.get(new CompositeType(ConfigProvider.class, key));
+            final TypeLiteral<DelegatingConfigProvider<?>> delegatingProviderType =
+                    (TypeLiteral<DelegatingConfigProvider<?>>) TypeLiteral.get(new CompositeType(DelegatingConfigProvider.class, key));
+
+            bind(providerType).to(delegatingProviderType).in(Singleton.class);
+            configProviderMultibinder.addBinding().to(delegatingProviderType);
+
+            // Bind T to the provider key
+            bind((Class<? super Object>) key).toProvider(Key.get(providerType));
+        });
     }
 
     @Override
@@ -110,11 +117,11 @@ public class ConfigModule extends AbstractModule {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConfigModule that = (ConfigModule) o;
-        return java.util.Objects.equals(configurations, that.configurations);
+        return Objects.equals(configurations, that.configurations);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(configurations);
+        return Objects.hash(configurations);
     }
 }

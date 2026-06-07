@@ -1,11 +1,9 @@
 package me.bristermitten.mittenlib.config;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
- * Represents a loadable configuration which will deserialize to an object of type {@link T}
+ * Represents a loadable configuration from a file which will (de)serialzse to/from an object of type {@link T}
  *
- * @param <T> the type of the config
+ * @param <T> the type of the config's abstract representation.
  */
 public class Configuration<T> {
     private final String fileName;
@@ -14,8 +12,8 @@ public class Configuration<T> {
     /**
      * Create a new Configuration
      *
-     * @param fileName            the name of the file to load
-     * @param type                the type to deserialize to
+     * @param fileName the name of the file to load
+     * @param type     the type to deserialize to
      */
     public Configuration(String fileName, Class<T> type) {
         this.fileName = fileName;

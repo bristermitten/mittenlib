@@ -14,7 +14,7 @@ public interface ConfigProviderImprover {
      *
      * @param provider the provider to improve
      * @param <T>      the type of the config
-     * @return the improved provider
+     * @return an improved provider
      */
     <T> ConfigProvider<T> improve(ConfigProvider<T> provider);
 }
