@@ -41,6 +41,22 @@ public class GenericTypeDeserializerGenerator {
         this.customDeserializers = customDeserializers;
     }
 
+    /**
+     * Creates a reference to a deserialization function, either as a method reference (for static)
+     * or a field reference (for non-static, injected).
+     * <p>
+     * Generates:
+     * <pre>
+     *     MyDeserializer::deserialize
+     * </pre>
+     * or
+     * <pre>
+     *     this.myDeserializer
+     * </pre>
+     *
+     * @param info the custom deserializer metadata, used to determine if the generated code should be static or not
+     * @return a code block referencing the deserializer
+     */
     private CodeBlock getDeserializationFunctionReference(CustomDeserializerInfo info) {
         if (info.isStatic()) {
             return CodeBlock.of("$T::deserialize", info.deserializerClass());
@@ -51,9 +67,14 @@ public class GenericTypeDeserializerGenerator {
 
     /**
      * Generates and appends deserialization logic for generic collection properties.
+     * <p>
+     * For a {@link List}, generates:
+     * <pre>
+     *     return CollectionsUtils.deserializeList(itemsFromMap, context, ctx0 -> ...);
+     * </pre>
      *
      * @param builder            the method spec builder
-     * @param property           the property being processed
+     * @param property           the property being processed, used to generate the variable name (e.g. {@code itemsFromMap})
      * @param wrappedElementType the wrapped property type mirror
      * @param elementType        the wrapped property type element
      * @return an optional method spec if handled successfully
@@ -108,11 +129,16 @@ public class GenericTypeDeserializerGenerator {
     }
 
     /**
-     * Recursively generates a CodeBlock representing a {@link me.bristermitten.mittenlib.config.DeserializationFunction}
+     * Recursively generates a {@link CodeBlock} representing a {@link me.bristermitten.mittenlib.config.DeserializationFunction}
      * for the given type. Maps collections recursively and falls back to object mapper mapping for basic types.
+     * <p>
+     * Generates lambdas like:
+     * <pre>
+     *     ctx0 -> CollectionsUtils.deserializeList(ctx0.getData(), ctx0, ctx1 -> ...)
+     * </pre>
      *
      * @param type  the type to generate a deserialization function for
-     * @param depth the current nesting depth, used to generate unique context variable names (e.g. ctx0, ctx1)
+     * @param depth the current nesting depth, used to generate unique context variable names (e.g. {@code ctx0}, {@code ctx1})
      * @return a {@link CodeBlock} lambda expression {@code ctx -> ...}
      */
     private CodeBlock getDeserializationFunction(TypeMirror type, int depth) {
@@ -152,6 +178,19 @@ public class GenericTypeDeserializerGenerator {
         return CodeBlock.of("$L -> $L.getMapper().map($L.getData(), new $T<$T>(){})", ctxVar, ctxVar, ctxVar, TypeToken.class, typesUtil.getBoxedType(type));
     }
 
+    /**
+     * Generates deserialization logic for a {@link List} property.
+     * <p>
+     * Generates:
+     * <pre>
+     *     return CollectionsUtils.deserializeList(fromMap, context, ctx0 -> ...);
+     * </pre>
+     *
+     * @param builder            the method spec builder
+     * @param wrappedElementType the wrapped property type mirror
+     * @param fromMapName        the name of the variable containing the raw data (e.g. {@code fromMap})
+     * @return an optional method spec
+     */
     private Optional<MethodSpec> handleListType(MethodSpec.Builder builder,
                                                 TypeMirrorWrapper wrappedElementType,
                                                 String fromMapName) {
@@ -162,6 +201,19 @@ public class GenericTypeDeserializerGenerator {
         return Optional.of(builder.build());
     }
 
+    /**
+     * Generates deserialization logic for a {@link Map} property.
+     * <p>
+     * Generates:
+     * <pre>
+     *     return CollectionsUtils.deserializeMap(KeyType.class, fromMap, context, ctx0 -> ...);
+     * </pre>
+     *
+     * @param builder            the method spec builder
+     * @param wrappedElementType the wrapped property type mirror
+     * @param fromMapName        the name of the variable containing the raw data (e.g. {@code fromMap})
+     * @return an optional method spec
+     */
     private Optional<MethodSpec> handleMapType(MethodSpec.Builder builder,
                                                TypeMirrorWrapper wrappedElementType, String fromMapName) {
         var arguments = wrappedElementType.getTypeArguments();

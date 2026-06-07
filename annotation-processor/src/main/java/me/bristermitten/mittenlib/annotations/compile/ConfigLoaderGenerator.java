@@ -2,17 +2,19 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
-import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
-import me.bristermitten.mittenlib.annotations.ast.*;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
+import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
-import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
+import org.jspecify.annotations.Nullable;
 
 import javax.annotation.processing.Generated;
 import javax.inject.Inject;
@@ -44,6 +46,12 @@ public class ConfigLoaderGenerator {
         this.typesUtil = typesUtil;
     }
 
+    /**
+     * Entry point for generating a {@link JavaFile} for a configuration loader.
+     *
+     * @param ast the configuration structure to generate a loader for
+     * @return a {@link JavaFile} containing the generated loader class
+     */
     public JavaFile emit(AbstractConfigStructure ast) {
         ClassName loaderClassName = classNameGenerator.getLoaderClassName(ast);
         TypeSpec.Builder builder = createLoaderBuilder(ast);
@@ -52,6 +60,13 @@ public class ConfigLoaderGenerator {
         return JavaFile.builder(loaderClassName.packageName(), builder.build()).build();
     }
 
+    /**
+     * Creates the {@link TypeSpec.Builder} for the loader class, including its annotations,
+     * fields, constructor, and deserialization methods.
+     *
+     * @param ast the configuration structure
+     * @return a builder for the loader class
+     */
     private TypeSpec.Builder createLoaderBuilder(AbstractConfigStructure ast) {
         ClassName loaderClassName = classNameGenerator.getLoaderClassName(ast);
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
@@ -91,6 +106,12 @@ public class ConfigLoaderGenerator {
         return builder;
     }
 
+    /**
+     * Recursively adds nested loader classes for enclosed configuration structures.
+     *
+     * @param ast           the parent configuration structure
+     * @param loaderBuilder the builder for the parent loader class
+     */
     private void addChildLoaderClasses(AbstractConfigStructure ast, TypeSpec.Builder loaderBuilder) {
         for (AbstractConfigStructure child : ast.enclosed()) {
             TypeSpec.Builder childLoaderBuilder = createLoaderBuilder(child);
@@ -99,12 +120,31 @@ public class ConfigLoaderGenerator {
         }
     }
 
+    /**
+     * Adds fields and a {@code @Inject} constructor to the loader class for its dependencies,
+     * such as sub-loaders, custom deserializers, and validators.
+     * <p>
+     * Generates:
+     * <pre>{@code
+     *     private final Provider<OtherConfigLoader> otherConfigLoader;
+     *     private final MyDeserializer myDeserializer;
+     *
+     *     @Inject
+     *     public MyConfigLoader(Provider<OtherConfigLoader> otherConfigLoader, MyDeserializer myDeserializer) {
+     *         this.otherConfigLoader = otherConfigLoader;
+     *         this.myDeserializer = myDeserializer;
+     *     }
+     * }</pre>
+     *
+     * @param ast     the configuration structure, used to determine dependencies like {@code otherConfigLoader} or {@code myDeserializer}
+     * @param builder the loader class builder
+     */
     private void addFieldsAndConstructor(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
                 .addAnnotation(Inject.class)
                 .addModifiers(Modifier.PUBLIC);
 
-        // 1. Injected Validator if validation is needed
+        // Injected Validator if validation is needed
         if (ast.needsValidation()) {
             ClassName validatorClassName = classNameGenerator.getValidatorClassName(ast);
             String validatorFieldName = "validator";
@@ -113,7 +153,7 @@ public class ConfigLoaderGenerator {
             constructor.addStatement("this.$L = $L", validatorFieldName, validatorFieldName);
         }
 
-        // 2. Referenced Sub-loaders & Non-static Custom Deserializers
+        // Referenced Sub-loaders & Non-static Custom Deserializers
         Set<TypeName> injectedTypes = new LinkedHashSet<>();
         Map<TypeName, String> injectedFieldNames = new LinkedHashMap<>();
 
@@ -146,6 +186,13 @@ public class ConfigLoaderGenerator {
         builder.addMethod(constructor.build());
     }
 
+    /**
+     * Collects configuration types that need to be injected as sub-loaders.
+     *
+     * @param type               the type to inspect
+     * @param injectedTypes      the set of already registered injected Types to add to
+     * @param injectedFieldNames the mapping of injected types to their corresponding field names
+     */
     private void collectConfigTypes(TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
         if (typesUtil.isConfigType(type)) {
             ClassName subLoaderName = classNameGenerator.getLoaderClassName(type);
@@ -195,7 +242,27 @@ public class ConfigLoaderGenerator {
         }
     }
 
-    private void addApplyMethod(AbstractConfigStructure ast, TypeSpec.Builder builder, List<MethodSpec> deserializeMethods, ClassName daoName) {
+    /**
+     * Adds the {@code apply} method to the loader, which orchestrates the deserialization of all properties.
+     * <p>
+     * Generates a recursive {@code flatMap} chain:
+     * <pre>{@code
+     *     public Result<MyConfig> apply(DeserializationContext context) {
+     *         MyConfigDAO dao = new MyConfigDAO();
+     *         return deserializeCount(context, dao).flatMap(var0 ->
+     *             deserializeName(context, dao).flatMap(var1 ->
+     *                 Result.ok((MyConfig) new MyConfigImpl(var0, var1))
+     *             )
+     *         );
+     *     }
+     * }</pre>
+     *
+     * @param ast                the configuration structure, used to determine the return type (e.g. {@code MyConfig})
+     * @param builder            the loader class builder
+     * @param deserializeMethods the list of generated property deserialization methods (e.g. {@code deserializeCount}, {@code deserializeName})
+     * @param daoName            the name of the DAO class, if applicable (e.g. {@code MyConfigDAO})
+     */
+    private void addApplyMethod(AbstractConfigStructure ast, TypeSpec.Builder builder, List<MethodSpec> deserializeMethods, @Nullable ClassName daoName) {
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
         ClassName implClassName = classNameGenerator.translateConfigClassName(ast);
 
@@ -243,8 +310,8 @@ public class ConfigLoaderGenerator {
         for (int idx = 0; idx < deserializeMethods.size(); idx++) {
             MethodSpec deserializeMethod = deserializeMethods.get(idx);
             Property property = ast.properties().get(idx);
-            var deserialiseMethodArguments = (daoName != null && property.settings().hasDefaultValue()) ? "context, dao" : "context";
-            expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserialiseMethodArguments, i++);
+            var deserializeMethodArguments = (daoName != null && property.settings().hasDefaultValue()) ? "context, dao" : "context";
+            expressionBuilder.add("$N($L).flatMap(var$L -> \n", deserializeMethod, deserializeMethodArguments, i++);
         }
 
         expressionBuilder.add("$T.ok(($T) new $T(", Result.class, publicClassName, implClassName);

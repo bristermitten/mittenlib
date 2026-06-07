@@ -62,7 +62,7 @@ public class NonGenericTypeDeserializerGenerator {
      * Only supports static deserializers for now.
      *
      * @param info               the custom deserializer metadata
-     * @param withDataExpression the code block providing the deserialization data
+     * @param withDataExpression the code block providing the deserialization data (e.g. {@code context.withData(data)})
      * @return a code block invoking the custom deserializer
      */
     private CodeBlock getDeserializationFunction(CustomDeserializerInfo info, CodeBlock withDataExpression) {
@@ -76,10 +76,10 @@ public class NonGenericTypeDeserializerGenerator {
     /**
      * Translates a {@link DataTree} literal value to its corresponding JVM primitive type.
      *
-     * @param type         the target type we want to convert to
+     * @param type         the target type we want to convert to (e.g. {@code int}, {@code float})
      * @param dataTreeType the actual type wrapper inside the {@link DataTree}
      * @param value        the code block representing the expression to convert
-     * @return a code block performing the primitive conversion
+     * @return a code block performing the primitive conversion (e.g. {@code ((Integer) value).intValue()})
      */
     public CodeBlock dataTreeConvert(TypeName type, TypeName dataTreeType, CodeBlock value) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
@@ -154,14 +154,19 @@ public class NonGenericTypeDeserializerGenerator {
      * Generates a short-circuit when a property has a default value and the
      * raw input value is already of the expected target type.
      * Specifically, if the property has a default value we generate:
-     * <pre>
+     * <pre>{@code
      * if (deserialisedValue instanceof ExpectedType) {
      *     return Result.ok((ExpectedType) deserialisedValue);
      * }
-     * </pre>
+     * }</pre>
      * The justification for the default value requirement is not obvious upon immediate inspection.
-     * However, if a property doesn't have a default value, we instead load it as a {@link DataTree}, so the <code>instanceof</code> would fail with a compile time error.
+     * However, if a property doesn't have a default value, we instead load it as a {@link DataTree}, so the {@code instanceof} would fail with a compile time error.
      * If there is a default value, we instead load it as {@link Object} so can try this case safely.
+     *
+     * @param builder     the method spec builder
+     * @param property    the property being processed
+     * @param fromMapName the name of the variable containing the raw data (e.g. {@code countFromMap})
+     * @param safeType    the expected target type (e.g. {@code Integer})
      */
     private void handleDirectTypeMatch(MethodSpec.Builder builder, Property property,
                                        String fromMapName, TypeName safeType) {
@@ -176,11 +181,15 @@ public class NonGenericTypeDeserializerGenerator {
      * Generates type checking and conversion logic when the raw input value is wrapped in
      * a {@link DataTree} literal (e.g. integer, float, string) that matches a primitive/string target.
      * Generates the code:
-     * <pre>
+     * <pre>{@code
      *     if (deserialisedValue instanceof DataTree.Expected) {
      *         return Result.ok([generatedDataTreeConvert](((DataTree.Expected) deserialisedValue).value());
      *     }
-     * </pre>
+     * }</pre>
+     *
+     * @param builder     the method spec builder
+     * @param fromMapName the name of the variable containing the raw data (e.g. {@code countFromMap})
+     * @param safeType    the expected target type (e.g. {@code Integer})
      */
     private void handleDataTreeTypeMatch(MethodSpec.Builder builder, String fromMapName, TypeName safeType) {
         var treeType = typesUtil.getDataTreeType(safeType);
@@ -250,6 +259,13 @@ public class NonGenericTypeDeserializerGenerator {
      * Handles type mismatches or fallbacks. If annotated with {@link UseObjectMapperSerialization},
      * generates code to delegate deserialization to our {@link ObjectMapper}.
      * Otherwise, it generates a failure result indicating an invalid property type.
+     *
+     * @param builder     the method spec builder
+     * @param property    the property being processed, used to determine the return type and check for annotations
+     * @param dtoType     the enclosing DTO class element, used for error reporting
+     * @param elementType the property type mirror, used for error reporting
+     * @param fromMapName the name of the variable containing the raw data (e.g. {@code countFromMap})
+     * @return true if handled, false otherwise
      */
     private boolean handleInvalidPropertyType(MethodSpec.Builder builder, Property property,
                                               TypeElement dtoType, TypeMirror elementType, String fromMapName) {
@@ -283,6 +299,12 @@ public class NonGenericTypeDeserializerGenerator {
     /**
      * Helper method to generate enum lookup logic using either exact case matching
      * or case-insensitive matching depending on property configuration.
+     *
+     * @param property    the property being processed, used to determine the parsing scheme and property name
+     * @param builder     the method spec builder
+     * @param fromMapName the name of the variable containing the raw data (e.g. {@code typeFromMap})
+     * @param safeType    the expected target type (e.g. {@code MyEnum})
+     * @param convert     the code block performing the conversion to String (e.g. {@code typeFromMap.value()})
      */
     private void addEnumDeserialisation(Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
         switch (property.settings().enumParsingScheme()) {

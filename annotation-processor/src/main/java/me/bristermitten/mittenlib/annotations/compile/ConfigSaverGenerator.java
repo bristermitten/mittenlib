@@ -51,6 +51,12 @@ public class ConfigSaverGenerator {
         this.customSerializers = customSerializers;
     }
 
+    /**
+     * Entry point for generating a {@link JavaFile} for a configuration saver.
+     *
+     * @param ast the configuration structure to generate a saver for
+     * @return a {@link JavaFile} containing the generated saver class
+     */
     public JavaFile emit(AbstractConfigStructure ast) {
         ClassName saverClassName = classNameGenerator.getSaverClassName(ast);
         TypeSpec.Builder builder = createSaverBuilder(ast);
@@ -58,6 +64,13 @@ public class ConfigSaverGenerator {
         return JavaFile.builder(saverClassName.packageName(), builder.build()).build();
     }
 
+    /**
+     * Creates the {@link TypeSpec.Builder} for the saver class, including its annotations,
+     * constructor, fields, and serialization methods.
+     *
+     * @param ast the configuration structure
+     * @return a builder for the saver class
+     */
     private TypeSpec.Builder createSaverBuilder(AbstractConfigStructure ast) {
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
         ClassName saverClassName = classNameGenerator.getSaverClassName(ast);
@@ -141,6 +154,23 @@ public class ConfigSaverGenerator {
         return builder;
     }
 
+    /**
+     * Adds the {@code generateDefault} method to the saver, which creates a default {@link DataTree}
+     * for the configuration structure, using a DAO for default values when possible.
+     * <p>
+     * Generates:
+     * <pre>{@code
+     *     public DataTree generateDefault(SerializationContext context) {
+     *         MyConfigDAO dao = new MyConfigDAO(); // DAO is either the DefaultMethodAccess or original Config class
+     *         Map<DataTree, DataTree> map = new LinkedHashMap<>();
+     *         map.put(DataTree.string("count"), this.serializeCount(dao.getCount(), context));
+     *         return DataTree.map(map);
+     *     }
+     * }</pre>
+     *
+     * @param ast     the configuration structure, used to determine the properties to include in the default tree
+     * @param builder the saver class builder
+     */
     private void addGenerateDefaultMethod(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         MethodSpec.Builder method = MethodSpec.methodBuilder("generateDefault")
                 .addAnnotation(Override.class)
@@ -203,6 +233,23 @@ public class ConfigSaverGenerator {
         builder.addMethod(method.build());
     }
 
+    /**
+     * Adds a dependency on another configuration saver to the class fields and constructor.
+     * <p>
+     * Generates:
+     * <pre>{@code
+     *     private final Provider<SerializationFunction<OtherConfig>> otherConfigSaver;
+     *
+     *     @Inject
+     *     public MyConfigSaver(Provider<SerializationFunction<OtherConfig>> otherConfigSaver) {
+     *         this.otherConfigSaver = otherConfigSaver;
+     *     }
+     * }</pre>
+     *
+     * @param builder            the saver class builder
+     * @param constructorBuilder the constructor builder
+     * @param type               the type of the configuration whose saver is needed (e.g. {@code OtherConfig})
+     */
     private void addSaverDependency(TypeSpec.Builder builder, MethodSpec.Builder constructorBuilder, TypeMirror type) {
         AbstractConfigStructure ast = configNameCache.lookupAST(type).orElse(null);
         if (ast == null) return;
@@ -227,8 +274,10 @@ public class ConfigSaverGenerator {
     /**
      * Recursively traverses generic type arguments of a property's type to discover
      * configuration savers that need to be injected into the generated saver as dependencies.
+     * <p>
+     * For a {@code List<OtherConfig>}, it will find and add a dependency for {@code OtherConfigSaver}.
      *
-     * @param type               the property type (or component/argument type) to inspect
+     * @param type               the property type (or component/argument type) to inspect (e.g. {@code List<OtherConfig>})
      * @param builder            the TypeSpec builder of the saver class
      * @param constructorBuilder the constructor builder of the saver class
      */
@@ -249,10 +298,20 @@ public class ConfigSaverGenerator {
     /**
      * Recursively traverses generic type arguments of a property's type to discover
      * non-static custom serializers that need to be injected into the generated saver.
+     * <p>
+     * Generates:
+     * <pre>{@code
+     *     private final Provider<MyCustomSerializer> myCustomSerializerProvider;
      *
-     * @param type               the property type (or component/argument type) to inspect
+     *     @Inject
+     *     public MyConfigSaver(Provider<MyCustomSerializer> myCustomSerializerProvider) {
+     *         this.myCustomSerializerProvider = myCustomSerializerProvider;
+     *     }
+     * }</pre>
+     *
+     * @param type               the property type (or component/argument type) to inspect (e.g. {@code Map<String, CustomType>})
      * @param injectedTypes      the set of already registered injected Types to add to
-     * @param injectedFieldNames the mapping of injected types to their corresponding field names
+     * @param injectedFieldNames the mapping of injected types to their corresponding field names (e.g. {@code myCustomSerializerProvider})
      */
     private void collectCustomSerializers(TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
         customSerializers.getCustomSerializer(type).ifPresent(info -> {

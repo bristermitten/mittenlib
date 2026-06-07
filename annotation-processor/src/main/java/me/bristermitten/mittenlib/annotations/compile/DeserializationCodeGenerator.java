@@ -5,12 +5,9 @@ import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.compile.deserializer.GenericTypeDeserializerGenerator;
 import me.bristermitten.mittenlib.annotations.compile.deserializer.NonGenericTypeDeserializerGenerator;
-import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
@@ -20,11 +17,9 @@ import me.bristermitten.mittenlib.util.Strings;
 import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,7 +33,6 @@ public class DeserializationCodeGenerator {
      * For example, a method to deserialize a field called "test" would be called deserializeTest
      */
     public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
-    public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
     private final MethodNames methodNames;
@@ -108,9 +102,22 @@ public class DeserializationCodeGenerator {
         return builder.build();
     }
 
+    /**
+     * Creates a {@link MethodSpec.Builder} for a deserialization method.
+     * <p>
+     * Generates a method header like:
+     * <pre>{@code
+     *     private Result<Integer> deserializeCount(DeserializationContext context, MyConfigDAO dao)
+     * }</pre>
+     *
+     * @param property          the property to create a method for, used for the method name (e.g. {@code count})
+     * @param elementResultType the return type of the method (e.g. {@code Integer})
+     * @param daoName           the name of the DAO class, if applicable (e.g. {@code MyConfigDAO}). If there is no DAO, pass {@code null}
+     * @return a method spec builder
+     */
     private MethodSpec.Builder createDeserializeMethodBuilder(Property property,
-                                                               TypeName elementResultType,
-                                                               @Nullable ClassName daoName) {
+                                                              TypeName elementResultType,
+                                                              @Nullable ClassName daoName) {
         final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
                 .addModifiers(Modifier.PRIVATE)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
@@ -124,6 +131,25 @@ public class DeserializationCodeGenerator {
         return builder;
     }
 
+    /**
+     * Sets up the initial statements for a deserialization method, loading the data from the {@link DeserializationContext}.
+     * <p>
+     * If the property has a default value, it generates:
+     * <pre>{@code
+     *     DataTree $data = context.getData();
+     *     Object countFromMap = $data.getOrDefault("count", dao.getCount());
+     * }</pre>
+     * Otherwise, it generates:
+     * <pre>{@code
+     *     DataTree $data = context.getData();
+     *     DataTree countFromMap = $data.get("count");
+     * }</pre>
+     *
+     * @param builder     the method spec builder
+     * @param propertyAST the AST representation of the property
+     * @param property    the property being processed, used to determine the key and variable name (e.g. {@code countFromMap})
+     * @param daoName     the name of the DAO class, used for default value access (e.g. {@code dao.getCount()})
+     */
     private void setupInitialStatements(MethodSpec.Builder builder,
                                         AbstractConfigStructure propertyAST,
                                         Property property,
@@ -147,6 +173,23 @@ public class DeserializationCodeGenerator {
         }
     }
 
+    /**
+     * Handles null checks for a deserialized value.
+     * <p>
+     * If the property is nullable, it generates:
+     * <pre>{@code
+     *     if (countFromMap == null) return Result.ok(null);
+     * }</pre>
+     * If the property is not nullable, it generates:
+     * <pre>{@code
+     *     if (countFromMap == null) return Result.fail(ConfigLoadingErrors.notFoundException(...));
+     * }</pre>
+     *
+     * @param builder         the method spec builder
+     * @param property        the property being processed, used to check nullability and variable name (e.g. {@code countFromMap})
+     * @param dtoType         the enclosing DTO class element
+     * @param elementTypeName the property type name
+     */
     private void handleNullChecks(MethodSpec.Builder builder,
                                   Property property,
                                   TypeElement dtoType,

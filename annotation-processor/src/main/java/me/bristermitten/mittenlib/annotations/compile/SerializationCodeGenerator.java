@@ -131,10 +131,10 @@ public class SerializationCodeGenerator {
     }
 
     /**
-     * Creates serialization methods for a config class in its Saver class.
+     * Adds private serialization methods for each property of a configuration structure to its saver class.
      *
-     * @param typeSpecBuilder The builder for the Saver class
-     * @param ast             The abstract configuration structure
+     * @param typeSpecBuilder the builder for the saver class
+     * @param ast             the configuration structure
      */
     public void addSerializeMethodsToSaver(TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
         // Generate serialize methods for each property
@@ -147,6 +147,8 @@ public class SerializationCodeGenerator {
     /**
      * Get the parameter type for a serialization method.
      * This method adds wildcards to collection types to allow for both the public and implementation types.
+     * <p>
+     * For example, a property with type {@code List<T>} will be mapped to {@code List<? extends T>}
      */
     private TypeName getSerializeParameterType(Property property) {
         TypeName typeName = configurationClassNameGenerator.publicPropertyClassName(property);
@@ -163,10 +165,20 @@ public class SerializationCodeGenerator {
     }
 
     /**
-     * Creates a serialization method for a specific property in a Saver class.
+     * Creates a private serialization method for a specific property.
+     * <p>
+     * Generates:
+     * <pre>{@code
+     *     private DataTree serializeCount(Integer value, SerializationContext context) {
+     *         if (value == null) return DataTree.null_();
+     *         DataTree result;
+     *         result = DataTreeTransforms.loadFrom(value);
+     *         return result;
+     *     }
+     * }</pre>
      *
-     * @param property The property to create a serialization method for
-     * @return A method spec for the serialization method
+     * @param property the property to create a serialization method for, used for the method name (e.g. {@code serializeCount}) and return type
+     * @return a method spec for the serialization method
      */
     private MethodSpec createSerializeMethodFor(Property property) {
         String methodName = SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
@@ -220,6 +232,16 @@ public class SerializationCodeGenerator {
         return wrappedType.isEnum();
     }
 
+    /**
+     * Handles serialization by delegating to an {@link me.bristermitten.mittenlib.config.reader.ObjectMapper}.
+     * <p>
+     * Generates:
+     * <pre>{@code
+     *     return DataTreeTransforms.loadFrom(context.getMapper().map(value));
+     * }</pre>
+     *
+     * @param builder the method builder
+     */
     private void handleObjectMapperSerialization(MethodSpec.Builder builder) {
         // Use ObjectMapper to map the value and then load it as DataTree
         // We use mapper.map(value) which returns an Object (likely a Map or List)
@@ -228,23 +250,33 @@ public class SerializationCodeGenerator {
     }
 
     /**
-     * Recursively generates serialization CodeBlock statements for a given type,
+     * Recursively generates serialization {@link CodeBlock} statements for a given type,
      * converting it to a {@link DataTree} representation.
-     * Supports custom serializers, nested config types, collections (List, Map),
+     * Supports custom serializers, nested config types, collections ({@link List}, {@link Map}),
      * and primitive/built-in serializable types.
+     * <p>
+     * For a {@link List}, generates:
+     * <pre>{@code
+     *     DataTree[] arr0 = new DataTree[value.size()];
+     *     for (int i0 = 0; i0 < value.size(); i0++) {
+     *         String el0 = (String) value.get(i0);
+     *         arr0[i0] = DataTreeTransforms.loadFrom(el0);
+     *     }
+     *     result = DataTree.array(arr0);
+     * }</pre>
      *
      * @param type             the type of the element being serialized
-     * @param inputVar         the name of the local variable holding the value to serialize
-     * @param targetExpression the code expression to assign the resulting {@link DataTree} to
+     * @param inputVar         the name of the local variable holding the value to serialize (e.g. {@code value})
+     * @param targetExpression the code expression to assign the resulting {@link DataTree} to (e.g. {@code result} or {@code arr0[i0]})
      * @param depth            the current recursion depth, used to generate unique variable names
-     *                         and avoid local variable scope clashes (e.g. arr0, i0, el0 vs arr1, i1, el1)
+     *                         and avoid local variable scope clashes (e.g. {@code arr0}, {@code i0}, {@code el0} vs {@code arr1}, {@code i1}, {@code el1})
      * @return a {@link CodeBlock} containing the serialization logic statements
      */
     private CodeBlock generateSerialization(TypeMirror type, String inputVar, String targetExpression, int depth) {
         CodeBlock.Builder builder = CodeBlock.builder();
         TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(type);
 
-        // 1. Custom Serializer
+        // Custom Serializer
         Optional<CustomSerializerInfo> customSerializerOptional = customSerializers.getCustomSerializer(type);
         if (customSerializerOptional.isPresent()) {
             CustomSerializerInfo info = customSerializerOptional.get();
@@ -258,14 +290,14 @@ public class SerializationCodeGenerator {
             return builder.build();
         }
 
-        // 2. Config type
+        // Config type
         if (typesUtil.isConfigType(type)) {
             String saverFieldName = configurationClassNameGenerator.getSaverProviderFieldName(type);
             builder.addStatement("$L = this.$L.get().apply(($T) $L, context)", targetExpression, saverFieldName, configurationClassNameGenerator.publicPropertyClassName(type), inputVar);
             return builder.build();
         }
 
-        // 3. Generic collections (List, Map)
+        // Generic collections (List, Map)
         if (wrappedType.hasTypeArguments()) {
             String canonicalName = wrappedType.erasure().getQualifiedName();
             if (canonicalName.equals(List.class.getName())) {
@@ -304,7 +336,7 @@ public class SerializationCodeGenerator {
             }
         }
 
-        // 4. Basic known serializable types or fallback
+        // Basic known serializable types or fallback
         builder.addStatement("$L = $T.loadFrom($L)", targetExpression, DataTreeTransforms.class, inputVar);
         return builder.build();
     }
