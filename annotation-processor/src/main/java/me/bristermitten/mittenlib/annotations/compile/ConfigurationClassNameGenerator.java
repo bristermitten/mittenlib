@@ -290,6 +290,54 @@ public class ConfigurationClassNameGenerator {
         return ClassName.get(packageName, findConfigClassName(configDTOType));
     }
 
+    public static final String DESERIALIZER_SUFFIX = "Deserializer";
+    public static final String SERIALIZER_SUFFIX = "Serializer";
+    public static final String VALIDATOR_SUFFIX = "Validator";
+    public static final String PROVIDER_SUFFIX = "Provider";
+    public static final String DEFAULT_METHOD_ACCESS_SUFFIX = "DefaultMethodAccess";
+    public static final String CONFIG_LOADER_MODULE_NAME = "ConfigLoaderModule";
+
+    public String getLoaderProviderFieldName(TypeMirror type) {
+        return getLoaderFieldName(type) + PROVIDER_SUFFIX;
+    }
+
+    public String getSaverProviderFieldName(TypeMirror type) {
+        return getSaverFieldName(type) + PROVIDER_SUFFIX;
+    }
+
+    public String getValidatorFieldName(Property property) {
+        return property.name() + VALIDATOR_SUFFIX;
+    }
+
+    public String getValidatorErrorFieldName(Property property) {
+        return property.name() + "ValidationError";
+    }
+
+    public ClassName getDefaultMethodAccessClassName(AbstractConfigStructure ast) {
+        ClassName concreteConfigClassName = getConcreteConfigClassName(ast);
+        return concreteConfigClassName.nestedClass(ast.name().simpleName() + DEFAULT_METHOD_ACCESS_SUFFIX);
+    }
+
+    public ClassName getLoaderModuleClassName(String packageName) {
+        return ClassName.get(packageName, CONFIG_LOADER_MODULE_NAME);
+    }
+
+    public String getProvidesProviderMethodName(String simpleName) {
+        return "provide" + simpleName + PROVIDER_SUFFIX;
+    }
+
+    public String getProvidesMethodName(String simpleName) {
+        return "provide" + simpleName;
+    }
+
+    public String getProvidesToConfigSetMethodName(String simpleName) {
+        return "provide" + simpleName + "ToConfigSet";
+    }
+
+    public String getProvidesToProviderSetMethodName(String simpleName) {
+        return "provide" + simpleName + "ToProviderSet";
+    }
+
     /**
      * Gets the ClassName of the loader for a given configuration structure.
      * For MyConfigImpl, the loader is MyConfigImplLoader.
@@ -298,17 +346,17 @@ public class ConfigurationClassNameGenerator {
     public ClassName getLoaderClassName(AbstractConfigStructure ast) {
         ClassName implName = translateConfigClassName(ast);
         if (ast.enclosedIn() != null) {
-            return getLoaderClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + "Deserializer");
+            return getLoaderClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + DESERIALIZER_SUFFIX);
         }
-        return implName.peerClass(implName.simpleName() + "Deserializer");
+        return implName.peerClass(implName.simpleName() + DESERIALIZER_SUFFIX);
     }
 
     private ClassName getLoaderClassName(ASTParentReference parent) {
         ClassName implName = translateConfigClassName(parent);
         if (parent.parent() != null) {
-            return getLoaderClassName(parent.parent()).nestedClass(implName.simpleName() + "Deserializer");
+            return getLoaderClassName(parent.parent()).nestedClass(implName.simpleName() + DESERIALIZER_SUFFIX);
         }
-        return implName.peerClass(implName.simpleName() + "Deserializer");
+        return implName.peerClass(implName.simpleName() + DESERIALIZER_SUFFIX);
     }
 
     /**
@@ -330,7 +378,7 @@ public class ConfigurationClassNameGenerator {
         ClassName publicName = getPublicClassName(ast);
         String safePkg = publicName.packageName().replace('.', '_');
         String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
-        return Strings.uncapitalize(prefix + publicName.simpleName()) + "Deserializer";
+        return Strings.uncapitalize(prefix + publicName.simpleName()) + DESERIALIZER_SUFFIX;
     }
 
     /**
@@ -341,17 +389,17 @@ public class ConfigurationClassNameGenerator {
     public ClassName getSaverClassName(AbstractConfigStructure ast) {
         ClassName implName = translateConfigClassName(ast);
         if (ast.enclosedIn() != null) {
-            return getSaverClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + "Serializer");
+            return getSaverClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + SERIALIZER_SUFFIX);
         }
-        return implName.peerClass(implName.simpleName() + "Serializer");
+        return implName.peerClass(implName.simpleName() + SERIALIZER_SUFFIX);
     }
 
     private ClassName getSaverClassName(ASTParentReference parent) {
         ClassName implName = translateConfigClassName(parent);
         if (parent.parent() != null) {
-            return getSaverClassName(parent.parent()).nestedClass(implName.simpleName() + "Serializer");
+            return getSaverClassName(parent.parent()).nestedClass(implName.simpleName() + SERIALIZER_SUFFIX);
         }
-        return implName.peerClass(implName.simpleName() + "Serializer");
+        return implName.peerClass(implName.simpleName() + SERIALIZER_SUFFIX);
     }
 
     /**
@@ -364,23 +412,23 @@ public class ConfigurationClassNameGenerator {
         ClassName publicName = getPublicClassName(ast);
         String safePkg = publicName.packageName().replace('.', '_');
         String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
-        return Strings.uncapitalize(prefix + publicName.simpleName()) + "Serializer";
+        return Strings.uncapitalize(prefix + publicName.simpleName()) + SERIALIZER_SUFFIX;
     }
 
     public ClassName getValidatorClassName(AbstractConfigStructure ast) {
         ClassName implName = translateConfigClassName(ast);
         if (ast.enclosedIn() != null) {
-            return getValidatorClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + "Validator");
+            return getValidatorClassName(ast.enclosedIn()).nestedClass(implName.simpleName() + VALIDATOR_SUFFIX);
         }
-        return implName.peerClass(implName.simpleName() + "Validator");
+        return implName.peerClass(implName.simpleName() + VALIDATOR_SUFFIX);
     }
 
     private ClassName getValidatorClassName(ASTParentReference parent) {
         ClassName implName = translateConfigClassName(parent);
         if (parent.parent() != null) {
-            return getValidatorClassName(parent.parent()).nestedClass(implName.simpleName() + "Validator");
+            return getValidatorClassName(parent.parent()).nestedClass(implName.simpleName() + VALIDATOR_SUFFIX);
         }
-        return implName.peerClass(implName.simpleName() + "Validator");
+        return implName.peerClass(implName.simpleName() + VALIDATOR_SUFFIX);
     }
 
 

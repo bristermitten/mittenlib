@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
@@ -76,7 +75,6 @@ public class ConfigValidatorGenerator {
         addGuiceConstructor(ast, builder);
 
 
-
         // validate() method
         addValidateMethod(ast, builder, publicClassName);
 
@@ -89,7 +87,7 @@ public class ConfigValidatorGenerator {
                 if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
                     FieldSpec validatorField = FieldSpec.builder(
                             validatorClassName,
-                            property.name() + "Validator",
+                            classNameGenerator.getValidatorFieldName(property),
                             Modifier.PRIVATE, Modifier.FINAL
                     ).build();
                     builder.addField(validatorField);
@@ -107,7 +105,7 @@ public class ConfigValidatorGenerator {
         for (Property property : ast.properties()) {
             for (ValidationConstraint constraint : property.settings().constraints()) {
                 if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
-                    String fieldName = property.name() + "Validator";
+                    String fieldName = classNameGenerator.getValidatorFieldName(property);
                     constructor.addParameter(validatorClassName, fieldName);
                     constructor.addStatement("this.$L = $L", fieldName, fieldName);
                     hasCustom = true;
@@ -119,7 +117,6 @@ public class ConfigValidatorGenerator {
             builder.addMethod(constructor.build());
         }
     }
-
 
 
     private void addValidateMethod(AbstractConfigStructure ast, TypeSpec.Builder builder, ClassName publicClassName) {
@@ -199,9 +196,9 @@ public class ConfigValidatorGenerator {
                                     ConfigValidationException.class, configKey, accessorCall, "Must not be blank");
                             validateMethod.endControlFlow();
                         }
-                        case ValidationConstraint.Custom(ClassName validatorClassName) -> {
-                            String validatorFieldName = "this." + property.name() + "Validator";
-                            String errorFieldName = property.name() + "ValidationError";
+                        case ValidationConstraint.Custom(ClassName ignored) -> {
+                            String validatorFieldName = "this." + classNameGenerator.getValidatorFieldName(property);
+                            String errorFieldName = classNameGenerator.getValidatorErrorFieldName(property);
                             validateMethod.addStatement("$T<$T> $L = $L.validate($L)",
                                     Optional.class, String.class, errorFieldName, validatorFieldName, accessorCall);
                             validateMethod.beginControlFlow("if ($L.isPresent())", errorFieldName);

@@ -126,7 +126,7 @@ public class GenericTypeDeserializerGenerator {
 
         // 2. Config type
         if (typesUtil.isConfigType(type)) {
-            String loaderField = configurationClassNameGenerator.getLoaderFieldName(type) + "Provider";
+            String loaderField = configurationClassNameGenerator.getLoaderProviderFieldName(type);
             return CodeBlock.of("this.$L.get()", loaderField);
         }
 

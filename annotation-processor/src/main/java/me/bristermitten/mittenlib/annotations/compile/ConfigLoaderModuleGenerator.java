@@ -35,9 +35,8 @@ public class ConfigLoaderModuleGenerator {
             throw new IllegalArgumentException("asts list cannot be empty");
         }
 
-        ClassName moduleClassName = ClassName.get(
-                classNameGenerator.getPublicClassName(asts.getFirst()).packageName(),
-                "ConfigLoaderModule"
+        ClassName moduleClassName = classNameGenerator.getLoaderModuleClassName(
+                classNameGenerator.getPublicClassName(asts.getFirst()).packageName()
         );
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(moduleClassName)
@@ -108,7 +107,7 @@ public class ConfigLoaderModuleGenerator {
         String name = publicClassName.simpleName();
 
         // @Provides ConfigProvider<Public>
-        MethodSpec.Builder providerMethod = MethodSpec.methodBuilder("provide" + name + "Provider")
+        MethodSpec.Builder providerMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesProviderMethodName(name))
                 .addAnnotation(Provides.class)
                 .addAnnotation(Singleton.class)
                 .addModifiers(Modifier.PUBLIC)
@@ -123,7 +122,7 @@ public class ConfigLoaderModuleGenerator {
         builder.addMethod(providerMethod.build());
 
         // @Provides Public
-        MethodSpec.Builder configMethod = MethodSpec.methodBuilder("provide" + name)
+        MethodSpec.Builder configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
                 .addAnnotation(Provides.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(publicClassName)
@@ -134,14 +133,14 @@ public class ConfigLoaderModuleGenerator {
 
         // Multibinder registrations
         
-        MethodSpec.Builder configMultibinder = MethodSpec.methodBuilder("provide" + name + "ToConfigSet")
+        MethodSpec.Builder configMultibinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToConfigSetMethodName(name))
                 .addAnnotation(ProvidesIntoSet.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Configuration.class), WildcardTypeName.subtypeOf(Object.class)))
                 .addStatement("return $T.CONFIG", implClassName);
         builder.addMethod(configMultibinder.build());
 
-        MethodSpec.Builder providerMultibinder = MethodSpec.methodBuilder("provide" + name + "ToProviderSet")
+        MethodSpec.Builder providerMultibinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToProviderSetMethodName(name))
                 .addAnnotation(ProvidesIntoSet.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), WildcardTypeName.subtypeOf(Object.class)))

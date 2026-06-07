@@ -326,7 +326,7 @@ public class ConfigImplGenerator {
         }
 
         ClassName concreteConfigClassName = configurationClassNameGenerator.getConcreteConfigClassName(ast);
-        var innerName = concreteConfigClassName.nestedClass(ast.name().simpleName() + "DefaultMethodAccess");
+        var innerName = configurationClassNameGenerator.getDefaultMethodAccessClassName(ast);
 
 
         var innerBuilder = TypeSpec.classBuilder(innerName);

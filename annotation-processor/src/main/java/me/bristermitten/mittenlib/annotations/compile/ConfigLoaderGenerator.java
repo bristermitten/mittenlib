@@ -153,7 +153,7 @@ public class ConfigLoaderGenerator {
         if (typesUtil.isConfigType(type)) {
             ClassName subLoaderName = classNameGenerator.getLoaderClassName(type);
             TypeName providerType = ParameterizedTypeName.get(ClassName.get(Provider.class), subLoaderName);
-            String fieldName = classNameGenerator.getLoaderFieldName(type) + "Provider";
+            String fieldName = classNameGenerator.getLoaderProviderFieldName(type);
             if (injectedTypes.add(providerType)) {
                 injectedFieldNames.put(providerType, fieldName);
             }
@@ -212,7 +212,7 @@ public class ConfigLoaderGenerator {
             CodeBlock.Builder deserialiseBuilder = CodeBlock.builder();
             deserialiseBuilder.add("return ");
             for (AbstractConfigStructure alternative : union.alternatives()) {
-                String loaderFieldName = classNameGenerator.getLoaderFieldName(alternative.source().element().asType()) + "Provider";
+                String loaderFieldName = classNameGenerator.getLoaderProviderFieldName(alternative.source().element().asType());
 
                 deserialiseBuilder.add("this.$L.get().apply(context).map($T.class::cast).orElse(() -> \n",
                         loaderFieldName,
@@ -243,7 +243,7 @@ public class ConfigLoaderGenerator {
         };
 
         if (superClass.isPresent()) {
-            String superLoaderFieldName = classNameGenerator.getLoaderFieldName(superClass.get()) + "Provider";
+            String superLoaderFieldName = classNameGenerator.getLoaderProviderFieldName(superClass.get());
             expressionBuilder.add("this.$L.get().apply(context).flatMap(var$L -> \n", superLoaderFieldName, i++);
         }
 
@@ -284,7 +284,6 @@ public class ConfigLoaderGenerator {
         if (!hasAnyDefaultValue) {
             return null;
         }
-        ClassName concreteConfigClassName = classNameGenerator.getConcreteConfigClassName(ast);
-        return concreteConfigClassName.nestedClass(ast.name().simpleName() + "DefaultMethodAccess");
+        return classNameGenerator.getDefaultMethodAccessClassName(ast);
     }
 }

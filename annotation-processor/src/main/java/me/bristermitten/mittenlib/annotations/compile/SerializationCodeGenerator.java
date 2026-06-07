@@ -242,7 +242,7 @@ public class SerializationCodeGenerator {
             if (info.isStatic()) {
                 builder.addStatement("$L = $T.serialize(($T) $L, context)", targetExpression, info.serializerClass(), publicTypeName, inputVar);
             } else {
-                String fieldName = Strings.uncapitalize(info.serializerClass().getSimpleName().toString()) + "Provider";
+                String fieldName = Strings.uncapitalize(info.serializerClass().getSimpleName().toString()) + ConfigurationClassNameGenerator.PROVIDER_SUFFIX;
                 builder.addStatement("$L = this.$L.get().apply(($T) $L, context)", targetExpression, fieldName, publicTypeName, inputVar);
             }
             return builder.build();
@@ -250,7 +250,7 @@ public class SerializationCodeGenerator {
 
         // 2. Config type
         if (typesUtil.isConfigType(type)) {
-            String saverFieldName = configurationClassNameGenerator.getSaverFieldName(type) + "Provider";
+            String saverFieldName = configurationClassNameGenerator.getSaverProviderFieldName(type);
             builder.addStatement("$L = this.$L.get().apply(($T) $L, context)", targetExpression, saverFieldName, configurationClassNameGenerator.publicPropertyClassName(type), inputVar);
             return builder.build();
         }
