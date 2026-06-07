@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapterFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import java.util.Set;
 
 /**

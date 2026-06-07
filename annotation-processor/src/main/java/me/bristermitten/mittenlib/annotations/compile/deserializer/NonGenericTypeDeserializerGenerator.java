@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
@@ -22,7 +23,6 @@ import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 
-import javax.inject.Inject;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.Optional;

@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.config.provider.construct;
 
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
@@ -10,13 +11,12 @@ import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.FileBasedConfigProvider;
 import me.bristermitten.mittenlib.config.provider.StringReadingConfigProvider;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
-import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.config.writer.ConfigWriter;
+import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.files.FileType;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
 import java.nio.file.Path;
 
 public class SimpleConfigProviderFactory implements ConfigProviderFactory {
@@ -55,7 +55,7 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
         return configPathResult.flatMap(configPath ->
                 initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getType())
                         .map(unit -> (ConfigProvider<T>) new FileBasedConfigProvider<>(configPath, reader,
-                                ctx -> (Result<T>) ctx.getMapper().map(ctx.getData(), TypeToken.get(type)),
+                                ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)),
                                 saver,
                                 (val, ctx) -> saver.serialize(val, type).getOrThrow(),
                                 objectWriter)));

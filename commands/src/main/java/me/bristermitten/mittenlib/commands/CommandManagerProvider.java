@@ -1,11 +1,11 @@
 package me.bristermitten.mittenlib.commands;
 
 import co.aikar.commands.PaperCommandManager;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import me.bristermitten.mittenlib.commands.handlers.*;
 import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Set;
 
 /**

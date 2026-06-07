@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
@@ -7,7 +8,6 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 
-import javax.inject.Inject;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;

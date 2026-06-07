@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.files.yaml;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
@@ -7,7 +8,6 @@ import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.inject.Inject;
 import java.io.Reader;
 
 import static me.bristermitten.mittenlib.util.Result.runCatching;

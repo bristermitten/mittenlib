@@ -1,11 +1,11 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileType;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.Set;

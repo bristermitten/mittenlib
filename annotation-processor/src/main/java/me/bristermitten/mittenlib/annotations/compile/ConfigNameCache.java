@@ -1,10 +1,10 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Singleton;
 import com.squareup.javapoet.ClassName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 
-import javax.inject.Singleton;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.HashMap;

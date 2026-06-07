@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
@@ -15,7 +16,6 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.util.Strings;
 
-import javax.inject.Inject;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Map;

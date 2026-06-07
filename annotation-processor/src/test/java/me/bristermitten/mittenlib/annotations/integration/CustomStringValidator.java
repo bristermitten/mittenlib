@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.annotations.integration;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.validation.Validator;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
 public class CustomStringValidator implements Validator<String> {

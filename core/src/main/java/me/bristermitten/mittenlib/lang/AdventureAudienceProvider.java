@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.lang;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 /**
  * A provider for {@link BukkitAudiences} that uses the {@link Plugin}

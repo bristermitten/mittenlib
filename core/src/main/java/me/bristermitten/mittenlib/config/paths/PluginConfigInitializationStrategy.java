@@ -1,12 +1,12 @@
 package me.bristermitten.mittenlib.config.paths;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.util.PathUtil;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Unit;
 import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;

@@ -1,9 +1,9 @@
 package me.bristermitten.mittenlib.config.paths;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.util.Result;
 import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
 import java.nio.file.Path;
 
 /**

@@ -1,10 +1,10 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 
-import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 import java.util.Objects;

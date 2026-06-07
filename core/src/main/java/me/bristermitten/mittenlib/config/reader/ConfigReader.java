@@ -1,13 +1,13 @@
 package me.bristermitten.mittenlib.config.reader;
 
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
 import java.io.Reader;
 import java.nio.file.Path;
 

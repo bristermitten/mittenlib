@@ -1,12 +1,12 @@
 package me.bristermitten.mittenlib.files.json;
 
 import com.google.gson.Gson;
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
 import java.io.Reader;
 
 /**

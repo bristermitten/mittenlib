@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
@@ -17,8 +19,6 @@ import me.bristermitten.mittenlib.util.Strings;
 import org.jspecify.annotations.Nullable;
 
 import javax.annotation.processing.Generated;
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;

@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -10,7 +11,6 @@ import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import org.jspecify.annotations.Nullable;
 
-import javax.inject.Inject;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;

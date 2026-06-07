@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.config.names.NamingPatternTransformer;
 import org.jspecify.annotations.Nullable;
-
-import javax.inject.Inject;
 
 /**
  * Responsible for generating serial keys based on DTO fields

@@ -1,9 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.MessagerUtils;
@@ -19,7 +16,6 @@ import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprov
 import org.jspecify.annotations.Nullable;
 
 import javax.annotation.processing.Generated;
-import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

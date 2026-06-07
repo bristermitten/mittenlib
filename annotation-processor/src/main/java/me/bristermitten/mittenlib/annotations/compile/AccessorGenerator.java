@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.wrapper.AnnotationMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
@@ -10,7 +11,6 @@ import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
 
-import javax.inject.Inject;
 import javax.lang.model.element.*;
 import java.util.StringJoiner;
 

@@ -1,11 +1,11 @@
 package me.bristermitten.mittenlib;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Set;
 import java.util.logging.Logger;
 

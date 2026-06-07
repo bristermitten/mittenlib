@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.parser;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage;
@@ -17,7 +18,6 @@ import me.bristermitten.mittenlib.config.extension.CustomDeserializer;
 import me.bristermitten.mittenlib.config.extension.Fallback;
 import me.bristermitten.mittenlib.util.Result;
 
-import javax.inject.Singleton;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.Optional;

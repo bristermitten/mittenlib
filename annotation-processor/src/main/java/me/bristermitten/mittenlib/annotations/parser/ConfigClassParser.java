@@ -1,6 +1,9 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
+import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
+import com.sun.source.tree.VariableTree;
+import com.sun.source.util.Trees;
 import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
@@ -17,17 +20,14 @@ import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.util.Null;
 import org.jspecify.annotations.Nullable;
-import com.sun.source.util.Trees;
-import com.sun.source.tree.VariableTree;
-import javax.annotation.processing.ProcessingEnvironment;
 
-import javax.inject.Inject;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;

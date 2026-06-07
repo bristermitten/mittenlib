@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
@@ -13,7 +14,6 @@ import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 
 import javax.annotation.processing.Generated;
-import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import java.time.ZoneId;

@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.annotations.util;
 
+import com.google.inject.Inject;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 
-import javax.inject.Inject;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import java.util.List;

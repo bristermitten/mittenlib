@@ -1,13 +1,13 @@
 package me.bristermitten.mittenlib.watcher;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.util.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Map;
