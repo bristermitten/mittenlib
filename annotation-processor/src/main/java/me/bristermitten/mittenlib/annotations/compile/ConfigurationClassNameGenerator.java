@@ -227,7 +227,7 @@ public class ConfigurationClassNameGenerator {
                 .map(TypeName.class::cast)
                 .orElse(translateDTOParameters(mirror, recursiveMapper));
     }
-    
+
 
     /**
      * Get a suitable configuration class name for the given type mirror,

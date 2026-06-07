@@ -87,7 +87,7 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
             }
             // Read existing file and merge with new values
             return reader.load(ctx -> Result.ok(ctx.getData()), path)
-                    .map(existingTree -> (DataTree) mergeDataTrees((DataTree) existingTree, serializedTree))
+                    .map(existingTree -> (DataTree) mergeDataTrees(existingTree, serializedTree))
                     .flatMap(mergedTree -> writer.write(mergedTree, path))
                     .flatMapException(error -> {
                         // If file doesn't exist or can't be read, just write the new config
