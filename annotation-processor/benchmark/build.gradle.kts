@@ -28,6 +28,6 @@ dependencies {
     annotationProcessor(project(":annotation-processor"))
     implementation(project(":core"))
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.19.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.21.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.1")
 }
