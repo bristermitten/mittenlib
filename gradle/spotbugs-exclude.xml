@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- 
+      Exclude EI_EXPOSE_REP and EI_EXPOSE_REP2 for types that are technically mutable but
+      fundamentally have to be and don't pose any major risk.
+    -->
+    <Match>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+        </Or>
+        <Or>
+            <Type name="~.*\.Plugin"/>
+            <Type name="~.*\.Logger"/>
+            <Type name="~org\.yaml\.snakeyaml\.Yaml"/>
+            <Type name="~com\.google\.gson\.Gson"/>
+
+            <!--            Config stuff follows the delegate pattern, so keeping the internal representation is intentional-->
+            <Type name="~.*\.ConfigProvider"/>
+        </Or>
+    </Match>
+
+
+</FindBugsFilter>

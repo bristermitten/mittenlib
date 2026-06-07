@@ -24,7 +24,6 @@ public class GsonObjectWriter implements ObjectWriter {
         this.gson = gson;
     }
 
-    @Override
     /**
      * Writes the given {@link DataTree} to the supplied {@link Writer} in JSON format using Gson.
      * <p>
@@ -35,8 +34,9 @@ public class GsonObjectWriter implements ObjectWriter {
      * @param tree   the configuration tree to serialize, not {@code null}
      * @param output the writer to which the JSON representation of the tree will be written, not {@code null}
      * @return a {@link Result} that is successful if the write completes without throwing,
-     *         or failed with the thrown exception otherwise
+     * or failed with the thrown exception otherwise
      */
+    @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer output) {
         return Result.runCatching(() -> {
             gson.toJson(tree, output); // we don't need to transform to POJO since we have a TypeAdapter for DataTree

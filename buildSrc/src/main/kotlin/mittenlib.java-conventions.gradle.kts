@@ -1,3 +1,6 @@
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
+import com.github.spotbugs.snom.SpotBugsTask
 import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -15,7 +18,9 @@ group = "me.bristermitten"
 version = "5.2.0-SNAPSHOT"
 
 spotbugs {
-    ignoreFailures.set(true)
+//    ignoreFailures.set(true)
+    effort = Effort.MORE
+    excludeFilter.set(rootProject.file("gradle/spotbugs-exclude.xml"))
 }
 
 java {
@@ -79,4 +84,13 @@ tasks.withType<Javadoc>().configureEach {
     options.links("https://helpch.at/docs/1.8.8/")
     options.links("https://javadoc.io/doc/net.kyori/adventure-api/latest/")
     options.links("https://google.github.io/guice/api-docs/latest/javadoc/")
+}
+
+tasks.withType<SpotBugsTask>().configureEach {
+    reports {
+        create("html") {
+            required.set(true)
+            outputLocation.set(layout.buildDirectory.file("reports/spotbugs/spotbugs.html"))
+        }
+    }
 }

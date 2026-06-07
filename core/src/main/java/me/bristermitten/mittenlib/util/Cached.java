@@ -45,8 +45,8 @@ public class Cached<T> implements Supplier<T> {
         t = null;
     }
 
-    private void update() {
-        t = computeWith.get();
+    private @NotNull T update() {
+        return t = computeWith.get();
     }
 
     /**
@@ -58,7 +58,7 @@ public class Cached<T> implements Supplier<T> {
     @NotNull
     public T get() {
         if (t == null) {
-            update();
+            return update();
         }
         return t;
     }

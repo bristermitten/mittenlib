@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.files;
 
+import com.google.common.collect.ImmutableSet;
 import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 
@@ -54,7 +55,7 @@ public class FileTypes {
      *
      * @return the set of {@link FileType} classes registered
      */
-    public Set<Class<? extends FileType>> getTypes() {
-        return types;
+    public ImmutableSet<Class<? extends FileType>> getTypes() {
+        return ImmutableSet.copyOf(types);
     }
 }

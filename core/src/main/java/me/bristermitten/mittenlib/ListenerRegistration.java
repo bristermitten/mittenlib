@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib;
 
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
@@ -17,7 +18,7 @@ public class ListenerRegistration {
     @Inject
     public ListenerRegistration(Plugin plugin, Set<Listener> listeners, Logger logger) {
         this.plugin = plugin;
-        this.listeners = listeners;
+        this.listeners = ImmutableSet.copyOf(listeners);
         this.logger = logger;
         init();
     }

@@ -1,8 +1,11 @@
 package me.bristermitten.mittenlib.util;
 
+import org.jspecify.annotations.NonNull;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -34,12 +37,12 @@ public class CompositeType implements ParameterizedType {
 
 
     @Override
-    public Type[] getActualTypeArguments() {
-        return parameters;
+    public Type @NonNull [] getActualTypeArguments() {
+        return parameters.clone();
     }
 
     @Override
-    public Type getRawType() {
+    public @NonNull Type getRawType() {
         return baseClass;
     }
 
@@ -53,13 +56,13 @@ public class CompositeType implements ParameterizedType {
         if (this == o) return true;
         if (!(o instanceof ParameterizedType)) return false;
         ParameterizedType that = (ParameterizedType) o;
-        return java.util.Objects.equals(baseClass, that.getRawType()) &&
+        return Objects.equals(baseClass, that.getRawType()) &&
                 Arrays.equals(parameters, that.getActualTypeArguments());
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(baseClass, Arrays.hashCode(parameters));
+        return Objects.hash(baseClass, Arrays.hashCode(parameters));
     }
 
     @Override

@@ -51,7 +51,7 @@ public class NamingPatternTransformer {
 
         return Strings.joinWith(
                 Arrays.asList(parts),
-                transformer::apply,
+                transformer,
                 separator);
     }
 

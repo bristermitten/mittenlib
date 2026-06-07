@@ -32,14 +32,14 @@ public class InventoryButton<Msg> {
 
 
     /**
-     * @return The pure function producing a {@link Msg} from a {@link ClickInput}
+     * Returns the pure function producing a {@link Msg} from a {@link ClickInput}
      */
     public PureFunction<ClickInput, @Nullable Msg> getMessageFunction() {
         return messageFunction;
     }
 
     /**
-     * @return The {@link ItemStack} to render the button as.
+     * Returns the {@link ItemStack} to render the button as.
      */
     public ItemStack getItemStack() {
         return itemStack;

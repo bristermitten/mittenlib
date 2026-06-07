@@ -1,13 +1,11 @@
 package me.bristermitten.mittenlib.config.tree;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Like {@link com.google.gson.JsonElement} but without a strict dependency on json
@@ -234,13 +232,13 @@ public abstract class DataTree {
             this.values = values;
         }
 
-        public Map<DataTree, DataTree> values() {
-            return values;
+        public @UnmodifiableView Map<DataTree, DataTree> values() {
+            return Collections.unmodifiableMap(values);
         }
 
         @Override
-        public Map<DataTree, DataTree> value() {
-            return values;
+        public @UnmodifiableView Map<DataTree, DataTree> value() {
+            return Collections.unmodifiableMap(values);
         }
 
         @Override
