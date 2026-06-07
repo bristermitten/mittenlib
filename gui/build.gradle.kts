@@ -1,3 +1,8 @@
+plugins {
+    id("mittenlib.java-conventions")
+    id("mittenlib.publishing-conventions")
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":record-generator:api"))
@@ -6,9 +11,7 @@ dependencies {
     testAnnotationProcessor(project(":record-generator:processor"))
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     testImplementation(libs.mockbukkit)
-
 }
-
 
 tasks.compileTestJava {
     sourceCompatibility = JavaVersion.VERSION_21.toString()

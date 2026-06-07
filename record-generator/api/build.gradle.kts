@@ -1,7 +1,8 @@
-java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = sourceCompatibility
+plugins {
+    id("mittenlib.java-conventions")
+    id("mittenlib.publishing-conventions")
 }
+
 dependencies {
-	implementation(project(":core"))
+    implementation(project(":core"))
 }
