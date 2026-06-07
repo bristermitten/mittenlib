@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.List;
 
 import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,10 +134,7 @@ public class SaveDefaultsIntegrationTest {
         SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
                 Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
         );
-        Configuration<ClassConfigImpl> config = new Configuration<>(
-                configFile.getFileName().toString(),
-                ClassConfigImpl.class
-        );
+
         FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Load the config - defaultValue should be 1 (from the default)
@@ -222,10 +220,6 @@ public class SaveDefaultsIntegrationTest {
         SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
                 Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
         );
-        Configuration<ClassConfigImpl> config = new Configuration<>(
-                configFile.getFileName().toString(),
-                ClassConfigImpl.class
-        );
         FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Load the config - it has defaultValue = 99 (not the default 1)
@@ -259,14 +253,11 @@ public class SaveDefaultsIntegrationTest {
         SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
                 Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
         );
-        Configuration<ClassConfigImpl> config = new Configuration<>(
-                configFile.getFileName().toString(),
-                ClassConfigImpl.class
-        );
+
         FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Create a config instance manually
-        ClassConfigImpl classConfig = new ClassConfigImpl("test", 42, 1, java.util.List.of(), null);
+        ClassConfigImpl classConfig = new ClassConfigImpl("test", 42, 1, List.of(), null);
 
         // Save (should create the file since it doesn't exist)
         provider.save(classConfig, false).getOrThrow();

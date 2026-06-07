@@ -6,7 +6,9 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import com.squareup.javapoet.*;
+import io.toolisticon.aptk.tools.MessagerUtils;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
@@ -14,6 +16,7 @@ import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
+import org.jspecify.annotations.Nullable;
 
 import javax.annotation.processing.Generated;
 import javax.inject.Inject;
@@ -24,10 +27,12 @@ import java.util.List;
 
 public class ConfigLoaderModuleGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;
+    private final MethodNames methodNames;
 
     @Inject
-    public ConfigLoaderModuleGenerator(ConfigurationClassNameGenerator classNameGenerator) {
+    public ConfigLoaderModuleGenerator(ConfigurationClassNameGenerator classNameGenerator, MethodNames methodNames) {
         this.classNameGenerator = classNameGenerator;
+        this.methodNames = methodNames;
     }
 
     public JavaFile emit(List<AbstractConfigStructure> asts) {
@@ -61,7 +66,7 @@ public class ConfigLoaderModuleGenerator {
 
         // Provides methods for providers and configs
         for (AbstractConfigStructure ast : asts) {
-            addProvidesMethods(builder, ast);
+            addProvidesMethods(builder, ast, null, false);
         }
 
         return JavaFile.builder(moduleClassName.packageName(), builder.build()).build();
@@ -94,62 +99,107 @@ public class ConfigLoaderModuleGenerator {
         }
     }
 
-    private void addProvidesMethods(TypeSpec.Builder builder, AbstractConfigStructure ast) {
-        if (ast.settings().source() == null) {
-             for (AbstractConfigStructure enclosed : ast.enclosed()) {
-                addProvidesMethods(builder, enclosed);
-            }
-            return;
+    private void addProvidesMethods(TypeSpec.Builder builder, AbstractConfigStructure ast, @Nullable AbstractConfigStructure parent, boolean isParentProvided) {
+        ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
+        boolean isCurrentProvided = false;
+
+        if (ast.settings().source() != null) {
+            isCurrentProvided = true;
+            ClassName implClassName = classNameGenerator.translateConfigClassName(ast);
+            String name = publicClassName.simpleName();
+
+            // @Provides ConfigProvider<Public>
+            MethodSpec.Builder providerMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesProviderMethodName(name))
+                    .addAnnotation(Provides.class)
+                    .addAnnotation(Singleton.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName))
+                    .addParameter(ConfigProviderFactory.class, "factory")
+                    .addParameter(ConfigProviderImprover.class, "improver")
+                    .addParameter(ParameterizedTypeName.get(ClassName.get(DeserializationFunction.class), publicClassName), "deserializer")
+                    .addParameter(ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicClassName), "serializer")
+                    .addStatement("return improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
+                            implClassName);
+
+            builder.addMethod(providerMethod.build());
+
+            // @Provides Public
+            MethodSpec.Builder configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
+                    .addAnnotation(Provides.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(publicClassName)
+                    .addParameter(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName), "provider")
+                    .addStatement("return provider.get()");
+
+            builder.addMethod(configMethod.build());
+
+            // Multibinder registrations
+
+            MethodSpec.Builder configMultiBinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToConfigSetMethodName(name))
+                    .addAnnotation(ProvidesIntoSet.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ParameterizedTypeName.get(ClassName.get(Configuration.class), WildcardTypeName.subtypeOf(Object.class)))
+                    .addStatement("return $T.CONFIG", implClassName);
+            builder.addMethod(configMultiBinder.build());
+
+            MethodSpec.Builder providerMultiBinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToProviderSetMethodName(name))
+                    .addAnnotation(ProvidesIntoSet.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), WildcardTypeName.subtypeOf(Object.class)))
+                    .addParameter(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName), "provider")
+                    .addStatement("return provider");
+            builder.addMethod(providerMultiBinder.build());
+        } else if (isParentProvided && parent != null) {
+            isCurrentProvided = addNestedProvidesMethod(builder, parent, ast);
         }
 
-        ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
-        ClassName implClassName = classNameGenerator.translateConfigClassName(ast);
-        String name = publicClassName.simpleName();
+        for (AbstractConfigStructure enclosed : ast.enclosed()) {
+            addProvidesMethods(builder, enclosed, ast, isCurrentProvided);
+        }
+    }
 
-        // @Provides ConfigProvider<Public>
-        MethodSpec.Builder providerMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesProviderMethodName(name))
-                .addAnnotation(Provides.class)
-                .addAnnotation(Singleton.class)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName))
-                .addParameter(ConfigProviderFactory.class, "factory")
-                .addParameter(ConfigProviderImprover.class, "improver")
-                .addParameter(ParameterizedTypeName.get(ClassName.get(DeserializationFunction.class), publicClassName), "deserializer")
-                .addParameter(ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicClassName), "serializer")
-                .addStatement("return improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
-                        implClassName);
+    private boolean addNestedProvidesMethod(TypeSpec.Builder builder, AbstractConfigStructure parent, AbstractConfigStructure child) {
+        ClassName parentPublicName = classNameGenerator.getPublicClassName(parent);
+        ClassName childPublicName = classNameGenerator.getPublicClassName(child);
 
-        builder.addMethod(providerMethod.build());
+        List<Property> matchingProperties = parent.properties().stream()
+                .filter(property -> classNameGenerator.publicPropertyClassName(property).equals(childPublicName))
+                .toList();
 
-        // @Provides Public
+        if (matchingProperties.isEmpty()) {
+            return false;
+        }
+
+        Property propertyToBind;
+        if (matchingProperties.size() == 1) {
+            propertyToBind = matchingProperties.get(0);
+        } else {
+            // Check for @BindProperty
+            List<Property> explicitBindings = matchingProperties.stream()
+                    .filter(p -> p.source().element().getAnnotation(me.bristermitten.mittenlib.config.BindProperty.class) != null)
+                    .toList();
+
+            if (explicitBindings.size() == 1) {
+                propertyToBind = explicitBindings.get(0);
+            } else {
+                if (explicitBindings.size() > 1) {
+                    for (Property explicitBinding : explicitBindings) {
+                        MessagerUtils.error(explicitBinding.source().element(),
+                                "Multiple properties of type " + childPublicName.simpleName() + " are marked with @BindProperty. Only one can be bound to the type in Guice.");
+                    }
+                }
+                return false;
+            }
+        }
+
+        String name = childPublicName.simpleName();
         MethodSpec.Builder configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
                 .addAnnotation(Provides.class)
                 .addModifiers(Modifier.PUBLIC)
-                .returns(publicClassName)
-                .addParameter(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName), "provider")
-                .addStatement("return provider.get()");
-
+                .returns(childPublicName)
+                .addParameter(parentPublicName, "parent")
+                .addStatement("return parent.$L()", methodNames.safeMethodName(propertyToBind));
         builder.addMethod(configMethod.build());
-
-        // Multibinder registrations
-        
-        MethodSpec.Builder configMultibinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToConfigSetMethodName(name))
-                .addAnnotation(ProvidesIntoSet.class)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(ParameterizedTypeName.get(ClassName.get(Configuration.class), WildcardTypeName.subtypeOf(Object.class)))
-                .addStatement("return $T.CONFIG", implClassName);
-        builder.addMethod(configMultibinder.build());
-
-        MethodSpec.Builder providerMultibinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToProviderSetMethodName(name))
-                .addAnnotation(ProvidesIntoSet.class)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), WildcardTypeName.subtypeOf(Object.class)))
-                .addParameter(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName), "provider")
-                .addStatement("return provider");
-        builder.addMethod(providerMultibinder.build());
-
-        for (AbstractConfigStructure enclosed : ast.enclosed()) {
-            addProvidesMethods(builder, enclosed);
-        }
+        return true;
     }
 }
