@@ -432,4 +432,16 @@ public class ConfigurationClassNameGenerator {
     }
 
 
+
+    public @Nullable ClassName getInnerDaoName(AbstractConfigStructure ast) {
+        if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
+            return null;
+        }
+        boolean hasAnyDefaultValue = ast.properties().stream()
+                .anyMatch(property -> property.settings().hasDefaultValue());
+        if (!hasAnyDefaultValue) {
+            return null;
+        }
+        return getDefaultMethodAccessClassName(ast);
+    }
 }

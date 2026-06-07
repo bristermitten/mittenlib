@@ -3,33 +3,26 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
-import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import javax.lang.model.element.TypeElement;
-
 import javax.annotation.processing.Generated;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class ConfigSaverGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;
@@ -123,11 +116,7 @@ public class ConfigSaverGenerator {
             String serializeMethodName = SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
 
             // Get the property value based on source type
-            CodeBlock propertyAccess = switch (ast.source()) {
-                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("config.$L()", property.name());
-                case ConfigTypeSource.ClassConfigTypeSource ignored ->
-                        CodeBlock.of("config.$L()", methodNames.safeMethodName(property));
-            };
+            CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "config", methodNames, true);
 
             applyMethod.addStatement("map.put($T.string($S), this.$L($L, context))",
                     DataTree.class,
@@ -139,6 +128,8 @@ public class ConfigSaverGenerator {
         applyMethod.addStatement("return $T.map(map)", DataTree.class);
         builder.addMethod(applyMethod.build());
 
+        addGenerateDefaultMethod(ast, builder);
+
         // Add private serialize methods for each property (copied from SerializationCodeGenerator but adapted)
         serializationCodeGenerator.addSerializeMethodsToSaver(builder, ast);
 
@@ -148,6 +139,68 @@ public class ConfigSaverGenerator {
         }
 
         return builder;
+    }
+
+    private void addGenerateDefaultMethod(AbstractConfigStructure ast, TypeSpec.Builder builder) {
+        MethodSpec.Builder method = MethodSpec.methodBuilder("generateDefault")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(DataTree.class)
+                .addParameter(SerializationContext.class, "context");
+
+        ClassName daoName = GeneratorUtil.getDaoName(ast, classNameGenerator);
+        GeneratorUtil.addDaoInstantiationIfNecessary(ast, method, daoName);
+
+        method.addStatement("$T<$T, $T> map = new $T<>()",
+                Map.class, DataTree.class, DataTree.class, LinkedHashMap.class);
+
+        for (Property property : ast.properties()) {
+            String key = fieldNameGenerator.getConfigFieldName(property);
+            if (property.settings().hasDefaultValue()) {
+                TypeMirror propertyType = property.propertyType();
+                if (typesUtil.isConfigType(propertyType) || TypeMirrorWrapper.wrap(propertyType).hasTypeArguments()) {
+                    // For nested configs or generic collections with defaults, use the mapper
+                    CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
+                    method.addStatement("map.put($T.string($S), $T.loadFrom(context.getMapper().map($L)))",
+                            DataTree.class, key, DataTreeTransforms.class, propertyAccess);
+                } else {
+                    String serializeMethodName = SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
+                    CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
+                    method.addStatement("map.put($T.string($S), this.$L($L, context))",
+                            DataTree.class, key, serializeMethodName, propertyAccess);
+                }
+            } else if (typesUtil.isConfigType(property.propertyType())) {
+                if (property.settings().isNullable()) {
+                    method.addStatement("map.put($T.string($S), $T.null_())",
+                            DataTree.class, key, DataTree.class);
+                } else {
+                    String saverFieldName = classNameGenerator.getSaverProviderFieldName(property.propertyType());
+                    method.addStatement("map.put($T.string($S), this.$L.get().generateDefault(context))",
+                            DataTree.class, key, saverFieldName);
+                }
+            } else {
+                TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(property.propertyType());
+                if (wrapped.hasTypeArguments()) {
+                    String canonicalName = wrapped.erasure().getQualifiedName();
+                    if (canonicalName.equals(List.class.getName())) {
+                        method.addStatement("map.put($T.string($S), $T.array())",
+                                DataTree.class, key, DataTree.class);
+                    } else if (canonicalName.equals(Map.class.getName())) {
+                        method.addStatement("map.put($T.string($S), $T.map($T.emptyMap()))",
+                                DataTree.class, key, DataTree.class, java.util.Collections.class);
+                    } else {
+                        method.addStatement("map.put($T.string($S), $T.null_())",
+                                DataTree.class, key, DataTree.class);
+                    }
+                } else {
+                    method.addStatement("map.put($T.string($S), $T.null_())",
+                            DataTree.class, key, DataTree.class);
+                }
+            }
+        }
+
+        method.addStatement("return $T.map(map)", DataTree.class);
+        builder.addMethod(method.build());
     }
 
     private void addSaverDependency(TypeSpec.Builder builder, MethodSpec.Builder constructorBuilder, TypeMirror type) {

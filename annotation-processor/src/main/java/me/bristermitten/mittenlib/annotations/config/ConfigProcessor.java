@@ -36,8 +36,7 @@ import java.util.stream.Collectors;
  * Annotation processor for generating configuration classes from DTO classes marked with {@link Config}.
  * This processor handles the compilation-time generation of implementation classes for configuration DTOs,
  * creating strongly typed configuration objects with proper getters, equals, hashCode, and toString methods.
- * The processor only processes top-level classes (not nested classes) and uses Guice for dependency injection
- * of its internal components.
+ * The processor only processes top-level classes (not nested classes).
  */
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)

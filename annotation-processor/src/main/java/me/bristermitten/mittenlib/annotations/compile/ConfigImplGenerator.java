@@ -1,23 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
-import io.toolisticon.aptk.tools.MessagerUtils;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
-import me.bristermitten.mittenlib.config.exception.ConfigValidationException;
-import me.bristermitten.mittenlib.config.DeserializationContext;
-import me.bristermitten.mittenlib.util.Result;
-import java.util.ArrayList;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.util.Nullity;
-import me.bristermitten.mittenlib.annotations.util.TypesUtil;
-import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
-import org.jspecify.annotations.Nullable;
 
 import javax.annotation.processing.Generated;
 import javax.inject.Inject;
@@ -133,9 +124,20 @@ public class ConfigImplGenerator {
     }
 
     private void addGeneratedConfigAnnotations(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        source.addAnnotation(AnnotationSpec.builder(GeneratedConfig.class)
+        final List<String> unserializableProperties = ast.properties().stream()
+                .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
+                .map(Property::name)
+                .toList();
+
+        AnnotationSpec.Builder generatedConfigBuilder = AnnotationSpec.builder(GeneratedConfig.class)
                 .addMember("source", "$T.class", ast.name())
-                .build());
+                .addMember("isDynamicallyInitializable", "$L", ast.isDynamicallyInitializable());
+
+        for (String property : unserializableProperties) {
+            generatedConfigBuilder.addMember("unserializableProperties", "$S", property);
+        }
+
+        source.addAnnotation(generatedConfigBuilder.build());
 
 
         source.addAnnotation(AnnotationSpec.builder(Generated.class)

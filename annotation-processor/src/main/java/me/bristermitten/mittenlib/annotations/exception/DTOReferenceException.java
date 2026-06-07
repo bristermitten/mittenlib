@@ -23,10 +23,10 @@ public class DTOReferenceException extends RuntimeException {
     /**
      * Create a new DTOReferenceException
      *
-     * @param typeUsed    The invalid type that was uses
+     * @param typeUsed    The invalid type that was used
      * @param typeCache   The type cache, used for generating the error message
      * @param replaceWith The type to replace the invalid type with, if known
-     * @param source      The source element (i.e. the element referencing the invalid type), if known
+     * @param source      The source element (i.e., the element referencing the invalid type), if known
      */
     public DTOReferenceException(TypeMirror typeUsed, GeneratedTypeCache typeCache, @Nullable Class<?> replaceWith, @Nullable Element source) {
         this.typeUsed = typeUsed;

@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config.paths;
 
+import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.util.PathUtil;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Unit;
@@ -24,7 +25,13 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
     }
 
     @Override
+    @Deprecated
     public Result<Unit> initializeConfig(String filePath) {
+        return initializeConfig(filePath, Object.class);
+    }
+
+    @Override
+    public <T> Result<Unit> initializeConfig(String filePath, Class<T> configClass) {
         final Path dataFolder = plugin.getDataFolder().toPath();
         final Path inDataFolder = dataFolder.resolve(filePath);
         if (Files.exists(inDataFolder)) {
@@ -32,10 +39,20 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
         }
         try {
             final URL resource = plugin.getClass().getClassLoader().getResource(filePath);
-            if (resource == null) {
-                return Result.fail(
-                        new UnknownResourceException("Could not find resource " + filePath + " in plugin " + plugin.getName())
-                );
+            if (resource == null) { // jar resource doesn't exist
+                final GeneratedConfig annotation = configClass.getAnnotation(GeneratedConfig.class);
+                if (annotation != null && annotation.isDynamicallyInitializable()) {
+                    Files.createDirectories(inDataFolder.getParent());
+                    return Unit.unitResult();
+                }
+
+                String message = "Could not find resource " + filePath + " in plugin " + plugin.getName();
+                if (annotation != null && annotation.unserializableProperties().length > 0) {
+                    message += ". Note: the type is a @GeneratedConfig but was not considered dynamically initializable because the following required properties lack default values: " +
+                            String.join(", ", annotation.unserializableProperties());
+                }
+
+                return Result.fail(new UnknownResourceException(message));
             }
 
             Files.createDirectories(inDataFolder.getParent());
@@ -60,5 +77,6 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
         public UnknownResourceException(String message) {
             super(message);
         }
+
     }
 }

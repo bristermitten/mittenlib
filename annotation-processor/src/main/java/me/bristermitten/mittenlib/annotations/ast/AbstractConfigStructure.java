@@ -75,4 +75,9 @@ public sealed interface AbstractConfigStructure {
                 .anyMatch(p -> !p.settings().constraints().isEmpty() ||
                         !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
     }
+
+    default boolean isDynamicallyInitializable() {
+        return properties().stream()
+                .allMatch(p -> p.settings().hasDefaultValue() || p.settings().isNullable());
+    }
 }

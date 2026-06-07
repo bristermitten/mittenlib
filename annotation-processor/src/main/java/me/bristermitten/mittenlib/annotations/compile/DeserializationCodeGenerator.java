@@ -41,6 +41,7 @@ public class DeserializationCodeGenerator {
     public static final ClassName RESULT_CLASS_NAME = ClassName.get(Result.class);
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
+    private final MethodNames methodNames;
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final GenericTypeDeserializerGenerator genericTypeDeserializerGenerator;
     private final NonGenericTypeDeserializerGenerator nonGenericTypeDeserializerGenerator;
@@ -49,11 +50,13 @@ public class DeserializationCodeGenerator {
     public DeserializationCodeGenerator(
             TypesUtil typesUtil,
             FieldNameGenerator fieldNameGenerator,
+            MethodNames methodNames,
             ConfigurationClassNameGenerator configurationClassNameGenerator,
             GenericTypeDeserializerGenerator genericTypeDeserializerGenerator,
             NonGenericTypeDeserializerGenerator nonGenericTypeDeserializerGenerator) {
         this.typesUtil = typesUtil;
         this.fieldNameGenerator = fieldNameGenerator;
+        this.methodNames = methodNames;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.genericTypeDeserializerGenerator = genericTypeDeserializerGenerator;
         this.nonGenericTypeDeserializerGenerator = nonGenericTypeDeserializerGenerator;
@@ -136,10 +139,7 @@ public class DeserializationCodeGenerator {
                 ));
             }
 
-            var defaultString = switch (propertyAST.source()) {
-                case ConfigTypeSource.InterfaceConfigTypeSource ignored -> CodeBlock.of("dao.$L()", property.name());
-                case ConfigTypeSource.ClassConfigTypeSource ignored -> CodeBlock.of("dao.$L", property.name());
-            };
+            var defaultString = GeneratorUtil.getPropertyAccess(propertyAST, property, "dao", methodNames, false);
 
             builder.addStatement("Object $L = $$data.getOrDefault($S, $L)", fromMapName, key, defaultString);
         } else {

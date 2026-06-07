@@ -20,28 +20,40 @@ import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlObjectWriter;
+import me.bristermitten.mittenlib.util.Unit;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
+import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
+import me.bristermitten.mittenlib.util.Result;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 public class SaveDefaultsIntegrationTest {
 
     private Injector injector;
+    private final Plugin mockPlugin = mock(Plugin.class);
 
     @TempDir
     Path tempDir;
 
     @BeforeEach
     void setup() {
+        when(mockPlugin.getDataFolder()).thenReturn(tempDir.toFile());
+        when(mockPlugin.getName()).thenReturn("TestPlugin");
+
         injector = Guice.createInjector(
                 new ConfigLoaderModule(),
                 new FileWatcherModule(),
@@ -49,6 +61,7 @@ public class SaveDefaultsIntegrationTest {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
+                        bind(Plugin.class).toInstance(mockPlugin);
                         bind(MittenLibConsumer.class)
                                 .toInstance(new MittenLibConsumer("Tests"));
                     }
@@ -166,10 +179,6 @@ public class SaveDefaultsIntegrationTest {
         SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
                 Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
         );
-        Configuration<ClassConfigImpl> config = new Configuration<>(
-                configFile.getFileName().toString(),
-                ClassConfigImpl.class
-        );
         FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Load the config
@@ -269,5 +278,80 @@ public class SaveDefaultsIntegrationTest {
         assertThat(savedContent).contains("age: 42");
         assertThat(savedContent).contains("thing-name: test");
         assertThat(savedContent).contains("defaultValue: 1");
+    }
+
+    @Test
+    void testGenerateDefaultWhenFileMissing() throws IOException {
+        // Path to a non-existent file
+        Path configFile = tempDir.resolve("generated-default-config.yml");
+        assertThat(configFile).doesNotExist();
+
+        ConfigReader reader = injector.getInstance(ConfigReader.class);
+        YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
+        ConfigWriter saver = injector.getInstance(ConfigWriter.class);
+
+        DeserializationFunction<FullyDefaultConfigImpl> loader = (DeserializationFunction<FullyDefaultConfigImpl>) injector.getInstance(
+                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, FullyDefaultConfigImpl.class)))
+        );
+        SerializationFunction<FullyDefaultConfigImpl> saverFunc = (SerializationFunction<FullyDefaultConfigImpl>) injector.getInstance(
+                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, FullyDefaultConfigImpl.class)))
+        );
+
+        FileBasedConfigProvider<FullyDefaultConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+
+        // Calling get() should succeed because FullyDefaultConfig is dynamically initializable
+        FullyDefaultConfigImpl config = provider.get();
+
+        // Verify the file was created automatically
+        assertThat(configFile).exists();
+
+        // Verify values
+        assertThat(config.age()).isEqualTo(42);
+        assertThat(config.name()).isEqualTo("default");
+
+        String savedContent = Files.readString(configFile);
+        assertThat(savedContent).contains("age: 42");
+        assertThat(savedContent).contains("name: default");
+    }
+
+    @Test
+    void testDenyMissingResourceForNonDynamicConfig() {
+        // Path to a non-existent file
+        Path configFile = tempDir.resolve("non-existent-config.yml");
+
+        ConfigReader reader = injector.getInstance(ConfigReader.class);
+        YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
+        ConfigWriter saver = injector.getInstance(ConfigWriter.class);
+
+        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
+                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
+        );
+        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
+                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
+        );
+
+        FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+
+        // Calling get() should fail with NoSuchFileException because ClassConfig is NOT dynamically initializable
+        // (it has required fields name and age without defaults)
+        // and it is not found in the JAR, so it is not copied to the data folder.
+        assertThatThrownBy(provider::get)
+                .isInstanceOf(NoSuchFileException.class);
+
+        assertThat(configFile).doesNotExist();
+    }
+
+    @Test
+    void testInformativeErrorMessageWhenDynamicInitializationFails() {
+        PluginConfigInitializationStrategy strategy = injector.getInstance(PluginConfigInitializationStrategy.class);
+
+        // ClassConfig is NOT dynamically initializable because of 'name' and 'age'
+        Result<Unit> result = strategy.initializeConfig("non-existent-config.yml", ClassConfigImpl.class);
+
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.error()).isPresent();
+        assertThat(result.error().get().getMessage())
+                .contains("Could not find resource non-existent-config.yml")
+                .contains("following required properties lack default values: name, age, children");
     }
 }

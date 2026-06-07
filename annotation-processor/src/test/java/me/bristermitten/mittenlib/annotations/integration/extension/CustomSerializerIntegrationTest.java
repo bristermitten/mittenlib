@@ -13,12 +13,16 @@ import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.files.FileTypeModule;
+import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
+
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomSerializerIntegrationTest {
@@ -55,18 +59,18 @@ public class CustomSerializerIntegrationTest {
             }
 
             @Override
-            public java.util.List<SerializerCustomType> customTypeList() {
-                return java.util.List.of(
+            public List<SerializerCustomType> customTypeList() {
+                return List.of(
                         new SerializerCustomType("value-1"),
                         new SerializerCustomType("value-2")
                 );
             }
 
             @Override
-            public java.util.List<java.util.List<SerializerCustomType>> nestedCustomTypeList() {
-                return java.util.List.of(
-                        java.util.List.of(new SerializerCustomType("nested-1")),
-                        java.util.List.of(new SerializerCustomType("nested-2"), new SerializerCustomType("nested-3"))
+            public List<List<SerializerCustomType>> nestedCustomTypeList() {
+                return List.of(
+                        List.of(new SerializerCustomType("nested-1")),
+                        List.of(new SerializerCustomType("nested-2"), new SerializerCustomType("nested-3"))
                 );
             }
         };
@@ -103,7 +107,7 @@ public class CustomSerializerIntegrationTest {
     @SuppressWarnings("unchecked")
     void testDeserialization() {
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
-                .createStringReaderProvider(injector.getInstance(me.bristermitten.mittenlib.files.yaml.YamlFileType.class),
+                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         """
                         customType: 'anything'
                         customTypeList: ['anything1', 'anything2']
@@ -122,8 +126,8 @@ public class CustomSerializerIntegrationTest {
                 new SerializerCustomType("deserialized")
         );
         assertThat(config.nestedCustomTypeList()).containsExactly(
-                java.util.List.of(new SerializerCustomType("deserialized")),
-                java.util.List.of(new SerializerCustomType("deserialized"), new SerializerCustomType("deserialized"))
+                List.of(new SerializerCustomType("deserialized")),
+                List.of(new SerializerCustomType("deserialized"), new SerializerCustomType("deserialized"))
         );
     }
 }

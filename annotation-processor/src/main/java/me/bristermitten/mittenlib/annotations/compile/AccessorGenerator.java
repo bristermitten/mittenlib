@@ -9,7 +9,6 @@ import me.bristermitten.mittenlib.annotations.util.PrivateAnnotations;
 import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NonNull;
 
 import javax.inject.Inject;
 import javax.lang.model.element.*;
@@ -41,7 +40,7 @@ public class AccessorGenerator {
      * @param element         The variable element
      * @param field           The field spec
      */
-    public void createGetterMethod(TypeSpec.Builder typeSpecBuilder, @NonNull VariableElement element, @NonNull FieldSpec field) {
+    public void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
         var safeName = getFieldAccessorName(element);
 
         var builder = MethodSpec.methodBuilder(safeName)
@@ -64,7 +63,7 @@ public class AccessorGenerator {
      * @param overriding      The executable element being overridden
      * @param fromField       The field spec that the getter will return
      */
-    public void createGetterMethodOverriding(TypeSpec.@NonNull Builder typeSpecBuilder, @NonNull ExecutableElement overriding, @NonNull FieldSpec fromField) {
+    public void createGetterMethodOverriding(TypeSpec.Builder typeSpecBuilder, ExecutableElement overriding, FieldSpec fromField) {
         var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .returns(fromField.type)
@@ -148,7 +147,7 @@ public class AccessorGenerator {
      * @param variableElement The variable element
      * @return The accessor name
      */
-    private String getFieldAccessorName(@NonNull VariableElement variableElement) {
+    private String getFieldAccessorName(VariableElement variableElement) {
         return methodNames.safeMethodName(variableElement, (TypeElement) variableElement.getEnclosingElement());
     }
 }

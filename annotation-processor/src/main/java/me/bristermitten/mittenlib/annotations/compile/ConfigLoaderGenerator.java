@@ -76,10 +76,7 @@ public class ConfigLoaderGenerator {
         addFieldsAndConstructor(ast, builder);
 
         // Add property deserialization methods
-        ClassName daoName = switch (ast.source()) {
-            case ConfigTypeSource.InterfaceConfigTypeSource ignored -> getInnerDaoName(ast);
-            case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
-        };
+        ClassName daoName = GeneratorUtil.getDaoName(ast, classNameGenerator);
 
         var dtoType = ast.source().element();
         final List<MethodSpec> deserializeMethods = ast.properties().stream()
@@ -227,11 +224,7 @@ public class ConfigLoaderGenerator {
             return;
         }
 
-        boolean hasAnyDefault = ast.properties().stream()
-                .anyMatch(p -> p.settings().hasDefaultValue());
-        if (daoName != null && hasAnyDefault) {
-            applyMethod.addStatement("$1T dao = new $1T()", daoName);
-        }
+        GeneratorUtil.addDaoInstantiationIfNecessary(ast, applyMethod, daoName);
 
         final CodeBlock.Builder expressionBuilder = CodeBlock.builder();
         expressionBuilder.add("return ");
@@ -274,16 +267,4 @@ public class ConfigLoaderGenerator {
     }
 
 
-
-    private ClassName getInnerDaoName(AbstractConfigStructure ast) {
-        if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
-            return null;
-        }
-        boolean hasAnyDefaultValue = ast.properties().stream()
-                .anyMatch(property -> property.settings().hasDefaultValue());
-        if (!hasAnyDefaultValue) {
-            return null;
-        }
-        return classNameGenerator.getDefaultMethodAccessClassName(ast);
-    }
 }

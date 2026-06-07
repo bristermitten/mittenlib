@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config.provider.construct;
 
+import com.google.gson.reflect.TypeToken;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
@@ -41,7 +42,7 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
 
 
         return configPathResult.flatMap(configPath ->
-                initializationStrategy.initializeConfig(configuration.getFileName())
+                initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getType())
                         .map(unit -> new FileBasedConfigProvider<>(configPath, reader, deserializer, saver, serializer, objectWriter)));
 
     }
@@ -52,9 +53,9 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
         final Class<T> type = configuration.getType();
 
         return configPathResult.flatMap(configPath ->
-                initializationStrategy.initializeConfig(configuration.getFileName())
-                        .map(unit -> new FileBasedConfigProvider<>(configPath, reader,
-                                ctx -> (Result<T>) reader.load(type, configPath),
+                initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getType())
+                        .map(unit -> (ConfigProvider<T>) new FileBasedConfigProvider<>(configPath, reader,
+                                ctx -> (Result<T>) ctx.getMapper().map(ctx.getData(), TypeToken.get(type)),
                                 saver,
                                 (val, ctx) -> saver.serialize(val, type).getOrThrow(),
                                 objectWriter)));

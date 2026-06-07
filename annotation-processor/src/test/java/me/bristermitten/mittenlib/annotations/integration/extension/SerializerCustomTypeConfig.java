@@ -2,11 +2,13 @@ package me.bristermitten.mittenlib.annotations.integration.extension;
 
 import me.bristermitten.mittenlib.config.Config;
 
+import java.util.List;
+
 @Config
 public interface SerializerCustomTypeConfig {
     SerializerCustomType customType();
 
-    java.util.List<SerializerCustomType> customTypeList();
+    List<SerializerCustomType> customTypeList();
 
-    java.util.List<java.util.List<SerializerCustomType>> nestedCustomTypeList();
+    List<List<SerializerCustomType>> nestedCustomTypeList();
 }

@@ -1,6 +1,8 @@
 package me.bristermitten.mittenlib.config.provider;
 
+import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
@@ -8,6 +10,7 @@ import me.bristermitten.mittenlib.config.writer.ConfigWriter;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -47,6 +50,21 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
 
     @Override
     public T get() {
+        if (!Files.exists(path)) {
+            final SerializationContext serializationContext = new SerializationContext(reader.getMapper());
+            final DataTree defaultTree = serializer.generateDefault(serializationContext);
+
+            // Check if the config is actually dynamically initializable. 
+            // If it is, we can write the default and proceed.
+            // If not, we just let it fail naturally when we try to load it from the non-existent file.
+            final DeserializationContext deserializationContext = new DeserializationContext(reader.getMapper(), defaultTree);
+            final Result<T> defaultResult = deserializer.apply(deserializationContext);
+
+            if (defaultResult.isSuccess()) {
+                writer.write(defaultTree, path).getOrThrow();
+                return defaultResult.getOrThrow();
+            }
+        }
         return reader.load(deserializer, path).getOrThrow();
     }
 

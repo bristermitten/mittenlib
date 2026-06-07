@@ -16,13 +16,18 @@ class CollectionDTOTransformationTest {
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.CollectionConfig",
                         """
                                 package me.bristermitten.mittenlib.tests;
+                                import me.bristermitten.mittenlib.config.Config;
+                                import me.bristermitten.mittenlib.config.Source;
+                                import me.bristermitten.mittenlib.config.names.NamingPattern;
+                                import me.bristermitten.mittenlib.config.names.NamingPatterns;
+                                
                                 import java.util.Map;
-                                @me.bristermitten.mittenlib.config.names.NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
-                                @me.bristermitten.mittenlib.config.Source(value = "lang.yml")
-                                @me.bristermitten.mittenlib.config.Config
+                                @NamingPattern(value = NamingPatterns.LOWER_KEBAB_CASE)
+                                @Source(value = "lang.yml")
+                                @Config
                                 public class CollectionConfig {
                                     public final Map<String, SubConfig> map = null;
-                                    @me.bristermitten.mittenlib.config.Config
+                                    @Config
                                     public static class SubConfig {
                                         int i;
                                         String s;

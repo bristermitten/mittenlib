@@ -23,7 +23,7 @@ public @interface Config {
      *
      * @return The class name of the generated class
      */
-    @NotNull String className() default "";
+    String className() default "";
 
     /**
      * Whether to require that serialization methods are generated for this config.

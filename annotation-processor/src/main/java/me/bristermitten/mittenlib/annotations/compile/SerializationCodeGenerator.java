@@ -1,19 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.squareup.javapoet.*;
-import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
+import me.bristermitten.mittenlib.annotations.ast.CustomSerializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
-import me.bristermitten.mittenlib.annotations.ast.CustomSerializerInfo;
-import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.SerializationContext;
-import java.util.Optional;
 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
-import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
@@ -21,10 +16,7 @@ import me.bristermitten.mittenlib.util.Strings;
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Generates serialization code for configuration classes.
@@ -153,6 +145,24 @@ public class SerializationCodeGenerator {
     }
 
     /**
+     * Get the parameter type for a serialization method.
+     * This method adds wildcards to collection types to allow for both the public and implementation types.
+     */
+    private TypeName getSerializeParameterType(Property property) {
+        TypeName typeName = configurationClassNameGenerator.publicPropertyClassName(property);
+        if (typeName instanceof ParameterizedTypeName parameterizedTypeName) {
+            ClassName rawType = parameterizedTypeName.rawType;
+            if (rawType.equals(ClassName.get(List.class)) || rawType.equals(ClassName.get(Map.class))) {
+                List<TypeName> typeArguments = parameterizedTypeName.typeArguments.stream()
+                        .map(arg -> (TypeName) WildcardTypeName.subtypeOf(arg))
+                        .toList();
+                return ParameterizedTypeName.get(rawType, typeArguments.toArray(new TypeName[0]));
+            }
+        }
+        return typeName;
+    }
+
+    /**
      * Creates a serialization method for a specific property in a Saver class.
      *
      * @param property The property to create a serialization method for
@@ -160,7 +170,7 @@ public class SerializationCodeGenerator {
      */
     private MethodSpec createSerializeMethodFor(Property property) {
         String methodName = SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
-        TypeName propertyType = configurationClassNameGenerator.publicPropertyClassName(property);
+        TypeName propertyType = getSerializeParameterType(property);
 
         // Check if the property is annotated with @UseObjectMapperSerialization
         boolean useObjectMapper = typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class) != null;
