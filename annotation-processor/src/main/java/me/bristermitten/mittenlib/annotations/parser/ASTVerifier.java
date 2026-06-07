@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
@@ -19,6 +20,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 
 /**
  * Inspects the AST and sends errors/warnings for invalid setups
@@ -55,11 +57,12 @@ public class ASTVerifier {
                     .anyMatch(p -> p.settings().hasDefaultValue());
             if (hasAnyDefault) {
                 TypeElement element = classSource.element();
-                boolean hasNoArgConstructor = element.getEnclosedElements().stream()
+                Optional<ExecutableElement> noArgConstructor = element.getEnclosedElements().stream()
                         .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
                         .map(ExecutableElement.class::cast)
-                        .anyMatch(c -> c.getParameters().isEmpty());
-                if (!hasNoArgConstructor) {
+                        .filter(c -> c.getParameters().isEmpty())
+                        .findFirst();
+                if (noArgConstructor.isEmpty() || noArgConstructor.get().getModifiers().contains(Modifier.PRIVATE)) {
                     MessagerUtils.error(element,
                             ConfigVerificationErrors.CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR,
                             element.getSimpleName());

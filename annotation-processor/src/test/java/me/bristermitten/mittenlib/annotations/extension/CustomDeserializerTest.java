@@ -40,4 +40,38 @@ public class CustomDeserializerTest {
                 .compilationSucceeds()
                 .executeTest();
     }
+    @Test
+    void testNonStaticDeserializerWithoutInterfaceFails() {
+        Cute.unitTest()
+                .when()
+                .passInElement()
+                .<TypeElement>fromSourceString("me.bristermitten.mittenlib.annotations.integration.extension.CustomTypeDeserializer", """
+                        import io.toolisticon.cute.PassIn;import me.bristermitten.mittenlib.annotations.integration.extension.CustomType;
+                        import me.bristermitten.mittenlib.config.DeserializationContext;
+                        import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
+                        import me.bristermitten.mittenlib.util.Result;
+                        
+                        @CustomDeserializerFor(CustomType.class)
+                        @PassIn
+                        public class CustomTypeDeserializer {
+                        
+                            public Result<CustomType> deserialize(DeserializationContext context) {
+                                return Result.ok(
+                                        new CustomType("hello")
+                                );
+                            }
+                        }
+                        
+                        """)
+                .intoUnitTest((processingEnvironment, element) -> {
+                    ToolingProvider.setTooling(processingEnvironment);
+                    CustomDeserializers customDeserializers = new CustomDeserializers();
+                    customDeserializers.registerCustomDeserializer(element);
+                })
+                .thenExpectThat()
+                .compilationFails()
+                .andThat()
+                .compilerMessage().ofKindError().contains("Non static custom deserializers aren't supported yet")
+                .executeTest();
+    }
 }

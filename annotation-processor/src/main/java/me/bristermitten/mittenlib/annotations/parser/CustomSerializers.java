@@ -81,6 +81,11 @@ public class CustomSerializers {
         boolean isStatic = !implementsCustomSerializer && serializeMethodOpt.isPresent() &&
                 serializeMethodOpt.get().unwrap().getModifiers().contains(Modifier.STATIC);
 
+        if (!isStatic && !implementsCustomSerializer) {
+            MessagerUtils.error(customSerializerType, "Non static custom serializers must implement CustomSerializer");
+            return;
+        }
+
         var customSerializerInfo = new CustomSerializerInfo(
                 customSerializerType,
                 isStatic

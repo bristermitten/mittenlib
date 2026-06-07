@@ -22,7 +22,7 @@ public class ConfigVerificationErrors {
 
     public static final ValidationMessage CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR =
             PlainValidationMessage.create("CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR",
-                    "Class DTO ${0} has fields with default values, but is missing a zero-arguments constructor. Please define a zero-arguments constructor (can be private or package-private) so MittenLib can read the default values."
+                    "Class DTO ${0} has fields with default values, but is missing an accessible (non-private) zero-arguments constructor. Please define an accessible zero-arguments constructor (package-private, protected, or public) so MittenLib can read the default values."
             );
 
     public static final ValidationMessage CONSTRAINT_TYPE_MISMATCH =

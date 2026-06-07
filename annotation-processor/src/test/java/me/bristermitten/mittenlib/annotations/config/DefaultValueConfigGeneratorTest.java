@@ -186,7 +186,29 @@ class DefaultValueConfigGeneratorTest {
                 .whenCompiled()
                 .thenExpectThat().compilationFails()
                 .andThat()
-                .compilerMessage().ofKindError().contains("has fields with default values, but is missing a zero-arguments constructor")
+                .compilerMessage().ofKindError().contains("has fields with default values, but is missing an accessible (non-private) zero-arguments constructor")
+                .executeTest();
+    }
+
+    @Test
+    void testClassDTOWithPrivateNoArgConstructorFails() {
+        Cute.blackBoxTest().given().processor(ConfigProcessor.class)
+                .andSourceFile("PrivateNoArgDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        
+                        import me.bristermitten.mittenlib.config.Config;
+                        
+                        @Config
+                        public class PrivateNoArgDTO {
+                            public int x = 3;
+                        
+                            private PrivateNoArgDTO() {}
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat().compilationFails()
+                .andThat()
+                .compilerMessage().ofKindError().contains("has fields with default values, but is missing an accessible (non-private) zero-arguments constructor")
                 .executeTest();
     }
 

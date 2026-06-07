@@ -84,6 +84,11 @@ public class CustomDeserializers {
         boolean isStatic = !implementsCustomDeserializer && deserializeMethodOpt.isPresent() &&
                 deserializeMethodOpt.get().unwrap().getModifiers().contains(javax.lang.model.element.Modifier.STATIC);
 
+        if (!isStatic && !implementsCustomDeserializer) {
+            MessagerUtils.error(customDeserializerType, CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC);
+            return;
+        }
+
         var isFallback = customDeserializerType.getAnnotation(Fallback.class) != null;
 
         var customDeserializerInfo = new CustomDeserializerInfo(
