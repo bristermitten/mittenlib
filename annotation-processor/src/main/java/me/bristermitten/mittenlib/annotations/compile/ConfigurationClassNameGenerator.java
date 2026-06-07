@@ -210,25 +210,6 @@ public class ConfigurationClassNameGenerator {
         return getPropertyClassName(mirror, this::getPublicClassName, this::publicPropertyClassName);
     }
 
-    /**
-     * Get the concrete property class name for a type mirror.
-     *
-     * @param mirror The type mirror
-     * @return The concrete property class name
-     */
-    public TypeName concretePropertyClassName(TypeMirror mirror) {
-        return getPropertyClassName(mirror, this::getConcreteConfigClassName, this::concretePropertyClassName);
-    }
-
-    /**
-     * Get the concrete property class name for a property.
-     *
-     * @param p The property
-     * @return The concrete property class name
-     */
-    public TypeName concretePropertyClassName(Property p) {
-        return concretePropertyClassName(p.propertyType());
-    }
 
     /**
      * Helper method to get a property class name based on a type mirror and a mapping function.
@@ -246,19 +227,7 @@ public class ConfigurationClassNameGenerator {
                 .map(TypeName.class::cast)
                 .orElse(translateDTOParameters(mirror, recursiveMapper));
     }
-
-    /**
-     * Get a suitable configuration class name for the given type mirror.
-     * This is a convenience method that calls {@link #getConfigClassName(TypeMirror, Element)}
-     * with a null source element.
-     *
-     * @param mirror The type mirror to get the configuration class name for
-     * @return The configuration class name for the given type mirror
-     * @see #getConfigClassName(TypeMirror, Element)
-     */
-    public TypeName getConfigClassName(TypeMirror mirror) {
-        return getConfigClassName(mirror, null);
-    }
+    
 
     /**
      * Get a suitable configuration class name for the given type mirror,
@@ -385,14 +354,6 @@ public class ConfigurationClassNameGenerator {
         return implName.peerClass(implName.simpleName() + "Serializer");
     }
 
-    public ClassName getSaverClassName(TypeElement type) {
-        ClassName implName = generateConfigurationClassName(type);
-        if (type.getNestingKind() == NestingKind.MEMBER) {
-            return getSaverClassName((TypeElement) type.getEnclosingElement()).nestedClass(implName.simpleName() + "Serializer");
-        }
-        return implName.peerClass(implName.simpleName() + "Serializer");
-    }
-
     /**
      * Gets the field name for a saver instance based on the public config type.
      * E.g., for InterfaceConfig, it returns "interfaceConfigSaver".
@@ -422,18 +383,5 @@ public class ConfigurationClassNameGenerator {
         return implName.peerClass(implName.simpleName() + "Validator");
     }
 
-    public ClassName getValidatorClassName(TypeMirror type) {
-        AbstractConfigStructure ast = configNameCache.lookupAST(type)
-                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
-        return getValidatorClassName(ast);
-    }
 
-    public String getValidatorFieldName(TypeMirror type) {
-        AbstractConfigStructure ast = configNameCache.lookupAST(type)
-                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
-        ClassName publicName = getPublicClassName(ast);
-        String safePkg = publicName.packageName().replace('.', '_');
-        String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
-        return Strings.uncapitalize(prefix + publicName.simpleName()) + "Validator";
-    }
 }
