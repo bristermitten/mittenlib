@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.config.provider;
 
-import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.config.writer.ConfigSaver;
+import me.bristermitten.mittenlib.config.writer.ConfigWriter;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 
@@ -15,14 +14,14 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A {@link ConfigProvider} that reads from a file, using a {@link ConfigReader}
+ * A {@link ConfigProvider} that reads and writes from a file, using a {@link ConfigReader}
  *
  * @param <T> the type of the config
  */
-public class ReadingConfigProvider<T> implements ConfigProvider<T> {
+public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
     private final ConfigReader reader;
     private final DeserializationFunction<T> deserializer;
-    private final ConfigSaver saver;
+    private final ConfigWriter saver;
     private final SerializationFunction<T> serializer;
     private final Path path;
     private final ObjectWriter writer; // TODO: merge into ConfigReader?
@@ -31,14 +30,13 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
      * Create a new ReadingConfigProvider
      *
      * @param path         the path to read from
-     * @param config       the configuration to read
      * @param reader       the reader to use
      * @param deserializer the deserialization function to use
      * @param saver        the saver to use
      * @param serializer   the serialization function to use
      * @param writer       the writer to use for saving
      */
-    public ReadingConfigProvider(Path path, Configuration<T> config, ConfigReader reader, DeserializationFunction<T> deserializer, ConfigSaver saver, SerializationFunction<T> serializer, ObjectWriter writer) {
+    public FileBasedConfigProvider(Path path, ConfigReader reader, DeserializationFunction<T> deserializer, ConfigWriter saver, SerializationFunction<T> serializer, ObjectWriter writer) {
         this.path = path;
         this.reader = reader;
         this.deserializer = deserializer;
@@ -100,7 +98,7 @@ public class ReadingConfigProvider<T> implements ConfigProvider<T> {
 
     /**
      * Merges two DataTrees, with existing values taking precedence.
-     * Only adds fields from newTree that don't exist in existingTree.
+     * Only adds fields from {@code newTree} that don't exist in {@code existingTree}.
      *
      * @param existingTree the existing data tree (takes precedence)
      * @param newTree      the new data tree with default values

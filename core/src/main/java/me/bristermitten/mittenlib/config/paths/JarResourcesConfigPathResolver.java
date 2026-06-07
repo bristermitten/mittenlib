@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.config.paths;
 
+import me.bristermitten.mittenlib.util.Result;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,23 +13,28 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A {@link ConfigPathResolver} that resolves config paths from the jar resources.
+ */
 public class JarResourcesConfigPathResolver implements ConfigPathResolver {
+
     @Override
-    public Path getConfigPath(String configFileName) {
+    public Result<Path> getConfigPath(String configFileName) {
         URI uri;
         try {
             URL resource = getClass().getClassLoader().getResource(configFileName);
             if (resource == null) {
-                throw new RuntimeException("Could not find resource " + configFileName);
+                return Result.fail(new RuntimeException("Could not find resource " + configFileName));
             }
             uri = resource.toURI();
-            return getSystem(uri).getPath(configFileName);
+            FileSystem fileSystem = getFileSystem(uri);
+            return Result.ok(fileSystem.getPath(configFileName));
         } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
+            return Result.fail(e);
         }
     }
 
-    private FileSystem getSystem(URI uri) throws IOException {
+    private FileSystem getFileSystem(URI uri) throws IOException {
         try {
             return FileSystems.getFileSystem(uri);
         } catch (FileSystemNotFoundException e) {

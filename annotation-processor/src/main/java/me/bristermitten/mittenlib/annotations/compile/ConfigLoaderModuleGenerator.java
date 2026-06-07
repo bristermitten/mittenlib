@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.Multibinder;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import com.squareup.javapoet.*;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
@@ -15,14 +14,12 @@ import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Generated;
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.List;
 
 public class ConfigLoaderModuleGenerator {
@@ -39,7 +36,7 @@ public class ConfigLoaderModuleGenerator {
         }
 
         ClassName moduleClassName = ClassName.get(
-                classNameGenerator.getPublicClassName(asts.get(0)).packageName(),
+                classNameGenerator.getPublicClassName(asts.getFirst()).packageName(),
                 "ConfigLoaderModule"
         );
 
@@ -118,9 +115,9 @@ public class ConfigLoaderModuleGenerator {
                 .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName))
                 .addParameter(ConfigProviderFactory.class, "factory")
                 .addParameter(ConfigProviderImprover.class, "improver")
-                .addParameter(ParameterizedTypeName.get(ClassName.get(DeserializationFunction.class), publicClassName), "loader")
-                .addParameter(ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicClassName), "saver")
-                .addStatement("return improver.improve(factory.createProvider($T.CONFIG, loader, saver).getOrThrow())",
+                .addParameter(ParameterizedTypeName.get(ClassName.get(DeserializationFunction.class), publicClassName), "deserializer")
+                .addParameter(ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicClassName), "serializer")
+                .addStatement("return improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
                         implClassName);
 
         builder.addMethod(providerMethod.build());

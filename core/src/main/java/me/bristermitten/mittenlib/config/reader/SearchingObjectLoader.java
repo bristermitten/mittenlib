@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 
 import static me.bristermitten.mittenlib.util.Result.fail;
 
+/**
+ * An {@link ObjectLoader} which tries each known {@link FileType} in order, until one succeeds.
+ */
 public class SearchingObjectLoader implements ObjectLoader {
     private final Set<FileType> loaders;
 

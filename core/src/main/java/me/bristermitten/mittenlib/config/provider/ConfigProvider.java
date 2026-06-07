@@ -31,7 +31,5 @@ public interface ConfigProvider<T> extends Provider<T> {
      * <p>
      * This may be a no-op if the config is not cached.
      */
-    default void clearCache() {
-        // no-op
-    }
+    void clearCache();
 }

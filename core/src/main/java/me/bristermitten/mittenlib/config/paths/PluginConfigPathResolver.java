@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.config.paths;
 
+import me.bristermitten.mittenlib.util.Result;
 import org.bukkit.plugin.Plugin;
 
 import javax.inject.Inject;
@@ -17,7 +18,7 @@ public class PluginConfigPathResolver implements ConfigPathResolver {
     }
 
     @Override
-    public Path getConfigPath(String configFileName) {
-        return plugin.getDataFolder().toPath().resolve(configFileName);
+    public Result<Path> getConfigPath(String configFileName) {
+        return Result.ok(plugin.getDataFolder().toPath().resolve(configFileName));
     }
 }

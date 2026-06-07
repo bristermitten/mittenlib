@@ -18,7 +18,7 @@ import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProvider
 import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProviderImprover;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.reader.SearchingObjectLoader;
-import me.bristermitten.mittenlib.config.writer.ConfigSaver;
+import me.bristermitten.mittenlib.config.writer.ConfigWriter;
 import me.bristermitten.mittenlib.config.tree.DataTreeTypeAdapter;
 import me.bristermitten.mittenlib.config.tree.DataTreeTypeAdapterFactory;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
@@ -34,8 +34,8 @@ import java.util.Set;
  * <p>
  * Responsible for quite a lot (probably too much) of the config handling, binding / registering:
  * <ul>
- *     <li>{@link ObjectLoader}</li>
- *     <li>{@link ConfigInitializationStrategy}</li>
+ *     <li>{@link ObjectLoader} to {@link SearchingObjectLoader}</li>
+ *     <li>{@link ConfigInitializationStrategy}, initially as {@link NoOpConfigInitializationStrategy}</li>
  *     <li>{@link ConfigPathResolver}</li>
  *     <li>{@link ConfigProviderFactory}</li>
  *     <li>{@link ConfigProviderImprover}</li>
@@ -71,7 +71,7 @@ public class ConfigModule extends AbstractModule {
         bind(ObjectWriter.class).to(SearchingObjectWriter.class);
         bind(ConfigInitializationStrategy.class).to(NoOpConfigInitializationStrategy.class);
         bind(ConfigPathResolver.class).to(JarResourcesConfigPathResolver.class);
-        bind(ConfigSaver.class);
+        bind(ConfigWriter.class);
         bind(ConfigProviderFactory.class).to(SimpleConfigProviderFactory.class);
         bind(ConfigProviderImprover.class).to(SimpleConfigProviderImprover.class);
 
@@ -115,7 +115,7 @@ public class ConfigModule extends AbstractModule {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if(!(o instanceof ConfigModule)) return false;
         ConfigModule that = (ConfigModule) o;
         return Objects.equals(configurations, that.configurations);
     }

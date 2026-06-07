@@ -3,6 +3,9 @@ package me.bristermitten.mittenlib.config.paths;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Unit;
 
+/**
+ * A {@link ConfigInitializationStrategy} that does nothing.
+ */
 public class NoOpConfigInitializationStrategy implements ConfigInitializationStrategy {
     @Override
     public Result<Unit> initializeConfig(String filePath) {

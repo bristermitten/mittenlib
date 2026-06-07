@@ -12,14 +12,13 @@ import java.nio.file.Path;
 /**
  * Responsible for both mapping and writing data,
  * delegating to {@link SerializationFunction}s and {@link ObjectWriter}s.
- * Mirrors {@link me.bristermitten.mittenlib.config.reader.ConfigReader}.
  */
-public class ConfigSaver {
+public class ConfigWriter {
     private final ObjectWriter writer;
     private final ObjectMapper mapper;
 
     @Inject
-    public ConfigSaver(ObjectWriter writer, ObjectMapper mapper) {
+    public ConfigWriter(ObjectWriter writer, ObjectMapper mapper) {
         this.writer = writer;
         this.mapper = mapper;
     }
@@ -27,13 +26,13 @@ public class ConfigSaver {
     /**
      * Serializes the given config instance and saves it to the given path.
      *
-     * @param instance      the config instance to save
-     * @param function      the serialization function to use
-     * @param destination   the path to save to
-     * @param <T>           the type of the config
+     * @param instance    the config instance to save
+     * @param function    the serialization function to use
+     * @param destination the path to save to
+     * @param <T>         the type of the config
      * @return a Result indicating success or failure
      */
-    public <T> Result<Void> save(T instance, SerializationFunction<T> function, Path destination) {
+    public <T> Result<Void> write(T instance, SerializationFunction<T> function, Path destination) {
         return serialize(instance, function).flatMap(tree -> writer.write(tree, destination));
     }
 
@@ -50,7 +49,7 @@ public class ConfigSaver {
                 .map(ctx -> function.apply(instance, ctx));
     }
 
-    public <T> Result<Void> save(T instance, Class<T> type, Path destination) {
+    public <T> Result<Void> write(T instance, Class<T> type, Path destination) {
         return serialize(instance, type).flatMap(tree -> writer.write(tree, destination));
     }
 
@@ -69,6 +68,7 @@ public class ConfigSaver {
 
     /**
      * Returns the ObjectWriter used by this saver.
+     *
      * @return the ObjectWriter
      */
     public ObjectWriter getWriter() {

@@ -17,8 +17,8 @@ public class SimpleConfigProviderImprover implements ConfigProviderImprover {
 
     @Override
     public <T> ConfigProvider<T> improve(ConfigProvider<T> provider) {
-        final CachingConfigProvider<T> cachingConfigProvider = new CachingConfigProvider<>(provider);
         // Always apply caching
+        final CachingConfigProvider<T> cachingConfigProvider = new CachingConfigProvider<>(provider);
 
         if (cachingConfigProvider.path().isPresent()) {
             return new FileWatchingConfigProvider<>(cachingConfigProvider, watcherService);

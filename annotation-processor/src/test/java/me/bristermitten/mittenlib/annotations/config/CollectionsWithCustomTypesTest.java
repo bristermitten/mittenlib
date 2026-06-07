@@ -51,7 +51,7 @@ class CollectionsWithCustomTypesTest {
                 
         // Verify that the generated code includes list deserialization
         assertThat(compilation)
-                .generatedSourceFile("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigLoader")
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDeserializer")
                 .contentsAsUtf8String()
                 .contains("CollectionsUtils.deserializeList");
     }
@@ -95,7 +95,7 @@ class CollectionsWithCustomTypesTest {
                 
         // Verify that the generated code includes map deserialization
         assertThat(compilation)
-                .generatedSourceFile("me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigLoader")
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigDeserializer")
                 .contentsAsUtf8String()
                 .contains("CollectionsUtils.deserializeMap");
     }
