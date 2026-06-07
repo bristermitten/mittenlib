@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.config.provider;
 
-import javax.inject.Provider;
+import com.google.inject.Provider;
 import java.nio.file.Path;
 import java.util.Optional;
 
