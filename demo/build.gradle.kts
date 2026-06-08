@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":record-generator:api"))
     implementation(project(":gui"))
     annotationProcessor(project(":record-generator:processor"))
+    annotationProcessor(project(":annotation-processor"))
 
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
     testImplementation(libs.mockbukkit)

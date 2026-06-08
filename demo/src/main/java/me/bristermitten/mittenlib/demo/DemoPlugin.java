@@ -22,11 +22,17 @@ public class DemoPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
         injector = MittenLib.withDefaults(this)
-                .addModule(new GUIModule())
-                .build();
+                .addModule(new GUIModule()) // setup the GUI features
+                .config(new ConfigLoaderModule()) // setup the config module
+                .setup();
+
 
 
         counterGUI = injector.getInstance(DemoCounterGUI.class);
+
+        DemoConfig config = injector.getInstance(DemoConfig.class);
+
+        System.out.println(config);
 
     }
 
