@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.config.provider;
 
 import com.google.inject.Provider;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Optional;
 
