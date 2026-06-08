@@ -26,41 +26,31 @@ class YamlObjectLoaderTest {
 
     @Test
     void load() {
-        DataTree load = loader.load("123")
-                .getOrThrow();
+        DataTree load = loader.load("123").getOrThrow();
 
-        assertThat(load)
-                .isEqualTo(new DataTree.DataTreeLiteral.DataTreeLiteralInt(123));
+        assertThat(load).isEqualTo(new DataTree.DataTreeLiteral.DataTreeLiteralInt(123));
 
-        DataTree load2 = loader.load("123abc: 123\n" +
-                                     "someObjectMap:\n" +
-                                     "  { a: 1, b: 1 }: 2.5")
-                .getOrThrow();
+        DataTree load2 =
+                loader.load("123abc: 123\n" + "someObjectMap:\n" + "  { a: 1, b: 1 }: 2.5").getOrThrow();
 
         assertThat(load2)
                 .isNotNull()
-                .isEqualTo(new DataTree.DataTreeMap(
-                        Maps.of(
-                                new DataTree.DataTreeLiteral.DataTreeLiteralString("123abc"),
-                                new DataTree.DataTreeLiteral.DataTreeLiteralInt(123),
-                                new DataTree.DataTreeLiteral.DataTreeLiteralString("someObjectMap"),
-                                new DataTree.DataTreeMap(
-                                        Maps.of(
-                                                new DataTree.DataTreeMap(
-                                                        Maps.of(
-                                                                new DataTree.DataTreeLiteral.DataTreeLiteralString("a"),
-                                                                new DataTree.DataTreeLiteral.DataTreeLiteralInt(1),
-                                                                new DataTree.DataTreeLiteral.DataTreeLiteralString("b"),
-                                                                new DataTree.DataTreeLiteral.DataTreeLiteralInt(1)
-                                                        )
-                                                ),
-                                                new DataTree.DataTreeLiteral.DataTreeLiteralFloat(2.5)
-                                        )
-                                )
-                        )
-                ));
+                .isEqualTo(
+                        new DataTree.DataTreeMap(
+                                Maps.of(
+                                        new DataTree.DataTreeLiteral.DataTreeLiteralString("123abc"),
+                                        new DataTree.DataTreeLiteral.DataTreeLiteralInt(123),
+                                        new DataTree.DataTreeLiteral.DataTreeLiteralString("someObjectMap"),
+                                        new DataTree.DataTreeMap(
+                                                Maps.of(
+                                                        new DataTree.DataTreeMap(
+                                                                Maps.of(
+                                                                        new DataTree.DataTreeLiteral.DataTreeLiteralString("a"),
+                                                                        new DataTree.DataTreeLiteral.DataTreeLiteralInt(1),
+                                                                        new DataTree.DataTreeLiteral.DataTreeLiteralString("b"),
+                                                                        new DataTree.DataTreeLiteral.DataTreeLiteralInt(1))),
+                                                        new DataTree.DataTreeLiteral.DataTreeLiteralFloat(2.5))))));
 
-        assertThat(load2.get("123abc"))
-                .isEqualTo(new DataTree.DataTreeLiteral.DataTreeLiteralInt(123));
+        assertThat(load2.get("123abc")).isEqualTo(new DataTree.DataTreeLiteral.DataTreeLiteralInt(123));
     }
 }

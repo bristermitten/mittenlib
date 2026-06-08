@@ -20,5 +20,5 @@ public class PluginConfigPathResolver implements ConfigPathResolver {
     @Override
     public Result<Path> getConfigPath(String configFileName) {
         return Result.ok(plugin.getDataFolder().toPath().resolve(configFileName));
-    }
+  }
 }

@@ -13,8 +13,8 @@ import java.nio.file.Path;
  */
 public interface FileType {
     /**
-     * If the given path matches this file type.
-     * This is generally done by the file extension, but this is not a requirement.
+     * If the given path matches this file type. This is generally done by the file extension, but
+     * this is not a requirement.
      *
      * @param path the path to check
      * @return if the path matches this file type
@@ -22,18 +22,20 @@ public interface FileType {
     boolean matches(Path path);
 
     /**
-     * Returns an {@link ObjectLoader} for this file type.
-     * It should be assumed that the loader will only work (i.e. not produce an {@link Result#fail(Exception)})
-     * for paths for which {@link FileType#matches(Path)} returns true
+     * Returns an {@link ObjectLoader} for this file type. It should be assumed that the loader will
+     * only work (i.e. not produce an {@link Result#fail(Exception)}) for paths for which {@link
+     * FileType#matches(Path)} returns true
      *
      * @return an Object Loader for this file type
      */
-    @NotNull ObjectLoader loader();
+    @NotNull
+    ObjectLoader loader();
 
     /**
      * Returns an {@link ObjectWriter} for this file type.
      *
      * @return an {@link ObjectWriter} for this file type
      */
-    @NotNull ObjectWriter writer();
+    @NotNull
+    ObjectWriter writer();
 }

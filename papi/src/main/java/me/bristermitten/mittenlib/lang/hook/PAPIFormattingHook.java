@@ -19,5 +19,5 @@ public class PAPIFormattingHook implements FormattingHook {
     @Override
     public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         return PlaceholderAPI.setPlaceholders(player, message);
-    }
+  }
 }

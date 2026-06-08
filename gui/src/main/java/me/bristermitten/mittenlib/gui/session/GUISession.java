@@ -12,10 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
- * Represents an active GUI session with state management and event handling.
- * Follows the Elm architecture pattern with immutable state updates.
+ * Represents an active GUI session with state management and event handling. Follows the Elm
+ * architecture pattern with immutable state updates.
  */
-public class GUISession<Model,
+public class GUISession<
+        Model,
         Msg,
         V extends View<Msg, V, Viewer>,
         Viewer extends InventoryViewer<Msg, V>,
@@ -51,12 +52,13 @@ public class GUISession<Model,
     private volatile boolean active = true;
     private volatile boolean transitioning = false;
 
-    public GUISession(SessionID<Model, Msg, V, Viewer> sessionId,
-                      GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
-                      Viewer viewer,
-                      Model initialModel,
-                      Consumer<V> renderer,
-                      CommandRunner<Ctx, Msg> commandRunner) {
+    public GUISession(
+            SessionID<Model, Msg, V, Viewer> sessionId,
+            GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
+            Viewer viewer,
+            Model initialModel,
+            Consumer<V> renderer,
+            CommandRunner<Ctx, Msg> commandRunner) {
         this.sessionId = sessionId;
         this.gui = gui;
         this.viewer = viewer;
@@ -67,7 +69,6 @@ public class GUISession<Model,
         this.currentView = new AtomicReference<>();
         this.completionFuture = new CompletableFuture<>();
     }
-
 
     /**
      * Starts the GUI session by rendering the initial view.
@@ -85,10 +86,9 @@ public class GUISession<Model,
         }
     }
 
-
     /**
-     * The core message processing loop.
-     * Processes a message, updates the model, renders the view, and runs commands.
+     * The core message processing loop. Processes a message, updates the model, renders the view, and
+     * runs commands.
      *
      * @param msg the message to process
      * @return true if processed, false if session is inactive
@@ -103,7 +103,8 @@ public class GUISession<Model,
                 // first, update the model
                 Model oldModel = currentModel.get();
 
-                UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result = gui.update(oldModel, msg);
+                UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result =
+                        gui.update(oldModel, msg);
 
                 Model newModel = result.getModel();
                 currentModel.set(newModel);
@@ -131,7 +132,6 @@ public class GUISession<Model,
     private void renderAndFlush(Model model) {
         V layout = gui.render(model);
         currentView.set(layout);
-
 
         renderer.accept(layout);
     }
@@ -175,6 +175,6 @@ public class GUISession<Model,
 
     @FunctionalInterface
     public interface CommandRunner<Ctx extends CommandContext, Msg> {
-        void run(Command<Ctx, Msg> cmd, Consumer<Msg> dispatcher);
-    }
+    void run(Command<Ctx, Msg> cmd, Consumer<Msg> dispatcher);
+  }
 }

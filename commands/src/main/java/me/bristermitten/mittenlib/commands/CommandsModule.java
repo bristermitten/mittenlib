@@ -21,10 +21,8 @@ public class CommandsModule extends AbstractModule {
         Multibinder.newSetBinder(binder(), TabCompleter.class);
         Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentContext<?>>() {
         });
-        Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentCondition<?>>() {
-        });
-
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentCondition<?>>() {});
 
         bind(BukkitCommandManager.class).toProvider(CommandManagerProvider.class).asEagerSingleton();
-    }
+  }
 }

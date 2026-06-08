@@ -14,26 +14,29 @@ class CollectionsWithCustomTypesTest {
 
     @Test
     void testListWithCustomType() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDTO",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDTO",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
-                                
+
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.config.names.NamingPatterns;
-                                
+
                                 import java.util.List;
-                                
+
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("list_custom.yml")
                                 @Config(requireDynamicInitialization = false)
                                 public class ListWithCustomTypeConfigDTO {
                                     // List of custom config objects
                                     public List<PlayerConfigDTO> players;
-                                
+
                                     @Config
                                     public static class PlayerConfigDTO {
                                         public String name;
@@ -44,33 +47,38 @@ class CollectionsWithCustomTypesTest {
                                 """));
 
         assertThat(compilation).succeeded();
-        
+
         // Verify that the generated class exists
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfig")
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfig")
                 .isNotNull();
-                
+
         // Verify that the generated code includes list deserialization
         assertThat(compilation)
-                .generatedSourceFile("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDeserializer")
+                .generatedSourceFile(
+                        "me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDeserializer")
                 .contentsAsUtf8String()
                 .contains("CollectionsUtils.deserializeList");
     }
-    
+
     @Test
     void testMapWithCustomType() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigDTO",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigDTO",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
-                                
+
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.config.names.NamingPatterns;
-                                
+
                                 import java.util.Map;
-                                
+
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("map_custom.yml")
                                 @Config(requireDynamicInitialization = false)
@@ -88,41 +96,45 @@ class CollectionsWithCustomTypesTest {
                                 """));
 
         assertThat(compilation).succeeded();
-        
+
         // Verify that the generated class exists
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.MapWithCustomTypeConfig")
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.MapWithCustomTypeConfig")
                 .isNotNull();
-                
+
         // Verify that the generated code includes map deserialization
         assertThat(compilation)
                 .generatedSourceFile("me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigDeserializer")
                 .contentsAsUtf8String()
                 .contains("CollectionsUtils.deserializeMap");
     }
-    
+
     @Test
     void testNestedCollections() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.NestedCollectionsConfigDTO",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.NestedCollectionsConfigDTO",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
-                                
+
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.config.names.NamingPatterns;
-                                
+
                                 import java.util.List;
                                 import java.util.Map;
-                                
+
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("nested_collections.yml")
                                 @Config(requireDynamicInitialization = false)
                                 public class NestedCollectionsConfigDTO {
                                     // Map with string keys and lists of custom config objects as values
                                     public Map<String, List<QuestConfigDTO>> questsByCategory;
-                                
+
                                     @Config
                                     public static class QuestConfigDTO {
                                         public String id;
@@ -135,9 +147,10 @@ class CollectionsWithCustomTypesTest {
                                 """));
 
         assertThat(compilation).succeeded();
-        
+
         // Verify that the generated class exists
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.NestedCollectionsConfig")
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.NestedCollectionsConfig")
                 .isNotNull();
     }
 }

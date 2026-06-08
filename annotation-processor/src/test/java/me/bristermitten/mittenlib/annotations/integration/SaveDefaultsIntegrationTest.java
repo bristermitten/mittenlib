@@ -50,40 +50,50 @@ public class SaveDefaultsIntegrationTest {
         when(mockPlugin.getDataFolder()).thenReturn(tempDir.toFile());
         when(mockPlugin.getName()).thenReturn("TestPlugin");
 
-        injector = Guice.createInjector(
-                new ConfigLoaderModule().asModuleWithInfrastructure(),
-                new FileWatcherModule(),
-                new FileTypeModule(),
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        bind(Plugin.class).toInstance(mockPlugin);
-                        bind(MittenLibConsumer.class)
-                                .toInstance(new MittenLibConsumer("Tests"));
-                    }
-                }
-        );
+        injector =
+                Guice.createInjector(
+                        new ConfigLoaderModule().asModuleWithInfrastructure(),
+                        new FileWatcherModule(),
+                        new FileTypeModule(),
+                        new AbstractModule() {
+                            @Override
+                            protected void configure() {
+                                bind(Plugin.class).toInstance(mockPlugin);
+                                bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("Tests"));
+                            }
+                        });
     }
 
     @Test
     void testSerializeClassConfig() throws IOException {
         var fileContents = loadResourceString("integration/InterfaceConfig_dummy.yml");
 
-        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
-        );
+        DeserializationFunction<ClassConfigImpl> loader =
+                (DeserializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, ClassConfigImpl.class))));
         SerializationFunction<ClassConfigImpl> saverFunc;
-        saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
+        saverFunc =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
 
-        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
-                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
-                        fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
-                        loader,
-                        saverFunc
-                ).getOrThrow();
+        var stringReaderProvider =
+                injector
+                        .getInstance(ConfigProviderFactory.class)
+                        .createStringReaderProvider(
+                                injector.getInstance(YamlFileType.class),
+                                fileContents,
+                                new Configuration<>(null, ClassConfigImpl.class),
+                                loader,
+                                saverFunc)
+                        .getOrThrow();
 
         ClassConfigImpl classConfig = stringReaderProvider.get();
 
@@ -91,10 +101,16 @@ public class SaveDefaultsIntegrationTest {
         assertThat(classConfig.defaultValue()).isEqualTo(1);
 
         // Serialize the config back to a DataTree
-        SerializationFunction<ClassConfigImpl> saver = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
-        DataTree serialized = saver.apply(classConfig, new SerializationContext(injector.getInstance(ObjectMapper.class)));
+        SerializationFunction<ClassConfigImpl> saver =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
+        DataTree serialized =
+                saver.apply(
+                        classConfig, new SerializationContext(injector.getInstance(ObjectMapper.class)));
 
         // Verify the serialized data contains all fields including the default
         assertThat(serialized).isInstanceOf(DataTree.DataTreeMap.class);
@@ -110,7 +126,8 @@ public class SaveDefaultsIntegrationTest {
     @Test
     void testSaveOnlyMissingFields() throws IOException {
         // Create a config file without the defaultValue field
-        String originalContent = """
+        String originalContent =
+                """
                 age: 3
                 thing-name: a
                 children: []
@@ -123,14 +140,23 @@ public class SaveDefaultsIntegrationTest {
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
-        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
-        );
-        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
+        DeserializationFunction<ClassConfigImpl> loader =
+                (DeserializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, ClassConfigImpl.class))));
+        SerializationFunction<ClassConfigImpl> saverFunc =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
 
-        FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+        FileBasedConfigProvider<ClassConfigImpl> provider =
+                new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Load the config - defaultValue should be 1 (from the default)
         ClassConfigImpl classConfig = provider.get();
@@ -154,7 +180,8 @@ public class SaveDefaultsIntegrationTest {
     @Test
     void testSaveWithOverride() throws IOException {
         // Create a config file with a different age value
-        String originalContent = """
+        String originalContent =
+                """
                 age: 5
                 thing-name: original
                 children: []
@@ -166,13 +193,22 @@ public class SaveDefaultsIntegrationTest {
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
-        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
-        );
-        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
-        FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+        DeserializationFunction<ClassConfigImpl> loader =
+                (DeserializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, ClassConfigImpl.class))));
+        SerializationFunction<ClassConfigImpl> saverFunc =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
+        FileBasedConfigProvider<ClassConfigImpl> provider =
+                new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Load the config
         ClassConfigImpl classConfig = provider.get();
@@ -196,7 +232,8 @@ public class SaveDefaultsIntegrationTest {
     @Test
     void testSavePreservesExistingFields() throws IOException {
         // Create a config file with all fields including a non-default value
-        String originalContent = """
+        String originalContent =
+                """
                 age: 7
                 thing-name: existing
                 defaultValue: 99
@@ -209,13 +246,22 @@ public class SaveDefaultsIntegrationTest {
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
-        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
-        );
-        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
-        FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+        DeserializationFunction<ClassConfigImpl> loader =
+                (DeserializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, ClassConfigImpl.class))));
+        SerializationFunction<ClassConfigImpl> saverFunc =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
+        FileBasedConfigProvider<ClassConfigImpl> provider =
+                new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Load the config - it has defaultValue = 99 (not the default 1)
         ClassConfigImpl classConfig = provider.get();
@@ -242,14 +288,23 @@ public class SaveDefaultsIntegrationTest {
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
-        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
-        );
-        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
+        DeserializationFunction<ClassConfigImpl> loader =
+                (DeserializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, ClassConfigImpl.class))));
+        SerializationFunction<ClassConfigImpl> saverFunc =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
 
-        FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+        FileBasedConfigProvider<ClassConfigImpl> provider =
+                new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Create a config instance manually
         ClassConfigImpl classConfig = new ClassConfigImpl("test", 42, 1, List.of(), null);
@@ -276,14 +331,23 @@ public class SaveDefaultsIntegrationTest {
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
 
-        DeserializationFunction<FullyDefaultConfigImpl> loader = (DeserializationFunction<FullyDefaultConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, FullyDefaultConfigImpl.class)))
-        );
-        SerializationFunction<FullyDefaultConfigImpl> saverFunc = (SerializationFunction<FullyDefaultConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, FullyDefaultConfigImpl.class)))
-        );
+        DeserializationFunction<FullyDefaultConfigImpl> loader =
+                (DeserializationFunction<FullyDefaultConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, FullyDefaultConfigImpl.class))));
+        SerializationFunction<FullyDefaultConfigImpl> saverFunc =
+                (SerializationFunction<FullyDefaultConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, FullyDefaultConfigImpl.class))));
 
-        FileBasedConfigProvider<FullyDefaultConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+        FileBasedConfigProvider<FullyDefaultConfigImpl> provider =
+                new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
         // Calling get() should succeed because FullyDefaultConfig is dynamically initializable
         FullyDefaultConfigImpl config = provider.get();
@@ -309,30 +373,41 @@ public class SaveDefaultsIntegrationTest {
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
 
-        DeserializationFunction<ClassConfigImpl> loader = (DeserializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))
-        );
-        SerializationFunction<ClassConfigImpl> saverFunc = (SerializationFunction<ClassConfigImpl>) injector.getInstance(
-                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ClassConfigImpl.class)))
-        );
+        DeserializationFunction<ClassConfigImpl> loader =
+                (DeserializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        DeserializationFunction.class, ClassConfigImpl.class))));
+        SerializationFunction<ClassConfigImpl> saverFunc =
+                (SerializationFunction<ClassConfigImpl>)
+                        injector.getInstance(
+                                Key.get(
+                                        TypeLiteral.get(
+                                                Types.newParameterizedType(
+                                                        SerializationFunction.class, ClassConfigImpl.class))));
 
-        FileBasedConfigProvider<ClassConfigImpl> provider = new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
+        FileBasedConfigProvider<ClassConfigImpl> provider =
+                new FileBasedConfigProvider<>(configFile, reader, loader, saver, saverFunc, writer);
 
-        // Calling get() should fail with NoSuchFileException because ClassConfig is NOT dynamically initializable
+        // Calling get() should fail with NoSuchFileException because ClassConfig is NOT dynamically
+        // initializable
         // (it has required fields name and age without defaults)
         // and it is not found in the JAR, so it is not copied to the data folder.
-        assertThatThrownBy(provider::get)
-                .isInstanceOf(NoSuchFileException.class);
+        assertThatThrownBy(provider::get).isInstanceOf(NoSuchFileException.class);
 
         assertThat(configFile).doesNotExist();
     }
 
     @Test
     void testInformativeErrorMessageWhenDynamicInitializationFails() {
-        PluginConfigInitializationStrategy strategy = injector.getInstance(PluginConfigInitializationStrategy.class);
+        PluginConfigInitializationStrategy strategy =
+                injector.getInstance(PluginConfigInitializationStrategy.class);
 
         // ClassConfig is NOT dynamically initializable because of 'name' and 'age'
-        Result<Unit> result = strategy.initializeConfig("non-existent-config.yml", ClassConfigImpl.class);
+        Result<Unit> result =
+                strategy.initializeConfig("non-existent-config.yml", ClassConfigImpl.class);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.error()).isPresent();

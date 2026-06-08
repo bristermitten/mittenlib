@@ -18,7 +18,8 @@ import java.util.*;
 public class MittenLib<T extends Plugin> {
 
     private final Map<Class<? extends Module>, Module> modules = new LinkedHashMap<>();
-    private final Map<Class<? extends MittenLibConfigLoader>, MittenLibConfigLoader> configModules = new LinkedHashMap<>();
+    private final Map<Class<? extends MittenLibConfigLoader>, MittenLibConfigLoader> configModules =
+            new LinkedHashMap<>();
     private final Set<Configuration<?>> manualConfigs = new LinkedHashSet<>();
 
     public MittenLib(T plugin) {
@@ -42,9 +43,9 @@ public class MittenLib<T extends Plugin> {
     }
 
     /**
-     * Register a module which installs certain config types.
-     * This module should typically be a generated {@code ConfigLoaderModule},
-     * which will be installed, and overridden with plugin-specific {@link PluginConfigModule} bindings.
+     * Register a module which installs certain config types. This module should typically be a
+     * generated {@code ConfigLoaderModule}, which will be installed, and overridden with
+     * plugin-specific {@link PluginConfigModule} bindings.
      *
      * @param module the module to register
      * @return this
@@ -86,7 +87,10 @@ public class MittenLib<T extends Plugin> {
      * @param <C>                the type of the configuration
      * @return this
      */
-    public <C> MittenLib<T> config(@NotNull String fileName, @NotNull Class<C> type, @NotNull Class<? extends C> implementationType) {
+    public <C> MittenLib<T> config(
+            @NotNull String fileName,
+            @NotNull Class<C> type,
+            @NotNull Class<? extends C> implementationType) {
         return config(new Configuration<>(fileName, type, implementationType));
     }
 
@@ -132,9 +136,7 @@ public class MittenLib<T extends Plugin> {
         return this;
     }
 
-    /**
-     * Finalizes the setup process and returns the {@link Injector}
-     */
+    /** Finalizes the setup process and returns the {@link Injector} */
     public @NotNull Injector setup() {
         List<Module> allModules = new ArrayList<>(modules.values());
 
@@ -145,15 +147,13 @@ public class MittenLib<T extends Plugin> {
                 allModules.add(new ConfigDataModule(manualConfigs));
             }
 
-            allModules.add(new ConfigInfrastructureModule(
-                    PluginConfigInitializationStrategy.class,
-                    PluginConfigPathResolver.class
-            ));
+            allModules.add(
+                    new ConfigInfrastructureModule(
+                            PluginConfigInitializationStrategy.class, PluginConfigPathResolver.class));
         }
 
         return Guice.createInjector(allModules);
     }
-
 
     private void addModule0(Module module) {
         for (Map.Entry<Class<? extends Module>, Module> entry : modules.entrySet()) {
@@ -161,11 +161,11 @@ public class MittenLib<T extends Plugin> {
 
             if (existingKey.isAssignableFrom(module.getClass())) {
                 Module merged = Modules.override(entry.getValue()).with(module);
-                entry.setValue(merged);
-                return;
-            }
-        }
-
-        this.modules.put(module.getClass(), module);
+        entry.setValue(merged);
+        return;
+      }
     }
+
+    this.modules.put(module.getClass(), module);
+  }
 }

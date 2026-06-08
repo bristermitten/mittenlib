@@ -7,14 +7,13 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates a {@link TypeAdapter} that can serialize elements with just a message to plain
- * Strings (i.e not complex objects), and vice versa
+ * Creates a {@link TypeAdapter} that can serialize elements with just a message to plain Strings
+ * (i.e not complex objects), and vice versa
  */
 public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
 
@@ -25,37 +24,42 @@ public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         //noinspection unchecked
-        final TypeAdapter<LangMessage> delegateAdapter = (TypeAdapter<LangMessage>) gson.getDelegateAdapter(this, type);
+        final TypeAdapter<LangMessage> delegateAdapter =
+                (TypeAdapter<LangMessage>) gson.getDelegateAdapter(this, type);
         //noinspection unchecked
-        return (TypeAdapter<T>) new TypeAdapter<LangMessage>() {
-            @Override
-            public void write(JsonWriter out, LangMessage value) throws IOException {
-                if (value.getTitle() == null && value.getSubtitle() == null && value.getActionBar() == null && value.getSound() == null) {
-                    if (value.getMessage() == null) {
-                        throw new IllegalArgumentException("Empty LangElement!");
+        return (TypeAdapter<T>)
+                new TypeAdapter<LangMessage>() {
+                    @Override
+                    public void write(JsonWriter out, LangMessage value) throws IOException {
+                        if (value.getTitle() == null
+                                && value.getSubtitle() == null
+                                && value.getActionBar() == null
+                                && value.getSound() == null) {
+                            if (value.getMessage() == null) {
+                                throw new IllegalArgumentException("Empty LangElement!");
+                            }
+                            out.value(value.getMessage()); // just write the message as a string
+                            return;
+                        }
+                        delegateAdapter.write(out, value);
                     }
-                    out.value(value.getMessage()); // just write the message as a string
-                    return;
-                }
-                delegateAdapter.write(out, value);
-            }
 
-            @Override
-            public LangMessage read(JsonReader in) throws IOException {
-                if (in.peek() == JsonToken.STRING) {
-                    return new LangMessage(in.nextString(), null, null, null, null);
-                }
-                if (in.peek() == JsonToken.BEGIN_ARRAY) {
-                    final List<String> lines = new ArrayList<>();
-                    in.beginArray();
-                    while (in.hasNext()) {
-                        lines.add(in.nextString());
+                    @Override
+                    public LangMessage read(JsonReader in) throws IOException {
+                        if (in.peek() == JsonToken.STRING) {
+                            return new LangMessage(in.nextString(), null, null, null, null);
+                        }
+                        if (in.peek() == JsonToken.BEGIN_ARRAY) {
+                            final List<String> lines = new ArrayList<>();
+                            in.beginArray();
+                            while (in.hasNext()) {
+                                lines.add(in.nextString());
+                            }
+                            in.endArray();
+                            return new LangMessage(String.join("\n", lines), null, null, null, null);
+                        }
+                        return delegateAdapter.read(in);
                     }
-                    in.endArray();
-                    return new LangMessage(String.join("\n", lines), null, null, null, null);
-                }
-                return delegateAdapter.read(in);
-            }
         };
     }
 }

@@ -16,7 +16,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
-
 /**
  * Handles file watching operations.
  */
@@ -30,18 +29,22 @@ public class FileWatcherService {
     private final Logger logger = Logger.getLogger(FileWatcherService.class.getName());
 
     @Inject
-    FileWatcherService(@NotNull Provider<WatchService> watchServiceProvider, @NotNull MittenLibConsumer consumer) {
+    FileWatcherService(
+            @NotNull Provider<WatchService> watchServiceProvider, @NotNull MittenLibConsumer consumer) {
         this.watchServiceProvider = watchServiceProvider;
 
-        service = Executors.newSingleThreadExecutor(r ->
-        {
-            final Thread thread = new Thread(r, String.format("%s MittenLib File Watcher", consumer.getName()));
-            thread.setDaemon(true);
-            return thread;
-        });
+        service =
+                Executors.newSingleThreadExecutor(
+                        r -> {
+                            final Thread thread =
+                                    new Thread(r, String.format("%s MittenLib File Watcher", consumer.getName()));
+                            thread.setDaemon(true);
+                            return thread;
+                        });
     }
 
-    private void registerWatcher(@NotNull WatchService watchService, @NotNull FileWatcher fileWatcher) throws IOException {
+    private void registerWatcher(@NotNull WatchService watchService, @NotNull FileWatcher fileWatcher)
+            throws IOException {
         if (registeredWatchers.contains(fileWatcher)) {
             return;
         }
@@ -50,7 +53,11 @@ public class FileWatcherService {
             toWatch = toWatch.getParent();
         }
 
-        toWatch.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.OVERFLOW);
+        toWatch.register(
+                watchService,
+                StandardWatchEventKinds.ENTRY_MODIFY,
+                StandardWatchEventKinds.ENTRY_CREATE,
+                StandardWatchEventKinds.OVERFLOW);
         registeredWatchers.add(fileWatcher);
     }
 
@@ -58,8 +65,9 @@ public class FileWatcherService {
      * Add a watcher to the service.
      *
      * @param fileWatcher The watcher to add.
-     * @return A future that will be completed once the service is ready to use - some delay may be required for the thread to startup.
-     * File changes that occur before this future is completed may not be handled.
+     * @return A future that will be completed once the service is ready to use - some delay may be
+     * required for the thread to startup. File changes that occur before this future is completed
+     * may not be handled.
      */
     public @NotNull Future<Unit> addWatcher(@NotNull FileWatcher fileWatcher) {
         final Set<FileWatcher> fileWatchers =
@@ -73,10 +81,10 @@ public class FileWatcherService {
     }
 
     /**
-     * Removes a watcher from the service.
-     * Note that the watcher will not be removed from the underlying watch service until the service is restarted -
-     * the file will still be watched, but the watcher will not be notified of changes.
-     * If this operation leaves no watchers, the service will be stopped.
+     * Removes a watcher from the service. Note that the watcher will not be removed from the
+     * underlying watch service until the service is restarted - the file will still be watched, but
+     * the watcher will not be notified of changes. If this operation leaves no watchers, the service
+     * will be stopped.
      *
      * @param fileWatcher The watcher to remove.
      */
@@ -94,7 +102,8 @@ public class FileWatcherService {
     /**
      * Start watching for file changes.
      *
-     * @return A future that will be completed once the service is ready to use - some delay may be required for the thread to startup.
+     * @return A future that will be completed once the service is ready to use - some delay may be
+     * required for the thread to startup.
      * @throws IllegalStateException if the service is already watching (see {@link #isWatching()}
      */
     public @NotNull Future<Unit> startWatching() {
@@ -109,8 +118,9 @@ public class FileWatcherService {
     }
 
     /**
-     * Returns whether the service is currently watching for file changes.
-     * Note that this may return true even if the service is not currently watching, if the service is in the process of starting up.
+     * Returns whether the service is currently watching for file changes. Note that this may return
+     * true even if the service is not currently watching, if the service is in the process of
+     * starting up.
      *
      * @return whether the service is currently watching for file changes.
      * @see #startWatching()
@@ -122,7 +132,8 @@ public class FileWatcherService {
     /**
      * Stop watching for file changes.
      *
-     * @throws IllegalStateException if the service is not currently watching (see {@link #isWatching()}
+     * @throws IllegalStateException if the service is not currently watching (see {@link
+     *                               #isWatching()}
      */
     public void stopWatching() {
         if (!watching.getAndSet(false)) {
@@ -143,7 +154,8 @@ public class FileWatcherService {
             }
         } catch (IOException e) {
             // Handle IO errors specifically
-            whenReady.completeExceptionally(new FileWatcherException("Failed to watch files due to an IO error", e));
+            whenReady.completeExceptionally(
+                    new FileWatcherException("Failed to watch files due to an IO error", e));
             logger.severe(() -> "Error watching files: " + e.getMessage());
         } catch (InterruptedException e) {
             // Handle thread interruption
@@ -176,8 +188,8 @@ public class FileWatcherService {
             }
             for (FileWatcher fileWatcher : fileWatchers) {
                 fileWatcher.getOnModify().accept(event);
-            }
-        }
-        return key.reset();
+      }
     }
+    return key.reset();
+  }
 }

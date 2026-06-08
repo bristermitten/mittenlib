@@ -14,7 +14,6 @@ public abstract class CustomInfoRegistry<T> {
         infoMultimap.put(clazz, info);
     }
 
-
     public Optional<T> getCustomInfo(TypeMirror propertyType) {
         var fromMap = infoMultimap.get(TypeName.get(propertyType));
 
@@ -27,5 +26,4 @@ public abstract class CustomInfoRegistry<T> {
 
         return Optional.of(fromMap.iterator().next());
     }
-
 }

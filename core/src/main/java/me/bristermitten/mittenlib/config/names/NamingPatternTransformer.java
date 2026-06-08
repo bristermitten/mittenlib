@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
  */
 public class NamingPatternTransformer {
     // https://stackoverflow.com/questions/1097901/regular-expression-split-string-by-capital-letter-but-ignore-tla
-    private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(?=(?<=[a-z])[A-Z]|[A-Z](?=[a-z]))");
+    private static final Pattern CAMEL_CASE_PATTERN =
+            Pattern.compile("(?=(?<=[a-z])[A-Z]|[A-Z](?=[a-z]))");
 
     private NamingPatternTransformer() {
     }
@@ -40,19 +41,18 @@ public class NamingPatternTransformer {
         final UnaryOperator<String> transformer;
         if (pattern == NamingPatterns.LOWER_KEBAB_CASE || pattern == NamingPatterns.UPPER_KEBAB_CASE) {
             separator = "-";
-            transformer = pattern == NamingPatterns.LOWER_KEBAB_CASE ? String::toLowerCase : Strings::capitalize;
-        } else if (pattern == NamingPatterns.LOWER_SNAKE_CASE || pattern == NamingPatterns.UPPER_SNAKE_CASE) {
+            transformer =
+                    pattern == NamingPatterns.LOWER_KEBAB_CASE ? String::toLowerCase : Strings::capitalize;
+        } else if (pattern == NamingPatterns.LOWER_SNAKE_CASE
+                || pattern == NamingPatterns.UPPER_SNAKE_CASE) {
             separator = "_";
-            transformer = pattern == NamingPatterns.LOWER_SNAKE_CASE ? String::toLowerCase : Strings::capitalize;
+            transformer =
+                    pattern == NamingPatterns.LOWER_SNAKE_CASE ? String::toLowerCase : Strings::capitalize;
         } else {
             throw new IllegalStateException("what");
         }
 
-
-        return Strings.joinWith(
-                Arrays.asList(parts),
-                transformer,
-                separator);
+        return Strings.joinWith(Arrays.asList(parts), transformer, separator);
     }
 
     @Nullable
@@ -67,5 +67,5 @@ public class NamingPatternTransformer {
             parts[0] = Strings.uncapitalize(parts[0]);
         }
         return String.join("", parts);
-    }
+  }
 }

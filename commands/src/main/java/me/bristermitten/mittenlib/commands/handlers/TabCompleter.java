@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A tab completer for a command argument.
  */
-public interface TabCompleter extends CommandCompletions.AsyncCommandCompletionHandler<BukkitCommandCompletionContext> {
-    @NotNull String id();
+public interface TabCompleter
+        extends CommandCompletions.AsyncCommandCompletionHandler<BukkitCommandCompletionContext> {
+    @NotNull
+    String id();
 }

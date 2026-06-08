@@ -69,6 +69,6 @@ public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConf
             public T get() {
                 return delegate.get();
             }
-        };
-    }
+    };
+  }
 }

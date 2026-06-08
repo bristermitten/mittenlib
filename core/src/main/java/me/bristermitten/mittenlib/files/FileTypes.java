@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Stores all the known {@link FileType} classes,
- * used for registration in the {@link FileTypeModule}
+ * Stores all the known {@link FileType} classes, used for registration in the {@link
+ * FileTypeModule}
  */
 public class FileTypes {
     private final Set<Class<? extends FileType>> types;
@@ -26,18 +26,15 @@ public class FileTypes {
     }
 
     /**
-     * Return a {@link FileTypes} containing the default {@link FileType}s.
-     * These are currently {@link JSONFileType} and {@link YamlFileType}
+     * Return a {@link FileTypes} containing the default {@link FileType}s. These are currently {@link
+     * JSONFileType} and {@link YamlFileType}
      *
      * @return a {@link FileTypes} instance with the default types registered
      * @see JSONFileType
      * @see YamlFileType
      */
     public static FileTypes defaultTypes() {
-        return new FileTypes(new HashSet<>(Arrays.asList(
-                JSONFileType.class,
-                YamlFileType.class
-        )));
+        return new FileTypes(new HashSet<>(Arrays.asList(JSONFileType.class, YamlFileType.class)));
     }
 
     /**
@@ -58,5 +55,5 @@ public class FileTypes {
      */
     public @Unmodifiable Set<Class<? extends FileType>> getTypes() {
         return Collections.unmodifiableSet(types);
-    }
+  }
 }

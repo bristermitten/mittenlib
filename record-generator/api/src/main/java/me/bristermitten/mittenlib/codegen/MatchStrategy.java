@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies how match methods should be generated for a union.
- * See {@link MatchStrategies} for available strategies.
+ * Specifies how match methods should be generated for a union. See {@link MatchStrategies} for
+ * available strategies.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

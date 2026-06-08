@@ -22,8 +22,8 @@ import me.bristermitten.mittenlib.config.writer.SearchingObjectWriter;
 import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 
 /**
- * Guice module for configuration infrastructure.
- * This module binds the core components required for configuration loading and writing.
+ * Guice module for configuration infrastructure. This module binds the core components required for
+ * configuration loading and writing.
  */
 public class ConfigInfrastructureModule extends AbstractModule {
 
@@ -43,8 +43,9 @@ public class ConfigInfrastructureModule extends AbstractModule {
      * @param initializationStrategy the strategy to use for initializing configs
      * @param pathResolver           the resolver to use for finding config files
      */
-    public ConfigInfrastructureModule(Class<? extends ConfigInitializationStrategy> initializationStrategy,
-                                      Class<? extends ConfigPathResolver> pathResolver) {
+    public ConfigInfrastructureModule(
+            Class<? extends ConfigInitializationStrategy> initializationStrategy,
+            Class<? extends ConfigPathResolver> pathResolver) {
         this.initializationStrategy = initializationStrategy;
         this.pathResolver = pathResolver;
     }
@@ -66,6 +67,5 @@ public class ConfigInfrastructureModule extends AbstractModule {
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class)
                 .addBinding()
                 .to(DataTreeTypeAdapterFactory.class);
-    }
-
+  }
 }

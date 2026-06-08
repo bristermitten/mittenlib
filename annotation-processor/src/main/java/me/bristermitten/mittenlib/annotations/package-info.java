@@ -1,4 +1,6 @@
-@AnnotationWrapper(value = {CustomDeserializerFor.class}, usePublicVisibility = true)
+@AnnotationWrapper(
+        value = {CustomDeserializerFor.class},
+        usePublicVisibility = true)
 @NullMarked
 package me.bristermitten.mittenlib.annotations;
 

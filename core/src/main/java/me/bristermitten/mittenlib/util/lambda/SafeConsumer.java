@@ -31,5 +31,5 @@ public interface SafeConsumer<T> {
                 Errors.sneakyThrow(e);
             }
         };
-    }
+  }
 }

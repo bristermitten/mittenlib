@@ -20,18 +20,21 @@ class ConfigurationClassNameGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.LangConfigDTO",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.LangConfigDTO",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
-                                
+
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.lang.LangMessage;
-                                
+
                                 @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source(value = "lang.yml")
                                 @Config
@@ -39,11 +42,11 @@ class ConfigurationClassNameGeneratorTest {
                                 public class LangConfigDTO {
                                     public final ErrorsDTO errors = null;
                                     public final CommandsDTO commands = null;
-                                
+
                                     @Config
                                     public static class CommandsDTO {
                                         public final SelectionDTO selection = null;
-                                
+
                                         @Config
                                         public static class SelectionDTO {
                                             public final LangMessage rename = null;
@@ -53,12 +56,12 @@ class ConfigurationClassNameGeneratorTest {
                                             public final LangMessage removedZone = null;
                                         }
                                     }
-                                
+
                                     @Config
                                     public static class ErrorsDTO {
                                         public final LangMessage noSelection = null;
                                         public final SelectionDTO selection = null;
-                                
+
                                         @Config
                                         public static class SelectionDTO {
                                             public final LangMessage nodeExists = null;
@@ -100,7 +103,8 @@ class ConfigurationClassNameGeneratorTest {
 
         when(ast.name()).thenReturn(ClassName.bestGuess("TestConfig"));
 
-        ConfigurationClassNameGenerator generator = new ConfigurationClassNameGenerator(new ConfigNameCache());
+        ConfigurationClassNameGenerator generator =
+                new ConfigurationClassNameGenerator(new ConfigNameCache());
 
         assertThat(generator.getDeserializerClassName(ast))
                 .isEqualTo(ClassName.bestGuess("TestConfigDeserializer"));

@@ -23,10 +23,8 @@ public class YamlObjectWriter implements ObjectWriter {
         this.yaml = yaml;
     }
 
-
     /**
-     * Writes a DataTree to the given writer as YAML.
-     * This method does not close the writer.
+     * Writes a DataTree to the given writer as YAML. This method does not close the writer.
      *
      * @param tree   The DataTree to write
      * @param writer The writer to write to
@@ -34,11 +32,12 @@ public class YamlObjectWriter implements ObjectWriter {
      */
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer writer) {
-        return runCatching(() -> {
-            Object pojo = DataTreeTransforms.toPOJO(tree);
-            yaml.dump(pojo, writer);
-            writer.flush();
-            return null;
+        return runCatching(
+                () -> {
+                    Object pojo = DataTreeTransforms.toPOJO(tree);
+                    yaml.dump(pojo, writer);
+                    writer.flush();
+                    return null;
         });
-    }
+  }
 }

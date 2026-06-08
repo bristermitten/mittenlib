@@ -8,5 +8,6 @@ import org.jetbrains.annotations.NotNull;
  * A command condition that is referenced by name on the full command rather than an argument.
  */
 public interface NamedCondition extends CommandConditions.Condition<BukkitCommandIssuer> {
-    @NotNull String id();
+    @NotNull
+    String id();
 }

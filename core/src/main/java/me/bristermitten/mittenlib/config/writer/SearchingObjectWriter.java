@@ -24,7 +24,6 @@ public class SearchingObjectWriter implements ObjectWriter {
         this.logger = logger;
     }
 
-
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Path path) {
         for (FileType fileType : fileTypes) {
@@ -38,20 +37,25 @@ public class SearchingObjectWriter implements ObjectWriter {
 
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer output) {
-        logger.warning(() -> "SearchingObjectWriter used with write(DataTree, Writer). " +
-                "This method is not supported because multiple ObjectWriters cannot safely share the same Writer. " +
-                "Use write(DataTree, Path) or a specific ObjectWriter implementation instead.");
+        logger.warning(
+                () ->
+                        "SearchingObjectWriter used with write(DataTree, Writer). "
+                                + "This method is not supported because multiple ObjectWriters cannot safely share the same Writer. "
+                                + "Use write(DataTree, Path) or a specific ObjectWriter implementation instead.");
 
-        return fail(new UnsupportedOperationException(
-                "SearchingObjectWriter does not support write(DataTree, Writer). " +
-                "Use write(DataTree, Path) or a specific ObjectWriter instead."));
+        return fail(
+                new UnsupportedOperationException(
+                        "SearchingObjectWriter does not support write(DataTree, Writer). "
+                                + "Use write(DataTree, Path) or a specific ObjectWriter instead."));
     }
 
     @Override
     public @NotNull Result<String> write(@NotNull DataTree tree) {
-        logger.warning(() -> "SearchingObjectWriter used with write(DataTree). " +
-                "This is not recommended as we can't efficiently determine which Writer to use, and so must try all of them." +
-                "Consider using a specific ObjectWriter for better performance.");
+        logger.warning(
+                () ->
+                        "SearchingObjectWriter used with write(DataTree). "
+                                + "This is not recommended as we can't efficiently determine which Writer to use, and so must try all of them."
+                                + "Consider using a specific ObjectWriter for better performance.");
 
         for (FileType fileType : fileTypes) {
             Result<String> res = fileType.writer().write(tree);
@@ -59,6 +63,7 @@ public class SearchingObjectWriter implements ObjectWriter {
                 return res;
             }
         }
-        return fail(new IllegalStateException("Could not find a matching file type for DataTree " + tree));
+        return fail(
+                new IllegalStateException("Could not find a matching file type for DataTree " + tree));
     }
 }

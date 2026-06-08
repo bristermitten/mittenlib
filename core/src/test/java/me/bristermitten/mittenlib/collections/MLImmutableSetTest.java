@@ -9,7 +9,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Comprehensive tests for the MLImmutableSet interface using both unit tests and property-based testing
+ * Comprehensive tests for the MLImmutableSet interface using both unit tests and property-based
+ * testing
  */
 class MLImmutableSetTest {
 
@@ -77,8 +78,7 @@ class MLImmutableSetTest {
 
         // Adding null should throw
         //noinspection DataFlowIssue
-        assertThrows(NullPointerException.class,
-                () -> set.plus(null));
+        assertThrows(NullPointerException.class, () -> set.plus(null));
     }
 
     @Test
@@ -95,8 +95,8 @@ class MLImmutableSetTest {
     // Property-based tests
 
     @Property
-    void plusPreservesExistingElements(@ForAll @Size(max = 10) List<String> elements,
-                                       @ForAll("nonNullString") String newElement) {
+    void plusPreservesExistingElements(
+            @ForAll @Size(max = 10) List<String> elements, @ForAll("nonNullString") String newElement) {
         Assume.that(elements.stream().allMatch(Objects::nonNull));
 
         MLImmutableSet<String> set = createTestSet(elements);
@@ -119,8 +119,8 @@ class MLImmutableSetTest {
     }
 
     @Property
-    void plusOperationIsIdempotent(@ForAll @Size(max = 10) List<String> elements,
-                                   @ForAll("nonNullString") String newElement) {
+    void plusOperationIsIdempotent(
+            @ForAll @Size(max = 10) List<String> elements, @ForAll("nonNullString") String newElement) {
         Assume.that(elements.stream().allMatch(Objects::nonNull));
 
         MLImmutableSet<String> set = createTestSet(elements);
@@ -133,8 +133,8 @@ class MLImmutableSetTest {
     }
 
     @Property
-    void originalSetRemainsUnchanged(@ForAll @Size(max = 10) List<String> elements,
-                                     @ForAll("nonNullString") String newElement) {
+    void originalSetRemainsUnchanged(
+            @ForAll @Size(max = 10) List<String> elements, @ForAll("nonNullString") String newElement) {
         Assume.that(elements.stream().allMatch(Objects::nonNull));
 
         MLImmutableSet<String> originalSet = createTestSet(elements);
@@ -158,5 +158,5 @@ class MLImmutableSetTest {
     @Provide
     Arbitrary<String> nonNullString() {
         return Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10);
-    }
+  }
 }

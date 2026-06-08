@@ -13,6 +13,5 @@ public class CustomTypeDeserializer {
             case DataTree.DataTreeLiteral.DataTreeLiteralString ignored -> Result.ok(new CustomType("hello"));
             default -> Result.fail(new IllegalArgumentException("Invalid data type " + context.getData()));
         };
-
     }
 }

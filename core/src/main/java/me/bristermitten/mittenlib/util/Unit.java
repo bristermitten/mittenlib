@@ -9,7 +9,6 @@ public class Unit {
     public static final Unit UNIT = new Unit();
 
     private Unit() {
-
     }
 
     public static CompletableFuture<Unit> unitFuture() {
@@ -33,5 +32,5 @@ public class Unit {
     @Override
     public String toString() {
         return "Unit";
-    }
+  }
 }

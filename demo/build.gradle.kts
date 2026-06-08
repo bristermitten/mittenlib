@@ -27,9 +27,10 @@ tasks.shadowJar {
 }
 
 tasks.withType<RunServer> {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    javaLauncher =
+        javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
 
     minecraftVersion("1.8.8")
     downloadPlugins {

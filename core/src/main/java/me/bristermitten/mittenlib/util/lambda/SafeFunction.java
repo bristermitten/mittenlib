@@ -53,7 +53,6 @@ public interface SafeFunction<T, R> {
      * @param t the input
      * @return the result
      */
-
     default Result<R> applyCatching(T t) {
         return runCatching(() -> apply(t));
     }
@@ -69,8 +68,8 @@ public interface SafeFunction<T, R> {
                 return apply(t);
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
-                return null;
-            }
-        };
-    }
+        return null;
+      }
+    };
+  }
 }

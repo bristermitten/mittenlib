@@ -10,7 +10,7 @@ public class FileWatcherException extends RuntimeException {
      * Creates a new FileWatcherException with the specified message and cause.
      *
      * @param message the detail message
-     * @param cause the cause of the exception
+     * @param cause   the cause of the exception
      */
     public FileWatcherException(@NotNull String message, @NotNull Throwable cause) {
         super(message, cause);

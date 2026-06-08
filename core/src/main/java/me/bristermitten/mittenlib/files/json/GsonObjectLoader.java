@@ -22,7 +22,6 @@ public class GsonObjectLoader implements ObjectLoader {
 
     @Override
     public @NotNull Result<DataTree> load(@NotNull Reader source) {
-        return Result.runCatching(() ->
-                gson.fromJson(source, DataTree.class));
-    }
+        return Result.runCatching(() -> gson.fromJson(source, DataTree.class));
+  }
 }

@@ -27,7 +27,8 @@ public class Cached<T> implements Supplier<T> {
      * Create a new Cached with the given supplier.
      *
      * @param computeWith The supplier to compute the value with.
-     * @param eager       Whether to eagerly compute the value. If true, the supplier will be called immediately.
+     * @param eager       Whether to eagerly compute the value. If true, the supplier will be called
+     *                    immediately.
      */
     public Cached(Supplier<@NotNull T> computeWith, boolean eager) {
         this.computeWith = computeWith;
@@ -38,8 +39,8 @@ public class Cached<T> implements Supplier<T> {
 
     /**
      * Invalidate the cached value, causing it to be recomputed on the next call to {@link #get()}.
-     * Note that this does not respect {@link Cached#Cached(Supplier, boolean)}'s {@code eager} parameter,
-     * and will always lazily compute the value.
+     * Note that this does not respect {@link Cached#Cached(Supplier, boolean)}'s {@code eager}
+     * parameter, and will always lazily compute the value.
      */
     public void invalidate() {
         t = null;
@@ -58,9 +59,8 @@ public class Cached<T> implements Supplier<T> {
     @NotNull
     public T get() {
         if (t == null) {
-            return update();
-        }
-        return t;
+      return update();
     }
-
+    return t;
+  }
 }

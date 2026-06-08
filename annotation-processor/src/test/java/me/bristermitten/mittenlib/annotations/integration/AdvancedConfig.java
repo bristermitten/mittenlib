@@ -28,6 +28,7 @@ public interface AdvancedConfig {
     @Config
     interface DatabaseConfig {
         String username();
+
         @Nullable String password();
     }
 }

@@ -8,10 +8,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 /**
- * A {@link ParameterizedType} that can take a dynamic number of type arguments.
- * Required when not all types are known at compile time, otherwise {@link com.google.inject.TypeLiteral} can be used.
+ * A {@link ParameterizedType} that can take a dynamic number of type arguments. Required when not
+ * all types are known at compile time, otherwise {@link com.google.inject.TypeLiteral} can be used.
  * <a href="https://stackoverflow.com/a/49418496/6272977">Source / Credit</a>
  */
 public class CompositeType implements ParameterizedType {
@@ -29,12 +28,12 @@ public class CompositeType implements ParameterizedType {
         this.baseClass = baseClass;
         this.parameters = arguments.clone();
 
-        this.name = String.format("%s<%s>", baseClass.getName(),
-                Arrays.stream(arguments)
-                        .map(Class::getName)
-                        .collect(Collectors.joining(", ")));
+        this.name =
+                String.format(
+                        "%s<%s>",
+                        baseClass.getName(),
+                        Arrays.stream(arguments).map(Class::getName).collect(Collectors.joining(", ")));
     }
-
 
     @Override
     public Type @NonNull [] getActualTypeArguments() {
@@ -56,8 +55,8 @@ public class CompositeType implements ParameterizedType {
         if (this == o) return true;
         if (!(o instanceof ParameterizedType)) return false;
         ParameterizedType that = (ParameterizedType) o;
-        return Objects.equals(baseClass, that.getRawType()) &&
-                Arrays.equals(parameters, that.getActualTypeArguments());
+        return Objects.equals(baseClass, that.getRawType())
+                && Arrays.equals(parameters, that.getActualTypeArguments());
     }
 
     @Override
@@ -68,5 +67,5 @@ public class CompositeType implements ParameterizedType {
     @Override
     public String getTypeName() {
         return name;
-    }
+  }
 }

@@ -28,7 +28,8 @@ public class ASTVerifier {
     private final SerializationCodeGenerator serializationCodeGenerator;
 
     @Inject
-    public ASTVerifier(Types types, Elements elements, SerializationCodeGenerator serializationCodeGenerator) {
+    public ASTVerifier(
+            Types types, Elements elements, SerializationCodeGenerator serializationCodeGenerator) {
         this.types = types;
         this.elements = elements;
         this.serializationCodeGenerator = serializationCodeGenerator;
@@ -41,8 +42,10 @@ public class ASTVerifier {
             if (!union.properties().isEmpty()) {
                 // if there are some properties, all alternatives must extend the union
                 for (AbstractConfigStructure alternative : union.alternatives()) {
-                    if (alternative.source().parents().stream().noneMatch(t -> types.isSameType(t, unionType))) {
-                        MessagerUtils.error(alternative.source().element(),
+                    if (alternative.source().parents().stream()
+                            .noneMatch(t -> types.isSameType(t, unionType))) {
+                        MessagerUtils.error(
+                                alternative.source().element(),
                                 ConfigVerificationErrors.UNION_ALTERNATIVE_NOT_EXTENDING_UNION,
                                 union.source().element());
                         success = false;
@@ -50,19 +53,22 @@ public class ASTVerifier {
                 }
             }
         }
-        
+
         if (structure.source() instanceof ClassConfigTypeSource classSource) {
-            boolean hasAnyDefault = structure.properties().stream()
-                    .anyMatch(p -> p.settings().hasDefaultValue());
+            boolean hasAnyDefault =
+                    structure.properties().stream().anyMatch(p -> p.settings().hasDefaultValue());
             if (hasAnyDefault) {
                 TypeElement element = classSource.element();
-                Optional<ExecutableElement> noArgConstructor = element.getEnclosedElements().stream()
-                        .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
-                        .map(ExecutableElement.class::cast)
-                        .filter(c -> c.getParameters().isEmpty())
-                        .findFirst();
-                if (noArgConstructor.isEmpty() || noArgConstructor.get().getModifiers().contains(Modifier.PRIVATE)) {
-                    MessagerUtils.error(element,
+                Optional<ExecutableElement> noArgConstructor =
+                        element.getEnclosedElements().stream()
+                                .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
+                                .map(ExecutableElement.class::cast)
+                                .filter(c -> c.getParameters().isEmpty())
+                                .findFirst();
+                if (noArgConstructor.isEmpty()
+                        || noArgConstructor.get().getModifiers().contains(Modifier.PRIVATE)) {
+                    MessagerUtils.error(
+                            element,
                             ConfigVerificationErrors.CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR,
                             element.getSimpleName());
                     success = false;
@@ -73,12 +79,14 @@ public class ASTVerifier {
         if (!serializationCodeGenerator.isSerializationSupported(structure)) {
             var unsupported = serializationCodeGenerator.getUnsupportedSerializationProperties(structure);
             if (structure.settings().config().requireSerialization()) {
-                MessagerUtils.error(structure.source().element(),
+                MessagerUtils.error(
+                        structure.source().element(),
                         ConfigVerificationErrors.SERIALIZATION_NOT_SUPPORTED,
                         String.join(", ", unsupported));
                 success = false;
             } else {
-                MessagerUtils.warning(structure.source().element(),
+                MessagerUtils.warning(
+                        structure.source().element(),
                         ConfigVerificationErrors.SERIALIZATION_NOT_SUPPORTED_WARNING,
                         String.join(", ", unsupported));
             }
@@ -86,20 +94,23 @@ public class ASTVerifier {
 
         // Error/warn if a config with a @Source is not dynamically initializable
         if (structure.settings().source() != null && !structure.isDynamicallyInitializable()) {
-            var missingDefaults = structure.properties().stream()
-                    .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
-                    .map(Property::name)
-                    .toList();
+            var missingDefaults =
+                    structure.properties().stream()
+                            .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
+                            .map(Property::name)
+                            .toList();
             if (!missingDefaults.isEmpty()) {
                 if (structure.settings().config().requireDynamicInitialization()) {
-                    MessagerUtils.error(structure.source().element(),
+                    MessagerUtils.error(
+                            structure.source().element(),
                             ConfigVerificationErrors.NOT_DYNAMICALLY_INITIALIZABLE,
                             structure.name().simpleName(),
                             String.join(", ", missingDefaults),
                             structure.settings().source().value());
                     success = false;
                 } else {
-                    MessagerUtils.warning(structure.source().element(),
+                    MessagerUtils.warning(
+                            structure.source().element(),
                             ConfigVerificationErrors.NOT_DYNAMICALLY_INITIALIZABLE,
                             structure.name().simpleName(),
                             String.join(", ", missingDefaults),
@@ -117,49 +128,67 @@ public class ASTVerifier {
                 switch (constraint) {
                     case ValidationConstraint.Positive() -> {
                         if (!isNumeric) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Positive", type.toString(), "numeric type");
+                                    "@Positive",
+                                    type.toString(),
+                                    "numeric type");
                             success = false;
                         }
                     }
                     case ValidationConstraint.Negative() -> {
                         if (!isNumeric) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Negative", type.toString(), "numeric type");
+                                    "@Negative",
+                                    type.toString(),
+                                    "numeric type");
                             success = false;
                         }
                     }
                     case ValidationConstraint.Min(double val) -> {
                         if (!isNumeric) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Min", type.toString(), "numeric type");
+                                    "@Min",
+                                    type.toString(),
+                                    "numeric type");
                             success = false;
                         }
                     }
                     case ValidationConstraint.Max(double val) -> {
                         if (!isNumeric) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Max", type.toString(), "numeric type");
+                                    "@Max",
+                                    type.toString(),
+                                    "numeric type");
                             success = false;
                         }
                     }
                     case ValidationConstraint.Range(double min, double max) -> {
                         if (!isNumeric) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Range", type.toString(), "numeric type");
+                                    "@Range",
+                                    type.toString(),
+                                    "numeric type");
                             success = false;
                         }
                     }
                     case ValidationConstraint.NotBlank() -> {
                         if (!isString) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@NotBlank", type.toString(), "String or CharSequence");
+                                    "@NotBlank",
+                                    type.toString(),
+                                    "String or CharSequence");
                             success = false;
                         }
                     }
@@ -167,17 +196,25 @@ public class ASTVerifier {
                         TypeElement validatorElement = elements.getTypeElement(Validator.class.getName());
                         TypeElement customElement = elements.getTypeElement(val.canonicalName());
                         if (customElement == null) {
-                            MessagerUtils.error(property.source().element(),
+                            MessagerUtils.error(
+                                    property.source().element(),
                                     "Custom validator class " + val.canonicalName() + " not found");
                             success = false;
                         } else {
-                            TypeMirror boxedType = type.getKind().isPrimitive() ? types.boxedClass((PrimitiveType) type).asType() : type;
+                            TypeMirror boxedType =
+                                    type.getKind().isPrimitive()
+                                            ? types.boxedClass((PrimitiveType) type).asType()
+                                            : type;
                             TypeMirror wildcard = types.getWildcardType(null, boxedType); // <?>
-                            TypeMirror expectedValidatorType = types.getDeclaredType(validatorElement, wildcard); // Validator<?>
+                            TypeMirror expectedValidatorType =
+                                    types.getDeclaredType(validatorElement, wildcard); // Validator<?>
                             if (!types.isAssignable(customElement.asType(), expectedValidatorType)) {
-                                MessagerUtils.error(property.source().element(),
+                                MessagerUtils.error(
+                                        property.source().element(),
                                         ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                        "@ValidateWith(" + val.simpleName() + ".class)", type.toString(), "Validator compatible with " + type);
+                                        "@ValidateWith(" + val.simpleName() + ".class)",
+                                        type.toString(),
+                                        "Validator compatible with " + type);
                                 success = false;
                             }
                         }
@@ -199,14 +236,14 @@ public class ASTVerifier {
         Element element = types.asElement(type);
         if (element instanceof TypeElement typeElement) {
             String typeStr = typeElement.getQualifiedName().toString();
-            return typeStr.equals(Byte.class.getName()) ||
-                   typeStr.equals(Short.class.getName()) ||
-                   typeStr.equals(Integer.class.getName()) ||
-                   typeStr.equals(Long.class.getName()) ||
-                   typeStr.equals(Float.class.getName()) ||
-                   typeStr.equals(Double.class.getName()) ||
-                   typeStr.equals(BigInteger.class.getName()) ||
-                   typeStr.equals(BigDecimal.class.getName());
+            return typeStr.equals(Byte.class.getName())
+                    || typeStr.equals(Short.class.getName())
+                    || typeStr.equals(Integer.class.getName())
+                    || typeStr.equals(Long.class.getName())
+                    || typeStr.equals(Float.class.getName())
+                    || typeStr.equals(Double.class.getName())
+                    || typeStr.equals(BigInteger.class.getName())
+                    || typeStr.equals(BigDecimal.class.getName());
         }
         return false;
     }
@@ -215,9 +252,8 @@ public class ASTVerifier {
         Element element = types.asElement(type);
         if (element instanceof TypeElement typeElement) {
             String typeStr = typeElement.getQualifiedName().toString();
-            return typeStr.equals(String.class.getName()) ||
-                   typeStr.equals(CharSequence.class.getName());
+            return typeStr.equals(String.class.getName()) || typeStr.equals(CharSequence.class.getName());
         }
         return false;
-    }
+  }
 }

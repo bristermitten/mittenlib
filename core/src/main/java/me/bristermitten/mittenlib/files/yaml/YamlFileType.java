@@ -37,6 +37,4 @@ public class YamlFileType implements FileType {
     public @NotNull ObjectWriter writer() {
         return yamlObjectWriter;
     }
-
-
 }

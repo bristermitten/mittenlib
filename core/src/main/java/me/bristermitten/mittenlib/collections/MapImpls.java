@@ -49,7 +49,7 @@ public class MapImpls {
         }
     }
 
-    static class Map0<K, V> extends MLImmutableMap<K, V> { //NOSONAR
+    static class Map0<K, V> extends MLImmutableMap<K, V> { // NOSONAR
         @Override
         public boolean containsKey(Object key) {
             return false;
@@ -127,7 +127,6 @@ public class MapImpls {
             this.entrySet = Sets.of(new MLEntry<>(k1, v1), new MLEntry<>(k2, v2));
         }
 
-
         @Override
         public boolean containsKey(Object key) {
             return k1.equals(key) || k2.equals(key);
@@ -151,7 +150,6 @@ public class MapImpls {
             return this.entrySet().equals(((Map<?, ?>) o).entrySet());
         }
 
-
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {
             return new Map3<>(k1, v1, k2, v2, key, value);
@@ -174,9 +172,7 @@ public class MapImpls {
             this.v1 = v1;
             this.v2 = v2;
             this.v3 = v3;
-            this.entrySet = Sets.of(new MLEntry<>(k1, v1),
-                    new MLEntry<>(k2, v2),
-                    new MLEntry<>(k3, v3));
+            this.entrySet = Sets.of(new MLEntry<>(k1, v1), new MLEntry<>(k2, v2), new MLEntry<>(k3, v3));
         }
 
         @Override
@@ -202,7 +198,6 @@ public class MapImpls {
             return this.entrySet().equals(((Map<?, ?>) o).entrySet());
         }
 
-
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {
             return new MapN<>(
@@ -210,9 +205,7 @@ public class MapImpls {
                             new MLEntry<>(k1, v1),
                             new MLEntry<>(k2, v2),
                             new MLEntry<>(k3, v3),
-                            new MLEntry<>(key, value)
-                    )
-            );
+                            new MLEntry<>(key, value)));
         }
     }
 
@@ -223,13 +216,11 @@ public class MapImpls {
             this.entrySet = entrySet;
         }
 
-
         @NotNull
         @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
-
 
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {
@@ -237,5 +228,5 @@ public class MapImpls {
             newEntries.add(new MLEntry<>(key, value));
             return new MapN<>(Sets.ofAll(newEntries));
         }
-    }
+  }
 }

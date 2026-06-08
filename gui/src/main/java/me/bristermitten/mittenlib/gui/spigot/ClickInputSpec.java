@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.OptionalInt;
 
 /**
- * Input about a click event in a {@link SpigotGUI}.
- * Used to generate messages from {@link InventoryButton}s.
+ * Input about a click event in a {@link SpigotGUI}. Used to generate messages from {@link
+ * InventoryButton}s.
  */
 @RecordSpec
 public interface ClickInputSpec {

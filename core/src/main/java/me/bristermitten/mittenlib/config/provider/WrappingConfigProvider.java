@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 public interface WrappingConfigProvider<T> {
     /**
      * Get the wrapped {@link ConfigProvider}.
+     *
      * @return the wrapped {@link ConfigProvider}
      */
-    @NotNull ConfigProvider<T> getWrapped();
+    @NotNull
+    ConfigProvider<T> getWrapped();
 }

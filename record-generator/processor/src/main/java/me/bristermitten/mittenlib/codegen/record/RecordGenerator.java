@@ -13,60 +13,66 @@ import java.util.Locale;
 import static javax.lang.model.element.Modifier.*;
 
 public class RecordGenerator {
-    public static void addAllArgsConstructor(RecordConstructorSpec constructor, TypeSpec.Builder constructorTypeSpecBuilder) {
+    public static void addAllArgsConstructor(
+            RecordConstructorSpec constructor, TypeSpec.Builder constructorTypeSpecBuilder) {
         constructorTypeSpecBuilder.addMethod(
                 MethodSpec.constructorBuilder()
                         .addModifiers(PUBLIC)
                         .addParameters(
-                                constructor.fields().stream().map(
-                                        field -> ParameterSpec.builder(field.type(), field.name()).build()
-                                ).toList()
-                        )
+                                constructor.fields().stream()
+                                        .map(field -> ParameterSpec.builder(field.type(), field.name()).build())
+                                        .toList())
                         .addCode(
                                 constructor.fields().stream()
                                         .map(field -> "this." + field.name() + " = " + field.name() + ";")
                                         .map(CodeBlock::of)
-                                        .collect(CodeBlock.joining("\n"))
-                        )
-                        .build()
-        );
+                                        .collect(CodeBlock.joining("\n")))
+                        .build());
     }
 
-    public static void addFieldAndGetter(RecordConstructorSpec.RecordFieldSpec field, TypeSpec.Builder constructorTypeSpecBuilder) {
-        constructorTypeSpecBuilder.addField(
-                field.type(),
-                field.name(),
-                PRIVATE, FINAL
-        );
+    public static void addFieldAndGetter(
+            RecordConstructorSpec.RecordFieldSpec field, TypeSpec.Builder constructorTypeSpecBuilder) {
+        constructorTypeSpecBuilder.addField(field.type(), field.name(), PRIVATE, FINAL);
 
         constructorTypeSpecBuilder.addMethod(
                 MethodSpec.methodBuilder(field.name())
                         .addModifiers(PUBLIC)
                         .returns(field.type())
                         .addStatement("return this.$N", field.name())
-                        .build()
-        );
+                        .build());
     }
 
-    public static void addWithMethod(RecordConstructorSpec constructorSpec, RecordConstructorSpec.RecordFieldSpec field, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
+    public static void addWithMethod(
+            RecordConstructorSpec constructorSpec,
+            RecordConstructorSpec.RecordFieldSpec field,
+            ClassName returnTypeName,
+            TypeSpec.Builder typeSpecBuilder) {
         typeSpecBuilder.addMethod(
-                MethodSpec.methodBuilder("with" + field.name().substring(0, 1).toUpperCase(Locale.ROOT) + field.name().substring(1))
+                MethodSpec.methodBuilder(
+                                "with"
+                                        + field.name().substring(0, 1).toUpperCase(Locale.ROOT)
+                                        + field.name().substring(1))
                         .addModifiers(PUBLIC)
                         .returns(returnTypeName)
                         .addParameter(field.type(), field.name())
-                        .addStatement("return new $T($L)", returnTypeName,
+                        .addStatement(
+                                "return new $T($L)",
+                                returnTypeName,
                                 constructorSpec.fields().stream()
-                                        .map(f -> f.name().equals(field.name())
-                                                ? CodeBlock.of(field.name())
-                                                : CodeBlock.of("this.$L", f.name()) // Use existing field value
+                                        .map(
+                                                f ->
+                                                        f.name().equals(field.name())
+                                                                ? CodeBlock.of(field.name())
+                                                                : CodeBlock.of("this.$L", f.name()) // Use existing field value
                                         )
-                                        .collect(CodeBlock.joining(", ")
-                                        ))
-                        .build()
-        );
+                                        .collect(CodeBlock.joining(", ")))
+                        .build());
     }
 
-    public static void addFactoryMethod(RecordConstructorSpec constructor, ClassName returnTypeName, TypeSpec.Builder typeSpecBuilder) {
+    public static void addFactoryMethod(
+            RecordConstructorSpec constructor,
+            ClassName returnTypeName,
+            TypeSpec.Builder typeSpecBuilder) {
         typeSpecBuilder.addMethod(
                 MethodSpec.methodBuilder(constructor.name())
                         .addModifiers(PUBLIC, STATIC)
@@ -74,17 +80,19 @@ public class RecordGenerator {
                         .addParameters(
                                 constructor.fields().stream()
                                         .map(field -> ParameterSpec.builder(field.type(), field.name()).build())
-                                        .toList()
-                        )
-                        .addStatement("return new $L($L)", returnTypeName, constructor.fields().stream()
-                                .map(RecordConstructorSpec.RecordFieldSpec::name)
-                                .map(CodeBlock::of)
-                                .collect(CodeBlock.joining(", ")))
-                        .build()
-        );
+                                        .toList())
+                        .addStatement(
+                                "return new $L($L)",
+                                returnTypeName,
+                                constructor.fields().stream()
+                                        .map(RecordConstructorSpec.RecordFieldSpec::name)
+                                        .map(CodeBlock::of)
+                                        .collect(CodeBlock.joining(", ")))
+                        .build());
     }
 
-    public static @NotNull RecordGenerator.GeneratedRecord generateBasicRecordTypeSpec(RecordSpecLike record, boolean extendSpec) {
+    public static @NotNull RecordGenerator.GeneratedRecord generateBasicRecordTypeSpec(
+            RecordSpecLike record, boolean extendSpec) {
         ClassName recordImplName = record.name();
 
         var typeSpecBuilder = TypeSpec.classBuilder(recordImplName);
@@ -92,16 +100,20 @@ public class RecordGenerator {
         if (extendSpec) {
             typeSpecBuilder.addSuperinterface(record.source());
         }
-        typeSpecBuilder.addAnnotation(AnnotationSpec.builder(me.bristermitten.mittenlib.codegen.GeneratedRecord.class)
-                .addMember("source", "$T.class", record.source())
-                .build());
+        typeSpecBuilder.addAnnotation(
+                AnnotationSpec.builder(me.bristermitten.mittenlib.codegen.GeneratedRecord.class)
+                        .addMember("source", "$T.class", record.source())
+                        .build());
 
-        typeSpecBuilder.addAnnotation(AnnotationSpec.builder(Generated.class)
-                .addMember("value", "$S", BoilerplateGenerator.class.getName())
-                .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
-                .addMember("date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
-                .build()
-        );
+        typeSpecBuilder.addAnnotation(
+                AnnotationSpec.builder(Generated.class)
+                        .addMember("value", "$S", BoilerplateGenerator.class.getName())
+                        .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
+                        .addMember(
+                                "date",
+                                "$S",
+                                ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
+                        .build());
 
         for (var field : record.constructor().fields()) {
             addFieldAndGetter(field, typeSpecBuilder);
@@ -109,14 +121,11 @@ public class RecordGenerator {
         }
         addAllArgsConstructor(record.constructor(), typeSpecBuilder);
 
-
         // Add equals, hashCode, and toString methods
         typeSpecBuilder.addMethod(
                 BoilerplateGenerator.genToString(record.constructor(), recordImplName));
-        typeSpecBuilder.addMethod(
-                BoilerplateGenerator.genEquals(record.constructor(), recordImplName));
-        typeSpecBuilder.addMethod(
-                BoilerplateGenerator.genHashCode(record.constructor()));
+        typeSpecBuilder.addMethod(BoilerplateGenerator.genEquals(record.constructor(), recordImplName));
+        typeSpecBuilder.addMethod(BoilerplateGenerator.genHashCode(record.constructor()));
         return new GeneratedRecord(recordImplName, typeSpecBuilder);
     }
 

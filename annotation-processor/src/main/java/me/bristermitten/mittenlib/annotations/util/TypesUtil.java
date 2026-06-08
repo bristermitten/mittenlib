@@ -40,13 +40,14 @@ public class TypesUtil {
     }
 
     /**
-     * Get a "safe" version of a type, where "safe" refers to being able to use it as the target of a <code>instanceof</code> check without compilation errors
-     * This is defined as the boxed type for primitives, the erasure for parameterized types, otherwise simply the type itself
-     * Examples:
+     * Get a "safe" version of a type, where "safe" refers to being able to use it as the target of a
+     * <code>instanceof</code> check without compilation errors This is defined as the boxed type for
+     * primitives, the erasure for parameterized types, otherwise simply the type itself Examples:
+     *
      * <ul>
-     * <li>{@code int -> Integer}</li>
-     * <li>{@code Map<String, Integer> -> Map}</li>
-     * <li>{@code String -> String}</li>
+     *   <li>{@code int -> Integer}
+     *   <li>{@code Map<String, Integer> -> Map}
+     *   <li>{@code String -> String}
      * </ul>
      */
     public TypeMirror getSafeType(TypeMirror typeMirror) {
@@ -57,8 +58,8 @@ public class TypesUtil {
     }
 
     /**
-     * Get a boxed version of a given type, if it is a primitive.
-     * Otherwise, the type is returned unchanged
+     * Get a boxed version of a given type, if it is a primitive. Otherwise, the type is returned
+     * unchanged
      */
     public TypeMirror getBoxedType(TypeMirror typeMirror) {
         if (typeMirror.getKind().isPrimitive()) {
@@ -68,9 +69,9 @@ public class TypesUtil {
     }
 
     /**
-     * Return if a {@link VariableElement} should be considered nullable or not
-     * Everything is considered non-nullable unless it is specifically annotated as nullable.
-     * Any annotation named "Nullable" is supported, i.e. jetbrains or javax
+     * Return if a {@link VariableElement} should be considered nullable or not Everything is
+     * considered non-nullable unless it is specifically annotated as nullable. Any annotation named
+     * "Nullable" is supported, i.e. jetbrains or javax
      *
      * @param element The element to check
      * @return True if the element is nullable, false otherwise
@@ -99,7 +100,12 @@ public class TypesUtil {
             return false; // primitives are never nullable
         }
         for (AnnotationMirror annotationMirror : typeMirror.getAnnotationMirrors()) {
-            if (annotationMirror.getAnnotationType().asElement().getSimpleName().toString().equals("Nullable")) {
+            if (annotationMirror
+                    .getAnnotationType()
+                    .asElement()
+                    .getSimpleName()
+                    .toString()
+                    .equals("Nullable")) {
                 return true;
             }
         }
@@ -107,9 +113,9 @@ public class TypesUtil {
     }
 
     /**
-     * Gets an {@link Annotation} present on an {@link Element}, if present.
-     * This method is slightly different to {@link Element#getAnnotation(Class)},
-     * in that it respects the semantics described in {@link CascadeToInnerClasses}
+     * Gets an {@link Annotation} present on an {@link Element}, if present. This method is slightly
+     * different to {@link Element#getAnnotation(Class)}, in that it respects the semantics described
+     * in {@link CascadeToInnerClasses}
      *
      * @param e    The element
      * @param type The class of the annotation
@@ -132,7 +138,6 @@ public class TypesUtil {
         return null;
     }
 
-
     /**
      * Checks if a type is a config type (annotated with @Config).
      *
@@ -143,13 +148,16 @@ public class TypesUtil {
         if (mirror.getKind() == TypeKind.ERROR) {
             throw new DTOReferenceException(mirror, generatedTypeCache, null, null);
         }
-        return mirror instanceof DeclaredType declaredType &&
-                getAnnotation(declaredType.asElement(), Config.class) != null;
+        return mirror instanceof DeclaredType declaredType
+                && getAnnotation(declaredType.asElement(), Config.class) != null;
     }
 
     public Optional<TypeName> getDataTreeType(TypeName type) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
-        if (type.equals(TypeName.INT) || type.equals(TypeName.LONG) || type.equals(TypeName.SHORT) || type.equals(TypeName.BYTE)) {
+        if (type.equals(TypeName.INT)
+                || type.equals(TypeName.LONG)
+                || type.equals(TypeName.SHORT)
+                || type.equals(TypeName.BYTE)) {
             return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralInt.class));
         }
         if (type.equals(TypeName.FLOAT) || type.equals(TypeName.DOUBLE)) {
@@ -167,8 +175,8 @@ public class TypesUtil {
             }
             if (p.rawType.equals(ClassName.get(List.class))) {
                 return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
-            }
-        }
-        return Optional.empty();
+      }
     }
+    return Optional.empty();
+  }
 }

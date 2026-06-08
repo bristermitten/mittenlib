@@ -260,7 +260,7 @@ public class SetImpls {
     /**
      * Union of 2 sets
      */
-    static class UnionOf<E> extends AbstractSet<E> { //NOSONAR
+    static class UnionOf<E> extends AbstractSet<E> { // NOSONAR
         private final @Unmodifiable Set<E> first;
         private final @Unmodifiable Set<E> second;
         private final int size;
@@ -290,6 +290,6 @@ public class SetImpls {
         @NonNull
         public Iterator<E> iterator() {
             return Iterators.concat(first.iterator(), second.iterator());
-        }
     }
+  }
 }

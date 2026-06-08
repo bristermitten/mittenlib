@@ -27,47 +27,43 @@ public class SearchingObjectLoaderTest {
         var gson = new Gson();
         var yaml = new Yaml();
 
-        searchingObjectLoader = new SearchingObjectLoader(
-                Set.of(new JSONFileType(new GsonObjectLoader(gson), new GsonObjectWriter(gson)),
-                        new YamlFileType(new YamlObjectLoader(yaml), new YamlObjectWriter(yaml))), Logger.getLogger("SearchingObjectLoader")
-        );
+        searchingObjectLoader =
+                new SearchingObjectLoader(
+                        Set.of(
+                                new JSONFileType(new GsonObjectLoader(gson), new GsonObjectWriter(gson)),
+                                new YamlFileType(new YamlObjectLoader(yaml), new YamlObjectWriter(yaml))),
+                        Logger.getLogger("SearchingObjectLoader"));
     }
 
     @Test
     void loadJSON() {
-        Result<DataTree> load = searchingObjectLoader.load("""
+        Result<DataTree> load =
+                searchingObjectLoader.load(
+                        """
                 {"hello": "world"}
                 """);
 
-        assertThat(load)
-                .isNotNull()
-                .extracting(Result::isSuccess)
-                .isEqualTo(true);
+        assertThat(load).isNotNull().extracting(Result::isSuccess).isEqualTo(true);
 
         assertThat(load.getOrThrow())
-                .isEqualTo(new DataTree.DataTreeMap(
-                        Maps.of(new DataTree.DataTreeLiteral.DataTreeLiteralString("hello"),
-                                new DataTree.DataTreeLiteral.DataTreeLiteralString("world")
-                        )
-                ));
+                .isEqualTo(
+                        new DataTree.DataTreeMap(
+                                Maps.of(
+                                        new DataTree.DataTreeLiteral.DataTreeLiteralString("hello"),
+                                        new DataTree.DataTreeLiteral.DataTreeLiteralString("world"))));
     }
 
     @Test
     void loadYAML() {
-        Result<DataTree> load = searchingObjectLoader.load("""
+        Result<DataTree> load =
+                searchingObjectLoader.load(
+                        """
                 hello: world
                 """);
 
-        assertThat(load)
-                .isNotNull()
-                .extracting(Result::isSuccess)
-                .isEqualTo(true);
+        assertThat(load).isNotNull().extracting(Result::isSuccess).isEqualTo(true);
 
         assertThat(load.getOrThrow())
-                .isEqualTo(DataTree.map(
-                        Maps.of(DataTree.string("hello"),
-                                DataTree.string("world")
-                        )
-                ));
+                .isEqualTo(DataTree.map(Maps.of(DataTree.string("hello"), DataTree.string("world"))));
     }
 }

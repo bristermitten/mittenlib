@@ -16,13 +16,15 @@ public class ConfigMapLoader {
     }
 
     /**
-     * Get a value from a map, or return an empty optional if the value is null
-     * This tries a few different ways to load the value:
+     * Get a value from a map, or return an empty optional if the value is null This tries a few
+     * different ways to load the value:
+     *
      * <ol>
-     *     <li>Cast if it is an instance of {@code type}</li>
-     *     <li>If it is a {@link Map}, use {@code fromMap}</li>
-     *     <li>Use the default value, if present</li>
+     *   <li>Cast if it is an instance of {@code type}
+     *   <li>If it is a {@link Map}, use {@code fromMap}
+     *   <li>Use the default value, if present
      * </ol>
+     * <p>
      * If all of them fail, an {@link IllegalArgumentException} is thrown
      *
      * @param map          the map to get the value from
@@ -35,11 +37,13 @@ public class ConfigMapLoader {
      * @throws IllegalArgumentException if all the ways to load the value fail
      */
     @SuppressWarnings("unused") // This is used in generated code
-    public static <T> Optional<T> load(Map<String, Object> map,
-                                       String key,
-                                       Class<T> type,
-                                       @Nullable T defaultValue,
-                                       Function<Map<String, Object>, T> fromMap) throws IllegalArgumentException {
+    public static <T> Optional<T> load(
+            Map<String, Object> map,
+            String key,
+            Class<T> type,
+            @Nullable T defaultValue,
+            Function<Map<String, Object>, T> fromMap)
+            throws IllegalArgumentException {
         Object value = map.get(key);
 
         if (type.isInstance(value)) {
@@ -53,11 +57,13 @@ public class ConfigMapLoader {
         if (defaultValue != null) {
             return Optional.of(defaultValue);
         }
-        throw new IllegalArgumentException(String.format("Cannot deserialize %s from map %s with key %s", type, map, key));
+        throw new IllegalArgumentException(
+                String.format("Cannot deserialize %s from map %s with key %s", type, map, key));
     }
 
     /**
-     * Creates an exception to use when a value cannot be deserialized as it is not found (i.e. is null)
+     * Creates an exception to use when a value cannot be deserialized as it is not found (i.e. is
+     * null)
      *
      * @param fieldName      the name of the field that is trying to be deserialized
      * @param typeName       the name of the type that is trying to be deserialized
@@ -66,8 +72,12 @@ public class ConfigMapLoader {
      * @deprecated Use {@link ConfigLoadingErrors#notFoundException(String, String, Class, String)}
      */
     @Deprecated
-    @InlineMe(replacement = "ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName)", imports = "me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors")
-    public static RuntimeException throwNotFound(String fieldName, String typeName, Class<?> enclosingClass, String keyName) {
+    @InlineMe(
+            replacement =
+                    "ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName)",
+            imports = "me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors")
+    public static RuntimeException throwNotFound(
+            String fieldName, String typeName, Class<?> enclosingClass, String keyName) {
         return ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName);
-    }
+  }
 }

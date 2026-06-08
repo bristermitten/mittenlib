@@ -10,7 +10,7 @@ import static me.bristermitten.mittenlib.util.Result.runCatching;
 /**
  * A {@link BiFunction} that can throw a checked exception.
  *
- * @param <T>  the type of the first argument
+ * @param <T> the type of the first argument
  * @param <R1> the type of the second argument
  * @param <R2> the type of the result
  */
@@ -26,7 +26,8 @@ public interface SafeFunction2<T, R1, R2> {
     R2 apply(T t, R1 r1) throws Exception;
 
     /**
-     * Curry the first argument of this function, returning a {@link SafeFunction} that takes only the second argument.
+     * Curry the first argument of this function, returning a {@link SafeFunction} that takes only the
+     * second argument.
      *
      * @param t the first argument
      * @return a curried {@link SafeFunction}
@@ -58,7 +59,7 @@ public interface SafeFunction2<T, R1, R2> {
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
                 return null;
-            }
-        };
-    }
+      }
+    };
+  }
 }

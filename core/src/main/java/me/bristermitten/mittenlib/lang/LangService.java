@@ -27,7 +27,6 @@ public class LangService {
     private final BukkitAudiences audiences;
     private final UnaryOperator<Component> componentPostProcessor;
 
-
     @Inject
     public LangService(MessageFormatter formatter, BukkitAudiences audiences) {
         this.formatter = formatter;
@@ -35,7 +34,10 @@ public class LangService {
         this.componentPostProcessor = UnaryOperator.identity();
     }
 
-    public LangService(MessageFormatter formatter, BukkitAudiences audiences, UnaryOperator<Component> componentPostProcessor) {
+    public LangService(
+            MessageFormatter formatter,
+            BukkitAudiences audiences,
+            UnaryOperator<Component> componentPostProcessor) {
         this.formatter = formatter;
         this.audiences = audiences;
         this.componentPostProcessor = componentPostProcessor;
@@ -49,27 +51,38 @@ public class LangService {
         send(receiver, langMessage, Collections.emptyMap(), null);
     }
 
-    public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @NotNull Map<String, Object> placeholders) {
+    public void send(
+            @NotNull CommandSender receiver,
+            @NotNull LangMessage langMessage,
+            @NotNull Map<String, Object> placeholders) {
         send(receiver, langMessage, placeholders, null);
     }
 
-    public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @Nullable String messagePrefix) {
+    public void send(
+            @NotNull CommandSender receiver,
+            @NotNull LangMessage langMessage,
+            @Nullable String messagePrefix) {
         send(receiver, langMessage, Collections.emptyMap(), messagePrefix);
     }
 
-    public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @NotNull Map<String, Object> placeholders, @Nullable String messagePrefix) {
+    public void send(
+            @NotNull CommandSender receiver,
+            @NotNull LangMessage langMessage,
+            @NotNull Map<String, Object> placeholders,
+            @Nullable String messagePrefix) {
         if (langMessage instanceof CompoundLangMessage) {
             CompoundLangMessage compound = (CompoundLangMessage) langMessage;
             for (LangMessage message : compound.getComponents()) {
                 send(receiver, message, placeholders, messagePrefix);
             }
         }
-        UnaryOperator<String> applyPlaceholders = str -> {
-            for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
-                str = str.replace(entry.getKey(), entry.getValue().toString());
-            }
-            return str;
-        };
+        UnaryOperator<String> applyPlaceholders =
+                str -> {
+                    for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
+                        str = str.replace(entry.getKey(), entry.getValue().toString());
+                    }
+                    return str;
+                };
 
         if (langMessage.getMessage() != null) {
             String message = langMessage.getMessage();
@@ -79,12 +92,10 @@ public class LangService {
         }
 
         if (langMessage.getTitle() != null || langMessage.getSubtitle() != null) {
-            final String title = Optional.ofNullable(langMessage.getTitle())
-                    .map(applyPlaceholders)
-                    .orElse(null);
-            final String subtitle = Optional.ofNullable(langMessage.getSubtitle())
-                    .map(applyPlaceholders)
-                    .orElse("");
+            final String title =
+                    Optional.ofNullable(langMessage.getTitle()).map(applyPlaceholders).orElse(null);
+            final String subtitle =
+                    Optional.ofNullable(langMessage.getSubtitle()).map(applyPlaceholders).orElse("");
 
             sendTitle(receiver, title, subtitle);
         }
@@ -104,7 +115,8 @@ public class LangService {
     }
 
     private Component getFormattedComponent(CommandSender receiver, String message) {
-        return componentPostProcessor.apply(formatter.format(message, safeCast(receiver, OfflinePlayer.class)));
+        return componentPostProcessor.apply(
+                formatter.format(message, safeCast(receiver, OfflinePlayer.class)));
     }
 
     public void sendActionBar(CommandSender receiver, String message) {
@@ -112,10 +124,10 @@ public class LangService {
     }
 
     public void sendTitle(CommandSender receiver, String title, String subtitle) {
-        audiences.sender(receiver).showTitle(Title.title(
-                getFormattedComponent(receiver, title),
-                getFormattedComponent(receiver, subtitle)
-        ));
-    }
-
+        audiences
+                .sender(receiver)
+                .showTitle(
+                        Title.title(
+                                getFormattedComponent(receiver, title), getFormattedComponent(receiver, subtitle)));
+  }
 }

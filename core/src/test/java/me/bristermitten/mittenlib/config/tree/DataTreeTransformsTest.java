@@ -12,23 +12,20 @@ class DataTreeTransformsTest {
                 Arbitraries.strings().map(DataTree.DataTreeLiteral.DataTreeLiteralString::new),
                 Arbitraries.doubles().map(DataTree.DataTreeLiteral.DataTreeLiteralFloat::new),
                 Arbitraries.of(true, false).map(DataTree.DataTreeLiteral.DataTreeLiteralBoolean::new),
-                Arbitraries.of(DataTree.DataTreeNull.INSTANCE)
-        );
+                Arbitraries.of(DataTree.DataTreeNull.INSTANCE));
     }
 
     @Provide
     Arbitrary<DataTree> dataTreeArbitrary() {
         return Arbitraries.recursive(
                 DataTreeTransformsTest::atomicDataTreeArbitrary,
-                arb -> Arbitraries.oneOf(
-                        arb.list().ofMaxSize(5).map(
-                                list -> new DataTree.DataTreeArray(list.toArray(new DataTree[0]))
-                        ),
-                        Arbitraries.maps(arb, arb)
-                                .ofMaxSize(5)
-                                .map(DataTree.DataTreeMap::new)
-                ), 4
-        );
+                arb ->
+                        Arbitraries.oneOf(
+                                arb.list()
+                                        .ofMaxSize(5)
+                                        .map(list -> new DataTree.DataTreeArray(list.toArray(new DataTree[0]))),
+                                Arbitraries.maps(arb, arb).ofMaxSize(5).map(DataTree.DataTreeMap::new)),
+                4);
     }
 
     @Property

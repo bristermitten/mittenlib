@@ -14,10 +14,13 @@ class ComplexNestedStructuresTest {
 
     @Test
     void testComplexNestedStructures() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.GameConfigDTO",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.GameConfigDTO",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -111,7 +114,8 @@ class ComplexNestedStructuresTest {
         assertThat(compilation).succeeded();
 
         // Verify that the main generated class exists
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.GameConfig")
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.GameConfig")
                 .isNotNull();
-    }
+  }
 }

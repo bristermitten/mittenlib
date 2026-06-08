@@ -40,12 +40,14 @@ public abstract class MLImmutableMap<K, V> extends AbstractMap<K, V> {
     }
 
     @Override
-    public V computeIfPresent(K key, @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    public V computeIfPresent(
+            K key, @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         throw new UnsupportedOperationException("Immutable map");
     }
 
     @Override
-    public V compute(K key, @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    public V compute(
+            K key, @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         throw new UnsupportedOperationException("Immutable map");
     }
 

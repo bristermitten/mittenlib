@@ -7,7 +7,8 @@ public class ConstructorAndDefaultValueConfig {
     public int x = 3;
     public int y;
 
-    ConstructorAndDefaultValueConfig() {}
+    ConstructorAndDefaultValueConfig() {
+    }
 
     public ConstructorAndDefaultValueConfig(int y) {
         this.y = y;

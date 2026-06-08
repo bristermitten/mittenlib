@@ -10,9 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.Optional;
 
-
 /**
- * A {@link ConfigProvider} which delegates to another {@link ConfigProvider}, improving it with a {@link ConfigProviderImprover}
+ * A {@link ConfigProvider} which delegates to another {@link ConfigProvider}, improving it with a
+ * {@link ConfigProviderImprover}
+ *
  * <p>
  *
  * @param <T> the type of the config
@@ -25,9 +26,16 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T>, WrappingC
      *
      * @param configuration the configuration to delegate to
      */
-    public DelegatingConfigProvider(Configuration<T> configuration, Provider<ConfigProviderFactory> providerFactory, Provider<ConfigProviderImprover> improver) {
-        this.delegate = new Cached<>(() ->
-                improver.get().improve(providerFactory.get().createProvider(configuration).getOrThrow()));
+    public DelegatingConfigProvider(
+            Configuration<T> configuration,
+            Provider<ConfigProviderFactory> providerFactory,
+            Provider<ConfigProviderImprover> improver) {
+        this.delegate =
+                new Cached<>(
+                        () ->
+                                improver
+                                        .get()
+                                        .improve(providerFactory.get().createProvider(configuration).getOrThrow()));
     }
 
     @Override
@@ -53,5 +61,5 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T>, WrappingC
     @NotNull
     public ConfigProvider<T> getWrapped() {
         return getDelegate();
-    }
+  }
 }

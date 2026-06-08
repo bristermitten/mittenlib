@@ -20,10 +20,11 @@ public interface SafeRunnable {
      * @return the result
      */
     default Result<Unit> runCatching() {
-        return Result.runCatching(() -> {
-            run();
-            return Unit.UNIT;
-        });
+        return Result.runCatching(
+                () -> {
+                    run();
+                    return Unit.UNIT;
+                });
     }
 
     /**
@@ -37,7 +38,7 @@ public interface SafeRunnable {
                 run();
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
-            }
-        };
-    }
+      }
+    };
+  }
 }

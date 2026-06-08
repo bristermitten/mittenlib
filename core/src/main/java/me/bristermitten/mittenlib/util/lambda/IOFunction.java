@@ -55,7 +55,6 @@ public interface IOFunction<T, R> {
      * @param t the input
      * @return the result
      */
-
     default Result<R> applyCatching(T t) {
         return runCatching(() -> apply(t));
     }
@@ -71,8 +70,8 @@ public interface IOFunction<T, R> {
                 return apply(t);
             } catch (IOException e) {
                 Errors.sneakyThrow(e);
-                return null;
-            }
-        };
-    }
+        return null;
+      }
+    };
+  }
 }

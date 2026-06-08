@@ -42,6 +42,5 @@ public abstract class MLImmutableSet<E> extends AbstractSet<@NonNull E> {
         throw new UnsupportedOperationException("Immutable set");
     }
 
-
     public abstract @NonNull MLImmutableSet<E> plus(@NonNull E e);
 }

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Cast {
     private Cast() {
-
     }
 
     /**
@@ -27,5 +26,5 @@ public class Cast {
             return (T) o;
         }
         return null;
-    }
+  }
 }

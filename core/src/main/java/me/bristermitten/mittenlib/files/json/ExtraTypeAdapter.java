@@ -4,14 +4,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 
 /**
- * A thin wrapper over a {@link TypeAdapter} that also stores the type it is for.
- * This is necessary for dynamic binding as Gson does not provide a way to get the type of a TypeAdapter,
- * but requires it for registering ({@link GsonBuilder#registerTypeAdapter(Type, Object)}).
+ * A thin wrapper over a {@link TypeAdapter} that also stores the type it is for. This is necessary
+ * for dynamic binding as Gson does not provide a way to get the type of a TypeAdapter, but requires
+ * it for registering ({@link GsonBuilder#registerTypeAdapter(Type, Object)}).
  *
  * @param <T> the type of the TypeAdapter
  */
@@ -45,8 +44,8 @@ public abstract class ExtraTypeAdapter<T> extends TypeAdapter<T> {
 
     /**
      * Get the type that this {@link ExtraTypeAdapter} is for.
+     *
      * @return The type that this {@link ExtraTypeAdapter} is for.
      */
-
     public abstract Type type();
 }

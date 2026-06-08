@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A cache for AbstractConfigStructure objects indexed by their class names.
- * This class provides lookup methods for different types of names (ClassName, TypeName, TypeMirror)
- * to efficiently retrieve cached configuration structures.
+ * A cache for AbstractConfigStructure objects indexed by their class names. This class provides
+ * lookup methods for different types of names (ClassName, TypeName, TypeMirror) to efficiently
+ * retrieve cached configuration structures.
  */
 @Singleton
 public class ConfigNameCache {
@@ -31,27 +31,27 @@ public class ConfigNameCache {
     }
 
     /**
-     * Looks up an AbstractConfigStructure by its TypeMirror.
-     * This method only works with declared types.
+     * Looks up an AbstractConfigStructure by its TypeMirror. This method only works with declared
+     * types.
      *
      * @param mirror The type mirror to look up
-     * @return An Optional containing the AbstractConfigStructure if found, or empty if not found or if the TypeMirror is not a declared type
+     * @return An Optional containing the AbstractConfigStructure if found, or empty if not found or
+     * if the TypeMirror is not a declared type
      */
     public Optional<AbstractConfigStructure> lookupAST(TypeMirror mirror) {
         if (mirror.getKind() != TypeKind.DECLARED) {
             return Optional.empty();
         }
-        return lookupAST(ClassName.bestGuess(TypeMirrorWrapper.wrap(mirror)
-                .getQualifiedName()));
+        return lookupAST(ClassName.bestGuess(TypeMirrorWrapper.wrap(mirror).getQualifiedName()));
     }
 
     /**
-     * Adds an AbstractConfigStructure to the cache, indexed by its name.
-     * If an entry with the same name already exists, it will be replaced.
+     * Adds an AbstractConfigStructure to the cache, indexed by its name. If an entry with the same
+     * name already exists, it will be replaced.
      *
      * @param ast The AbstractConfigStructure to add to the cache
      */
     public void put(AbstractConfigStructure ast) {
         astCache.put(ast.name(), ast);
-    }
+  }
 }

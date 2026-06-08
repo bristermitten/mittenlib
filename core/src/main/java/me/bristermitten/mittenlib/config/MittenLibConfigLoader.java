@@ -8,15 +8,15 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Base class for modules that load configurations.
- * <p>
- * This class is NOT a Guice {@link Module}. It is a high-level configuration descriptor used by
+ *
+ * <p>This class is NOT a Guice {@link Module}. It is a high-level configuration descriptor used by
  * {@link MittenLib} to register configurations and set up the necessary infrastructure.
  */
 public abstract class MittenLibConfigLoader {
 
     /**
-     * Configure the configurations for this module.
-     * This is called internally when building the Guice module.
+     * Configure the configurations for this module. This is called internally when building the Guice
+     * module.
      *
      * @param binder the Guice binder being configured
      */
@@ -24,9 +24,9 @@ public abstract class MittenLibConfigLoader {
 
     /**
      * Get this configuration loader as a Guice {@link Module}.
-     * <p>
-     * <b>Warning:</b> Using this directly bypasses MittenLib's infrastructure setup.
-     * It should primarily be used for testing.
+     *
+     * <p><b>Warning:</b> Using this directly bypasses MittenLib's infrastructure setup. It should
+     * primarily be used for testing.
      *
      * @return the Guice module
      */
@@ -35,13 +35,14 @@ public abstract class MittenLibConfigLoader {
 
     /**
      * Get this configuration loader as a Guice {@link Module}, including default infrastructure.
-     * <p>
-     * This is useful for tests that need a complete configuration setup without using {@link MittenLib}.
+     *
+     * <p>This is useful for tests that need a complete configuration setup without using {@link
+     * MittenLib}.
      *
      * @return the Guice module with infrastructure
      */
     @ApiStatus.Internal
     public final Module asModuleWithInfrastructure() {
         return Modules.combine(asModule(), new ConfigInfrastructureModule());
-    }
+  }
 }

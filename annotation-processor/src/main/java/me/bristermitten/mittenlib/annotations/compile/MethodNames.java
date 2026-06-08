@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Manages method names for configuration classes to ensure they don't conflict with existing methods.
- * This class caches method names to improve performance and provides utilities to generate
+ * Manages method names for configuration classes to ensure they don't conflict with existing
+ * methods. This class caches method names to improve performance and provides utilities to generate
  * safe method names that won't cause conflicts in the generated code.
  */
 @Singleton
@@ -26,14 +26,14 @@ public class MethodNames {
     private final Map<VariableElement, Set<String>> methodNamesCache = new HashMap<>();
 
     /**
-     * The prefix for all generated serialization methods.
-     * For example, a method to serialize a field called "test" would be called {@code serializeTest}
+     * The prefix for all generated serialization methods. For example, a method to serialize a field
+     * called "test" would be called {@code serializeTest}
      */
     private static final String SERIALIZE_METHOD_PREFIX = "serialize";
 
     /**
-     * The prefix for all generated deserialization methods.
-     * For example, a method to deserialize a field called "test" would be called {@code deserializeTest}
+     * The prefix for all generated deserialization methods. For example, a method to deserialize a
+     * field called "test" would be called {@code deserializeTest}
      */
     private static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
 
@@ -51,15 +51,15 @@ public class MethodNames {
      * @return A safe method name that doesn't conflict with existing methods
      */
     public String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
-        return safeNameCache.computeIfAbsent(variableElement,
-                elem -> safeMethodName0(elem, enclosingClass));
+        return safeNameCache.computeIfAbsent(
+                variableElement, elem -> safeMethodName0(elem, enclosingClass));
     }
 
     /**
-     * Gets a safe method name for a property that doesn't conflict with existing methods.
-     * This method handles both field-based and method-based properties differently:
-     * - For field-based properties, it delegates to {@link #safeMethodName(VariableElement, TypeElement)}
-     * - For method-based properties, it uses the method's simple name directly
+     * Gets a safe method name for a property that doesn't conflict with existing methods. This method
+     * handles both field-based and method-based properties differently: - For field-based properties,
+     * it delegates to {@link #safeMethodName(VariableElement, TypeElement)} - For method-based
+     * properties, it uses the method's simple name directly
      *
      * @param property The property to generate a method name for
      * @return A safe method name that doesn't conflict with existing methods
@@ -73,7 +73,8 @@ public class MethodNames {
     }
 
     private String safeMethodName0(VariableElement variableElement, TypeElement enclosingClass) {
-        var methodNames = methodNamesCache.computeIfAbsent(variableElement, x -> getNoArgMethodNames(enclosingClass));
+        var methodNames =
+                methodNamesCache.computeIfAbsent(variableElement, x -> getNoArgMethodNames(enclosingClass));
 
         var name = new StringBuilder(variableElement.getSimpleName());
         while (methodNames.contains(name.toString())) {
@@ -94,8 +95,8 @@ public class MethodNames {
     }
 
     /**
-     * Gets the name of the deserialization method for a property.
-     * This should only be used when the type is known to be a configuration implementation class.
+     * Gets the name of the deserialization method for a property. This should only be used when the
+     * type is known to be a configuration implementation class.
      *
      * @param property the property
      * @return The deserialization method name
@@ -106,15 +107,14 @@ public class MethodNames {
     }
 
     /**
-     * Gets the name of the serialization method for a property.
-     * This should only be used when the type is known to be a configuration implementation class.
+     * Gets the name of the serialization method for a property. This should only be used when the
+     * type is known to be a configuration implementation class.
      *
      * @param property the property
      * @return The serialization method name
      */
     public String getSerializeMethodName(Property property) {
         var name = Strings.capitalize(property.name());
-        return SERIALIZE_METHOD_PREFIX + name;
-    }
-
+    return SERIALIZE_METHOD_PREFIX + name;
+  }
 }

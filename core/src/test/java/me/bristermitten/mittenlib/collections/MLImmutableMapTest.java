@@ -9,7 +9,8 @@ import java.util.Map.Entry;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Comprehensive tests for the MLImmutableMap interface using both unit tests and property-based testing
+ * Comprehensive tests for the MLImmutableMap interface using both unit tests and property-based
+ * testing
  */
 class MLImmutableMapTest {
 
@@ -42,7 +43,8 @@ class MLImmutableMapTest {
         assertThrows(UnsupportedOperationException.class, () -> map.replace("a", 1, 10));
         assertThrows(UnsupportedOperationException.class, () -> map.remove("a", 1));
         assertThrows(UnsupportedOperationException.class, () -> map.computeIfAbsent("d", k -> 4));
-        assertThrows(UnsupportedOperationException.class, () -> map.computeIfPresent("a", (k, v) -> v + 1));
+        assertThrows(
+                UnsupportedOperationException.class, () -> map.computeIfPresent("a", (k, v) -> v + 1));
         assertThrows(UnsupportedOperationException.class, () -> map.compute("a", (k, v) -> v));
         assertThrows(UnsupportedOperationException.class, () -> map.merge("a", 10, Integer::sum));
 
@@ -116,8 +118,10 @@ class MLImmutableMapTest {
     @Test
     void testNullHandling() {
         // Constructing a map with null keys or values should throw
-        assertThrows(NullPointerException.class, () -> createTestMap(Collections.singletonMap(null, 1)));
-        assertThrows(NullPointerException.class, () -> createTestMap(Collections.singletonMap("a", null)));
+        assertThrows(
+                NullPointerException.class, () -> createTestMap(Collections.singletonMap(null, 1)));
+        assertThrows(
+                NullPointerException.class, () -> createTestMap(Collections.singletonMap("a", null)));
 
         MLImmutableMap<String, Integer> map = createTestMap(Map.of("a", 1, "b", 2));
 
@@ -185,5 +189,5 @@ class MLImmutableMapTest {
                         Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10),
                         Arbitraries.integers().between(-1000, 1000))
                 .ofMaxSize(10);
-    }
+  }
 }

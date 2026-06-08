@@ -147,7 +147,7 @@ public void saveDefaults() {
         SQLConfig config = provider.get();
         // Save only missing default values to the file (preserves existing values)
         readingProvider.save(config).getOrThrow();
-        
+
         // Or, to override the entire file with the in-memory config:
         readingProvider.save(config, true).getOrThrow();
     }
@@ -163,4 +163,3 @@ After loading an old config file, calling `save()` will write it back with the n
 
 The generated config class includes both deserialization and serialization methods,
 making it easy to save configs back to files.
-

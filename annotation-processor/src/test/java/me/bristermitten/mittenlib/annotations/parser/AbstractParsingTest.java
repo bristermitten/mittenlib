@@ -26,37 +26,38 @@ public class AbstractParsingTest {
                 .when()
                 .passInElement()
                 .<TypeElement>fromClass(InterfaceConfig.class)
-                .intoUnitTest((processingEnvironment, element) -> {
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
+                .intoUnitTest(
+                        (processingEnvironment, element) -> {
+                            var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
 
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                            AbstractConfigStructure ast =
+                                    injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
-                    assertThat(ast)
-                            .isNotNull()
-                            .isInstanceOf(AbstractConfigStructure.Atomic.class)
-                            .extracting(AbstractConfigStructure::name)
-                            .isEqualTo(ClassName.get(InterfaceConfig.class));
+                            assertThat(ast)
+                                    .isNotNull()
+                                    .isInstanceOf(AbstractConfigStructure.Atomic.class)
+                                    .extracting(AbstractConfigStructure::name)
+                                    .isEqualTo(ClassName.get(InterfaceConfig.class));
 
-                    assertThat(ast.enclosedIn())
-                            .isNull();
+                            assertThat(ast.enclosedIn()).isNull();
 
-                    assertThat(ast.enclosed())
-                            .singleElement()
-                            .isNotNull()
-                            .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Atomic.class))
-                            .hasFieldOrPropertyWithValue("name", ClassName.get(InterfaceConfig.ChildConfig.class))
-                            .hasFieldOrPropertyWithValue("enclosed", List.of())
-                            .hasFieldOrPropertyWithValue("enclosedIn", new ASTParentReference(ClassName.get(InterfaceConfig.class), true, "", null))
-                            .extracting(AbstractConfigStructure.Atomic::properties,
-                                    InstanceOfAssertFactories.list(Property.class))
-                            .singleElement()
-                            .hasFieldOrPropertyWithValue("name", "id")
-                    ;
-
-                })
+                            assertThat(ast.enclosed())
+                                    .singleElement()
+                                    .isNotNull()
+                                    .asInstanceOf(
+                                            InstanceOfAssertFactories.type(AbstractConfigStructure.Atomic.class))
+                                    .hasFieldOrPropertyWithValue(
+                                            "name", ClassName.get(InterfaceConfig.ChildConfig.class))
+                                    .hasFieldOrPropertyWithValue("enclosed", List.of())
+                                    .hasFieldOrPropertyWithValue(
+                                            "enclosedIn",
+                                            new ASTParentReference(ClassName.get(InterfaceConfig.class), true, "", null))
+                                    .extracting(
+                                            AbstractConfigStructure.Atomic::properties,
+                                            InstanceOfAssertFactories.list(Property.class))
+                                    .singleElement()
+                                    .hasFieldOrPropertyWithValue("name", "id");
+                        })
                 .thenExpectThat()
                 .compilationSucceeds()
                 .executeTest();
@@ -68,47 +69,43 @@ public class AbstractParsingTest {
                 .when()
                 .passInElement()
                 .<TypeElement>fromClass(UnionConfig.class)
-                .intoUnitTest((processingEnvironment, element) -> {
-                    ToolingProvider.setTooling(processingEnvironment);
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
+                .intoUnitTest(
+                        (processingEnvironment, element) -> {
+                            ToolingProvider.setTooling(processingEnvironment);
+                            var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
 
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                            AbstractConfigStructure ast =
+                                    injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
-                    assertThat(ast).isNotNull();
-                    assertThat(ast.name())
-                            .isEqualTo(ClassName.get(UnionConfig.class));
+                            assertThat(ast).isNotNull();
+                            assertThat(ast.name()).isEqualTo(ClassName.get(UnionConfig.class));
 
-                    assertThat(ast)
-                            .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
-                            .extracting(AbstractConfigStructure.Union::alternatives)
-                            .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
-                            .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child1Config.class)))
-                            .singleElement()
-                            .extracting(AbstractConfigStructure::properties)
-                            .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
-                            .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("hello"));
+                            assertThat(ast)
+                                    .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
+                                    .extracting(AbstractConfigStructure.Union::alternatives)
+                                    .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
+                                    .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child1Config.class)))
+                                    .singleElement()
+                                    .extracting(AbstractConfigStructure::properties)
+                                    .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
+                                    .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("hello"));
 
+                            assertThat(ast)
+                                    .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
+                                    .extracting(AbstractConfigStructure.Union::alternatives)
+                                    .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
+                                    .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child2Config.class)))
+                                    .singleElement()
+                                    .extracting(AbstractConfigStructure::properties)
+                                    .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
+                                    .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("world"));
 
-                    assertThat(ast)
-                            .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
-                            .extracting(AbstractConfigStructure.Union::alternatives)
-                            .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
-                            .filteredOn(p -> p.name().equals(ClassName.get(UnionConfig.Child2Config.class)))
-                            .singleElement()
-                            .extracting(AbstractConfigStructure::properties)
-                            .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
-                            .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("world"));
+                            assertThat(ast.enclosedIn()).isNull();
 
-
-                    assertThat(ast.enclosedIn()).isNull();
-
-                    assertThat(ast.enclosed()).hasSize(2);
-
-                })
-                .thenExpectThat().compilationSucceeds().executeTest();
-
+                            assertThat(ast.enclosed()).hasSize(2);
+                        })
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 }

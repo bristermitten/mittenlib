@@ -12,8 +12,8 @@ import java.util.function.BiFunction;
 @FunctionalInterface
 public interface SerializationFunction<T> extends BiFunction<T, SerializationContext, DataTree> {
     /**
-     * Generate a default {@link DataTree} for this type.
-     * This is used when a config file does not exist to create a default one.
+     * Generate a default {@link DataTree} for this type. This is used when a config file does not
+     * exist to create a default one.
      *
      * @param context the context to use for serialization
      * @return a default DataTree

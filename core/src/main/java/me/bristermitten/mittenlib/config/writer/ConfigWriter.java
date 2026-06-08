@@ -11,8 +11,8 @@ import me.bristermitten.mittenlib.util.Result;
 import java.nio.file.Path;
 
 /**
- * Responsible for both mapping and writing data,
- * delegating to {@link SerializationFunction}s and {@link ObjectWriter}s.
+ * Responsible for both mapping and writing data, delegating to {@link SerializationFunction}s and
+ * {@link ObjectWriter}s.
  */
 public class ConfigWriter {
     private final ObjectWriter writer;
@@ -46,8 +46,7 @@ public class ConfigWriter {
      * @return a Result containing the serialized DataTree
      */
     public <T> Result<DataTree> serialize(T instance, SerializationFunction<T> function) {
-        return Result.ok(new SerializationContext(mapper))
-                .map(ctx -> function.apply(instance, ctx));
+        return Result.ok(new SerializationContext(mapper)).map(ctx -> function.apply(instance, ctx));
     }
 
     public <T> Result<Void> write(T instance, Class<T> type, Path destination) {
@@ -73,6 +72,6 @@ public class ConfigWriter {
      * @return the ObjectWriter
      */
     public ObjectWriter getWriter() {
-        return writer;
-    }
+    return writer;
+  }
 }

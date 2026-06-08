@@ -12,12 +12,11 @@ import java.util.function.Supplier;
  */
 public class Null {
     private Null() {
-
     }
 
     /**
-     * Returns the given value if it is not null, or the given other value if it is.
-     * Analogous to {@link java.util.Optional#orElse(Object)} or Kotlin's Elvis operator.
+     * Returns the given value if it is not null, or the given other value if it is. Analogous to
+     * {@link java.util.Optional#orElse(Object)} or Kotlin's Elvis operator.
      *
      * @param t     the value to check
      * @param other the value to return if t is null
@@ -29,10 +28,9 @@ public class Null {
         return t == null ? other : t;
     }
 
-
     /**
-     * Returns the given value if it is not null, or the value returned by the given {@link Supplier} if it is.
-     * Analogous to {@link java.util.Optional#orElseGet(Supplier)}
+     * Returns the given value if it is not null, or the value returned by the given {@link Supplier}
+     * if it is. Analogous to {@link java.util.Optional#orElseGet(Supplier)}
      *
      * @param t     the value to check
      * @param other the supplier to use if t is null
@@ -58,7 +56,7 @@ public class Null {
     public static <A, B> @Nullable B map(@Nullable A a, Function<A, @NotNull B> function) {
         if (a == null) {
             return null;
-        }
-        return function.apply(a);
     }
+    return function.apply(a);
+  }
 }

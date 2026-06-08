@@ -5,8 +5,6 @@ import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 import me.bristermitten.mittenlib.codegen.record.RecordSpecLike;
 
 public record ResolvedUnionConstructor(
-        ClassName source,
-        ClassName name,
-        RecordConstructorSpec constructor
-) implements RecordSpecLike {
+        ClassName source, ClassName name, RecordConstructorSpec constructor)
+        implements RecordSpecLike {
 }

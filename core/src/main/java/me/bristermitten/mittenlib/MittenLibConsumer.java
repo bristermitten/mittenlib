@@ -3,8 +3,8 @@ package me.bristermitten.mittenlib;
 import me.bristermitten.mittenlib.watcher.FileWatcherService;
 
 /**
- * Stores the name of the consumer of MittenLib (usually the plugin name).
- * Useful for logging, currently also used for the thread name in {@link FileWatcherService}
+ * Stores the name of the consumer of MittenLib (usually the plugin name). Useful for logging,
+ * currently also used for the thread name in {@link FileWatcherService}
  */
 public class MittenLibConsumer {
     private final String name;
@@ -25,5 +25,5 @@ public class MittenLibConsumer {
      */
     public String getName() {
         return name;
-    }
+  }
 }

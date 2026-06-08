@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * Spigot implementation of GUIFactory for creating GUI components.
- * Replaces static factory methods with dependency-injected instances.
+ * Spigot implementation of GUIFactory for creating GUI components. Replaces static factory methods
+ * with dependency-injected instances.
  */
 public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
 
@@ -23,20 +23,22 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
     @Inject
     public SpigotMinecraftGUIFactory(MessageFormatter messageFormatter) {
         this.messageFormatter = messageFormatter;
-
     }
 
     @Override
     public <Command> SpigotGUIView<Command> createSpigotView(int size, String title) {
         if (size <= 0 || size % INVENTORY_ROW_SIZE != 0) {
-            throw new IllegalArgumentException("Inventory size must be a positive multiple of " + INVENTORY_ROW_SIZE);
+            throw new IllegalArgumentException(
+                    "Inventory size must be a positive multiple of " + INVENTORY_ROW_SIZE);
         }
         if (size > MAX_INVENTORY_SIZE) {
-            throw new IllegalArgumentException("Inventory size cannot exceed " + MAX_INVENTORY_SIZE + " slots");
+            throw new IllegalArgumentException(
+                    "Inventory size cannot exceed " + MAX_INVENTORY_SIZE + " slots");
         }
         Component formattedTitle = messageFormatter.format(title, null);
 
-        return new SpigotGUIView<>(size, LegacyComponentSerializer.legacySection().serialize(formattedTitle), Maps.of(), null);
+        return new SpigotGUIView<>(
+                size, LegacyComponentSerializer.legacySection().serialize(formattedTitle), Maps.of(), null);
     }
 
     @Override
@@ -52,7 +54,8 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
     }
 
     @Override
-    public <Command> InventoryButton<Command> createButton(ItemStack itemStack, Command command, String displayName) {
+    public <Command> InventoryButton<Command> createButton(
+            ItemStack itemStack, Command command, String displayName) {
         if (itemStack == null) {
             throw new IllegalArgumentException("ItemStack cannot be null");
         }

@@ -16,9 +16,6 @@ public class BenchmarkingModule extends AbstractModule {
         bind(ConfigInitializationStrategy.class).to(NoOpConfigInitializationStrategy.class);
         bind(ConfigPathResolver.class).to(JarResourcesConfigPathResolver.class);
 
-        bind(MittenLibConsumer.class)
-                .toInstance(new MittenLibConsumer("Benchmark"));
+        bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("Benchmark"));
     }
-
-
 }

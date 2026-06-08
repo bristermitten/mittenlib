@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class FileWatcherServiceTest {
 
-
     @Test
     void testWatchingNormalFile() throws IOException, ExecutionException, InterruptedException {
         try (FileSystem fs = Jimfs.newFileSystem(Configuration.forCurrentPlatform())) {
@@ -28,10 +27,8 @@ class FileWatcherServiceTest {
 
             FileWatcherService service = new FileWatcherService(() -> ws, new TestMittenLibConsumer());
 
-
             CompletableFuture<Void> viewed = new CompletableFuture<>();
-            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null)))
-                    .get();
+            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null))).get();
 
             Files.writeString(testFile, "test");
 
@@ -51,15 +48,12 @@ class FileWatcherServiceTest {
 
             FileWatcherService service = new FileWatcherService(() -> ws, new TestMittenLibConsumer());
 
-
             CompletableFuture<Void> viewed = new CompletableFuture<>();
-            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null)))
-                    .get();
+            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null))).get();
 
             Files.writeString(testFile, "test");
 
             assertDoesNotThrow(() -> viewed.get());
         }
     }
-
 }

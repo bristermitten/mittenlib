@@ -26,10 +26,11 @@ import javax.lang.model.element.TypeElement;
 import java.util.*;
 
 /**
- * Annotation processor for generating configuration classes from DTO classes marked with {@link Config}.
- * This processor handles the compilation-time generation of implementation classes for configuration DTOs,
- * creating strongly typed configuration objects with proper getters, equals, hashCode, and toString methods.
- * The processor only processes top-level classes (not nested classes).
+ * Annotation processor for generating configuration classes from DTO classes marked with {@link
+ * Config}. This processor handles the compilation-time generation of implementation classes for
+ * configuration DTOs, creating strongly typed configuration objects with proper getters, equals,
+ * hashCode, and toString methods. The processor only processes top-level classes (not nested
+ * classes).
  */
 @SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
@@ -44,14 +45,11 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
     }
 
     /**
-     * Processes annotations and generates configuration implementation classes.
-     * This method is called by the Java compiler during the annotation processing phase.
-     * It performs the following steps:
-     * 1. Sets up the tooling environment and creates a Guice injector
-     * 2. Finds all top-level classes annotated with @Config
-     * 3. Parses each class into an abstract configuration structure
-     * 4. Generates implementation classes for each structure
-     * 5. Writes the generated files to the filer
+     * Processes annotations and generates configuration implementation classes. This method is called
+     * by the Java compiler during the annotation processing phase. It performs the following steps:
+     * 1. Sets up the tooling environment and creates a Guice injector 2. Finds all top-level classes
+     * annotated with @Config 3. Parses each class into an abstract configuration structure 4.
+     * Generates implementation classes for each structure 5. Writes the generated files to the filer
      *
      * @param annotations The annotation types requested to be processed
      * @param roundEnv    The environment for this round of annotation processing
@@ -59,34 +57,29 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
      * @throws ConfigProcessingException if there is an error writing the generated files
      */
     @Override
-    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean processAnnotations(
+            Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         ToolingProvider.setTooling(processingEnv);
-        var injector = Guice.createInjector(
-                new ConfigProcessorModule(processingEnv)
-        );
+        var injector = Guice.createInjector(new ConfigProcessorModule(processingEnv));
 
-        final List<TypeElement> types = annotations
-                .stream()
-                .map(roundEnv::getElementsAnnotatedWith)
-                .flatMap(Collection::stream)
-                .filter(TypeElement.class::isInstance)
-                .map(TypeElement.class::cast)
-                .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
-                .toList();
-
+        final List<TypeElement> types =
+                annotations.stream()
+                        .map(roundEnv::getElementsAnnotatedWith)
+                        .flatMap(Collection::stream)
+                        .filter(TypeElement.class::isInstance)
+                        .map(TypeElement.class::cast)
+                        .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
+                        .toList();
 
         CustomDeserializers customDeserializers = injector.getInstance(CustomDeserializers.class);
-        roundEnv.getElementsAnnotatedWith(CustomDeserializerFor.class)
-                .stream()
+        roundEnv.getElementsAnnotatedWith(CustomDeserializerFor.class).stream()
                 .map(TypeElement.class::cast)
                 .forEach(customDeserializers::registerCustomDeserializer);
 
         CustomSerializers customSerializers = injector.getInstance(CustomSerializers.class);
-        roundEnv.getElementsAnnotatedWith(CustomSerializerFor.class)
-                .stream()
+        roundEnv.getElementsAnnotatedWith(CustomSerializerFor.class).stream()
                 .map(TypeElement.class::cast)
                 .forEach(customSerializers::registerCustomSerializer);
-
 
         List<AbstractConfigStructure> asts = new ArrayList<>();
         var configClassParser = injector.getInstance(ConfigClassParser.class);
@@ -131,24 +124,26 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
             var classNameGenerator = injector.getInstance(ConfigurationClassNameGenerator.class);
 
             // Sort by package name and then simple name for stability
-            asts.sort(Comparator.comparing((AbstractConfigStructure ast) -> classNameGenerator.getPublicClassName(ast).packageName())
-                    .thenComparing(ast -> classNameGenerator.getPublicClassName(ast).simpleName()));
+            asts.sort(
+                    Comparator.comparing(
+                                    (AbstractConfigStructure ast) ->
+                                            classNameGenerator.getPublicClassName(ast).packageName())
+                            .thenComparing(ast -> classNameGenerator.getPublicClassName(ast).simpleName()));
 
             // Use the shortest package name as the "root" package for the module
-            String rootPackage = asts.stream()
-                    .map(ast -> classNameGenerator.getPublicClassName(ast).packageName())
-                    .min(Comparator.comparingInt(String::length))
-                    .orElse("");
+            String rootPackage =
+                    asts.stream()
+                            .map(ast -> classNameGenerator.getPublicClassName(ast).packageName())
+                            .min(Comparator.comparingInt(String::length))
+                            .orElse("");
 
             JavaFile moduleEmit = moduleGenerator.emit(asts, rootPackage);
             try {
                 moduleEmit.writeTo(processingEnv.getFiler());
             } catch (Exception e) {
                 throw new ConfigProcessingException("Could not create ConfigLoaderModule file", e);
-            }
-        }
-        return true;
+      }
     }
-
-
+    return true;
+  }
 }

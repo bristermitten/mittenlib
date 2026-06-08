@@ -15,7 +15,8 @@ public class SimpleFormattingHook implements FormattingHook {
     /**
      * Creates a SimpleFormattingHook configured with supplied BiFunction.
      *
-     * @param formatter a BiFunction that provides an implementation for {@link #format(String, OfflinePlayer)}.
+     * @param formatter a BiFunction that provides an implementation for {@link #format(String,
+     *                  OfflinePlayer)}.
      * @throws NullPointerException if formatter is null
      * @see #format(String, OfflinePlayer) for documentation on the function's behaviour
      */
@@ -31,5 +32,5 @@ public class SimpleFormattingHook implements FormattingHook {
     @Override
     public @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player) {
         return formatter.apply(message, player);
-    }
+  }
 }

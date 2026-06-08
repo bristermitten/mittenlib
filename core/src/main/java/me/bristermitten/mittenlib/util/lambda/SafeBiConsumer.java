@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 /**
  * A {@link BiConsumer} that can throw a checked exception.
  *
- * @param <T>  the first type of the input
+ * @param <T> the first type of the input
  * @param <T2> the second type of the input
  */
 @FunctionalInterface
@@ -25,7 +25,6 @@ public interface SafeBiConsumer<T, T2> {
      *
      * @return a {@link BiConsumer} that sneaky throws any exceptions
      */
-
     default BiConsumer<T, T2> asBiConsumer() {
         return (t, t2) -> {
             try {
@@ -33,6 +32,6 @@ public interface SafeBiConsumer<T, T2> {
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
             }
-        };
-    }
+    };
+  }
 }

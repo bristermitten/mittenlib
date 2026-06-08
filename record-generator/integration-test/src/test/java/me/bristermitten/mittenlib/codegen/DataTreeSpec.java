@@ -20,6 +20,4 @@ public interface DataTreeSpec {
     DataTreeSpec Map(Map<DataTreeSpec, DataTreeSpec> map);
 
     DataTreeSpec Array(DataTreeSpec[] values);
-
-
 }

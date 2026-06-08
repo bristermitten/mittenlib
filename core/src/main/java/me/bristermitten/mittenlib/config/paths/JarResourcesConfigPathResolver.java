@@ -42,5 +42,5 @@ public class JarResourcesConfigPathResolver implements ConfigPathResolver {
             env.put("create", "true");
             return FileSystems.newFileSystem(uri, env);
         }
-    }
+  }
 }

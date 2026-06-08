@@ -5,13 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Exception representing multiple failures that occur simultaneously.
- * This is commonly used to collect and report multiple exceptions or errors
- * encountered during a single operation or execution context.
- * <p>
- * This exception is useful for aggregating multiple causes, allowing them
- * to be handled collectively rather than individually. It enables the capture
- * of all contributing failures for comprehensive error reporting.
+ * Exception representing multiple failures that occur simultaneously. This is commonly used to
+ * collect and report multiple exceptions or errors encountered during a single operation or
+ * execution context.
+ *
+ * <p>This exception is useful for aggregating multiple causes, allowing them to be handled
+ * collectively rather than individually. It enables the capture of all contributing failures for
+ * comprehensive error reporting.
  */
 public class MultipleFailuresException extends RuntimeException {
     private final List<? extends Throwable> failures;

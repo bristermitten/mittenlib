@@ -18,11 +18,12 @@ public class FieldNameGenerator {
     }
 
     /**
-     * Get a suitable serialization key for a given property.
-     * This is the String that is looked up from the given {@link DeserializationContext#getData()}
+     * Get a suitable serialization key for a given property. This is the String that is looked up
+     * from the given {@link DeserializationContext#getData()}
      *
      * @param property The property
-     * @return The key to use when reading from {@link DeserializationContext#getData()} for the given property.
+     * @return The key to use when reading from {@link DeserializationContext#getData()} for the given
+     * property.
      */
     public String getConfigFieldName(Property property) {
         ConfigName configName = property.settings().configName();
@@ -40,15 +41,16 @@ public class FieldNameGenerator {
      * @param fieldName     The name of the field
      * @return The config field name
      */
-    private String getConfigFieldName(@Nullable ConfigName configName, @Nullable NamingPattern namingPattern, String fieldName) {
+    private String getConfigFieldName(
+            @Nullable ConfigName configName, @Nullable NamingPattern namingPattern, String fieldName) {
         if (configName != null) {
             return configName.value();
         }
 
         if (namingPattern != null) {
             return NamingPatternTransformer.format(fieldName, namingPattern.value());
-        }
-
-        return fieldName;
     }
+
+    return fieldName;
+  }
 }

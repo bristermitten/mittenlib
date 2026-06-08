@@ -10,12 +10,32 @@ plugins {
     `java-library`
     id("net.ltgt.errorprone")
     id("com.github.spotbugs")
+    id("com.diffplug.spotless")
 }
 
 val libs = versionCatalogs.named("libs")
 
 group = "me.bristermitten"
 version = "6.0.0-SNAPSHOT"
+
+spotless {
+    java {
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint()
+    }
+    format("misc") {
+        target("*.md", ".gitignore")
+        trimTrailingWhitespace()
+        leadingTabsToSpaces()
+        endWithNewline()
+    }
+}
 
 spotbugs {
     effort = Effort.MORE

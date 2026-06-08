@@ -12,8 +12,8 @@ import java.io.Reader;
 import java.nio.file.Path;
 
 /**
- * Responsible for both reading and mapping data,
- * delegating to {@link ObjectLoader}s and {@link ObjectMapper}s
+ * Responsible for both reading and mapping data, delegating to {@link ObjectLoader}s and {@link
+ * ObjectMapper}s
  */
 public class ConfigReader {
     private final ObjectLoader loader;
@@ -45,7 +45,8 @@ public class ConfigReader {
         return read(loader.load(source), function);
     }
 
-    private <T> Result<T> read(Result<@NotNull DataTree> rawData, DeserializationFunction<T> mappingFunction) {
+    private <T> Result<T> read(
+            Result<@NotNull DataTree> rawData, DeserializationFunction<T> mappingFunction) {
         return rawData
                 .map(data -> new DeserializationContext(mapper, data))
                 .flatMap(mappingFunction::apply);
@@ -64,7 +65,8 @@ public class ConfigReader {
     }
 
     /**
-     * Create a new {@link ConfigReader} with the given {@link ObjectLoader} instead of the existing one
+     * Create a new {@link ConfigReader} with the given {@link ObjectLoader} instead of the existing
+     * one
      *
      * @param loader the loader to use
      * @return the new ConfigReader
@@ -83,6 +85,6 @@ public class ConfigReader {
     }
 
     public ObjectLoader getLoader() {
-        return loader;
-    }
+    return loader;
+  }
 }

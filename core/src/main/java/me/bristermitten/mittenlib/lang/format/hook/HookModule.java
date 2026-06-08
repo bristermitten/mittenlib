@@ -12,7 +12,8 @@ import me.bristermitten.mittenlib.lang.LangModule;
 public class HookModule extends AbstractModule {
     @Override
     protected void configure() {
-        final Multibinder<FormattingHook> chatHookMultibinder = Multibinder.newSetBinder(binder(), FormattingHook.class);
+        final Multibinder<FormattingHook> chatHookMultibinder =
+                Multibinder.newSetBinder(binder(), FormattingHook.class);
         chatHookMultibinder.addBinding().to(HexColorFixerHook.class);
         chatHookMultibinder.addBinding().to(SimpleColorCodeHook.class);
     }

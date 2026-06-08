@@ -11,7 +11,6 @@ public record UnionSpec(
         ClassName source,
         ClassName name,
         MatchStrategies strategy,
-        List<RecordConstructorSpec> constructors
-) implements GenericTypeSpec {
-
+        List<RecordConstructorSpec> constructors)
+        implements GenericTypeSpec {
 }

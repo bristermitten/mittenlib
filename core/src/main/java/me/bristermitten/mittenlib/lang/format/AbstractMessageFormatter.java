@@ -11,11 +11,12 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * An abstract implementation of {@link MessageFormatter} that provides a default implementation of {@link #preFormat(String, OfflinePlayer)}.
- * This implementation keeps a set of {@link FormattingHook}s, and calls them sequentially.
- * <p>
- * This implementation does not implement {@link #format(String, OfflinePlayer)}, leaving the {@link Component}
- * creation to the subclasses.
+ * An abstract implementation of {@link MessageFormatter} that provides a default implementation of
+ * {@link #preFormat(String, OfflinePlayer)}. This implementation keeps a set of {@link
+ * FormattingHook}s, and calls them sequentially.
+ *
+ * <p>This implementation does not implement {@link #format(String, OfflinePlayer)}, leaving the
+ * {@link Component} creation to the subclasses.
  */
 public abstract class AbstractMessageFormatter implements MessageFormatter {
     /**
@@ -40,5 +41,5 @@ public abstract class AbstractMessageFormatter implements MessageFormatter {
             }
         }
         return message;
-    }
+  }
 }

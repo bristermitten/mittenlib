@@ -10,7 +10,6 @@ public class SpigotInventoryViewer<Msg> implements InventoryViewer<Msg, SpigotGU
         this.player = player;
     }
 
-
     public Player getPlayer() {
         return player;
     }

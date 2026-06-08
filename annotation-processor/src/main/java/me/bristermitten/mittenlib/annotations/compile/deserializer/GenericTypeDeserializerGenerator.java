@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Generates deserialization code for generic collection types (specifically {@link List} and {@link Map})
- * where the element or value types are custom configuration types.
+ * Generates deserialization code for generic collection types (specifically {@link List} and {@link
+ * Map}) where the element or value types are custom configuration types.
  */
 public class GenericTypeDeserializerGenerator {
 
@@ -42,19 +42,23 @@ public class GenericTypeDeserializerGenerator {
     }
 
     /**
-     * Creates a reference to a deserialization function, either as a method reference (for static)
-     * or a field reference (for non-static, injected).
-     * <p>
-     * Generates:
+     * Creates a reference to a deserialization function, either as a method reference (for static) or
+     * a field reference (for non-static, injected).
+     *
+     * <p>Generates:
+     *
      * <pre>
      *     MyDeserializer::deserialize
      * </pre>
+     * <p>
      * or
+     *
      * <pre>
      *     this.myDeserializer
      * </pre>
      *
-     * @param info the custom deserializer metadata, used to determine if the generated code should be static or not
+     * @param info the custom deserializer metadata, used to determine if the generated code should be
+     *             static or not
      * @return a code block referencing the deserializer
      */
     private CodeBlock getDeserializationFunctionReference(CustomDeserializerInfo info) {
@@ -67,21 +71,25 @@ public class GenericTypeDeserializerGenerator {
 
     /**
      * Generates and appends deserialization logic for generic collection properties.
-     * <p>
-     * For a {@link List}, generates:
+     *
+     * <p>For a {@link List}, generates:
+     *
      * <pre>
      *     return CollectionsUtils.deserializeList(itemsFromMap, context, ctx0 -> ...);
      * </pre>
      *
      * @param builder            the method spec builder
-     * @param property           the property being processed, used to generate the variable name (e.g. {@code itemsFromMap})
+     * @param property           the property being processed, used to generate the variable name (e.g. {@code
+     *                           itemsFromMap})
      * @param wrappedElementType the wrapped property type mirror
      * @param elementType        the wrapped property type element
      * @return an optional method spec if handled successfully
      */
-    public Optional<MethodSpec> handleGenericType(MethodSpec.Builder builder, Property property,
-                                                   TypeMirrorWrapper wrappedElementType,
-                                                   TypeElementWrapper elementType) {
+    public Optional<MethodSpec> handleGenericType(
+            MethodSpec.Builder builder,
+            Property property,
+            TypeMirrorWrapper wrappedElementType,
+            TypeElementWrapper elementType) {
         if (!hasNestedCustomDeserializerOrConfig(wrappedElementType.unwrap())) {
             return Optional.empty();
         }
@@ -90,9 +98,11 @@ public class GenericTypeDeserializerGenerator {
         ElementWrapper.wrap(property.source().element())
                 .validate()
                 .asError()
-                .check($ -> AptkCoreMatchers.BY_RAW_TYPE
-                        .getValidator()
-                        .hasOneOf(elementType.unwrap(), List.class, Map.class))
+                .check(
+                        $ ->
+                                AptkCoreMatchers.BY_RAW_TYPE
+                                        .getValidator()
+                                        .hasOneOf(elementType.unwrap(), List.class, Map.class))
                 .validateAndIssueMessages();
 
         final String fromMapName = property.name() + "FromMap";
@@ -108,10 +118,12 @@ public class GenericTypeDeserializerGenerator {
 
     /**
      * Recursively checks if a type or any of its nested type arguments contains a custom deserializer
-     * or a config type. Used to decide if custom recursive deserialization code needs to be generated.
+     * or a config type. Used to decide if custom recursive deserialization code needs to be
+     * generated.
      *
      * @param type the type to check
-     * @return true if the type or any nested type argument contains a custom deserializer or a config type
+     * @return true if the type or any nested type argument contains a custom deserializer or a config
+     * type
      */
     private boolean hasNestedCustomDeserializerOrConfig(TypeMirror type) {
         if (customDeserializers.getCustomInfo(type).isPresent() || typesUtil.isConfigType(type)) {
@@ -129,23 +141,27 @@ public class GenericTypeDeserializerGenerator {
     }
 
     /**
-     * Recursively generates a {@link CodeBlock} representing a {@link me.bristermitten.mittenlib.config.DeserializationFunction}
-     * for the given type. Maps collections recursively and falls back to object mapper mapping for basic types.
-     * <p>
-     * Generates lambdas like:
+     * Recursively generates a {@link CodeBlock} representing a {@link
+     * me.bristermitten.mittenlib.config.DeserializationFunction} for the given type. Maps collections
+     * recursively and falls back to object mapper mapping for basic types.
+     *
+     * <p>Generates lambdas like:
+     *
      * <pre>
      *     ctx0 -> CollectionsUtils.deserializeList(ctx0.getData(), ctx0, ctx1 -> ...)
      * </pre>
      *
-     * @param type  the type to generate a deserialization function for
-     * @param depth the current nesting depth, used to generate unique context variable names (e.g. {@code ctx0}, {@code ctx1})
+     * @param type the type to generate a deserialization function for
+     * @param depth the current nesting depth, used to generate unique context variable names (e.g.
+     *     {@code ctx0}, {@code ctx1})
      * @return a {@link CodeBlock} lambda expression {@code ctx -> ...}
      */
     private CodeBlock getDeserializationFunction(TypeMirror type, int depth) {
         TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
 
         // Custom Deserializer
-        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomInfo(type);
+        Optional<CustomDeserializerInfo> customDeserializerOptional =
+                customDeserializers.getCustomInfo(type);
         if (customDeserializerOptional.isPresent()) {
             return getDeserializationFunctionReference(customDeserializerOptional.get());
         }
@@ -163,25 +179,45 @@ public class GenericTypeDeserializerGenerator {
             if (canonicalName.equals(List.class.getName())) {
                 TypeMirror elementType = wrapped.getTypeArguments().getFirst();
                 CodeBlock innerFunction = getDeserializationFunction(elementType, depth + 1);
-                return CodeBlock.of("$L -> $T.deserializeList($L.getData(), $L, $L)", ctxVar, CollectionsUtils.class, ctxVar, ctxVar, innerFunction);
+                return CodeBlock.of(
+                        "$L -> $T.deserializeList($L.getData(), $L, $L)",
+                        ctxVar,
+                        CollectionsUtils.class,
+                        ctxVar,
+                        ctxVar,
+                        innerFunction);
             } else if (canonicalName.equals(Map.class.getName())) {
                 var arguments = wrapped.getTypeArguments();
                 TypeMirror keyType = arguments.get(0);
                 TypeMirror valueType = arguments.get(1);
                 CodeBlock innerFunction = getDeserializationFunction(valueType, depth + 1);
-                return CodeBlock.of("$L -> $T.deserializeMap($T.class, $L.getData(), $L, $L)", ctxVar, CollectionsUtils.class, typesUtil.getSafeType(keyType), ctxVar, ctxVar, innerFunction);
+                return CodeBlock.of(
+                        "$L -> $T.deserializeMap($T.class, $L.getData(), $L, $L)",
+                        ctxVar,
+                        CollectionsUtils.class,
+                        typesUtil.getSafeType(keyType),
+                        ctxVar,
+                        ctxVar,
+                        innerFunction);
             }
         }
 
         // 4. Basic fallback using ObjectMapper mapping
         String ctxVar = "ctx" + depth;
-        return CodeBlock.of("$L -> $L.getMapper().map($L.getData(), new $T<$T>(){})", ctxVar, ctxVar, ctxVar, TypeToken.class, typesUtil.getBoxedType(type));
+        return CodeBlock.of(
+                "$L -> $L.getMapper().map($L.getData(), new $T<$T>(){})",
+                ctxVar,
+                ctxVar,
+                ctxVar,
+                TypeToken.class,
+                typesUtil.getBoxedType(type));
     }
 
     /**
      * Generates deserialization logic for a {@link List} property.
-     * <p>
-     * Generates:
+     *
+     * <p>Generates:
+     *
      * <pre>
      *     return CollectionsUtils.deserializeList(fromMap, context, ctx0 -> ...);
      * </pre>
@@ -191,20 +227,23 @@ public class GenericTypeDeserializerGenerator {
      * @param fromMapName        the name of the variable containing the raw data (e.g. {@code fromMap})
      * @return an optional method spec
      */
-    private Optional<MethodSpec> handleListType(MethodSpec.Builder builder,
-                                                TypeMirrorWrapper wrappedElementType,
-                                                String fromMapName) {
+    private Optional<MethodSpec> handleListType(
+            MethodSpec.Builder builder, TypeMirrorWrapper wrappedElementType, String fromMapName) {
         var listType = wrappedElementType.getTypeArguments().getFirst();
         CodeBlock deserializationFunction = getDeserializationFunction(listType, 0);
-        builder.addStatement("return $T.deserializeList($L, context, $L)",
-                CollectionsUtils.class, fromMapName, deserializationFunction);
+        builder.addStatement(
+                "return $T.deserializeList($L, context, $L)",
+                CollectionsUtils.class,
+                fromMapName,
+                deserializationFunction);
         return Optional.of(builder.build());
     }
 
     /**
      * Generates deserialization logic for a {@link Map} property.
-     * <p>
-     * Generates:
+     *
+     * <p>Generates:
+     *
      * <pre>
      *     return CollectionsUtils.deserializeMap(KeyType.class, fromMap, context, ctx0 -> ...);
      * </pre>
@@ -214,18 +253,19 @@ public class GenericTypeDeserializerGenerator {
      * @param fromMapName        the name of the variable containing the raw data (e.g. {@code fromMap})
      * @return an optional method spec
      */
-    private Optional<MethodSpec> handleMapType(MethodSpec.Builder builder,
-                                               TypeMirrorWrapper wrappedElementType, String fromMapName) {
+    private Optional<MethodSpec> handleMapType(
+            MethodSpec.Builder builder, TypeMirrorWrapper wrappedElementType, String fromMapName) {
         var arguments = wrappedElementType.getTypeArguments();
         var keyType = arguments.get(0);
         var valueType = arguments.get(1);
 
         CodeBlock deserializationFunction = getDeserializationFunction(valueType, 0);
-        builder.addStatement("return $T.deserializeMap($T.class, $L, context, $L)",
-                CollectionsUtils.class,
-                typesUtil.getSafeType(keyType),
-                fromMapName,
-                deserializationFunction);
-        return Optional.of(builder.build());
-    }
+        builder.addStatement(
+                "return $T.deserializeMap($T.class, $L, context, $L)",
+        CollectionsUtils.class,
+        typesUtil.getSafeType(keyType),
+        fromMapName,
+        deserializationFunction);
+    return Optional.of(builder.build());
+  }
 }

@@ -5,8 +5,8 @@ import me.bristermitten.mittenlib.gui.spigot.SpigotGUIView;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Factory interface for creating GUI components.
- * Provides a clean abstraction for component creation without static methods.
+ * Factory interface for creating GUI components. Provides a clean abstraction for component
+ * creation without static methods.
  */
 public interface MinecraftGUIFactory {
 
@@ -39,5 +39,6 @@ public interface MinecraftGUIFactory {
      * @param <Command>   the command type
      * @return a new InventoryButton instance with custom display name
      */
-    <Command> InventoryButton<Command> createButton(ItemStack itemStack, Command command, String displayName);
+    <Command> InventoryButton<Command> createButton(
+            ItemStack itemStack, Command command, String displayName);
 }

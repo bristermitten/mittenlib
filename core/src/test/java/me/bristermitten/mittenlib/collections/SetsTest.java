@@ -235,8 +235,9 @@ class SetsTest {
     }
 
     @Property
-    void unionIsCommutative(@ForAll("nonNullStringLists") List<String> elements1,
-                            @ForAll("nonNullStringLists") List<String> elements2) {
+    void unionIsCommutative(
+            @ForAll("nonNullStringLists") List<String> elements1,
+            @ForAll("nonNullStringLists") List<String> elements2) {
 
         Set<String> set1 = Sets.of(elements1.toArray(new String[0]));
         Set<String> set2 = Sets.of(elements2.toArray(new String[0]));
@@ -248,8 +249,9 @@ class SetsTest {
     }
 
     @Property
-    void unionContainsAllElements(@ForAll("nonNullStringLists") List<String> elements1,
-                                  @ForAll("nonNullStringLists") List<String> elements2) {
+    void unionContainsAllElements(
+            @ForAll("nonNullStringLists") List<String> elements1,
+            @ForAll("nonNullStringLists") List<String> elements2) {
 
         Set<String> set1 = Sets.of(elements1.toArray(new String[0]));
         Set<String> set2 = Sets.of(elements2.toArray(new String[0]));
@@ -268,8 +270,7 @@ class SetsTest {
 
     @Provide
     Arbitrary<List<String>> nonNullStringLists() {
-        return Arbitraries.strings().alpha().ofMaxLength(10)
-                .list().ofMaxSize(5);
+        return Arbitraries.strings().alpha().ofMaxLength(10).list().ofMaxSize(5);
     }
 
     @Property
@@ -284,7 +285,8 @@ class SetsTest {
     }
 
     @Property
-    void duplicateElementsAreHandledCorrectly(@ForAll("nonNullString") String element, @ForAll("smallPositiveInt") int count) {
+    void duplicateElementsAreHandledCorrectly(
+            @ForAll("nonNullString") String element, @ForAll("smallPositiveInt") int count) {
         String[] duplicates = new String[count];
         Arrays.fill(duplicates, element);
 
@@ -376,7 +378,6 @@ class SetsTest {
     /**
      * Property-based tests for complex set operations and edge cases
      */
-
     @Property
     void setContainsNoMoreThanUniqueElements(@ForAll @Size(min = 1, max = 20) List<String> elements) {
         Assume.that(elements.stream().allMatch(Objects::nonNull));
@@ -394,8 +395,9 @@ class SetsTest {
     }
 
     @Property
-    void setUnionSizeIsCorrect(@ForAll("nonNullStringLists") List<String> list1,
-                               @ForAll("nonNullStringLists") List<String> list2) {
+    void setUnionSizeIsCorrect(
+            @ForAll("nonNullStringLists") List<String> list1,
+            @ForAll("nonNullStringLists") List<String> list2) {
 
         Set<String> set1 = Sets.ofAll(list1);
         Set<String> set2 = Sets.ofAll(list2);
@@ -410,9 +412,10 @@ class SetsTest {
     }
 
     @Property
-    void unionIsAssociative(@ForAll("nonNullStringLists") List<String> list1,
-                            @ForAll("nonNullStringLists") List<String> list2,
-                            @ForAll("nonNullStringLists") List<String> list3) {
+    void unionIsAssociative(
+            @ForAll("nonNullStringLists") List<String> list1,
+            @ForAll("nonNullStringLists") List<String> list2,
+            @ForAll("nonNullStringLists") List<String> list3) {
 
         Set<String> set1 = Sets.of(list1.toArray(new String[0]));
         Set<String> set2 = Sets.of(list2.toArray(new String[0]));
@@ -435,8 +438,7 @@ class SetsTest {
             withNull.add(i, null);
 
             final int position = i; // Effectively final for lambda
-            assertThrows(NullPointerException.class, () ->
-                    Sets.of(withNull.toArray(new String[0])));
+            assertThrows(NullPointerException.class, () -> Sets.of(withNull.toArray(new String[0])));
         }
     }
 
@@ -454,7 +456,8 @@ class SetsTest {
     }
 
     @Property
-    void addingElementsToSetViaStreamProducesCorrectResult(@ForAll("nonNullStringLists") List<String> elements) {
+    void addingElementsToSetViaStreamProducesCorrectResult(
+            @ForAll("nonNullStringLists") List<String> elements) {
         // Get unique elements via stream
         Set<String> expectedSet = elements.stream().collect(Collectors.toSet());
 
@@ -590,6 +593,6 @@ class SetsTest {
         // Check non-existing elements
         for (int i = 0; i < 100; i++) {
             assertFalse(set.contains("missing" + i));
-        }
     }
+  }
 }

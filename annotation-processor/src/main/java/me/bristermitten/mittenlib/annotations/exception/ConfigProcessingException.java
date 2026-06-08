@@ -14,5 +14,5 @@ public class ConfigProcessingException extends RuntimeException {
      */
     public ConfigProcessingException(String message, Throwable cause) {
         super(message, cause);
-    }
+  }
 }

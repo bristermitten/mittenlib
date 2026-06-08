@@ -39,7 +39,13 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
      * @param serializer   the serialization function to use
      * @param writer       the writer to use for saving
      */
-    public FileBasedConfigProvider(Path path, ConfigReader reader, DeserializationFunction<T> deserializer, ConfigWriter saver, SerializationFunction<T> serializer, ObjectWriter writer) {
+    public FileBasedConfigProvider(
+            Path path,
+            ConfigReader reader,
+            DeserializationFunction<T> deserializer,
+            ConfigWriter saver,
+            SerializationFunction<T> serializer,
+            ObjectWriter writer) {
         this.path = path;
         this.reader = reader;
         this.deserializer = deserializer;
@@ -51,13 +57,15 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
     @Override
     public T get() {
         if (!Files.exists(path)) {
-            final SerializationContext serializationContext = new SerializationContext(reader.getMapper());
+            final SerializationContext serializationContext =
+                    new SerializationContext(reader.getMapper());
             final DataTree defaultTree = serializer.generateDefault(serializationContext);
 
-            // Check if the config is actually dynamically initializable. 
+            // Check if the config is actually dynamically initializable.
             // If it is, we can write the default and proceed.
             // If not, we just let it fail naturally when we try to load it from the non-existent file.
-            final DeserializationContext deserializationContext = new DeserializationContext(reader.getMapper(), defaultTree);
+            final DeserializationContext deserializationContext =
+                    new DeserializationContext(reader.getMapper(), defaultTree);
             final Result<T> defaultResult = deserializer.apply(deserializationContext);
 
             if (defaultResult.isSuccess()) {
@@ -75,13 +83,12 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
 
     @Override
     public void clearCache() {
-        //no-op
+        // no-op
     }
 
     /**
-     * Saves the given config instance back to the file.
-     * This can be used to save default values for missing fields.
-     * By default, this only adds missing fields and does not override existing ones.
+     * Saves the given config instance back to the file. This can be used to save default values for
+     * missing fields. By default, this only adds missing fields and does not override existing ones.
      *
      * @param instance the config instance to save
      * @return a Result indicating success or failure
@@ -91,39 +98,45 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
     }
 
     /**
-     * Saves the given config instance back to the file.
-     * This can be used to save default values for missing fields.
+     * Saves the given config instance back to the file. This can be used to save default values for
+     * missing fields.
      *
      * @param instance         the config instance to save
      * @param overrideExisting if true, overwrites the entire file; if false, only adds missing fields
      * @return a Result indicating success or failure
      */
     public Result<Void> save(T instance, boolean overrideExisting) {
-        return saver.serialize(instance, serializer).flatMap(serializedTree -> {
-            if (overrideExisting) {
-                return writer.write(serializedTree, path);
-            }
-            // Read existing file and merge with new values
-            return reader.load(ctx -> Result.ok(ctx.getData()), path)
-                    .map(existingTree -> (DataTree) mergeDataTrees(existingTree, serializedTree))
-                    .flatMap(mergedTree -> writer.write(mergedTree, path))
-                    .flatMapException(error -> {
+        return saver
+                .serialize(instance, serializer)
+                .flatMap(
+                        serializedTree -> {
+              if (overrideExisting) {
+                  return writer.write(serializedTree, path);
+              }
+                            // Read existing file and merge with new values
+                            return reader
+                                    .load(ctx -> Result.ok(ctx.getData()), path)
+                                    .map(existingTree -> mergeDataTrees(existingTree, serializedTree))
+                                    .flatMap(mergedTree -> writer.write(mergedTree, path))
+                  .flatMapException(
+                      error -> {
                         // If file doesn't exist or can't be read, just write the new config
-                        return writer.write(serializedTree, path);
-                    });
-        });
+                          return writer.write(serializedTree, path);
+                      });
+                        });
     }
 
     /**
-     * Merges two DataTrees, with existing values taking precedence.
-     * Only adds fields from {@code newTree} that don't exist in {@code existingTree}.
+     * Merges two DataTrees, with existing values taking precedence. Only adds fields from {@code
+     * newTree} that don't exist in {@code existingTree}.
      *
      * @param existingTree the existing data tree (takes precedence)
      * @param newTree      the new data tree with default values
      * @return the merged data tree
      */
     private DataTree mergeDataTrees(DataTree existingTree, DataTree newTree) {
-        if (!(existingTree instanceof DataTree.DataTreeMap) || !(newTree instanceof DataTree.DataTreeMap)) {
+        if (!(existingTree instanceof DataTree.DataTreeMap)
+                || !(newTree instanceof DataTree.DataTreeMap)) {
             return existingTree;
         }
 
@@ -142,10 +155,9 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
                 DataTree existingValue = mergedValues.get(key);
                 DataTree mergedValue = mergeDataTrees(existingValue, newValue);
                 mergedValues.put(key, mergedValue);
-            }
-        }
-
-        return new DataTree.DataTreeMap(mergedValues);
+      }
     }
-}
 
+    return new DataTree.DataTreeMap(mergedValues);
+  }
+}

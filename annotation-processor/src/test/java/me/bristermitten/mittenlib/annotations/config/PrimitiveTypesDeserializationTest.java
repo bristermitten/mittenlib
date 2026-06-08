@@ -14,17 +14,20 @@ class PrimitiveTypesDeserializationTest {
 
     @Test
     void testPrimitiveTypesDeserialization() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.PrimitiveTypesConfigDTO",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.PrimitiveTypesConfigDTO",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
-                                
+
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.config.names.NamingPatterns;
-                                
+
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("primitives.yml")
                                 @Config
@@ -38,7 +41,7 @@ class PrimitiveTypesDeserializationTest {
                                     public char charValue = 'A';
                                     public byte byteValue = 127;
                                     public short shortValue = 32767;
-                                
+
                                     // Boxed primitive types
                                     public Integer boxedIntValue = 42;
                                     public Long boxedLongValue = 1234567890L;
@@ -48,16 +51,17 @@ class PrimitiveTypesDeserializationTest {
                                     public Character boxedCharValue = 'A';
                                     public Byte boxedByteValue = 127;
                                     public Short boxedShortValue = 32767;
-                                
+
                                     // String (not a primitive but commonly used)
                                     public String stringValue = "Hello, World!";
                                 }
                                 """));
 
         assertThat(compilation).succeeded();
-        
+
         // Verify that the generated class exists
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.PrimitiveTypesConfig")
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.PrimitiveTypesConfig")
                 .isNotNull();
     }
 }

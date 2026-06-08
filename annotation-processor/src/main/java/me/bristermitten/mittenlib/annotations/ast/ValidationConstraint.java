@@ -7,12 +7,23 @@ import com.squareup.javapoet.ClassName;
  */
 public sealed interface ValidationConstraint {
 
-    record Positive() implements ValidationConstraint {}
-    record Negative() implements ValidationConstraint {}
-    record Min(double value) implements ValidationConstraint {}
+    record Positive() implements ValidationConstraint {
+    }
 
-    record Max(double value) implements ValidationConstraint {}
-    record NotBlank() implements ValidationConstraint {}
-    record Range(double min, double max) implements ValidationConstraint {}
+    record Negative() implements ValidationConstraint {
+    }
+
+    record Min(double value) implements ValidationConstraint {
+    }
+
+    record Max(double value) implements ValidationConstraint {
+    }
+
+    record NotBlank() implements ValidationConstraint {
+    }
+
+    record Range(double min, double max) implements ValidationConstraint {
+    }
+
     record Custom(ClassName validatorClassName) implements ValidationConstraint {}
 }

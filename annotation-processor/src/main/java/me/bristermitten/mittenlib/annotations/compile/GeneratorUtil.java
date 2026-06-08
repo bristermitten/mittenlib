@@ -16,15 +16,15 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Resolves the DAO name for a configuration structure.
-     * For interfaces, this is the generated DefaultMethodAccess class.
-     * For classes, this is the original class itself.
+     * Resolves the DAO name for a configuration structure. For interfaces, this is the generated
+     * DefaultMethodAccess class. For classes, this is the original class itself.
      *
      * @param ast                The configuration structure
      * @param classNameGenerator The class name generator
      * @return The DAO class name, or null if it's an interface without any defaults
      */
-    public static @Nullable ClassName getDaoName(AbstractConfigStructure ast, ConfigurationClassNameGenerator classNameGenerator) {
+    public static @Nullable ClassName getDaoName(
+            AbstractConfigStructure ast, ConfigurationClassNameGenerator classNameGenerator) {
         return switch (ast.source()) {
             case ConfigTypeSource.InterfaceConfigTypeSource ignored -> classNameGenerator.getInnerDaoName(ast);
             case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
@@ -32,15 +32,16 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Adds a DAO instantiation statement to a method builder if the configuration has any default values.
+     * Adds a DAO instantiation statement to a method builder if the configuration has any default
+     * values.
      *
      * @param ast           The configuration structure
      * @param methodBuilder The method builder to add the statement to
      * @param daoName       The DAO class name
      */
-    public static void addDaoInstantiationIfNecessary(AbstractConfigStructure ast, MethodSpec.Builder methodBuilder, @Nullable ClassName daoName) {
-        boolean hasAnyDefault = ast.properties().stream()
-                .anyMatch(p -> p.settings().hasDefaultValue());
+    public static void addDaoInstantiationIfNecessary(
+            AbstractConfigStructure ast, MethodSpec.Builder methodBuilder, @Nullable ClassName daoName) {
+        boolean hasAnyDefault = ast.properties().stream().anyMatch(p -> p.settings().hasDefaultValue());
 
         if (daoName != null && hasAnyDefault) {
             methodBuilder.addStatement("$T dao = new $T()", daoName, daoName);
@@ -54,16 +55,22 @@ public final class GeneratorUtil {
      * @param property     The property to access
      * @param variableName The name of the variable to access the property on
      * @param methodNames  The method names generator (used for safe method names in classes)
-     * @param useGetters   Whether to use getter methods (true) or direct field access (false) for classes
+     * @param useGetters   Whether to use getter methods (true) or direct field access (false) for
+     *                     classes
      * @return A {@link CodeBlock} representing the property access
      */
-    public static CodeBlock getPropertyAccess(AbstractConfigStructure ast, Property property, String variableName, MethodNames methodNames, boolean useGetters) {
+    public static CodeBlock getPropertyAccess(
+            AbstractConfigStructure ast,
+            Property property,
+            String variableName,
+            MethodNames methodNames,
+            boolean useGetters) {
         return switch (ast.source()) {
             case ConfigTypeSource.InterfaceConfigTypeSource ignored ->
                     CodeBlock.of("$L.$L()", variableName, property.name());
-            case ConfigTypeSource.ClassConfigTypeSource ignored ->
-                    useGetters ? CodeBlock.of("$L.$L()", variableName, methodNames.safeMethodName(property)) :
-                            CodeBlock.of("$L.$L", variableName, property.name());
-        };
-    }
+            case ConfigTypeSource.ClassConfigTypeSource ignored -> useGetters
+                    ? CodeBlock.of("$L.$L()", variableName, methodNames.safeMethodName(property))
+                    : CodeBlock.of("$L.$L", variableName, property.name());
+    };
+  }
 }

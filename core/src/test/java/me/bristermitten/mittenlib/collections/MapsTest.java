@@ -65,10 +65,10 @@ class MapsTest {
 
     @Test
     void assertThat_largeMap_creationWorks() {
-        final Map<String, String> maps = Maps.of(
-                "k1", "v1", "k2", "v2", "k3", "v3", "k4", "v4", "k5", "v5",
-                "k6", "v6", "k7", "v7", "k8", "v8", "k9", "v9", "k10", "v10"
-        );
+        final Map<String, String> maps =
+                Maps.of(
+                        "k1", "v1", "k2", "v2", "k3", "v3", "k4", "v4", "k5", "v5", "k6", "v6", "k7", "v7",
+                        "k8", "v8", "k9", "v9", "k10", "v10");
         assertEquals(10, maps.size());
         for (int i = 1; i <= 10; i++) {
             assertEquals("v" + i, maps.get("k" + i));
@@ -102,7 +102,8 @@ class MapsTest {
         assertThrows(UnsupportedOperationException.class, () -> map.replace("key", 42, 99));
         assertThrows(UnsupportedOperationException.class, () -> map.remove("key", 42));
         assertThrows(UnsupportedOperationException.class, () -> map.computeIfAbsent("new", k -> 99));
-        assertThrows(UnsupportedOperationException.class, () -> map.computeIfPresent("key", (k, v) -> 99));
+        assertThrows(
+                UnsupportedOperationException.class, () -> map.computeIfPresent("key", (k, v) -> 99));
         assertThrows(UnsupportedOperationException.class, () -> map.compute("key", (k, v) -> 99));
     }
 
@@ -111,10 +112,8 @@ class MapsTest {
         Map<String, Integer> map = Maps.of("key", 42);
         Set<Entry<String, Integer>> entrySet = map.entrySet();
 
-        assertThrows(UnsupportedOperationException.class, () ->
-                entrySet.add(Maps.entry("new", 99)));
-        assertThrows(UnsupportedOperationException.class, () ->
-                entrySet.remove(Maps.entry("key", 42)));
+        assertThrows(UnsupportedOperationException.class, () -> entrySet.add(Maps.entry("new", 99)));
+        assertThrows(UnsupportedOperationException.class, () -> entrySet.remove(Maps.entry("key", 42)));
         assertThrows(UnsupportedOperationException.class, entrySet::clear);
     }
 
@@ -217,15 +216,14 @@ class MapsTest {
             assertEquals(entry.getValue(), ourMap.get(entry.getKey()));
         }
 
-        Map<String, Integer> reconstructed = entrySet.stream()
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        Map<String, Integer> reconstructed =
+                entrySet.stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         assertEquals(ourMap, reconstructed);
     }
 
     /**
      * Property-based tests for complex map operations and edge cases
      */
-
     @Property
     void mapEntriesShouldBeImmutable(@ForAll Map<String, Integer> standardMap) {
         List<Entry<String, Integer>> entries = new ArrayList<>(standardMap.entrySet());
@@ -239,8 +237,8 @@ class MapsTest {
     }
 
     @Property
-    void nonExistentKeysReturnNull(@ForAll Map<String, Integer> standardMap,
-                                   @ForAll("nonExistentKey") String nonExistentKey) {
+    void nonExistentKeysReturnNull(
+            @ForAll Map<String, Integer> standardMap, @ForAll("nonExistentKey") String nonExistentKey) {
         Assume.that(!standardMap.containsKey(nonExistentKey));
 
         List<Entry<String, Integer>> entries = new ArrayList<>(standardMap.entrySet());
@@ -281,10 +279,8 @@ class MapsTest {
         // A modified entry should not be contained
         if (!standardMap.isEmpty()) {
             Entry<String, Integer> firstEntry = standardMap.entrySet().iterator().next();
-            Entry<String, Integer> modifiedEntry = Maps.entry(
-                    firstEntry.getKey(),
-                    firstEntry.getValue() + 1000
-            );
+            Entry<String, Integer> modifiedEntry =
+                    Maps.entry(firstEntry.getKey(), firstEntry.getValue() + 1000);
             assertFalse(entrySet.contains(modifiedEntry));
         }
     }
@@ -311,7 +307,6 @@ class MapsTest {
     Arbitrary<Map<String, Integer>> keyValuePairs() {
         return Arbitraries.maps(Arbitraries.strings(), Arbitraries.integers());
     }
-
 
     // Additional edge case tests
 
@@ -380,7 +375,8 @@ class MapsTest {
     @Test
     void testLargeMapPerformance() {
         // Create a large map with 1000 entries
-        @SuppressWarnings("unchecked") Entry<String, Integer>[] entries = new Entry[1000];
+        @SuppressWarnings("unchecked")
+        Entry<String, Integer>[] entries = new Entry[1000];
         for (int i = 0; i < 1000; i++) {
             entries[i] = Maps.entry("key" + i, i);
         }
@@ -391,6 +387,6 @@ class MapsTest {
         // Test retrieval performance
         for (int i = 0; i < 1000; i++) {
             assertEquals(Integer.valueOf(i), map.get("key" + i));
-        }
     }
+  }
 }

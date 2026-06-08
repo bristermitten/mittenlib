@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 /**
- * A {@link Supplier} that can throw a checked  exception.
+ * A {@link Supplier} that can throw a checked exception.
  *
  * @param <T> the type of the value supplied
  */
@@ -26,7 +26,6 @@ public interface SafeSupplier<T> {
      *
      * @return the result
      */
-
     default Result<T> getCatching() {
         return runCatching(this);
     }
@@ -44,6 +43,6 @@ public interface SafeSupplier<T> {
                 Errors.sneakyThrow(e);
                 return null;
             }
-        };
-    }
+    };
+  }
 }

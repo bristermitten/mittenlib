@@ -24,26 +24,36 @@ import java.util.Optional;
 @DeclareCompilerMessageCodePrefix("CUSTOM_DESERIALIZER")
 public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerInfo> {
 
-
-    @DeclareCompilerMessage(code = "001", enumValueName = "INVALID_STATIC_METHOD_SIGNATURE", message = "Custom deserializer method must be static and be of the signature Result<${0}> deserialize(DeserializationContext)")
-    @DeclareCompilerMessage(code = "002", enumValueName = "UNSUPPORTED_NON_STATIC", message = "Non static custom deserializers aren't supported yet")
+    @DeclareCompilerMessage(
+            code = "001",
+            enumValueName = "INVALID_STATIC_METHOD_SIGNATURE",
+            message =
+                    "Custom deserializer method must be static and be of the signature Result<${0}> deserialize(DeserializationContext)")
+    @DeclareCompilerMessage(
+            code = "002",
+            enumValueName = "UNSUPPORTED_NON_STATIC",
+            message = "Non static custom deserializers aren't supported yet")
     public void registerCustomDeserializer(TypeElement customDeserializerType) {
-        CustomDeserializerForWrapper deserializerTypeAnnotation = CustomDeserializerForWrapper.wrap(customDeserializerType);
+        CustomDeserializerForWrapper deserializerTypeAnnotation =
+                CustomDeserializerForWrapper.wrap(customDeserializerType);
         if (deserializerTypeAnnotation == null) {
-            throw new IllegalArgumentException("CustomDeserializer must be annotated with @CustomDeserializerFor");
+            throw new IllegalArgumentException(
+                    "CustomDeserializer must be annotated with @CustomDeserializerFor");
         }
 
-        var implementsCustomDeserializer = TypeElementWrapper.wrap(customDeserializerType)
-                .getAllInterfaces()
-                .stream().anyMatch(i -> i.getQualifiedName().equals(CustomDeserializer.class.getCanonicalName()));
+        var implementsCustomDeserializer =
+                TypeElementWrapper.wrap(customDeserializerType).getAllInterfaces().stream()
+                        .anyMatch(
+                                i -> i.getQualifiedName().equals(CustomDeserializer.class.getCanonicalName()));
 
-        Optional<ExecutableElementWrapper> deserializeMethodOpt = TypeElementWrapper.wrap(customDeserializerType)
-                .getMethod("deserialize", DeserializationContext.class);
+        Optional<ExecutableElementWrapper> deserializeMethodOpt =
+                TypeElementWrapper.wrap(customDeserializerType)
+                        .getMethod("deserialize", DeserializationContext.class);
 
         if (!implementsCustomDeserializer && deserializeMethodOpt.isEmpty()) {
-            throw new IllegalArgumentException("CustomDeserializer must implement CustomDeserializer or have a static method Result<T> deserialize(DeserializationContext)");
+            throw new IllegalArgumentException(
+                    "CustomDeserializer must implement CustomDeserializer or have a static method Result<T> deserialize(DeserializationContext)");
         }
-
 
         TypeMirror deserializerFor = deserializerTypeAnnotation.valueAsTypeMirror();
 
@@ -52,32 +62,34 @@ public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerIn
 
             if (!TypeUtils.TypeComparison.isTypeEqual(
                     deserializeMethod.getReturnType().unwrap(),
-                    TypeUtils.Generics.createGenericType(Result.class,
-                            TypeUtils.Generics.createGenericType(deserializerFor))
-            )) {
-                MessagerUtils.error(deserializeMethod.unwrap(), CustomDeserializersCompilerMessages.INVALID_STATIC_METHOD_SIGNATURE, deserializerFor);
+                    TypeUtils.Generics.createGenericType(
+                            Result.class, TypeUtils.Generics.createGenericType(deserializerFor)))) {
+                MessagerUtils.error(
+                        deserializeMethod.unwrap(),
+                        CustomDeserializersCompilerMessages.INVALID_STATIC_METHOD_SIGNATURE,
+                        deserializerFor);
                 return;
             }
         }
 
-        boolean isStatic = !implementsCustomDeserializer && deserializeMethodOpt.isPresent() &&
-                deserializeMethodOpt.get().unwrap().getModifiers().contains(Modifier.STATIC);
+        boolean isStatic =
+                !implementsCustomDeserializer
+                        && deserializeMethodOpt.isPresent()
+                        && deserializeMethodOpt.get().unwrap().getModifiers().contains(Modifier.STATIC);
 
         if (!isStatic && !implementsCustomDeserializer) {
-            MessagerUtils.error(customDeserializerType, CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC);
+            MessagerUtils.error(
+                    customDeserializerType, CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC);
             return;
         }
 
         var isFallback = customDeserializerType.getAnnotation(Fallback.class) != null;
 
-        var customDeserializerInfo = new CustomDeserializerInfo(
-                customDeserializerType,
-                isStatic,
-                isFallback,
-                false // TODO
-        );
+        var customDeserializerInfo =
+                new CustomDeserializerInfo(
+                        customDeserializerType, isStatic, isFallback, false // TODO
+                );
 
         register(ClassName.get(deserializerFor), customDeserializerInfo);
-
     }
 }

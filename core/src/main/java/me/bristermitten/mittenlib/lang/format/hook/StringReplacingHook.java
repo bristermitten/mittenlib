@@ -17,9 +17,9 @@ public class StringReplacingHook implements FormattingHook {
     /**
      * Create a new StringReplacingHook
      *
-     * @param replacements The replacements to apply
-     *                     These should be in the format {@code key, value}, so the length should always be a multiple of 2
-     *                     If a {@link Supplier} is used as a value, it will be called each time the hook is applied, but only if the key is found in the message
+     * @param replacements The replacements to apply These should be in the format {@code key, value},
+     *                     so the length should always be a multiple of 2 If a {@link Supplier} is used as a value, it
+     *                     will be called each time the hook is applied, but only if the key is found in the message
      */
     public StringReplacingHook(Object... replacements) {
         if (replacements.length % 2 != 0) {
@@ -27,7 +27,8 @@ public class StringReplacingHook implements FormattingHook {
         }
         this.replacements = new HashSet<>(replacements.length / 2);
         for (int i = 0; i < replacements.length; i += 2) {
-            this.replacements.add(new AbstractMap.SimpleEntry<>((String) replacements[i], replacements[i + 1]));
+            this.replacements.add(
+                    new AbstractMap.SimpleEntry<>((String) replacements[i], replacements[i + 1]));
         }
     }
 
@@ -50,7 +51,7 @@ public class StringReplacingHook implements FormattingHook {
         if (s instanceof Supplier) {
             //noinspection rawtypes
             return getStringValue(((Supplier) s).get());
-        }
-        return Objects.toString(s);
     }
+    return Objects.toString(s);
+  }
 }

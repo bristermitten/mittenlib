@@ -14,7 +14,6 @@ import java.util.*;
 public abstract class DataTree {
 
     private DataTree() {
-
     }
 
     // static factories
@@ -38,7 +37,6 @@ public abstract class DataTree {
     public static DataTreeNull null_() {
         return DataTreeNull.INSTANCE;
     }
-
 
     public static DataTree.DataTreeArray array(DataTree... values) {
         return new DataTree.DataTreeArray(values);
@@ -90,7 +88,7 @@ public abstract class DataTree {
         }
     }
 
-    public static abstract class DataTreeLiteral extends DataTree {
+    public abstract static class DataTreeLiteral extends DataTree {
 
         @Override
         public abstract Object value();
@@ -257,5 +255,5 @@ public abstract class DataTree {
         public int hashCode() {
             return Objects.hashCode(values);
         }
-    }
+  }
 }

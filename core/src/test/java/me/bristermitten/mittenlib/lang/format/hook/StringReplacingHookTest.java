@@ -16,11 +16,11 @@ class StringReplacingHookTest {
     @Test
     void format() {
         var message = "Hello {name} {abcde} {abc}";
-        var hook = new StringReplacingHook(
-                "{name}", "Test",
-                "{abcde}", "test2",
-                "{abc}", null
-        );
+        var hook =
+                new StringReplacingHook(
+                        "{name}", "Test",
+                        "{abcde}", "test2",
+                        "{abc}", null);
 
         var result = hook.format(message, null);
         assertEquals("Hello Test test2 null", result);

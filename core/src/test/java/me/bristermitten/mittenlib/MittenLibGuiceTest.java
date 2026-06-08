@@ -27,17 +27,18 @@ class MittenLibGuiceTest {
         MockBukkit.unload();
     }
 
-
     @Test
     void testGuiceInjection() {
-        Injector build = MittenLib.withDefaults(plugin)
-                .addModules(new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        Multibinder.newSetBinder(binder(), Listener.class);
-                    }
+        Injector build =
+                MittenLib.withDefaults(plugin)
+                        .addModules(
+                                new AbstractModule() {
+                                    @Override
+                                    protected void configure() {
+                                        Multibinder.newSetBinder(binder(), Listener.class);
+                                    }
                 })
-                .build();
+                        .build();
 
         assertEquals(plugin.getName(), build.getInstance(MittenLibConsumer.class).getName());
     }

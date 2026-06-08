@@ -20,14 +20,16 @@ public class GsonObjectMapper implements ObjectMapper {
 
     @Override
     public <T> Result<T> map(Object map, TypeToken<T> type) {
-        return Result.runCatching(() -> {
-            final JsonElement tree = map instanceof JsonElement ? (JsonElement) map : gson.toJsonTree(map);
-            return gson.fromJson(tree, type.getType());
-        });
+        return Result.runCatching(
+                () -> {
+                    final JsonElement tree =
+                            map instanceof JsonElement ? (JsonElement) map : gson.toJsonTree(map);
+                    return gson.fromJson(tree, type.getType());
+                });
     }
 
     @Override
     public JsonElement map(Object value) {
         return gson.toJsonTree(value);
-    }
+  }
 }

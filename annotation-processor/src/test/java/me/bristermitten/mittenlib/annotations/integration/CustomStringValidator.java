@@ -38,6 +38,6 @@ public class CustomStringValidator implements Validator<String> {
 
         public boolean check(String val) {
             return val != null && val.startsWith(prefix);
-        }
     }
+  }
 }

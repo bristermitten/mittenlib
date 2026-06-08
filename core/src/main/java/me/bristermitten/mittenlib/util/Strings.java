@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
 
 public class Strings {
     private Strings() {
-
     }
 
     /**
      * Capitalize the first letter of a given String
+     *
      * <ul>
-     * <li>"" → ""</li>
-     * <li>"hello" → "Hello"</li>
-     * <li>"HEllo" → "HEllo"</li>
+     *   <li>"" → ""
+     *   <li>"hello" → "Hello"
+     *   <li>"HEllo" → "HEllo"
      * </ul>
      *
      * @param str the String to capitalize
@@ -35,10 +35,11 @@ public class Strings {
 
     /**
      * Uncapitalize the first letter of a given String
+     *
      * <ul>
-     * <li>"" → ""</li>
-     * <li>"Hello" → "hello"</li>
-     * <li>"HEllo" → "hEllo"</li>
+     *   <li>"" → ""
+     *   <li>"Hello" → "hello"
+     *   <li>"HEllo" → "hEllo"
      * </ul>
      *
      * @param str the String to uncapitalize
@@ -54,9 +55,9 @@ public class Strings {
     }
 
     /**
-     * Join a collection of elements to a String using a given separator and toString function.
-     * This is useful when wanting to join a collection of complex objects, whilst wanting to avoid the overhead
-     * of Streams ({@link Collectors#joining()}), and the boilerplate of a for loop
+     * Join a collection of elements to a String using a given separator and toString function. This
+     * is useful when wanting to join a collection of complex objects, whilst wanting to avoid the
+     * overhead of Streams ({@link Collectors#joining()}), and the boilerplate of a for loop
      *
      * @param collection The collection to join
      * @param toString   A function to transform an element to a String
@@ -64,7 +65,10 @@ public class Strings {
      * @param <T>        The type of the collection
      * @return A joined string
      */
-    public static <T> String joinWith(@NotNull Collection<T> collection, @NotNull Function<? super T, ? extends CharSequence> toString, @NotNull String separator) {
+    public static <T> String joinWith(
+            @NotNull Collection<T> collection,
+            @NotNull Function<? super T, ? extends CharSequence> toString,
+            @NotNull String separator) {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
             stringJoiner.add(Objects.requireNonNull(toString.apply(t)));
@@ -77,11 +81,14 @@ public class Strings {
      *
      * @see #joinWith(Collection, Function, String)
      */
-    public static <T> String joinWith(@NotNull T[] collection, @NotNull Function<? super T, ? extends CharSequence> toString, @NotNull String separator) {
+    public static <T> String joinWith(
+            @NotNull T[] collection,
+            @NotNull Function<? super T, ? extends CharSequence> toString,
+            @NotNull String separator) {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
             stringJoiner.add(Objects.requireNonNull(toString.apply(t)));
-        }
-        return stringJoiner.toString();
     }
+    return stringJoiner.toString();
+  }
 }

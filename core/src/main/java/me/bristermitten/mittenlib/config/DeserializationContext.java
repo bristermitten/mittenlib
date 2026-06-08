@@ -13,8 +13,8 @@ public class DeserializationContext {
     /**
      * Create a new DeserializationContext
      *
-     * @param mapper   the mapper to use
-     * @param data     the data to deserialize
+     * @param mapper the mapper to use
+     * @param data   the data to deserialize
      */
     public DeserializationContext(ObjectMapper mapper, DataTree data) {
         this.mapper = mapper;
@@ -22,8 +22,9 @@ public class DeserializationContext {
     }
 
     /**
-     * Returns the mapper to use for deserialization.
-     * In generated config code, this is only used as a last resort.
+     * Returns the mapper to use for deserialization. In generated config code, this is only used as a
+     * last resort.
+     *
      * @return the mapper to use
      */
     public ObjectMapper getMapper() {
@@ -31,7 +32,9 @@ public class DeserializationContext {
     }
 
     /**
-     * Returns the data to deserialize. This may be a child of the original data, or the original data itself.
+     * Returns the data to deserialize. This may be a child of the original data, or the original data
+     * itself.
+     *
      * @return the data to deserialize
      */
     public DataTree getData() {
@@ -40,5 +43,5 @@ public class DeserializationContext {
 
     public DeserializationContext withData(DataTree data) {
         return new DeserializationContext(this.mapper, data);
-    }
+  }
 }

@@ -10,10 +10,9 @@ import me.bristermitten.mittenlib.lang.format.hook.FormattingHook;
 import me.bristermitten.mittenlib.lang.format.hook.LegacyCodeUpdaterHook;
 
 /**
- * An extension of {@link LangModule} that adds support for MiniMessage.
- * This includes a {@link MessageFormatter} implementation ({@link MiniMessageFormatter}),
- * a {@link FormattingHook} to update legacy codes,
- * and other classes required for MiniMessage usage.
+ * An extension of {@link LangModule} that adds support for MiniMessage. This includes a {@link
+ * MessageFormatter} implementation ({@link MiniMessageFormatter}), a {@link FormattingHook} to
+ * update legacy codes, and other classes required for MiniMessage usage.
  */
 public class MiniMessageModule extends LangModule {
     @Override
@@ -22,7 +21,7 @@ public class MiniMessageModule extends LangModule {
         bind(AbstractMiniMessageFactory.class).to(DefaultMiniMessageFactory.class);
 
         Multibinder.newSetBinder(binder(), FormattingHook.class)
-                .addBinding().to(LegacyCodeUpdaterHook.class);
+                .addBinding()
+                .to(LegacyCodeUpdaterHook.class);
     }
-
 }

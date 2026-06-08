@@ -23,14 +23,14 @@ public class PathUtil {
     }
 
     /**
-     * Converts a {@link URL} to a {@link Path}.
-     * <a href="https://stackoverflow.com/questions/15713119/java-nio-file-path-for-a-classpath-resource">Credit</a>
+     * Converts a {@link URL} to a {@link Path}. <a
+     * href="https://stackoverflow.com/questions/15713119/java-nio-file-path-for-a-classpath-resource">Credit</a>
      *
      * @deprecated Resource leak, use {@link #resourceToPath(URL, IOFunction)} instead
      */
     @Deprecated
-    public static @NotNull Path resourceToPath(@NotNull URL resource) throws IOException,
-            URISyntaxException {
+    public static @NotNull Path resourceToPath(@NotNull URL resource)
+            throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");
         URI uri = resource.toURI();
@@ -59,10 +59,8 @@ public class PathUtil {
         return path;
     }
 
-
     public static @NotNull <T> T resourceToPath(@NotNull URL resource, IOFunction<Path, T> function)
-            throws IOException,
-            URISyntaxException {
+            throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");
         URI uri = resource.toURI();
@@ -89,5 +87,5 @@ public class PathUtil {
             }
         }
         throw new IllegalStateException("Could not find a FileSystemProvider for " + uri);
-    }
+  }
 }

@@ -10,7 +10,6 @@ public record ResolvedUnionSpec(
         ClassName source,
         ClassName name,
         MatchStrategies strategy,
-        List<ResolvedUnionConstructor> constructors
-) implements GenericTypeSpec {
-
+        List<ResolvedUnionConstructor> constructors)
+        implements GenericTypeSpec {
 }

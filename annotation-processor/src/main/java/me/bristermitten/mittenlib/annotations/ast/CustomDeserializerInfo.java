@@ -6,14 +6,10 @@ import javax.lang.model.element.TypeElement;
  * Information about a custom deserializer.
  *
  * @param deserializerClass the class where the deserialization function is held
- * @param isStatic          whether the method is static
- * @param isFallback        whether the deserializer is a fallback
- * @param isGlobal          whether the deserializer is globally applied
+ * @param isStatic whether the method is static
+ * @param isFallback whether the deserializer is a fallback
+ * @param isGlobal whether the deserializer is globally applied
  */
 public record CustomDeserializerInfo(
-        TypeElement deserializerClass,
-        boolean isStatic,
-        boolean isFallback,
-        boolean isGlobal
-) {
+        TypeElement deserializerClass, boolean isStatic, boolean isFallback, boolean isGlobal) {
 }

@@ -20,12 +20,10 @@ public sealed interface AbstractConfigStructure {
      * @return The name of the class this config is enclosed in, if present
      */
     @Contract(pure = true)
-    @Nullable
-    ASTParentReference enclosedIn();
+    @Nullable ASTParentReference enclosedIn();
 
     @Contract(pure = true)
     List<AbstractConfigStructure> enclosed();
-
 
     @Contract(pure = true)
     List<Property> properties();
@@ -38,8 +36,10 @@ public sealed interface AbstractConfigStructure {
 
     default boolean needsValidation() {
         return properties().stream()
-                .anyMatch(p -> !p.settings().constraints().isEmpty() ||
-                        !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
+                .anyMatch(
+                        p ->
+                                !p.settings().constraints().isEmpty()
+                                        || !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
     }
 
     default boolean isDynamicallyInitializable() {
@@ -56,22 +56,25 @@ public sealed interface AbstractConfigStructure {
             ASTSettings.ConfigASTSettings settings,
             List<AbstractConfigStructure> enclosed,
             @Nullable ASTParentReference enclosedIn,
-            List<Property> properties
-    ) implements AbstractConfigStructure {
+            List<Property> properties)
+            implements AbstractConfigStructure {
     }
 
     /**
-     * An intersection config structure, i.e. a type with some super classes/interfaces that it extends from
+     * An intersection config structure, i.e. a type with some super classes/interfaces that it
+     * extends from
      *
      * @param roots the names of the "parents" of this config
      */
-    record Intersection(ClassName name,
-                        ConfigTypeSource source,
-                        ASTSettings.ConfigASTSettings settings,
-                        @Nullable ASTParentReference enclosedIn,
-                        List<AbstractConfigStructure> enclosed,
-                        List<ClassName> roots,
-                        List<Property> properties) implements AbstractConfigStructure {
+    record Intersection(
+            ClassName name,
+            ConfigTypeSource source,
+            ASTSettings.ConfigASTSettings settings,
+            @Nullable ASTParentReference enclosedIn,
+            List<AbstractConfigStructure> enclosed,
+            List<ClassName> roots,
+            List<Property> properties)
+            implements AbstractConfigStructure {
     }
 
     /**
@@ -87,11 +90,11 @@ public sealed interface AbstractConfigStructure {
             @Nullable ASTParentReference enclosedIn,
             List<ClassName> parents,
             List<AbstractConfigStructure> alternatives,
-            List<Property> properties
-    ) implements AbstractConfigStructure {
+            List<Property> properties)
+            implements AbstractConfigStructure {
         @Override
         public List<AbstractConfigStructure> enclosed() {
             return alternatives;
-        }
     }
+  }
 }

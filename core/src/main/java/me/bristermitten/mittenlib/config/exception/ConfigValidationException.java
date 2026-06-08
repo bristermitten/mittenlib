@@ -2,7 +2,6 @@ package me.bristermitten.mittenlib.config.exception;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 import java.util.Objects;
 
@@ -71,9 +70,9 @@ public class ConfigValidationException extends IllegalArgumentException {
             if (this == o) return true;
             if (!(o instanceof Violation)) return false;
             Violation violation = (Violation) o;
-            return Objects.equals(propertyName, violation.propertyName) &&
-                    Objects.equals(invalidValue, violation.invalidValue) &&
-                    Objects.equals(message, violation.message);
+            return Objects.equals(propertyName, violation.propertyName)
+                    && Objects.equals(invalidValue, violation.invalidValue)
+                    && Objects.equals(message, violation.message);
         }
 
         @Override
@@ -83,11 +82,16 @@ public class ConfigValidationException extends IllegalArgumentException {
 
         @Override
         public String toString() {
-            return "Violation{" +
-                    "propertyName='" + propertyName + '\'' +
-                    ", invalidValue=" + invalidValue +
-                    ", message='" + message + '\'' +
-                    '}';
+            return "Violation{"
+                    + "propertyName='"
+                    + propertyName
+                    + '\''
+                    + ", invalidValue="
+                    + invalidValue
+                    + ", message='"
+                    + message
+                    + '\''
+                    + '}';
         }
     }
 }

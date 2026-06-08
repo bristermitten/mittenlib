@@ -11,16 +11,19 @@ class CollectionDTOTransformationTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.CollectionConfig",
-                        """
+        Compilation compilation =
+                javac()
+                        .withProcessors(new ConfigProcessor())
+                        .compile(
+                                JavaFileObjects.forSourceString(
+                                        "me.bristermitten.mittenlib.tests.CollectionConfig",
+                                        """
                                 package me.bristermitten.mittenlib.tests;
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;
                                 import me.bristermitten.mittenlib.config.names.NamingPattern;
                                 import me.bristermitten.mittenlib.config.names.NamingPatterns;
-                                
+
                                 import java.util.Map;
                                 @NamingPattern(value = NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source(value = "lang.yml")
@@ -38,4 +41,3 @@ class CollectionDTOTransformationTest {
         assertThat(compilation).succeeded();
     }
 }
-

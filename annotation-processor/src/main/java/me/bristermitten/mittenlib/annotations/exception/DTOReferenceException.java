@@ -28,7 +28,11 @@ public class DTOReferenceException extends RuntimeException {
      * @param replaceWith The type to replace the invalid type with, if known
      * @param source      The source element (i.e., the element referencing the invalid type), if known
      */
-    public DTOReferenceException(TypeMirror typeUsed, GeneratedTypeCache typeCache, @Nullable Class<?> replaceWith, @Nullable Element source) {
+    public DTOReferenceException(
+            TypeMirror typeUsed,
+            GeneratedTypeCache typeCache,
+            @Nullable Class<?> replaceWith,
+            @Nullable Element source) {
         this.typeUsed = typeUsed;
         this.typeCache = typeCache;
         this.replaceWith = replaceWith;
@@ -46,19 +50,21 @@ public class DTOReferenceException extends RuntimeException {
                 return "Unknown type %s".formatted(typeUsed);
             }
 
-            typesReplaceWith = types.size() == 1
-                    ? Stringify.prettyStringify(types.iterator().next())
-                    : "any of " + types.stream().map(Stringify::prettyStringify).toList();
-        }
+            typesReplaceWith =
+                    types.size() == 1
+                            ? Stringify.prettyStringify(types.iterator().next())
+                            : "any of " + types.stream().map(Stringify::prettyStringify).toList();
+    }
 
-
-        return """
+    return """
                 You seem to be using a generated type in a DTO.
                 This results in weird behaviour and so is not allowed.
                 You should replace %s with %s.
                 This issue occurred in %s.
-                """
-                .formatted(typeUsed, typesReplaceWith, Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
-    }
-
+            """
+            .formatted(
+                    typeUsed,
+                    typesReplaceWith,
+                    Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
+  }
 }

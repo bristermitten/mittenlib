@@ -10,5 +10,5 @@ public class NoOpConfigProviderImprover implements ConfigProviderImprover {
     @Override
     public <T> ConfigProvider<T> improve(ConfigProvider<T> provider) {
         return provider;
-    }
+  }
 }

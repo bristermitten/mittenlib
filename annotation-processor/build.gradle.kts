@@ -22,7 +22,7 @@ dependencies {
     implementation(libs.chalk)
     @Suppress(
         "GradlePackageUpdate",
-        "RedundantSuppression"
+        "RedundantSuppression",
     ) // This is deliberately kept low, so it syncs with the spigot gson version
     implementation(libs.gson)
 

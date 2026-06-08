@@ -5,7 +5,6 @@ import me.bristermitten.mittenlib.gui.command.CommandContext;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-
 public class UpdateResult<Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>> {
     private final Model model;
     private final Cmd command;
@@ -15,11 +14,13 @@ public class UpdateResult<Model, Msg, Ctx extends CommandContext, Cmd extends Co
         this.command = command;
     }
 
-    public static <Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>> UpdateResult<Model, Msg, Ctx, Cmd> of(@NonNull Model model, @NonNull Cmd command) {
+    public static <Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>>
+    UpdateResult<Model, Msg, Ctx, Cmd> of(@NonNull Model model, @NonNull Cmd command) {
         return new UpdateResult<>(model, command);
     }
 
-    public static <Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>> UpdateResult<Model, Msg, Ctx, Cmd> pure(@NonNull Model model) {
+    public static <Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>>
+    UpdateResult<Model, Msg, Ctx, Cmd> pure(@NonNull Model model) {
         return new UpdateResult<>(model, null);
     }
 

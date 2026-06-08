@@ -13,8 +13,8 @@ public interface SpigotCommand<Msg> extends Command<SpigotCommandContext, Msg> {
 
     /**
      * Wrap a simple consumer into a SpigotCommand.
-     * <p>
-     * Note: Prefer creating specific commands where possible.
+     *
+     * <p>Note: Prefer creating specific commands where possible.
      *
      * @param command the command to wrap
      * @param <Msg>   the type of messages the command can produce
@@ -34,7 +34,5 @@ public interface SpigotCommand<Msg> extends Command<SpigotCommandContext, Msg> {
      */
     static <Msg> SpigotCommand<Msg> close() {
         return (context, continuation) -> context.closeInventory();
-    }
-
-
+  }
 }

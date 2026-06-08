@@ -19,5 +19,5 @@ public class AdventureAudienceProvider implements Provider<BukkitAudiences> {
     @Override
     public BukkitAudiences get() {
         return BukkitAudiences.create(plugin);
-    }
+  }
 }

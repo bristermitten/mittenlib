@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+import me.bristermitten.mittenlib.config.ConfigInfrastructureModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
@@ -17,7 +18,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
@@ -37,7 +37,6 @@ public class ConfigBenchmark {
     @Benchmark
     public TestDataGson benchmarkJacksonJson(BenchState state) throws JsonProcessingException {
         return state.jackson.readValue(state.jsonData, TestDataGson.class);
-
     }
 
     @Benchmark
@@ -57,7 +56,6 @@ public class ConfigBenchmark {
         return state.yaml.loadAs(state.yamlData, TestDataGson.class);
     }
 
-
     @State(Scope.Benchmark)
     public static class BenchState {
         public final Gson gson = new Gson();
@@ -73,20 +71,24 @@ public class ConfigBenchmark {
             this.yamlData = getYamlFile();
             this.jsonData = getJSONFile();
 
-            Injector injector = Guice.createInjector(
-                    Modules.override(new ConfigModule(Set.of()))
-                            .with(new BenchmarkingModule()),
-                    new FileTypeModule()
-            );
-            ConfigProviderFactory configProviderFactory = injector.getInstance(ConfigProviderFactory.class);
+            Injector injector =
+                    Guice.createInjector(
+                            Modules.override(new ConfigInfrastructureModule()).with(new BenchmarkingModule()),
+                            new FileTypeModule());
+            ConfigProviderFactory configProviderFactory =
+                    injector.getInstance(ConfigProviderFactory.class);
 
             var config = new Configuration<>("data.json", TestData.class);
             var jsonType = injector.getInstance(JSONFileType.class);
-            this.configProviderJson = configProviderFactory.createStringReaderProvider(jsonType, jsonData, config).getOrThrow();
+            this.configProviderJson =
+                    configProviderFactory.createStringReaderProvider(jsonType, jsonData, config).getOrThrow();
 
             var config2 = new Configuration<>("data.yaml", TestData.class);
             var yamlType = injector.getInstance(YamlFileType.class);
-            this.configProviderYaml = configProviderFactory.createStringReaderProvider(yamlType, yamlData, config2).getOrThrow();
+            this.configProviderYaml =
+                    configProviderFactory
+                            .createStringReaderProvider(yamlType, yamlData, config2)
+                            .getOrThrow();
         }
 
         public String getJSONFile() {
@@ -98,9 +100,7 @@ public class ConfigBenchmark {
         }
 
         private String load(String fileName) {
-            try (var is = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream(fileName)) {
+            try (var is = getClass().getClassLoader().getResourceAsStream(fileName)) {
                 return new String(Objects.requireNonNull(is).readAllBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);

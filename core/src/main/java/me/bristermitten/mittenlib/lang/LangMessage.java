@@ -11,7 +11,12 @@ public class LangMessage {
     private final @Nullable String actionBar;
     private final @Nullable SoundConfig sound;
 
-    public LangMessage(@Nullable String message, @Nullable String title, @Nullable String subtitle, @Nullable String actionBar, @Nullable SoundConfig sound) {
+    public LangMessage(
+            @Nullable String message,
+            @Nullable String title,
+            @Nullable String subtitle,
+            @Nullable String actionBar,
+            @Nullable SoundConfig sound) {
         this.message = message;
         this.title = title;
         this.subtitle = subtitle;
@@ -39,8 +44,8 @@ public class LangMessage {
         return sound;
     }
 
-    public @NotNull LangMessage add(@NotNull LangMessage other){
-        if(this instanceof CompoundLangMessage) {
+    public @NotNull LangMessage add(@NotNull LangMessage other) {
+        if (this instanceof CompoundLangMessage) {
             return new CompoundLangMessage(((CompoundLangMessage) this).getComponents(), other);
         }
         return new CompoundLangMessage(this, other);

@@ -1,6 +1,5 @@
 package me.bristermitten.mittenlib.config.tree;
 
-
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -78,7 +77,6 @@ public class DataTreeTypeAdapter extends ExtraTypeAdapter<DataTree> {
 
             default:
                 throw new IllegalStateException("Invalid DataTree type: " + in.peek());
-
         }
     }
 }
