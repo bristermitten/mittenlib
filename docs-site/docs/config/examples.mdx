@@ -1,0 +1,156 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Source vs Generated
+
+MittenLib's annotation processor takes your simple DTO classes and generates robust, type-safe implementation code. 
+This page demonstrates what the generated code looks like compared to your source DTO.
+
+## Basic Configuration
+
+The most common use case is a simple class annotated with `@Config`. 
+
+<Tabs>
+  <TabItem value="source" label="Source DTO" default>
+
+```java
+@Config
+public class DatabaseConfigDTO {
+    String host = "localhost";
+    int port = 3306;
+    
+    @NotBlank
+    String database;
+}
+```
+
+  </TabItem>
+  <TabItem value="impl" label="Generated Implementation">
+
+```java
+@GeneratedConfig(source = DatabaseConfigDTO.class)
+public class DatabaseConfig {
+  private final @NonNull String host;
+  private final @NonNull int port;
+  private final @NonNull String database;
+
+  public DatabaseConfig(final @NonNull String host, final @NonNull int port,
+      final @NonNull String database) {
+    this.host = host;
+    this.port = port;
+    this.database = database;
+  }
+
+  public @NonNull String host() { return host; }
+  public @NonNull int port() { return port; }
+  public @NonNull String database() { return database; }
+
+  // Includes withX methods for immutable copying
+  public DatabaseConfig withHost(final String host) {
+    return new DatabaseConfig(host, this.port, this.database);
+  }
+  
+  // equals, hashCode, and toString are also generated
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Validation
+
+When you add validation annotations, MittenLib generates a dedicated validator class that is integrated into the loading pipeline.
+
+<Tabs>
+  <TabItem value="source" label="Source DTO" default>
+
+```java
+@Config
+public class ValidationConfig {
+    @Positive
+    public int positiveInt;
+
+    @NotBlank
+    public String notBlankString;
+
+    @ValidateWith(CustomStringValidator.class)
+    public String customValidated;
+}
+```
+
+  </TabItem>
+  <TabItem value="validator" label="Generated Validator">
+
+```java
+public class ValidationConfigValidator {
+  private final CustomStringValidator customStringValidator;
+
+  @Inject
+  public ValidationConfigValidator(CustomStringValidator customStringValidator) {
+    this.customStringValidator = customStringValidator;
+  }
+
+  public Result<ValidationConfig> validate(ValidationConfig config) {
+    List<ConfigValidationException.Violation> violations = new ArrayList<>();
+    
+    if (config.positiveInt() <= 0) {
+      violations.add(new ConfigValidationException.Violation("positiveInt", config.positiveInt(), "Must be positive"));
+    }
+    
+    if (config.notBlankString().trim().isEmpty()) {
+      violations.add(new ConfigValidationException.Violation("notBlankString", config.notBlankString(), "Must not be blank"));
+    }
+    
+    // ... custom validator calls ...
+
+    if (!violations.isEmpty()) {
+      return Result.fail(new ConfigValidationException(ValidationConfig.class, violations));
+    }
+    return Result.ok(config);
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Serialization & Deserialization
+
+MittenLib generates specialized logic to convert your config to and from `DataTree` representations, which are then handled by YAML or JSON readers.
+
+<Tabs>
+  <TabItem value="deserializer" label="Generated Deserializer" default>
+
+```java
+public class DatabaseConfigDeserializer implements DeserializationFunction<DatabaseConfig> {
+  @Override
+  public Result<DatabaseConfig> apply(DeserializationContext context) {
+    DataTree data = context.data();
+    return Result.combine(
+        data.get("host").map(DataTree::asString).orElse(Result.ok("localhost")),
+        data.get("port").map(DataTree::asInt).orElse(Result.ok(3306)),
+        data.get("database").map(DataTree::asString).getOrThrow(),
+        DatabaseConfig::new
+    );
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="serializer" label="Generated Serializer">
+
+```java
+public class DatabaseConfigSerializer implements SerializationFunction<DatabaseConfig> {
+  @Override
+  public DataTree apply(DatabaseConfig config, SerializationContext context) {
+    Map<String, DataTree> map = new HashMap<>();
+    map.put("host", DataTree.string(config.host()));
+    map.put("port", DataTree.integer(config.port()));
+    map.put("database", DataTree.string(config.database()));
+    return DataTree.map(map);
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
