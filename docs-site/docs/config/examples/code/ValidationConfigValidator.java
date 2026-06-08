@@ -1,4 +1,4 @@
-export default `public class ValidationConfigValidator {
+public class ValidationConfigValidator {
   private final CustomStringValidator customStringValidator;
 
   @Inject
@@ -24,4 +24,4 @@ export default `public class ValidationConfigValidator {
     }
     return Result.ok(config);
   }
-}`;
+}

@@ -1,4 +1,4 @@
-export default `@Config
+@Config
 public class ValidationConfig {
     @Positive
     public int positiveInt;
@@ -8,4 +8,4 @@ public class ValidationConfig {
 
     @ValidateWith(CustomStringValidator.class)
     public String customValidated;
-}`;
+}

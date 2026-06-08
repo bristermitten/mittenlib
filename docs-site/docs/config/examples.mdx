@@ -1,10 +1,5 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
-import DatabaseConfigDTOCode from './code/DatabaseConfigDTO';
-import DatabaseConfigCode from './code/DatabaseConfig';
-import ValidationConfigDTOCode from './code/ValidationConfigDTO';
-import ValidationConfigValidatorCode from './code/ValidationConfigValidator';
 
 # Source vs Generated
 
@@ -17,10 +12,16 @@ The most common use case is a simple class annotated with `@Config`.
 
 <Tabs>
   <TabItem value="source" label="Source DTO" default>
-    <CodeBlock language="java">{DatabaseConfigDTOCode}</CodeBlock>
+
+```java file=./examples/code/DatabaseConfigDTO.java
+```
+
   </TabItem>
   <TabItem value="impl" label="Generated Implementation">
-    <CodeBlock language="java">{DatabaseConfigCode}</CodeBlock>
+
+```java file=./examples/code/DatabaseConfig.java
+```
+
   </TabItem>
 </Tabs>
 
@@ -30,9 +31,34 @@ When you add validation annotations, MittenLib generates a dedicated validator c
 
 <Tabs>
   <TabItem value="source" label="Source DTO" default>
-    <CodeBlock language="java">{ValidationConfigDTOCode}</CodeBlock>
+
+```java file=./examples/code/ValidationConfigDTO.java
+```
+
   </TabItem>
   <TabItem value="validator" label="Generated Validator">
-    <CodeBlock language="java">{ValidationConfigValidatorCode}</CodeBlock>
+
+```java file=./examples/code/ValidationConfigValidator.java
+```
+
+  </TabItem>
+</Tabs>
+
+## Serialization & Deserialization
+
+MittenLib generates specialized logic to convert your config to and from `DataTree` representations, which are then handled by YAML or JSON readers.
+
+<Tabs>
+  <TabItem value="deserializer" label="Generated Deserializer" default>
+
+```java file=./examples/code/DatabaseConfigDeserializer.java
+```
+
+  </TabItem>
+  <TabItem value="serializer" label="Generated Serializer">
+
+```java file=./examples/code/DatabaseConfigSerializer.java
+```
+
   </TabItem>
 </Tabs>

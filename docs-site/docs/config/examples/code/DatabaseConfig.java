@@ -1,4 +1,4 @@
-export default `@GeneratedConfig(source = DatabaseConfigDTO.class)
+@GeneratedConfig(source = DatabaseConfigDTO.class)
 public class DatabaseConfig {
     private final @NonNull String host;
     private final @NonNull int port;
@@ -28,4 +28,4 @@ public class DatabaseConfig {
     }
 
     // equals, hashCode, and toString are also generated
-}`;
+}

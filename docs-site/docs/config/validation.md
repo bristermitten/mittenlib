@@ -1,17 +1,18 @@
 # Validation
 
-MittenLib provides a powerful validation system that runs during the loading process, ensuring that your application never starts with invalid data.
+MittenLib provides a powerful validation system that runs during the loading process, ensuring that your application
+never starts with invalid data.
 
 ## Built-in Constraints
 
-| Annotation | Description |
-| :--- | :--- |
-| `@NotBlank` | String must not be null or whitespace only. |
-| `@Positive` | Number must be > 0. |
-| `@Negative` | Number must be < 0. |
-| `@Min(val)` | Number must be at least `val`. |
-| `@Max(val)` | Number must be at most `val`. |
-| `@Range(min, max)` | Number must be between `min` and `max`. |
+| Annotation         | Description                                 |
+|:-------------------|:--------------------------------------------|
+| `@NotBlank`        | String must not be null or whitespace only. |
+| `@Positive`        | Number must be > 0.                         |
+| `@Negative`        | Number must be < 0.                         |
+| `@Min(val)`        | Number must be at least `val`.              |
+| `@Max(val)`        | Number must be at most `val`.               |
+| `@Range(min, max)` | Number must be between `min` and `max`.     |
 
 ## Custom Validators
 
