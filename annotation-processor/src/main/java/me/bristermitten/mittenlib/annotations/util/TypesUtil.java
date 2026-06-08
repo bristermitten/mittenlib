@@ -118,7 +118,6 @@ public class TypesUtil {
      */
     public <A extends Annotation> @Nullable A getAnnotation(Element e, Class<A> type) {
         A onElem = e.getAnnotation(type);
-        //noinspection ConstantValue I don't know why intellij thinks getAnnotation can never return null
         if (onElem != null) {
             return onElem;
         }
@@ -171,23 +170,5 @@ public class TypesUtil {
             }
         }
         return Optional.empty();
-    }
-
-    public @Nullable TypeMirror getComponentType(TypeMirror typeMirror) {
-        if (!(typeMirror instanceof DeclaredType declaredType)) {
-            return null;
-        }
-        List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
-        if (typeArguments.isEmpty()) {
-            return null;
-        }
-        // For List<T>, return T. For Map<K, V>, return V.
-        if (typeArguments.size() == 1) {
-            return typeArguments.get(0);
-        }
-        if (typeArguments.size() == 2) {
-            return typeArguments.get(1);
-        }
-        return null;
     }
 }

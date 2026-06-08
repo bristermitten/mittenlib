@@ -13,10 +13,6 @@ public class CustomStringValidator implements Validator<String> {
         this.dependency = dependency;
     }
 
-    public CustomStringValidator() {
-        this(new ValidationDependency());
-    }
-
     @Override
     public Optional<String> validate(String value) {
         if (dependency.check(value)) {
@@ -33,10 +29,6 @@ public class CustomStringValidator implements Validator<String> {
 
         public ValidationDependency(String prefix) {
             this.prefix = prefix;
-        }
-
-        public ValidationDependency() {
-            this("mitten");
         }
 
         public boolean check(String val) {

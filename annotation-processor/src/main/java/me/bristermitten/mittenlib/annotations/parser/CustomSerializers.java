@@ -1,10 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeUtils;
 import io.toolisticon.aptk.tools.wrapper.ExecutableElementWrapper;
@@ -22,23 +19,8 @@ import javax.lang.model.type.TypeMirror;
 import java.util.Optional;
 
 @Singleton
-public class CustomSerializers {
-    private final Multimap<TypeName, CustomSerializerInfo> serializerInfoMultimap = HashMultimap.create();
+public class CustomSerializers extends CustomInfoRegistry<CustomSerializerInfo> {
 
-    public void register(TypeName clazz, CustomSerializerInfo info) {
-        serializerInfoMultimap.put(clazz, info);
-    }
-
-    public Optional<CustomSerializerInfo> getCustomSerializer(TypeMirror propertyType) {
-        var fromMap = serializerInfoMultimap.get(TypeName.get(propertyType));
-        if (fromMap.isEmpty()) {
-            return Optional.empty();
-        }
-        if (fromMap.size() > 1) {
-            throw new IllegalArgumentException("Not sure how to handle multiple yet");
-        }
-        return Optional.of(fromMap.iterator().next());
-    }
 
     public void registerCustomSerializer(TypeElement customSerializerType) {
         CustomSerializerFor annotation = customSerializerType.getAnnotation(CustomSerializerFor.class);
@@ -48,7 +30,7 @@ public class CustomSerializers {
 
         TypeMirror serializerFor;
         try {
-            annotation.value();
+            var ignored = annotation.value();
             throw new IllegalStateException("Expected MirroredTypeException");
         } catch (MirroredTypeException e) {
             serializerFor = e.getTypeMirror();
@@ -62,7 +44,7 @@ public class CustomSerializers {
                 .getMethods().stream()
                 .filter(m -> m.getSimpleName().equals("serialize"))
                 .filter(m -> m.getParameters().size() == 2)
-                .filter(m -> TypeUtils.TypeComparison.isTypeEqual(m.getParameters().get(0).asType().unwrap(), serializerFor))
+                .filter(m -> TypeUtils.TypeComparison.isTypeEqual(m.getParameters().getFirst().asType().unwrap(), serializerFor))
                 .filter(m -> m.getParameters().get(1).asType().toString().equals(SerializationContext.class.getCanonicalName()))
                 .findFirst();
 

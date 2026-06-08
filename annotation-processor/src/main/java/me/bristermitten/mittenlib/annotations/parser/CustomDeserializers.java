@@ -1,10 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage;
 import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessageCodePrefix;
 import io.toolisticon.aptk.tools.MessagerUtils;
@@ -18,32 +15,14 @@ import me.bristermitten.mittenlib.config.extension.CustomDeserializer;
 import me.bristermitten.mittenlib.config.extension.Fallback;
 import me.bristermitten.mittenlib.util.Result;
 
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.Optional;
 
 @Singleton
 @DeclareCompilerMessageCodePrefix("CUSTOM_DESERIALIZER")
-public class CustomDeserializers {
-    private final Multimap<TypeName, CustomDeserializerInfo> deserializerInfoMultimap = HashMultimap.create();
-
-
-    public void register(TypeName clazz, CustomDeserializerInfo info) {
-        deserializerInfoMultimap.put(clazz, info);
-    }
-
-    public Optional<CustomDeserializerInfo> getCustomDeserializer(TypeMirror propertyType) {
-        var fromMap = deserializerInfoMultimap.get(TypeName.get(propertyType));
-
-        if (fromMap.isEmpty()) {
-            return Optional.empty();
-        }
-        if (fromMap.size() > 1) {
-            throw new IllegalArgumentException("Not sure how to handle multiple yet");
-        }
-
-        return Optional.of(fromMap.iterator().next());
-    }
+public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerInfo> {
 
 
     @DeclareCompilerMessage(code = "001", enumValueName = "INVALID_STATIC_METHOD_SIGNATURE", message = "Custom deserializer method must be static and be of the signature Result<${0}> deserialize(DeserializationContext)")
@@ -82,7 +61,7 @@ public class CustomDeserializers {
         }
 
         boolean isStatic = !implementsCustomDeserializer && deserializeMethodOpt.isPresent() &&
-                deserializeMethodOpt.get().unwrap().getModifiers().contains(javax.lang.model.element.Modifier.STATIC);
+                deserializeMethodOpt.get().unwrap().getModifiers().contains(Modifier.STATIC);
 
         if (!isStatic && !implementsCustomDeserializer) {
             MessagerUtils.error(customDeserializerType, CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC);

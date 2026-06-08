@@ -14,7 +14,6 @@ import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
-import me.bristermitten.mittenlib.util.Strings;
 import org.jspecify.annotations.Nullable;
 
 import javax.lang.model.element.Modifier;
@@ -28,11 +27,7 @@ import java.util.Optional;
  * to strongly typed configuration objects.
  */
 public class DeserializationCodeGenerator {
-    /**
-     * The prefix for all generated deserialization methods.
-     * For example, a method to deserialize a field called "test" would be called deserializeTest
-     */
-    public static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
+
     final TypesUtil typesUtil;
     private final FieldNameGenerator fieldNameGenerator;
     private final MethodNames methodNames;
@@ -118,7 +113,7 @@ public class DeserializationCodeGenerator {
     private MethodSpec.Builder createDeserializeMethodBuilder(Property property,
                                                               TypeName elementResultType,
                                                               @Nullable ClassName daoName) {
-        final MethodSpec.Builder builder = MethodSpec.methodBuilder(DESERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name()))
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(methodNames.getDeserializeMethodName(property))
                 .addModifiers(Modifier.PRIVATE)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), elementResultType))
                 .addParameter(ParameterSpec.builder(DeserializationContext.class, "context").build());

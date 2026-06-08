@@ -126,7 +126,7 @@ public class ConfigSaverGenerator {
 
         for (Property property : ast.properties()) {
             String key = fieldNameGenerator.getConfigFieldName(property);
-            String serializeMethodName = SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
+            String serializeMethodName = methodNames.getSerializeMethodName(property);
 
             // Get the property value based on source type
             CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "config", methodNames, true);
@@ -194,7 +194,7 @@ public class ConfigSaverGenerator {
                     method.addStatement("map.put($T.string($S), $T.loadFrom(context.getMapper().map($L)))",
                             DataTree.class, key, DataTreeTransforms.class, propertyAccess);
                 } else {
-                    String serializeMethodName = SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
+                    String serializeMethodName = methodNames.getSerializeMethodName(property);
                     CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
                     method.addStatement("map.put($T.string($S), this.$L($L, context))",
                             DataTree.class, key, serializeMethodName, propertyAccess);
@@ -314,7 +314,7 @@ public class ConfigSaverGenerator {
      * @param injectedFieldNames the mapping of injected types to their corresponding field names (e.g. {@code myCustomSerializerProvider})
      */
     private void collectCustomSerializers(TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
-        customSerializers.getCustomSerializer(type).ifPresent(info -> {
+        customSerializers.getCustomInfo(type).ifPresent(info -> {
             if (!info.isStatic()) {
                 TypeElement serializerClass = info.serializerClass();
                 ClassName serializerClassName = ClassName.get(serializerClass);

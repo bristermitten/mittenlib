@@ -25,7 +25,7 @@ public class YamlObjectLoader implements ObjectLoader {
     public @NotNull Result<@NotNull DataTree> load(@NotNull Reader source) {
         return runCatching(() -> {
 
-            Object obj = yaml.load(source);
+            Object obj = yaml.load(source); // todo: let's perhaps move away from snakeyaml because it's very vulnerable
 
             return DataTreeTransforms.loadFrom(obj);
         });

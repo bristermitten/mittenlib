@@ -114,7 +114,7 @@ public class GenericTypeDeserializerGenerator {
      * @return true if the type or any nested type argument contains a custom deserializer or a config type
      */
     private boolean hasNestedCustomDeserializerOrConfig(TypeMirror type) {
-        if (customDeserializers.getCustomDeserializer(type).isPresent() || typesUtil.isConfigType(type)) {
+        if (customDeserializers.getCustomInfo(type).isPresent() || typesUtil.isConfigType(type)) {
             return true;
         }
         TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
@@ -144,13 +144,13 @@ public class GenericTypeDeserializerGenerator {
     private CodeBlock getDeserializationFunction(TypeMirror type, int depth) {
         TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
 
-        // 1. Custom Deserializer
-        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(type);
+        // Custom Deserializer
+        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomInfo(type);
         if (customDeserializerOptional.isPresent()) {
             return getDeserializationFunctionReference(customDeserializerOptional.get());
         }
 
-        // 2. Config type
+        // Config type
         if (typesUtil.isConfigType(type)) {
             String loaderField = configurationClassNameGenerator.getLoaderProviderFieldName(type);
             return CodeBlock.of("this.$L.get()", loaderField);

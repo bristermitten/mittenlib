@@ -2,11 +2,9 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
+import me.bristermitten.mittenlib.util.Strings;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -26,12 +24,22 @@ public class MethodNames {
     private final ElementsFinder elementsFinder;
     private final Map<VariableElement, String> safeNameCache = new HashMap<>();
     private final Map<VariableElement, Set<String>> methodNamesCache = new HashMap<>();
-    private final ConfigurationClassNameGenerator configurationClassNameGenerator;
+
+    /**
+     * The prefix for all generated serialization methods.
+     * For example, a method to serialize a field called "test" would be called {@code serializeTest}
+     */
+    private static final String SERIALIZE_METHOD_PREFIX = "serialize";
+
+    /**
+     * The prefix for all generated deserialization methods.
+     * For example, a method to deserialize a field called "test" would be called {@code deserializeTest}
+     */
+    private static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
 
     @Inject
-    MethodNames(ElementsFinder elementsFinder, ConfigurationClassNameGenerator configurationClassNameGenerator) {
+    MethodNames(ElementsFinder elementsFinder) {
         this.elementsFinder = elementsFinder;
-        this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
     /**
@@ -86,52 +94,27 @@ public class MethodNames {
     }
 
     /**
-     * Gets the name of the deserialization method for a type.
+     * Gets the name of the deserialization method for a property.
      * This should only be used when the type is known to be a configuration implementation class.
      *
-     * @param name The type name
+     * @param property the property
      * @return The deserialization method name
      */
-    public String getDeserializeMethodName(TypeName name) {
-        if (name instanceof ClassName cn) {
-            return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + cn.simpleName();
-        }
-        return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + name;
+    public String getDeserializeMethodName(Property property) {
+        var name = Strings.capitalize(property.name());
+        return DESERIALIZE_METHOD_PREFIX + name;
     }
 
     /**
-     * Gets the name of the deserialization method for a configuration structure.
-     * This method uses the implementation class name derived from the structure.
-     *
-     * @param ast The abstract configuration structure
-     * @return The deserialization method name for the structure
-     */
-    public String getDeserializeMethodName(AbstractConfigStructure ast) {
-        return getDeserializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
-    }
-
-    /**
-     * Gets the name of the serialization method for a type.
+     * Gets the name of the serialization method for a property.
      * This should only be used when the type is known to be a configuration implementation class.
      *
-     * @param name The type name
+     * @param property the property
      * @return The serialization method name
      */
-    public String getSerializeMethodName(TypeName name) {
-        if (name instanceof ClassName cn) {
-            return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + cn.simpleName();
-        }
-        return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + name;
+    public String getSerializeMethodName(Property property) {
+        var name = Strings.capitalize(property.name());
+        return SERIALIZE_METHOD_PREFIX + name;
     }
 
-    /**
-     * Gets the name of the serialization method for a configuration structure.
-     * This method uses the implementation class name derived from the structure.
-     *
-     * @param ast The abstract configuration structure
-     * @return The serialization method name for the structure
-     */
-    public String getSerializeMethodName(AbstractConfigStructure ast) {
-        return getSerializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
-    }
 }

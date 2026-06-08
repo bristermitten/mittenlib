@@ -221,7 +221,7 @@ public class ConfigLoaderGenerator {
      * @param injectedFieldNames the mapping of injected types to their corresponding field names
      */
     private void collectCustomDeserializers(TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
-        Optional<CustomDeserializerInfo> deserializerOpt = customDeserializers.getCustomDeserializer(type);
+        Optional<CustomDeserializerInfo> deserializerOpt = customDeserializers.getCustomInfo(type);
         if (deserializerOpt.isPresent()) {
             CustomDeserializerInfo info = deserializerOpt.get();
             if (!info.isStatic()) {

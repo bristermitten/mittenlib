@@ -24,24 +24,22 @@ import java.util.*;
  * configuration objects to {@link DataTree} representations.
  */
 public class SerializationCodeGenerator {
-    /**
-     * The prefix for all generated serialization methods.
-     * For example, a method to serialize a field called "test" would be called serializeTest
-     */
-    public static final String SERIALIZE_METHOD_PREFIX = "serialize";
+
 
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final TypesUtil typesUtil;
     private final CustomSerializers customSerializers;
+    private final MethodNames methodNames;
 
     @Inject
     public SerializationCodeGenerator(
             ConfigurationClassNameGenerator configurationClassNameGenerator,
             TypesUtil typesUtil,
-            CustomSerializers customSerializers) {
+            CustomSerializers customSerializers, MethodNames methodNames) {
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.typesUtil = typesUtil;
         this.customSerializers = customSerializers;
+        this.methodNames = methodNames;
     }
 
     /**
@@ -127,7 +125,7 @@ public class SerializationCodeGenerator {
         }
 
         // Unknown type - only serializable if CustomSerializer is present
-        return customSerializers.getCustomSerializer(propertyTypeMirror).isEmpty();
+        return customSerializers.getCustomInfo(propertyTypeMirror).isEmpty();
     }
 
     /**
@@ -181,7 +179,7 @@ public class SerializationCodeGenerator {
      * @return a method spec for the serialization method
      */
     private MethodSpec createSerializeMethodFor(Property property) {
-        String methodName = SERIALIZE_METHOD_PREFIX + Strings.capitalize(property.name());
+        String methodName = methodNames.getSerializeMethodName(property);
         TypeName propertyType = getSerializeParameterType(property);
 
         // Check if the property is annotated with @UseObjectMapperSerialization
@@ -277,7 +275,7 @@ public class SerializationCodeGenerator {
         TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(type);
 
         // Custom Serializer
-        Optional<CustomSerializerInfo> customSerializerOptional = customSerializers.getCustomSerializer(type);
+        Optional<CustomSerializerInfo> customSerializerOptional = customSerializers.getCustomInfo(type);
         if (customSerializerOptional.isPresent()) {
             CustomSerializerInfo info = customSerializerOptional.get();
             TypeName publicTypeName = configurationClassNameGenerator.publicPropertyClassName(type);

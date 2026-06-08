@@ -129,7 +129,7 @@ public class NonGenericTypeDeserializerGenerator {
         handleDirectTypeMatch(builder, property, fromMapName, safeType);
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
 
-        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomDeserializer(property.propertyType());
+        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomInfo(property.propertyType());
         if (customDeserializerOptional.isPresent()) {
             if (handleCustomDeserializer(builder, fromMapName, customDeserializerOptional.get(), false)) {
                 return true;

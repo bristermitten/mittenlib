@@ -14,12 +14,6 @@ public class ConfigVerificationErrors {
                     "This property's type is not an enum, so the @EnumParsingScheme annotation will have no effect."
             );
 
-
-    public static final ValidationMessage CUSTOM_DESERIALIZER_INVALID_STATIC_METHOD_SIGNATURE =
-            PlainValidationMessage.create("CUSTOM_DESERIALIZER_INVALID_STATIC_METHOD_SIGNATURE",
-                    "Custom deserializer method must be static and be of the signature Result<${0}> deserialize(DeserializationContext)"
-            );
-
     public static final ValidationMessage CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR =
             PlainValidationMessage.create("CLASS_DTO_MISSING_NO_ARG_CONSTRUCTOR",
                     "Class DTO ${0} has fields with default values, but is missing an accessible (non-private) zero-arguments constructor. Please define an accessible zero-arguments constructor (package-private, protected, or public) so MittenLib can read the default values."
