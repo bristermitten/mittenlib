@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.codegen;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
@@ -9,7 +10,7 @@ import java.lang.annotation.Target;
  * See {@link MatchStrategies} for available strategies.
  */
 @Target(ElementType.TYPE)
-@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MatchStrategy {
     MatchStrategies value() default MatchStrategies.NOMINAL;
 }
