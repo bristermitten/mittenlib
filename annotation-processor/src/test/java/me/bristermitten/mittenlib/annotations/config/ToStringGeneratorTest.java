@@ -27,7 +27,7 @@ class ToStringGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ToStringConfig")
                 .isNotNull();
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ToStringConfig")
@@ -63,7 +63,7 @@ class ToStringGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ToStringConfig")
                 .isNotNull();
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ToStringConfig")

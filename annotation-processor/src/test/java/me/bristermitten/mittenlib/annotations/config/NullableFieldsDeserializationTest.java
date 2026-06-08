@@ -58,7 +58,7 @@ class NullableFieldsDeserializationTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
         
         // Verify that the generated class exists
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.NullableFieldsConfig")

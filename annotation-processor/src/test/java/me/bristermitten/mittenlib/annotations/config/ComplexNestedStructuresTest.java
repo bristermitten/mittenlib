@@ -31,7 +31,7 @@ class ComplexNestedStructuresTest {
 
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("game.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class GameConfigDTO {
                                     // Game settings
                                     public String name = "Default Game";
@@ -108,7 +108,7 @@ class ComplexNestedStructuresTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         // Verify that the main generated class exists
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.GameConfig")

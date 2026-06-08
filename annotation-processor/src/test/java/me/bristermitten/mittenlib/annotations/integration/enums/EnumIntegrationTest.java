@@ -6,7 +6,9 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
+import me.bristermitten.mittenlib.annotations.integration.ConfigLoaderModule;
 import me.bristermitten.mittenlib.MittenLibConsumer;
+import me.bristermitten.mittenlib.config.ConfigInfrastructureModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
@@ -32,7 +34,7 @@ public class EnumIntegrationTest {
     @BeforeEach
     void setup() {
         injector = Guice.createInjector(
-                new ConfigLoaderModule(),
+                new ConfigLoaderModule().asModuleWithInfrastructure(),
                 new FileWatcherModule(),
                 new FileTypeModule(),
                 new AbstractModule() {

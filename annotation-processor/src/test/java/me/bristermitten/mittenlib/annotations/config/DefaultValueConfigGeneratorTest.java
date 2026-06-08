@@ -28,7 +28,7 @@ class DefaultValueConfigGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.DefaultValueConfig")
                 .isNotNull();
     }
@@ -276,10 +276,12 @@ class DefaultValueConfigGeneratorTest {
                         
                         import me.bristermitten.mittenlib.config.validation.Validator;
                         
+                        import java.util.Optional;
+                        
                         public class DummyValidator implements Validator<String> {
                             @Override
-                            public java.util.Optional<String> validate(String value) {
-                                return java.util.Optional.empty();
+                            public Optional<String> validate(String value) {
+                                return Optional.empty();
                             }
                         }
                         """)

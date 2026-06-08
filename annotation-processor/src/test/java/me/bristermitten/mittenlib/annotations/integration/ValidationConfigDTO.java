@@ -4,7 +4,7 @@ import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.validation.*;
 
 @Config
-public class ValidationConfig {
+public class ValidationConfigDTO {
     @Positive
     public int positiveInt;
 

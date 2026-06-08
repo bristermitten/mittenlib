@@ -49,7 +49,7 @@ public class AbstractParsingTest {
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Atomic.class))
                             .hasFieldOrPropertyWithValue("name", ClassName.get(InterfaceConfig.ChildConfig.class))
                             .hasFieldOrPropertyWithValue("enclosed", List.of())
-                            .hasFieldOrPropertyWithValue("enclosedIn", new ASTParentReference(ClassName.get(InterfaceConfig.class), null))
+                            .hasFieldOrPropertyWithValue("enclosedIn", new ASTParentReference(ClassName.get(InterfaceConfig.class), true, "", null))
                             .extracting(AbstractConfigStructure.Atomic::properties,
                                     InstanceOfAssertFactories.list(Property.class))
                             .singleElement()

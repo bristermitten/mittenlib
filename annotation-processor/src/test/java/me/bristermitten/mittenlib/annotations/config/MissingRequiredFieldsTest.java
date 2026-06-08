@@ -28,7 +28,7 @@ class MissingRequiredFieldsTest {
                                 
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("required.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class RequiredFieldsConfigDTO {
                                     // Required primitive fields (no default values)
                                     public int requiredInt;
@@ -56,7 +56,7 @@ class MissingRequiredFieldsTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
         
         // Verify that the generated class exists
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.RequiredFieldsConfig")

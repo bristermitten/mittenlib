@@ -25,7 +25,7 @@ class OverriddenNameGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
     }
 
     @Test

@@ -1,21 +1,16 @@
 package me.bristermitten.mittenlib.annotations.integration;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.google.inject.util.Types;
 import me.bristermitten.mittenlib.MittenLibConsumer;
-import me.bristermitten.mittenlib.config.ConfigModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.exception.ConfigValidationException;
-import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
+import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,12 +18,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatList;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 public class IntegrationTest {
 
@@ -37,8 +29,7 @@ public class IntegrationTest {
     @BeforeEach
     void setup() {
         injector = Guice.createInjector(
-                new ConfigModule(Set.of()),
-                new ConfigLoaderModule(),
+                new ConfigLoaderModule().asModuleWithInfrastructure(),
                 new FileWatcherModule(),
                 new FileTypeModule(),
                 new AbstractModule() {
@@ -237,7 +228,7 @@ public class IntegrationTest {
     }
 
     @Test
-    void testNoNoArgConstructorClassConfig() throws IOException {
+    void testNoNoArgConstructorClassConfig() {
         var fileContents = "id: 42\nname: \"hello\"";
 
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
@@ -256,7 +247,7 @@ public class IntegrationTest {
     }
 
     @Test
-    void testConstructorAndDefaultValueConfig() throws IOException {
+    void testConstructorAndDefaultValueConfig() {
         var fileContents = "y: 42";
 
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
@@ -275,7 +266,7 @@ public class IntegrationTest {
     }
 
     @Test
-    void testValidationConfigSuccess() throws IOException {
+    void testValidationConfigSuccess() {
         var fileContents = """
                 positiveInt: 5
                 negativeDouble: -2.5
@@ -289,13 +280,13 @@ public class IntegrationTest {
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ValidationConfigImpl.class),
-                        (DeserializationFunction<ValidationConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfigImpl.class)))),
-                        (SerializationFunction<ValidationConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfigImpl.class))))
+                        new Configuration<>(null, ValidationConfig.class),
+                        (DeserializationFunction<ValidationConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfig.class)))),
+                        (SerializationFunction<ValidationConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfig.class))))
                 ).getOrThrow();
 
 
-        ValidationConfigImpl config = stringReaderProvider.get();
+        ValidationConfig config = stringReaderProvider.get();
 
         assertThat(config).isNotNull();
         assertThat(config.positiveInt()).isEqualTo(5);
@@ -309,7 +300,7 @@ public class IntegrationTest {
 
 
     @Test
-    void testValidationConfigFailure() throws IOException {
+    void testValidationConfigFailure() {
         var fileContents = """
                 positiveInt: -5
                 negativeDouble: 2.5
@@ -323,14 +314,14 @@ public class IntegrationTest {
         var provider = injector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ValidationConfigImpl.class),
-                        (DeserializationFunction<ValidationConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfigImpl.class)))),
-                        (SerializationFunction<ValidationConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfigImpl.class))))
+                        new Configuration<>(null, ValidationConfig.class),
+                        (DeserializationFunction<ValidationConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfig.class)))),
+                        (SerializationFunction<ValidationConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfig.class))))
                 ).getOrThrow();
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(ConfigValidationException.class)
-                .hasMessageContaining("Configuration validation failed for class ValidationConfigImpl with 7 violation(s):")
+                .hasMessageContaining("Configuration validation failed for class ValidationConfig with 7 violation(s):")
                 .hasMessageContaining("Property 'positiveInt' (invalid value: -5): Must be positive")
                 .hasMessageContaining("Property 'negativeDouble' (invalid value: 2.5): Must be negative")
                 .hasMessageContaining("Property 'minInt' (invalid value: 5): Must be at least 10.0")
@@ -341,10 +332,9 @@ public class IntegrationTest {
     }
 
     @Test
-    void testValidationConfigInjection() throws IOException {
+    void testValidationConfigInjection() {
         var localInjector = Guice.createInjector(
-                new ConfigModule(Set.of()),
-                new ConfigLoaderModule(),
+                new ConfigLoaderModule().asModuleWithInfrastructure(),
                 new FileWatcherModule(),
                 new FileTypeModule(),
                 new AbstractModule() {
@@ -371,46 +361,46 @@ public class IntegrationTest {
         var provider = localInjector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(localInjector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ValidationConfigImpl.class),
-                        (DeserializationFunction<ValidationConfigImpl>) localInjector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfigImpl.class)))),
-                        (SerializationFunction<ValidationConfigImpl>) localInjector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfigImpl.class))))
+                        new Configuration<>(null, ValidationConfig.class),
+                        (DeserializationFunction<ValidationConfig>) localInjector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfig.class)))),
+                        (SerializationFunction<ValidationConfig>) localInjector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfig.class))))
                 ).getOrThrow();
 
-        ValidationConfigImpl config = provider.get();
+        ValidationConfig config = provider.get();
         assertThat(config).isNotNull();
         assertThat(config.customValidated()).isEqualTo("guice-mitten-lib");
-     }
+    }
 
-     @Test
-     void testValidationConfigNullabilityFailure() throws IOException {
-         var fileContents = """
-                 positiveInt: 5
-                 negativeDouble: -2.5
-                 minInt: 15
-                 maxLong: 50
-                 rangeDouble: 3.5
-                 notBlankString: null
-                 customValidated: null
-                 """;
+    @Test
+    void testValidationConfigNullabilityFailure() {
+        var fileContents = """
+                positiveInt: 5
+                negativeDouble: -2.5
+                minInt: 15
+                maxLong: 50
+                rangeDouble: 3.5
+                notBlankString: null
+                customValidated: null
+                """;
 
-         var provider = injector.getInstance(ConfigProviderFactory.class)
-                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
-                         fileContents,
-                         new Configuration<>(null, ValidationConfigImpl.class),
-                         (DeserializationFunction<ValidationConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfigImpl.class)))),
-                         (SerializationFunction<ValidationConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfigImpl.class))))
-                 ).getOrThrow();
+        var provider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, ValidationConfig.class, ValidationConfig.class),
+                        (DeserializationFunction<ValidationConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, ValidationConfig.class)))),
+                        (SerializationFunction<ValidationConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, ValidationConfig.class))))
+                ).getOrThrow();
 
-         assertThatThrownBy(provider::get)
-                 .isInstanceOf(ConfigValidationException.class)
-                 .hasMessageContaining("Configuration validation failed for class ValidationConfigImpl with 2 violation(s):")
-                 .hasMessageContaining("Property 'notBlankString' (invalid value: null): Must not be null")
-                 .hasMessageContaining("Property 'customValidated' (invalid value: null): Must not be null");
-     }
+        assertThatThrownBy(provider::get)
+                .isInstanceOf(ConfigValidationException.class)
+                .hasMessageContaining("Configuration validation failed for class ValidationConfig with 2 violation(s):")
+                .hasMessageContaining("Property 'notBlankString' (invalid value: null): Must not be null")
+                .hasMessageContaining("Property 'customValidated' (invalid value: null): Must not be null");
+    }
 
-     @Test
+    @Test
     void testValidationConfigProgrammatic() {
-        ValidationConfigImpl config = new ValidationConfigImpl(
+        ValidationConfig config = new ValidationConfig(
                 -5,            // positiveInt (invalid)
                 2.5,           // negativeDouble (invalid)
                 5,             // minInt (invalid)
@@ -420,13 +410,13 @@ public class IntegrationTest {
                 "not-mitten"   // customValidated (invalid)
         );
 
-        Result<ValidationConfigImpl> result = injector.getInstance(ValidationConfigImplValidator.class).validate(config);
+        Result<ValidationConfig> result = injector.getInstance(ValidationConfigValidator.class).validate(config);
         assertThat(result.isFailure()).isTrue();
         Exception exception = result.error().orElseThrow();
         assertThat(exception).isInstanceOf(ConfigValidationException.class);
 
         String message = exception.getMessage();
-        assertThat(message).contains("Configuration validation failed for class ValidationConfigImpl with 7 violation(s):");
+        assertThat(message).contains("Configuration validation failed for class ValidationConfig with 7 violation(s):");
         assertThat(message).contains("Property 'positiveInt' (invalid value: -5): Must be positive");
         assertThat(message).contains("Property 'negativeDouble' (invalid value: 2.5): Must be negative");
         assertThat(message).contains("Property 'minInt' (invalid value: 5): Must be at least 10.0");

@@ -1,29 +1,25 @@
 package me.bristermitten.mittenlib.annotations.integration;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.google.inject.util.Types;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
+import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.provider.FileBasedConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
-import me.bristermitten.mittenlib.config.writer.ConfigWriter;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.config.writer.ConfigWriter;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlObjectWriter;
+import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Unit;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
-import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
-import me.bristermitten.mittenlib.util.Result;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,11 +40,10 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked")
 public class SaveDefaultsIntegrationTest {
 
-    private Injector injector;
     private final Plugin mockPlugin = mock(Plugin.class);
-
     @TempDir
     Path tempDir;
+    private Injector injector;
 
     @BeforeEach
     void setup() {
@@ -56,7 +51,7 @@ public class SaveDefaultsIntegrationTest {
         when(mockPlugin.getName()).thenReturn("TestPlugin");
 
         injector = Guice.createInjector(
-                new ConfigLoaderModule(),
+                new ConfigLoaderModule().asModuleWithInfrastructure(),
                 new FileWatcherModule(),
                 new FileTypeModule(),
                 new AbstractModule() {
@@ -343,6 +338,8 @@ public class SaveDefaultsIntegrationTest {
         assertThat(result.error()).isPresent();
         assertThat(result.error().get().getMessage())
                 .contains("Could not find resource non-existent-config.yml")
-                .contains("following required properties lack default values: name, age, children");
+                .contains("is not dynamically initializable")
+                .contains("following required properties lack default values: name, age, children")
+                .contains("Either provide a default config file in your jar's resources");
     }
 }

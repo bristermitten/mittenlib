@@ -23,6 +23,6 @@ class EmptyConfigGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
     }
 }

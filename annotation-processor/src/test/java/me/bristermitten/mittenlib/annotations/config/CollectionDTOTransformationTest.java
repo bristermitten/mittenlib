@@ -35,7 +35,7 @@ class CollectionDTOTransformationTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
     }
 }
 

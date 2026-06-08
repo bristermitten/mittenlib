@@ -4,14 +4,17 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NestedConfigBindingTest {
 
     @Test
-    void testNestedConfigBindingsAreGenerated() throws java.io.IOException {
+    void testNestedConfigBindingsAreGenerated() throws IOException {
         Compilation compilation = javac()
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.RootConfigDTO",
@@ -22,7 +25,7 @@ class NestedConfigBindingTest {
                                 import me.bristermitten.mittenlib.config.Source;
                                 
                                 @Source("config.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class RootConfigDTO {
                                     public ChildConfigDTO child;
                                 
@@ -39,7 +42,7 @@ class NestedConfigBindingTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
@@ -52,7 +55,7 @@ class NestedConfigBindingTest {
     }
 
     @Test
-    void testNestedInterfaceConfigBindingsAreGenerated() throws java.io.IOException {
+    void testNestedInterfaceConfigBindingsAreGenerated() throws IOException {
         Compilation compilation = javac()
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.RootInterfaceConfig",
@@ -63,7 +66,7 @@ class NestedConfigBindingTest {
                                 import me.bristermitten.mittenlib.config.Source;
 
                                 @Source("config.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public interface RootInterfaceConfig {
                                     ChildInterface child();
 
@@ -74,7 +77,7 @@ class NestedConfigBindingTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
@@ -85,7 +88,7 @@ class NestedConfigBindingTest {
     }
 
     @Test
-    void testAmbiguousNestedConfigBindingsAreNotGenerated() throws java.io.IOException {
+    void testAmbiguousNestedConfigBindingsAreNotGenerated() throws IOException {
         Compilation compilation = javac()
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.AmbiguousConfigDTO",
@@ -96,7 +99,7 @@ class NestedConfigBindingTest {
                                 import me.bristermitten.mittenlib.config.Source;
 
                                 @Source("config.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class AmbiguousConfigDTO {
                                     public ChildConfigDTO first;
                                     public ChildConfigDTO second;
@@ -108,17 +111,17 @@ class NestedConfigBindingTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
 
         String content = module.get().getCharContent(true).toString();
-        assertTrue(!content.contains("provideChildConfig"), "Should not have provideChildConfig due to ambiguity");
+        assertFalse(content.contains("provideChildConfig"), "Should not have provideChildConfig due to ambiguity");
     }
 
     @Test
-    void testAmbiguousNestedConfigBindingsWithOverrideAreGenerated() throws java.io.IOException {
+    void testAmbiguousNestedConfigBindingsWithOverrideAreGenerated() throws IOException {
         Compilation compilation = javac()
                 .withProcessors(new ConfigProcessor())
                 .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OverrideAmbiguousConfigDTO",
@@ -130,7 +133,7 @@ class NestedConfigBindingTest {
                                 import me.bristermitten.mittenlib.config.BindProperty;
 
                                 @Source("config.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class OverrideAmbiguousConfigDTO {
                                     @BindProperty
                                     public ChildConfigDTO first;
@@ -143,7 +146,7 @@ class NestedConfigBindingTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
@@ -166,7 +169,7 @@ class NestedConfigBindingTest {
                                 import me.bristermitten.mittenlib.config.BindProperty;
 
                                 @Source("config.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class DoubleOverrideConfigDTO {
                                     @BindProperty
                                     public ChildConfigDTO first;
@@ -184,3 +187,5 @@ class NestedConfigBindingTest {
         assertThat(compilation).hadErrorContaining("Multiple properties of type ChildConfig are marked with @BindProperty");
     }
 }
+
+

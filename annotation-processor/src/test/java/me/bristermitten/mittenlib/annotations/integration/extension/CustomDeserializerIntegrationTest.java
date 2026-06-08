@@ -1,14 +1,13 @@
 package me.bristermitten.mittenlib.annotations.integration.extension;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.google.inject.util.Types;
 import me.bristermitten.mittenlib.MittenLibConsumer;
+import me.bristermitten.mittenlib.annotations.integration.ConfigLoaderModule;
 import me.bristermitten.mittenlib.annotations.integration.extension.fallback.CustomTypeFallback;
 import me.bristermitten.mittenlib.annotations.integration.extension.fallback.CustomTypeFallbackConfig;
+import me.bristermitten.mittenlib.annotations.integration.extension.fallback.CustomTypeFallbackConfigImpl;
+import me.bristermitten.mittenlib.config.ConfigInfrastructureModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
@@ -29,8 +28,8 @@ public class CustomDeserializerIntegrationTest {
     @BeforeEach
     void setup() {
         injector = Guice.createInjector(
-                new ConfigLoaderModule(),
-                new me.bristermitten.mittenlib.annotations.integration.extension.fallback.ConfigLoaderModule(),
+                new ConfigInfrastructureModule(),
+                new ConfigLoaderModule().asModule(),
                 new FileWatcherModule(),
                 new FileTypeModule(),
                 new AbstractModule() {
@@ -49,9 +48,10 @@ public class CustomDeserializerIntegrationTest {
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         """
-                                customType: 'blahblah'
-                                customTypes: [ 'f' ]""",
-                        new Configuration<>(null, CustomTypeConfig.class),
+                                   customType: 'blahblah'
+                                   customTypes: [ 'f' ]
+                                """,
+                        new Configuration<>(null, CustomTypeConfig.class, CustomTypeConfigImpl.class),
                         (DeserializationFunction<CustomTypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, CustomTypeConfig.class)))),
                         (SerializationFunction<CustomTypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, CustomTypeConfig.class))))
                 ).getOrThrow();
@@ -75,7 +75,7 @@ public class CustomDeserializerIntegrationTest {
         var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
                 .createStringReaderProvider(injector.getInstance(YamlFileType.class),
                         "customType: { test: blahblah }",
-                        new Configuration<>(null, CustomTypeFallbackConfig.class),
+                        new Configuration<>(null, CustomTypeFallbackConfig.class, CustomTypeFallbackConfigImpl.class),
                         (DeserializationFunction<CustomTypeFallbackConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(DeserializationFunction.class, CustomTypeFallbackConfig.class)))),
                         (SerializationFunction<CustomTypeFallbackConfig>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, CustomTypeFallbackConfig.class))))
                 ).getOrThrow();

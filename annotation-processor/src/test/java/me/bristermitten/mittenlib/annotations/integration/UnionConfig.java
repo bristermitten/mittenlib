@@ -5,7 +5,7 @@ import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.ConfigUnion;
 import me.bristermitten.mittenlib.config.Source;
 
-@Config
+@Config(requireDynamicInitialization = false)
 @PassIn
 @ConfigUnion
 @Source("integration/UnionConfig_dummy.yml")

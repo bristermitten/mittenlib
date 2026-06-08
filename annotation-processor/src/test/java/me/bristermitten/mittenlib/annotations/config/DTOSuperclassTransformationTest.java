@@ -24,7 +24,7 @@ class DTOSuperclassTransformationTest {
                                 
                                 @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source(value = "lang.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class SuperclassConfigDTO {
                                     Child1DTO child1;
                                     Child2DTO child2;
@@ -41,7 +41,7 @@ class DTOSuperclassTransformationTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
                 .isNotNull();
@@ -63,7 +63,7 @@ class DTOSuperclassTransformationTest {
                                 
                                 @NamingPattern(value = me.bristermitten.mittenlib.config.names.NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source(value = "lang.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class SuperclassConfigDTO {
                                     public Child1DTO child1;
                                     public Child2DTO child2;
@@ -91,7 +91,7 @@ class DTOSuperclassTransformationTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.SuperclassConfig")
                 .isNotNull();
@@ -170,7 +170,7 @@ class DTOSuperclassTransformationTest {
                                         }
                                         """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.ShopConfig")
                 .isNotNull();

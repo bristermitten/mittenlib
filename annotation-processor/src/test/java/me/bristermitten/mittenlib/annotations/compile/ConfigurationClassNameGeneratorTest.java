@@ -1,17 +1,20 @@
-package me.bristermitten.mittenlib.annotations.config;
+package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
 import com.squareup.javapoet.ClassName;
+import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
-import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
+import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
+import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
+import me.bristermitten.mittenlib.config.Config;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.Compiler.javac;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ConfigurationClassNameGeneratorTest {
 
@@ -83,10 +86,23 @@ class ConfigurationClassNameGeneratorTest {
     }
 
     @Test
-    void getLoaderClassName() {
+    void getDeserializerClassName() {
         var ast = mock(AbstractConfigStructure.Atomic.class);
+        var settings = mock(ASTSettings.ConfigASTSettings.class);
+        when(ast.settings()).thenReturn(settings);
+
+        var config = mock(Config.class);
+        when(config.className()).thenReturn("");
+        when(settings.config()).thenReturn(config);
+
+        var source = mock(ConfigTypeSource.ClassConfigTypeSource.class);
+        when(ast.source()).thenReturn(source);
+
+        when(ast.name()).thenReturn(ClassName.bestGuess("TestConfig"));
 
         ConfigurationClassNameGenerator generator = new ConfigurationClassNameGenerator(new ConfigNameCache());
 
+        assertThat(generator.getDeserializerClassName(ast))
+                .isEqualTo(ClassName.bestGuess("TestConfigDeserializer"));
     }
 }
