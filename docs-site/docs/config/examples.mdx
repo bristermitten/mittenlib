@@ -4,22 +4,22 @@ import TabItem from '@theme/TabItem';
 # Source vs Generated
 
 MittenLib's annotation processor takes your simple DTO classes and generates robust, type-safe implementation code. 
-This page demonstrates what the generated code looks like compared to your source DTO.
+This page demonstrates actual generated code from a real run of the processor.
 
-## Basic Configuration
+## Implementation Generation
 
-The most common use case is a simple class annotated with `@Config`. 
+The primary output is the implementation class. It is immutable, type-safe, and includes boilerplate like `equals`, `hashCode`, and `toString`.
 
 <Tabs>
   <TabItem value="source" label="Source DTO" default>
 
-```java file=./examples/code/DatabaseConfigDTO.java
+```java file=./examples/code/ValidationConfigDTO.java
 ```
 
   </TabItem>
   <TabItem value="impl" label="Generated Implementation">
 
-```java file=./examples/code/DatabaseConfig.java
+```java file=./examples/code/ValidationConfigImpl.java
 ```
 
   </TabItem>
@@ -38,7 +38,7 @@ When you add validation annotations, MittenLib generates a dedicated validator c
   </TabItem>
   <TabItem value="validator" label="Generated Validator">
 
-```java file=./examples/code/ValidationConfigValidator.java
+```java file=./examples/code/ValidationConfigImplValidator.java
 ```
 
   </TabItem>
@@ -46,18 +46,18 @@ When you add validation annotations, MittenLib generates a dedicated validator c
 
 ## Serialization & Deserialization
 
-MittenLib generates specialized logic to convert your config to and from `DataTree` representations, which are then handled by YAML or JSON readers.
+MittenLib generates specialized logic to convert your config to and from `DataTree` representations.
 
 <Tabs>
   <TabItem value="deserializer" label="Generated Deserializer" default>
 
-```java file=./examples/code/DatabaseConfigDeserializer.java
+```java file=./examples/code/ValidationConfigImplDeserializer.java
 ```
 
   </TabItem>
   <TabItem value="serializer" label="Generated Serializer">
 
-```java file=./examples/code/DatabaseConfigSerializer.java
+```java file=./examples/code/ValidationConfigImplSerializer.java
 ```
 
   </TabItem>
