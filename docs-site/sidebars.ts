@@ -17,11 +17,17 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
-      label: 'Tutorial',
+      label: 'Tutorials',
       items: [
-        'tutorial/first-config',
-        'tutorial/adding-features',
-        'tutorial/loading-and-usage',
+        {
+          type: 'category',
+          label: 'Config System',
+          items: [
+            'tutorial/config-system/first-config',
+            'tutorial/config-system/adding-features',
+            'tutorial/config-system/loading-and-usage',
+          ],
+        }
       ],
     },
     {

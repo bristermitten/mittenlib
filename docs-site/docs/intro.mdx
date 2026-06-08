@@ -1,27 +1,29 @@
 # MittenLib Documentation
 
-Welcome to the MittenLib documentation. MittenLib is a modern, general purpose framework for writing higher-quality Minecraft plugins, designed with Guice integration and developer experience in mind.
+Welcome to the MittenLib documentation. MittenLib is a modern, general-purpose framework for writing higher-quality Minecraft plugins, designed with Guice integration and developer experience in mind.
 
 ## Core Features
 
-- **Annotation-Driven Configurations**: Define your config structure in simple DTOs and let the processor handle the rest.
-- **Robust Validation**: Built-in and custom constraints to ensure your data is always valid.
-- **Guice First**: Native support for dependency injection, allowing for lazy loading and automatic reloads.
-- **Type Safety**: Fully typed configurations with support for complex collections and nested types.
+- **Scalability**: Strongly based around the Guice framework, making it particularly well-suited for larger scale projects.
+- **Modernity**: Built around modern practices in Spigot development. It uses Adventure throughout its internals and avoids common pitfalls like static abuse.
+- **Cross-Version Support**: Supports all Minecraft / Spigot versions including and above 1.8.8.
+- **Config Annotation Processor**: One of MittenLib's killer features. Define your config structure in simple interfaces and let the processor generate immutable implementations, loaders, savers, and validators.
 
 ## Documentation
 
-### Config Processor
+### Tutorials
 
-The Config Annotation Processor is MittenLib's flagship feature. Learn how to use it effectively:
+If you are new to MittenLib, our tutorials are the best place to start:
 
-- **[Getting Started](./config/getting-started)** - Create your first config DTO and understand the generated code
+- **[Config System Tutorial](./tutorial/config-system/first-config)** - A step-by-step guide to using the Config Annotation Processor, from your first config interface to loading it with Guice.
+
+### Config Reference
+
+Detailed reference guides for the Config Annotation Processor:
+
+- **[Getting Started](./config/getting-started)** - Quick overview of config generation
 - **[Data Types & Collections](./config/data-types)** - Explore supported types, nested configs, and collections
 - **[Naming & Keys](./config/naming-keys)** - Customize how Java fields map to config file keys
 - **[Validation](./config/validation)** - Built-in constraints and custom validators
 - **[Guice Integration](./config/guice-integration)** - Automatic loading, injection, and hot-reloading
 - **[Persistence](./config/persistence)** - Save configs back to files with smart merging
-
-## Getting Started
-
-To begin using MittenLib in your project, check out the [Config Processor Getting Started Guide](./config/getting-started) to see how source DTOs are transformed into generated code.
