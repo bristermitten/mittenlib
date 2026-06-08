@@ -28,20 +28,20 @@ public class ConfigReader {
     /**
      * Read the data from the given path, and map it to the given type
      *
-     * @param function            the deserialization function to use
-     * @param source              the path to read from
-     * @param <T>                 the type to map to
+     * @param function the deserialization function to use
+     * @param source   the path to read from
+     * @param <T>      the type to map to
      * @return the result of the mapping
      */
-    public <T> Result<? extends T> load(DeserializationFunction<T> function, Path source) {
+    public <T> Result<T> load(DeserializationFunction<T> function, Path source) {
         return read(loader.load(source), function);
     }
 
-    public <T> Result<? extends T> load(DeserializationFunction<T> function, String source) {
+    public <T> Result<T> load(DeserializationFunction<T> function, String source) {
         return read(loader.load(source), function);
     }
 
-    public <T> Result<? extends T> load(DeserializationFunction<T> function, Reader source) {
+    public <T> Result<T> load(DeserializationFunction<T> function, Reader source) {
         return read(loader.load(source), function);
     }
 
@@ -51,15 +51,15 @@ public class ConfigReader {
                 .flatMap(mappingFunction::apply);
     }
 
-    public <T> Result<? extends T> load(Class<T> type, Path source) {
+    public <T> Result<T> load(Class<T> type, Path source) {
         return load(ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)), source);
     }
 
-    public <T> Result<? extends T> load(Class<T> type, String source) {
+    public <T> Result<T> load(Class<T> type, String source) {
         return load(ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)), source);
     }
 
-    public <T> Result<? extends T> load(Class<T> type, Reader source) {
+    public <T> Result<T> load(Class<T> type, Reader source) {
         return load(ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)), source);
     }
 

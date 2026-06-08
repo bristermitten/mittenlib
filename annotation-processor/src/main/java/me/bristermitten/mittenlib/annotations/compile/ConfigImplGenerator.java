@@ -103,6 +103,7 @@ public class ConfigImplGenerator {
     private void addSourceElement(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
+            ClassName implementationClassName = configurationClassNameGenerator.translateConfigClassName(ast);
 
             FieldSpec.Builder configFieldBuilder = FieldSpec.builder(
                             ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
@@ -111,9 +112,10 @@ public class ConfigImplGenerator {
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
 
             configFieldBuilder.initializer(
-                    "new $T<>($S, $T.class)", Configuration.class,
+                    "new $T<>($S, $T.class, $T.class)", Configuration.class,
                     ast.settings().source().value(),
-                    publicClassName
+                    publicClassName,
+                    implementationClassName
             );
 
             builder.addField(configFieldBuilder.build());
@@ -160,7 +162,7 @@ public class ConfigImplGenerator {
                 .addMember("isDynamicallyInitializable", "$L", ast.isDynamicallyInitializable());
 
         for (String property : unserializableProperties) {
-            generatedConfigBuilder.addMember("unserializableProperties", "$S", property);
+            generatedConfigBuilder.addMember("uninitializableProperties", "$S", property);
         }
 
         source.addAnnotation(generatedConfigBuilder.build());

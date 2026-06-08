@@ -53,7 +53,7 @@ public class ConfigLoaderGenerator {
      * @return a {@link JavaFile} containing the generated loader class
      */
     public JavaFile emit(AbstractConfigStructure ast) {
-        ClassName loaderClassName = classNameGenerator.getLoaderClassName(ast);
+        ClassName loaderClassName = classNameGenerator.getDeserializerClassName(ast);
         TypeSpec.Builder builder = createLoaderBuilder(ast);
         addChildLoaderClasses(ast, builder);
 
@@ -68,7 +68,7 @@ public class ConfigLoaderGenerator {
      * @return a builder for the loader class
      */
     private TypeSpec.Builder createLoaderBuilder(AbstractConfigStructure ast) {
-        ClassName loaderClassName = classNameGenerator.getLoaderClassName(ast);
+        ClassName loaderClassName = classNameGenerator.getDeserializerClassName(ast);
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(loaderClassName.simpleName())
@@ -195,9 +195,9 @@ public class ConfigLoaderGenerator {
      */
     private void collectConfigTypes(TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
         if (typesUtil.isConfigType(type)) {
-            ClassName subLoaderName = classNameGenerator.getLoaderClassName(type);
+            ClassName subLoaderName = classNameGenerator.getDeserializerClassName(type);
             TypeName providerType = ParameterizedTypeName.get(ClassName.get(Provider.class), subLoaderName);
-            String fieldName = classNameGenerator.getLoaderProviderFieldName(type);
+            String fieldName = classNameGenerator.getDeserializerProviderFieldName(type);
             if (injectedTypes.add(providerType)) {
                 injectedFieldNames.put(providerType, fieldName);
             }
@@ -276,7 +276,7 @@ public class ConfigLoaderGenerator {
             CodeBlock.Builder deserialiseBuilder = CodeBlock.builder();
             deserialiseBuilder.add("return ");
             for (AbstractConfigStructure alternative : union.alternatives()) {
-                String loaderFieldName = classNameGenerator.getLoaderProviderFieldName(alternative.source().element().asType());
+                String loaderFieldName = classNameGenerator.getDeserializerProviderFieldName(alternative.source().element().asType());
 
                 deserialiseBuilder.add("this.$L.get().apply(context).map($T.class::cast).orElse(() -> \n",
                         loaderFieldName,
@@ -303,7 +303,7 @@ public class ConfigLoaderGenerator {
         };
 
         if (superClass.isPresent()) {
-            String superLoaderFieldName = classNameGenerator.getLoaderProviderFieldName(superClass.get());
+            String superLoaderFieldName = classNameGenerator.getDeserializerProviderFieldName(superClass.get());
             expressionBuilder.add("this.$L.get().apply(context).flatMap(var$L -> \n", superLoaderFieldName, i++);
         }
 

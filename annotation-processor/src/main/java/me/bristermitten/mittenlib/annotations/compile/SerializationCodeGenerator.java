@@ -290,7 +290,7 @@ public class SerializationCodeGenerator {
 
         // Config type
         if (typesUtil.isConfigType(type)) {
-            String saverFieldName = configurationClassNameGenerator.getSaverProviderFieldName(type);
+            String saverFieldName = configurationClassNameGenerator.getSerializerProviderFieldName(type);
             builder.addStatement("$L = this.$L.get().apply(($T) $L, context)", targetExpression, saverFieldName, configurationClassNameGenerator.publicPropertyClassName(type), inputVar);
             return builder.build();
         }

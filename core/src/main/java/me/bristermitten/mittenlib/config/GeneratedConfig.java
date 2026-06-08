@@ -31,5 +31,5 @@ public @interface GeneratedConfig {
      *
      * @return The names of properties that prevent dynamic initialization
      */
-    String[] unserializableProperties() default {};
+    String[] uninitializableProperties() default {};
 }

@@ -30,4 +30,18 @@ public @interface Config {
      * @return true if serialization is required, false otherwise
      */
     boolean requireSerialization() default true;
+
+    /**
+     * Whether to require that the config is dynamically initializable.
+     * If true (default) and the config has a {@link Source} but is not dynamically initializable
+     * (i.e., has required properties without default values), a compilation error will be emitted.
+     * If false, a warning will be emitted instead.
+     * <p>
+     * A config is dynamically initializable if all its required (non-nullable, non-primitive) properties
+     * have default values, allowing MittenLib to synthesize a default config file if one is not present
+     * in the jar's resources.
+     *
+     * @return true if dynamic initialization is required, false otherwise
+     */
+    boolean requireDynamicInitialization() default true;
 }

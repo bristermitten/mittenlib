@@ -31,6 +31,13 @@ public class ConfigVerificationErrors {
 
     public static final ValidationMessage SERIALIZATION_NOT_SUPPORTED_WARNING =
             PlainValidationMessage.create("SERIALIZATION_NOT_SUPPORTED_WARNING",
-                    "This config contains properties that cannot be serialized: ${0}. Attempting to serialize this config may result in runtime exceptions. If you want to require serialization, set requireSerialization to true."
+                    "This config contains properties that cannot be serialized: ${0}. Attempting to serialize this config may result in runtime exceptions. To make this a compile-time error, set requireSerialization to true."
+            );
+
+    public static final ValidationMessage NOT_DYNAMICALLY_INITIALIZABLE =
+            PlainValidationMessage.create("NOT_DYNAMICALLY_INITIALIZABLE",
+                    "Config ${0} has a @Source but is not dynamically initializable because the following required properties lack default values: ${1}. " +
+                            "You must provide a default configuration file (e.g. ${2}) in your jar's resources, " +
+                            "or provide default values for these properties to avoid runtime errors. If you understand the risks but do not want to change the type, set requireDynamicInitialization to false to set this to a warning rather than error."
             );
 }

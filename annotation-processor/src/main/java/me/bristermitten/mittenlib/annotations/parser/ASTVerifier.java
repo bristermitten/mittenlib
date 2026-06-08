@@ -84,6 +84,30 @@ public class ASTVerifier {
             }
         }
 
+        // Error/warn if a config with a @Source is not dynamically initializable
+        if (structure.settings().source() != null && !structure.isDynamicallyInitializable()) {
+            var missingDefaults = structure.properties().stream()
+                    .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
+                    .map(Property::name)
+                    .toList();
+            if (!missingDefaults.isEmpty()) {
+                if (structure.settings().config().requireDynamicInitialization()) {
+                    MessagerUtils.error(structure.source().element(),
+                            ConfigVerificationErrors.NOT_DYNAMICALLY_INITIALIZABLE,
+                            structure.name().simpleName(),
+                            String.join(", ", missingDefaults),
+                            structure.settings().source().value());
+                    success = false;
+                } else {
+                    MessagerUtils.warning(structure.source().element(),
+                            ConfigVerificationErrors.NOT_DYNAMICALLY_INITIALIZABLE,
+                            structure.name().simpleName(),
+                            String.join(", ", missingDefaults),
+                            structure.settings().source().value());
+                }
+            }
+        }
+
         for (Property property : structure.properties()) {
             TypeMirror type = property.propertyType();
             boolean isNumeric = isNumericType(type);

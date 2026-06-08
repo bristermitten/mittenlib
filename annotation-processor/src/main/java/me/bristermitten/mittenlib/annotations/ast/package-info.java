@@ -43,27 +43,6 @@
  * which essentially says that anytime a <code>RepositoryConfig</code> is referenced, it can be in the form of either of the subtypes.
  * Note that this is an <i>undiscriminated</i> union, i.e. there's nothing to distinguish between the two subtypes aside from their structure.
  * This is not considered a design flaw, but it means there's often no fast way to deserialise aside from trial and error.
- * //     * To denote discriminated unions; we can use annotations:
- * //     * {@snippet :
- * //     *
- * //     * import me.bristermitten.mittenlib.config.Config;
- * //     * import org.jspecify.annotations.Nullable;
- * //     *     @ConfigUnion(tag = "type")
- * //     *     public interface RepositoryConfig {
- * //     *         @Config
- * //     *         @UnionTag("url")
- * //     *         interface URLConfig extends RepositoryConfig {
- * //     *             String url();
- * //     *
- * //     *             @Nullable String authToken();
- * //     *         }
- * //     *
- * //     *         @Config
- * //     *         @UnionTag("file")
- * //     *         interface FileSystemConfig extends RepositoryConfig {
- * //     *             String path();
- * //     *         }
- * //     * }}
  */
 @NullMarked
 package me.bristermitten.mittenlib.annotations.ast;

@@ -249,7 +249,7 @@ public class NonGenericTypeDeserializerGenerator {
      */
     private void handleConfigType(MethodSpec.Builder builder,
                                   TypeMirror elementType, String fromMapName) {
-        String loaderFieldName = configurationClassNameGenerator.getLoaderProviderFieldName(elementType);
+        String loaderFieldName = configurationClassNameGenerator.getDeserializerProviderFieldName(elementType);
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
         builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
         builder.addStatement("return this.$L.get().apply(context.withData(mapData))", loaderFieldName);

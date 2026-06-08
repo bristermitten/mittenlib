@@ -47,9 +47,13 @@ public class PluginConfigInitializationStrategy implements ConfigInitializationS
                 }
 
                 String message = "Could not find resource " + filePath + " in plugin " + plugin.getName();
-                if (annotation != null && annotation.unserializableProperties().length > 0) {
-                    message += ". Note: the type is a @GeneratedConfig but was not considered dynamically initializable because the following required properties lack default values: " +
-                            String.join(", ", annotation.unserializableProperties());
+                if (annotation != null && annotation.uninitializableProperties().length > 0) {
+                    message += ". The config type " + configClass.getName() + " is not dynamically initializable because the following required properties lack default values: " +
+                            String.join(", ", annotation.uninitializableProperties()) +
+                            ". Either provide a default config file in your jar's resources at '" + filePath + "', or add default values to these properties.";
+                } else if (annotation != null) {
+                    message += ". The config type " + configClass.getName() + " is not dynamically initializable. " +
+                            "Either provide a default config file in your jar's resources at '" + filePath + "', or ensure all required properties have default values.";
                 }
 
                 return Result.fail(new UnknownResourceException(message));

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * Main Guice Module for MittenLib.
  * <p>
  * <strong>You probably shouldn't use this!</strong> You most likely want to create an Injector with
- * {@link MittenLib#build()}, which automatically installs this module.
+ * {@link MittenLib#setup()}, which automatically installs this module.
  * <p>
  * This module binds the following:
  * <ul>

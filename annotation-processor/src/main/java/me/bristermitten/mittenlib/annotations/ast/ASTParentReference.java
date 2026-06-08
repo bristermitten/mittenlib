@@ -12,6 +12,8 @@ import org.jspecify.annotations.Nullable;
  */
 public record ASTParentReference(
         ClassName parentClassName,
+        boolean isInterface,
+        @Nullable String manualClassName,
         @Nullable ASTParentReference parent
 ) {
 }

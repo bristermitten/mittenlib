@@ -42,7 +42,7 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
 
 
         return configPathResult.flatMap(configPath ->
-                initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getType())
+                initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getImplementationType())
                         .map(unit -> new FileBasedConfigProvider<>(configPath, reader, deserializer, saver, serializer, objectWriter)));
 
     }
@@ -53,8 +53,8 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
         final Class<T> type = configuration.getType();
 
         return configPathResult.flatMap(configPath ->
-                initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getType())
-                        .map(unit -> (ConfigProvider<T>) new FileBasedConfigProvider<>(configPath, reader,
+                initializationStrategy.initializeConfig(configuration.getFileName(), configuration.getImplementationType())
+                        .map(unit -> new FileBasedConfigProvider<>(configPath, reader,
                                 ctx -> ctx.getMapper().map(ctx.getData(), TypeToken.get(type)),
                                 saver,
                                 (val, ctx) -> saver.serialize(val, type).getOrThrow(),
@@ -70,7 +70,7 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
     public <T> @NotNull Result<ConfigProvider<T>> createStringReaderProvider(FileType type, String data, Configuration<T> configuration) {
         final Class<T> typeClass = configuration.getType();
         return Result.ok(new StringReadingConfigProvider<>(data, reader.withLoader(type.loader()),
-                ctx -> (Result<T>) reader.load(typeClass, data)
+                ctx -> reader.load(typeClass, data)
         ));
     }
 
@@ -85,7 +85,7 @@ public class SimpleConfigProviderFactory implements ConfigProviderFactory {
     public <T> @NotNull Result<ConfigProvider<T>> createStringReaderProvider(String data, Configuration<T> configuration) {
         final Class<T> typeClass = configuration.getType();
         return Result.ok(new StringReadingConfigProvider<>(data, reader,
-                ctx -> (Result<T>) reader.load(typeClass, data)
+                ctx -> reader.load(typeClass, data)
         ));
     }
 }

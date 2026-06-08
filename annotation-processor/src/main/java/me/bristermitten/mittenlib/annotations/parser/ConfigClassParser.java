@@ -101,7 +101,7 @@ public class ConfigClassParser {
 
             var enumParsingScheme = typesUtil.getAnnotation(propertyElement, EnumParsingScheme.class);
             if (enumParsingScheme != null && propertyElement.getAnnotation(EnumParsingScheme.class) != null // if the annotation is precisely present on the property
-                && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
+                    && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
                 MessagerUtils.warning(propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
             }
 
@@ -164,7 +164,13 @@ public class ConfigClassParser {
                 .map(ClassName::get)
                 .orElse(null);
 
-        var thisParentReference = enclosingName == null ? null : new ASTParentReference(enclosingName, parentReference);
+        boolean isEnclosingInterface = enclosingType.map(TypeElementWrapper::isInterface).orElse(false);
+        String manualClassName = enclosingType.map(TypeElementWrapper::unwrap)
+                .map(e -> e.getAnnotation(Config.class))
+                .map(Config::className)
+                .orElse(null);
+
+        var thisParentReference = enclosingName == null ? null : new ASTParentReference(enclosingName, isEnclosingInterface, manualClassName, parentReference);
 
         var enclosedConfigs = wrapper.filterEnclosedElements()
                 .applyFilter(AptkCoreMatchers.IS_TYPE_ELEMENT)

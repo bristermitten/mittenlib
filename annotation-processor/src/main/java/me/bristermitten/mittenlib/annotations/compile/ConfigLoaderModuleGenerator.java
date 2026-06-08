@@ -6,10 +6,7 @@ import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.config.ConfigModule;
-import me.bristermitten.mittenlib.config.Configuration;
-import me.bristermitten.mittenlib.config.DeserializationFunction;
-import me.bristermitten.mittenlib.config.SerializationFunction;
+import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
@@ -31,18 +28,18 @@ public class ConfigLoaderModuleGenerator {
         this.methodNames = methodNames;
     }
 
-    public JavaFile emit(List<AbstractConfigStructure> asts) {
+    public JavaFile emit(List<AbstractConfigStructure> asts, String rootPackage) {
         if (asts.isEmpty()) {
             throw new IllegalArgumentException("asts list cannot be empty");
         }
 
-        ClassName moduleClassName = classNameGenerator.getLoaderModuleClassName(
-                classNameGenerator.getPublicClassName(asts.getFirst()).packageName()
-        );
+        ClassName moduleClassName = classNameGenerator.getLoaderModuleClassName(rootPackage);
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(moduleClassName)
+                .addJavadoc("Generated Guice module for loading configurations.\n" +
+                        "This module should be installed in your application's injector.")
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(AbstractModule.class)
+                .superclass(MittenLibConfigLoader.class)
                 .addAnnotation(AnnotationSpec.builder(Generated.class)
                         .addMember("value", "$S", "me.bristermitten.mittenlib.annotations.config.ConfigProcessor")
                         .addMember("date", "$S", ZonedDateTime.now(ZoneId.of("UTC")).toString())
@@ -51,7 +48,7 @@ public class ConfigLoaderModuleGenerator {
         MethodSpec.Builder configureMethod = MethodSpec.methodBuilder("configure")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PROTECTED)
-                .addStatement("install(new $T())", ConfigModule.class);
+                .addParameter(Binder.class, "binder");
 
         // Bindings for functions
         for (AbstractConfigStructure ast : asts) {
@@ -60,34 +57,58 @@ public class ConfigLoaderModuleGenerator {
 
         builder.addMethod(configureMethod.build());
 
+        TypeSpec.Builder internalModuleBuilder = TypeSpec.classBuilder("GeneratedModule")
+                .addJavadoc("Internal module for providing configuration instances.")
+                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                .superclass(AbstractModule.class)
+                .addMethod(MethodSpec.methodBuilder("configure")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PROTECTED)
+                        .addStatement("$T.this.configure(binder())", moduleClassName)
+                        .build());
+
         // Provides methods for providers and configs
         for (AbstractConfigStructure ast : asts) {
-            addProvidesMethods(builder, ast, null, false);
+            addProvidesMethods(internalModuleBuilder, ast, null, false);
         }
+
+        builder.addType(internalModuleBuilder.build());
+
+        MethodSpec asModuleMethod = MethodSpec.methodBuilder("asModule")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(com.google.inject.Module.class)
+                .addStatement("return new GeneratedModule()")
+                .build();
+
+        builder.addMethod(asModuleMethod);
 
         return JavaFile.builder(moduleClassName.packageName(), builder.build()).build();
     }
 
     private void addFunctionBindings(MethodSpec.Builder configureMethod, AbstractConfigStructure ast) {
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
-        ClassName loaderClassName = classNameGenerator.getLoaderClassName(ast);
-        ClassName saverClassName = classNameGenerator.getSaverClassName(ast);
+        ClassName loaderClassName = classNameGenerator.getDeserializerClassName(ast);
+        ClassName saverClassName = classNameGenerator.getSerializerClassName(ast);
+
+        configureMethod.addCode("\n");
+        configureMethod.addComment("Function bindings for $T", publicClassName);
 
         // Bind DeserializationFunction<Public> -> Loader
         configureMethod.addStatement(
-                "bind(new $1T<$2T<$3T>>() {}).to($4T.class)",
+                "binder.bind(new $1T<$2T<$3T>>() {}).to($4T.class)",
                 TypeLiteral.class, DeserializationFunction.class, publicClassName, loaderClassName
         );
 
         // Bind SerializationFunction<Public> -> Saver
         configureMethod.addStatement(
-                "bind(new $1T<$2T<$3T>>() {}).to($4T.class)",
+                "binder.bind(new $1T<$2T<$3T>>() {}).to($4T.class)",
                 TypeLiteral.class, SerializationFunction.class, publicClassName, saverClassName
         );
 
         if (ast.needsValidation()) {
             ClassName validatorClassName = classNameGenerator.getValidatorClassName(ast);
-            configureMethod.addStatement("bind($T.class)", validatorClassName);
+            configureMethod.addStatement("binder.bind($T.class)", validatorClassName);
         }
 
         for (AbstractConfigStructure enclosed : ast.enclosed()) {
@@ -106,6 +127,7 @@ public class ConfigLoaderModuleGenerator {
 
             // @Provides ConfigProvider<Public>
             MethodSpec.Builder providerMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesProviderMethodName(name))
+                    .addJavadoc("Provides a {@link $T} for {@link $T}.", ConfigProvider.class, publicClassName)
                     .addAnnotation(Provides.class)
                     .addAnnotation(Singleton.class)
                     .addModifiers(Modifier.PUBLIC)
@@ -121,6 +143,7 @@ public class ConfigLoaderModuleGenerator {
 
             // @Provides Public
             MethodSpec.Builder configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
+                    .addJavadoc("Provides the {@link $T} instance.", publicClassName)
                     .addAnnotation(Provides.class)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(publicClassName)
@@ -132,6 +155,7 @@ public class ConfigLoaderModuleGenerator {
             // Multibinder registrations
 
             MethodSpec.Builder configMultiBinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToConfigSetMethodName(name))
+                    .addJavadoc("Adds {@link $T} to the set of all configurations.", publicClassName)
                     .addAnnotation(ProvidesIntoSet.class)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(ParameterizedTypeName.get(ClassName.get(Configuration.class), WildcardTypeName.subtypeOf(Object.class)))
@@ -139,6 +163,7 @@ public class ConfigLoaderModuleGenerator {
             builder.addMethod(configMultiBinder.build());
 
             MethodSpec.Builder providerMultiBinder = MethodSpec.methodBuilder(classNameGenerator.getProvidesToProviderSetMethodName(name))
+                    .addJavadoc("Adds the {@link $T} for {@link $T} to the set of all providers.", ConfigProvider.class, publicClassName)
                     .addAnnotation(ProvidesIntoSet.class)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), WildcardTypeName.subtypeOf(Object.class)))
@@ -168,15 +193,15 @@ public class ConfigLoaderModuleGenerator {
 
         Property propertyToBind;
         if (matchingProperties.size() == 1) {
-            propertyToBind = matchingProperties.get(0);
+            propertyToBind = matchingProperties.getFirst();
         } else {
             // Check for @BindProperty
             List<Property> explicitBindings = matchingProperties.stream()
-                    .filter(p -> p.source().element().getAnnotation(me.bristermitten.mittenlib.config.BindProperty.class) != null)
+                    .filter(p -> p.source().element().getAnnotation(BindProperty.class) != null)
                     .toList();
 
             if (explicitBindings.size() == 1) {
-                propertyToBind = explicitBindings.get(0);
+                propertyToBind = explicitBindings.getFirst();
             } else {
                 if (explicitBindings.size() > 1) {
                     for (Property explicitBinding : explicitBindings) {
@@ -190,6 +215,7 @@ public class ConfigLoaderModuleGenerator {
 
         String name = childPublicName.simpleName();
         MethodSpec.Builder configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
+                .addJavadoc("Provides the {@link $T} instance from its parent {@link $T}.", childPublicName, parentPublicName)
                 .addAnnotation(Provides.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(childPublicName)

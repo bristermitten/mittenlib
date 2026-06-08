@@ -26,3 +26,12 @@ tasks.javadoc {
     options.links("https://javadoc.io/doc/net.kyori/adventure-api/latest/")
     options.links("https://google.github.io/guice/api-docs/latest/javadoc/")
 }
+
+
+
+tasks.register<Copy>("copyJavadocsToDocs") {
+    description = "Copy all the generated Javadocs to the Docusaurus static folder"
+    dependsOn("javadoc")
+    from(layout.buildDirectory.dir("docs/javadoc"))
+    into(file("docs-site/static/javadoc"))
+}

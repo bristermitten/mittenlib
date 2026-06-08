@@ -36,6 +36,35 @@ public sealed interface AbstractConfigStructure {
     @Contract(pure = true)
     ASTSettings.ConfigASTSettings settings();
 
+    default boolean needsValidation() {
+        return properties().stream()
+                .anyMatch(p -> !p.settings().constraints().isEmpty() ||
+                        !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
+    }
+
+    default boolean isDynamicallyInitializable() {
+        return properties().stream()
+                .allMatch(p -> p.settings().hasDefaultValue() || p.settings().isNullable());
+    }
+
+    /**
+     * An atomic config structure, i.e. a type with no parents or interfaces
+     */
+    record Atomic(
+            ClassName name,
+            ConfigTypeSource source,
+            ASTSettings.ConfigASTSettings settings,
+            List<AbstractConfigStructure> enclosed,
+            @Nullable ASTParentReference enclosedIn,
+            List<Property> properties
+    ) implements AbstractConfigStructure {
+    }
+
+    /**
+     * An intersection config structure, i.e. a type with some super classes/interfaces that it extends from
+     *
+     * @param roots the names of the "parents" of this config
+     */
     record Intersection(ClassName name,
                         ConfigTypeSource source,
                         ASTSettings.ConfigASTSettings settings,
@@ -45,6 +74,12 @@ public sealed interface AbstractConfigStructure {
                         List<Property> properties) implements AbstractConfigStructure {
     }
 
+    /**
+     * A union config structure, i.e. a type that can be any of the given alternatives
+     *
+     * @param alternatives the alternatives of this union
+     * @param properties   any properties that are defined as present in any of the alternatives
+     */
     record Union(
             ClassName name,
             ConfigTypeSource source,
@@ -58,26 +93,5 @@ public sealed interface AbstractConfigStructure {
         public List<AbstractConfigStructure> enclosed() {
             return alternatives;
         }
-    }
-
-    record Atomic(
-            ClassName name,
-            ConfigTypeSource source,
-            ASTSettings.ConfigASTSettings settings,
-            List<AbstractConfigStructure> enclosed,
-            @Nullable ASTParentReference enclosedIn,
-            List<Property> properties
-    ) implements AbstractConfigStructure {
-    }
-
-    default boolean needsValidation() {
-        return properties().stream()
-                .anyMatch(p -> !p.settings().constraints().isEmpty() ||
-                        !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
-    }
-
-    default boolean isDynamicallyInitializable() {
-        return properties().stream()
-                .allMatch(p -> p.settings().hasDefaultValue() || p.settings().isNullable());
     }
 }

@@ -58,7 +58,7 @@ public class ConfigSaverGenerator {
      * @return a {@link JavaFile} containing the generated saver class
      */
     public JavaFile emit(AbstractConfigStructure ast) {
-        ClassName saverClassName = classNameGenerator.getSaverClassName(ast);
+        ClassName saverClassName = classNameGenerator.getSerializerClassName(ast);
         TypeSpec.Builder builder = createSaverBuilder(ast);
 
         return JavaFile.builder(saverClassName.packageName(), builder.build()).build();
@@ -73,7 +73,7 @@ public class ConfigSaverGenerator {
      */
     private TypeSpec.Builder createSaverBuilder(AbstractConfigStructure ast) {
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
-        ClassName saverClassName = classNameGenerator.getSaverClassName(ast);
+        ClassName saverClassName = classNameGenerator.getSerializerClassName(ast);
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(saverClassName)
                 .addModifiers(Modifier.PUBLIC)
@@ -204,7 +204,7 @@ public class ConfigSaverGenerator {
                     method.addStatement("map.put($T.string($S), $T.null_())",
                             DataTree.class, key, DataTree.class);
                 } else {
-                    String saverFieldName = classNameGenerator.getSaverProviderFieldName(property.propertyType());
+                    String saverFieldName = classNameGenerator.getSerializerProviderFieldName(property.propertyType());
                     method.addStatement("map.put($T.string($S), this.$L.get().generateDefault(context))",
                             DataTree.class, key, saverFieldName);
                 }
@@ -255,7 +255,7 @@ public class ConfigSaverGenerator {
         if (ast == null) return;
 
         ClassName publicChildClassName = classNameGenerator.getPublicClassName(ast);
-        String fieldName = classNameGenerator.getSaverProviderFieldName(type);
+        String fieldName = classNameGenerator.getSerializerProviderFieldName(type);
 
         if (builder.fieldSpecs.stream().anyMatch(f -> f.name.equals(fieldName))) {
             return;

@@ -6,13 +6,7 @@ import com.squareup.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
-import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderGenerator;
-import me.bristermitten.mittenlib.annotations.compile.ConfigSaverGenerator;
-import me.bristermitten.mittenlib.annotations.compile.ConfigValidatorGenerator;
-import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderModuleGenerator;
-import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
-import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
+import me.bristermitten.mittenlib.annotations.compile.*;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.annotations.parser.ASTVerifier;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
@@ -30,7 +24,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Annotation processor for generating configuration classes from DTO classes marked with {@link Config}.
@@ -135,16 +128,23 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
 
         if (!asts.isEmpty()) {
             var moduleGenerator = injector.getInstance(ConfigLoaderModuleGenerator.class);
-            Map<String, List<AbstractConfigStructure>> groupedByPackage = asts.stream()
-                    .collect(Collectors.groupingBy(ast -> injector.getInstance(ConfigurationClassNameGenerator.class).getPublicClassName(ast).packageName()));
+            var classNameGenerator = injector.getInstance(ConfigurationClassNameGenerator.class);
 
-            for (List<AbstractConfigStructure> packageAsts : groupedByPackage.values()) {
-                JavaFile moduleEmit = moduleGenerator.emit(packageAsts);
-                try {
-                    moduleEmit.writeTo(processingEnv.getFiler());
-                } catch (Exception e) {
-                    throw new ConfigProcessingException("Could not create ConfigLoaderModule file", e);
-                }
+            // Sort by package name and then simple name for stability
+            asts.sort(Comparator.comparing((AbstractConfigStructure ast) -> classNameGenerator.getPublicClassName(ast).packageName())
+                    .thenComparing(ast -> classNameGenerator.getPublicClassName(ast).simpleName()));
+
+            // Use the shortest package name as the "root" package for the module
+            String rootPackage = asts.stream()
+                    .map(ast -> classNameGenerator.getPublicClassName(ast).packageName())
+                    .min(Comparator.comparingInt(String::length))
+                    .orElse("");
+
+            JavaFile moduleEmit = moduleGenerator.emit(asts, rootPackage);
+            try {
+                moduleEmit.writeTo(processingEnv.getFiler());
+            } catch (Exception e) {
+                throw new ConfigProcessingException("Could not create ConfigLoaderModule file", e);
             }
         }
         return true;
