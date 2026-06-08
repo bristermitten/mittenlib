@@ -1,0 +1,272 @@
+# Data Types & Collections
+
+MittenLib supports a wide range of Java types out of the box, from primitives to complex nested structures. This guide shows how to use them effectively in your config DTOs.
+
+## Primitive Types
+
+All Java primitives and their wrapper types are supported:
+
+```java
+@Config
+public interface ServerConfig {
+    String name();
+    int port();
+    double tickRate();
+    boolean debug();
+    long timeout();
+    float multiplier();
+}
+```
+
+## Nullable Fields
+
+By default, all fields are required and must be present in the config file. To allow null values, use the `@Nullable` annotation:
+
+```java
+@Config
+public interface DatabaseConfig {
+    String host();
+    @Nullable
+    String tablePrefix();  // Can be null or omitted
+}
+```
+
+## Default Values
+
+Provide defaults using Java `default` methods. Fields with defaults are optional in the config file:
+
+```java
+@Config
+public interface ConnectionConfig {
+    String host();
+    
+    default int port() {
+        return 3306;
+    }
+    
+    default boolean ssl() {
+        return true;
+    }
+    
+    default String driver() {
+        return "mysql";
+    }
+}
+```
+
+## Collections
+
+### Lists
+
+```java
+@Config
+public interface Messages {
+    default List<String> motd() {
+        return List.of("Welcome to the server!", "Have fun!");
+    }
+}
+```
+
+**YAML:**
+```yaml
+motd:
+  - "Welcome to the server!"
+  - "Have fun!"
+```
+
+### Sets
+
+```java
+@Config
+public interface Features {
+    default Set<String> enabledFeatures() {
+        return Set.of("pvp", "economy");
+    }
+}
+```
+
+### Maps
+
+```java
+@Config
+public interface Commands {
+    default Map<String, String> descriptions() {
+        return Map.of(
+            "help", "Show help message",
+            "spawn", "Teleport to spawn"
+        );
+    }
+}
+```
+
+**YAML:**
+```yaml
+descriptions:
+  help: "Show help message"
+  spawn: "Teleport to spawn"
+```
+
+### Maps with Complex Values
+
+```java
+@Config
+public interface Permissions {
+    Map<String, PermissionConfig> permissions();
+}
+```
+
+**YAML:**
+```yaml
+permissions:
+  admin:
+    level: 100
+    inheritedFrom: "moderator"
+  moderator:
+    level: 50
+    inheritedFrom: "user"
+```
+
+## Nested Configs
+
+One of MittenLib's most powerful features is automatic nested configuration processing. When a method's return type is another `@Config` interface, the processor generates recursive deserialization logic.
+
+### Basic Nesting
+
+```java
+@Config
+public interface DatabaseConfig {
+    String host();
+    default int port() {
+        return 3306;
+    }
+}
+
+@Config
+public interface PluginConfig {
+    String pluginName();
+    DatabaseConfig database();  // Nested config
+    default int version() {
+        return 1;
+    }
+}
+```
+
+**YAML:**
+```yaml
+pluginName: "MyPlugin"
+database:
+  host: localhost
+  port: 3306
+version: 2
+```
+
+### Deep Nesting
+
+Nesting works to any depth:
+
+```java
+@Config
+public interface WorldConfig {
+    String name();
+    SpawnConfig spawn();
+}
+
+@Config
+public interface SpawnConfig {
+    LocationConfig location();
+    default String welcomeMessage() {
+        return "Welcome!";
+    }
+}
+
+@Config
+public interface LocationConfig {
+    double x();
+    double y();
+    double z();
+    default String world() {
+        return "world";
+    }
+}
+```
+
+**YAML:**
+```yaml
+name: "survival"
+spawn:
+  location:
+    x: 100.5
+    y: 64.0
+    z: -200.3
+    world: "survival"
+  welcomeMessage: "Welcome to Survival!"
+```
+
+## Enums
+
+Java enums are automatically deserialized by name (case-insensitive by default):
+
+```java
+public enum GameMode {
+    SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
+}
+
+@Config
+public interface WorldSettings {
+    default GameMode defaultGameMode() {
+        return GameMode.SURVIVAL;
+    }
+    
+    default Set<GameMode> allowedModes() {
+        return Set.of(GameMode.SURVIVAL, GameMode.CREATIVE);
+    }
+}
+```
+
+**YAML:**
+```yaml
+defaultGameMode: SURVIVAL
+allowedModes:
+  - survival
+  - creative
+```
+
+## Inheritance
+
+Interfaces can extend other interfaces, effectively merging configuration keys:
+
+```java
+public interface BaseConfig {
+    String name();
+    default boolean enabled() {
+        return true;
+    }
+}
+
+@Config
+public interface ExtendedConfig extends BaseConfig {
+    String extraField();
+}
+```
+
+The generated `ExtendedConfigImpl` class will have `name()`, `enabled()`, and `extraField()` methods.
+
+## Union Types (Discriminated)
+
+For polymorphic configs, use `@ConfigUnion` to define variants:
+
+```java
+@Config
+public interface Message {
+    String type();
+    @ConfigUnion({ChatMessage.class, ActionBarMessage.class})
+    MessageContent content();
+}
+```
+
+This is an advanced feature for configs where a field can be one of several distinct shapes.
+
+## Next Steps
+
+- **[Naming & Keys](./naming-keys)** - Customize how field names appear in config files
+- **[Validation](./validation)** - Add constraints to ensure data integrity

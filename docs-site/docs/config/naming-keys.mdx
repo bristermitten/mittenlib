@@ -1,0 +1,157 @@
+# Naming & Keys
+
+By default, MittenLib uses your Java method names directly as config keys. However, you can customize this mapping to match different naming conventions or specific config file requirements.
+
+## Default Behavior
+
+```java
+@Config
+public interface DatabaseConfig {
+    String hostName();
+    int portNumber();
+}
+```
+
+**Generated keys (default):**
+```yaml
+hostName: localhost
+portNumber: 3306
+```
+
+## Naming Patterns
+
+Apply consistent naming conventions across your entire config interface using `@NamingPattern`:
+
+```java
+import me.bristermitten.mittenlib.config.NamingPattern;
+import me.bristermitten.mittenlib.config.NamingPatterns;
+
+@Config
+@NamingPattern(NamingPatterns.LOWER_SNAKE_CASE)
+public interface DatabaseConfig {
+    String hostName();      // Maps to: host_name
+    int portNumber();       // Maps to: port_number
+    String databaseName();  // Maps to: database_name
+}
+```
+
+### Available Patterns
+
+| Pattern | Java Method | Config Key |
+|---------|-----------|------------|
+| `LOWER_SNAKE_CASE` | `hostName()` | `host_name` |
+| `LOWER_KEBAB_CASE` | `hostName()` | `host-name` |
+| `UPPER_SNAKE_CASE` | `hostName()` | `HOST_NAME` |
+| `UPPER_KEBAB_CASE` | `hostName()` | `HOST-NAME` |
+| `LOWER_CAMEL_CASE` | `hostName()` | `hostName` |
+| `UPPER_CAMEL_CASE` | `hostName()` | `HostName` |
+| `DEFAULT` | `hostName()` | `hostName` |
+
+### YAML with Kebab Case
+
+Kebab case (`lower-kebab-case`) is particularly popular for YAML configs:
+
+```java
+@Config
+@NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+public class PluginConfigDTO {
+    String pluginName;      // Maps to: plugin-name
+    int maxPlayers;         // Maps to: max-players
+    boolean enablePvp;      // Maps to: enable-pvp
+    List<String> motdLines; // Maps to: motd-lines
+}
+```
+
+**YAML:**
+```yaml
+plugin-name: "MyPlugin"
+max-players: 100
+enable-pvp: true
+motd-lines:
+  - "Welcome!"
+  - "Have fun!"
+```
+
+## Custom Field Names
+
+For one-off overrides, use `@ConfigName` on individual fields:
+
+```java
+@Config
+@NamingPattern(NamingPatterns.LOWER_SNAKE_CASE)
+public class ServerConfigDTO {
+    String serverName;                    // Maps to: server_name
+    
+    @ConfigName("srv-port")              // Overrides the pattern
+    int serverPort;                       // Maps to: srv-port
+    
+    @ConfigName("db")                    // Short alias
+    DatabaseConfigDTO databaseConfig;     // Maps to: db
+}
+```
+
+**YAML:**
+```yaml
+server_name: "My Server"
+srv-port: 25565
+db:
+  host: localhost
+  port: 3306
+```
+
+## Priority Hierarchy
+
+When multiple naming strategies apply, the most specific one wins:
+
+1. **`@ConfigName` on field** (highest priority)
+2. **`@NamingPattern` on field**
+3. **`@NamingPattern` on class**
+4. **Field name as-is** (lowest priority)
+
+```java
+@Config
+@NamingPattern(NamingPatterns.LOWER_SNAKE_CASE)
+public class MixedConfigDTO {
+    String userName;                      // user_name (class pattern)
+    
+    @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+    String displayName;                   // display-name (field pattern)
+    
+    @ConfigName("usr_email")
+    String userEmail;                     // usr_email (explicit name)
+}
+```
+
+## Best Practices
+
+### Match Your Format
+
+Use naming patterns that match your config file format's conventions:
+
+- **YAML/JSON configs**: `LOWER_KEBAB_CASE` or `LOWER_SNAKE_CASE`
+- **Java properties**: `LOWER_SNAKE_CASE`
+- **Environment variables**: `UPPER_SNAKE_CASE`
+
+### Keep It Consistent
+
+Apply `@NamingPattern` at the class level for consistency. Use `@ConfigName` sparingly for special cases where the pattern doesn't fit.
+
+### Nested Configs
+
+Naming patterns are **not inherited** by nested DTOs. Each DTO class should define its own pattern:
+
+```java
+@Config
+@NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+public class PluginConfigDTO {
+    String pluginName;                    // plugin-name
+    
+    @NamingPattern(NamingPatterns.LOWER_SNAKE_CASE)
+    DatabaseConfigDTO database;           // database keys use snake_case
+}
+```
+
+## Next Steps
+
+- **[Validation](./validation)** - Add constraints to your config fields
+- **[Guice Integration](./guice-integration)** - Automatic loading and injection

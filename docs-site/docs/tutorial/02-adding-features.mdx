@@ -1,0 +1,36 @@
+# 2. Adding Features
+
+In the previous step, we defined a very simple configuration. However, real-world configurations are rarely that simple. They require default values, validation constraints, collections, and nested structures.
+
+Let's expand our simple config into a more robust `AdvancedConfig`.
+
+## Building the Config
+
+Here is our expanded interface:
+
+```java file=./code/AdvancedConfig.java
+```
+
+Let's break down the new features we added.
+
+### 1. Defaults (`default` methods)
+By default, all fields in a MittenLib configuration are **required**. If a user omits them from the `config.yml`, the application will fail to start.
+By using a Java `default` method, the `port` field becomes optional. If the user doesn't specify a port, the loader will automatically use the value returned by `return 3306;`.
+This is incredibly powerful because it allows you to use standard, idiomatic Java to define complex defaults (like `List.of(...)`).
+
+### 2. Validation (`@NotBlank`, `@Min`)
+Configurations are notoriously fragile when users provide invalid data. MittenLib solves this with a built-in validation pipeline.
+* `@NotBlank` ensures the `host` string isn't empty or whitespace.
+* `@Min(1)` ensures the `port` is a positive number.
+
+If any of these constraints fail during loading, MittenLib will collect all the errors and present them to you, rather than crashing unpredictably later in your application.
+
+### 3. Collections (`List<String>`)
+MittenLib supports standard Java collections out of the box (`List`, `Set`, `Map`). You don't need any special wrappers; just declare the type and the annotation processor handles the mapping.
+
+### 4. Nested Configurations
+As your configuration grows, you'll want to organize it into sections. You can do this by defining another `@Config` interface (like `DatabaseConfig` above) and using it as a return type. 
+MittenLib will recursively generate logic to load the nested sections from your YAML/JSON file.
+
+## What's Next?
+We now have a robust, validated, and feature-rich configuration definition. The final step is learning how to actually load this configuration into your application and use it.

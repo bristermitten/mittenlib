@@ -1,0 +1,152 @@
+# Validation
+
+MittenLib ensures your configs are valid before they reach your application code. The validation system runs during deserialization and prevents your plugin from starting with bad configuration data.
+
+## Built-in Constraints
+
+Apply annotations directly to fields in your DTO:
+
+```java
+import me.bristermitten.mittenlib.config.validation.*;
+
+@Config
+public class ServerConfigDTO {
+    @NotBlank
+    String serverName;
+    
+    @Positive
+    int port;
+    
+    @Min(1)
+    @Max(100)
+    int maxPlayers = 20;
+    
+    @Range(min = 1024, max = 65535)
+    int queryPort;
+    
+    @Negative
+    double penaltyMultiplier = -1.5;
+}
+```
+
+### Constraint Reference
+
+| Annotation         | Validates                                   | Applies To    |
+|--------------------|---------------------------------------------|---------------|
+| `@NotBlank`        | String is not null, empty, or whitespace    | `String`      |
+| `@Positive`        | Number is greater than 0                    | Numeric types |
+| `@Negative`        | Number is less than 0                       | Numeric types |
+| `@Min(value)`      | Number is greater than or equal to value    | Numeric types |
+| `@Max(value)`      | Number is less than or equal to value       | Numeric types |
+| `@Range(min, max)` | Number is between min and max (inclusive)   | Numeric types |
+
+## How Validation Works
+
+When a config is loaded, the generated validator runs **before** the config object is constructed:
+
+```java
+// Loading with validation
+Result<ServerConfig> result = ServerConfig.deserializeServerConfig(data);
+
+result.ifFailure(errors -> {
+    // Validation failures are collected here
+    errors.forEach(error -> 
+        System.err.println("Config error: " + error.getMessage())
+    );
+});
+```
+
+**Key behaviors:**
+- Validation runs **after** deserialization but **before** object creation
+- All validation errors are collected and reported together
+- The config object is **never created** if validation fails
+
+## Custom Validators
+
+For complex validation logic, implement the `Validator<T>` interface:
+
+```java
+import me.bristermitten.mittenlib.config.validation.Validator;
+
+public class EmailValidator implements Validator<String> {
+    @Override
+    public Optional<String> validate(String value) {
+        if (value == null || !value.contains("@")) {
+            return Optional.of("Must be a valid email address");
+        }
+        return Optional.empty(); // Valid
+    }
+}
+```
+
+Apply it to your DTO field:
+
+```java
+@Config
+public class UserConfigDTO {
+    @ValidateWith(EmailValidator.class)
+    String contactEmail;
+    
+    @ValidateWith(PortValidator.class)
+    int gamePort;
+}
+```
+
+### Validator Requirements
+
+- Return `Optional.empty()` when valid
+- Return `Optional.of("error message")` when invalid
+- The error message will be displayed to the user/admin
+
+## Validation with Collections
+
+Constraints apply to each element in collections:
+
+```java
+@Config
+public class WhitelistDTO {
+    @NotBlank
+    List<String> playerNames;
+    
+    @Range(min = 1, max = 100)
+    Map<String, Integer> playerLevels;
+}
+```
+
+Each player name must be non-blank, and each level must be between 1 and 100.
+
+## Combining Constraints
+
+Multiple constraints can be applied to the same field:
+
+```java
+@Config
+public class DatabaseConfigDTO {
+    @NotBlank
+    @ConfigName("db-host")
+    String host;
+    
+    @Min(1024)
+    @Max(65535)
+    int port;
+}
+```
+
+## Validation in Guice
+
+When using Guice integration, validation errors prevent the config from being bound:
+
+```java
+// In your module
+install(new ConfigModule(ServerConfig.CONFIG));
+
+// Validation failures during startup will throw ConfigValidationException
+// with all collected violations
+```
+
+This ensures your plugin fails fast with a clear error message rather than running with invalid data.
+
+## Next Steps
+
+- **[Guice Integration](./guice-integration)** - Automatic loading with validation
+- **[Persistence](./persistence)** - Saving validated configs back to files

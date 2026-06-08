@@ -1,6 +1,10 @@
 # Pipeline Deep Dive
 
-For developers looking to understand the internal mechanics of MittenLib, here is how the annotation processor transforms your code.
+This page covers the internal mechanics of MittenLib's annotation processor for those interested in how DTOs are transformed into generated code.
+
+:::note
+This is an advanced topic. For usage documentation, see the [Config Processor guides](./getting-started).
+:::
 
 ## The Generation Pipeline
 

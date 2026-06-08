@@ -1,0 +1,59 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 1. Your First Config
+
+Welcome to MittenLib! The core philosophy of this library is to let you define configuration structures using simple, clean Data Transfer Objects (DTOs), and let the compiler generate all the heavy lifting.
+
+Let's start by defining a basic configuration for a server connection.
+
+## Defining the Structure
+
+You can use either an **interface** or a **class** to define your configuration structure. MittenLib will process either, but **interfaces are the preferred approach** because they enforce immutability by default and keep your code cleaner.
+
+<Tabs>
+  <TabItem value="interface" label="Interface (Recommended)" default>
+
+```java file=./code/SimpleInterfaceConfig.java
+```
+
+  </TabItem>
+  <TabItem value="class" label="Class (Alternative)">
+
+```java file=./code/SimpleClassConfig.java
+```
+
+  </TabItem>
+</Tabs>
+
+### What happens here?
+1. The `@Config` annotation tells the MittenLib annotation processor to inspect this type during compilation.
+2. The processor sees the `host` and `port` fields (or methods).
+3. It generates a full implementation class (`SimpleInterfaceConfigImpl` or `SimpleClassConfig`), along with deserializers and serializers for loading/saving data.
+
+## The Generated Implementation
+
+The generated class provides a type-safe, immutable representation of your configuration.
+
+```java
+// Simplified view of the generated implementation
+public class SimpleInterfaceConfigImpl implements SimpleInterfaceConfig {
+    private final String host;
+    private final int port;
+
+    public SimpleInterfaceConfigImpl(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    @Override
+    public String host() { return host; }
+    
+    @Override
+    public int port() { return port; }
+
+    // Also generated: withHost(), withPort(), equals(), hashCode(), toString()
+}
+```
+
+Now that we have our basic structure, let's look at how we can add defaults, optional fields, and validation in the next step.

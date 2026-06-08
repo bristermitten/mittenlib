@@ -1,0 +1,230 @@
+# Persistence & Saving
+
+MittenLib configs aren't just read-only. The generated classes include full serialization support, enabling you to save configuration changes back to files. The persistence system is designed to preserve user edits while allowing you to add new fields safely.
+
+## Basic Saving
+
+When using Guice integration, access saving capabilities through `ReadingConfigProvider`:
+
+```java
+public class ConfigManager {
+    private final ReadingConfigProvider<PluginConfig> configProvider;
+    
+    @Inject
+    public ConfigManager(ConfigProvider<PluginConfig> provider) {
+        this.configProvider = (ReadingConfigProvider<PluginConfig>) provider;
+    }
+    
+    public void saveDefaults() {
+        PluginConfig config = configProvider.get();
+        configProvider.save(config).getOrThrow();
+    }
+}
+```
+
+## Smart Merging
+
+The default `save(config)` behavior intelligently merges your in-memory config with the existing file:
+
+### Merge Behavior (Default)
+
+```java
+configProvider.save(config);  // or save(config, false)
+```
+
+**What it does:**
+- Adds missing fields with their default/current values
+- **Preserves** existing user values
+- **Preserves** comments and formatting in YAML files
+- Never overwrites data the user has customized
+
+### Use Case: Config Upgrades
+
+This is perfect for adding new features to your plugin:
+
+**Original `config.yml` (v1.0):**
+```yaml
+plugin-name: "MyPlugin"
+max-players: 20
+```
+
+**Updated DTO (v1.1 with new fields):**
+```java
+@Config
+@Source("config.yml")
+public class PluginConfigDTO {
+    String pluginName = "MyPlugin";
+    int maxPlayers = 20;
+    
+    // New field in v1.1
+    boolean enableEconomy = true;
+    
+    // New field in v1.1
+    double startingBalance = 100.0;
+}
+```
+
+**After `save(config)`:**
+```yaml
+plugin-name: "MyPlugin"
+max-players: 20
+
+# New fields added automatically
+enable-economy: true
+starting-balance: 100.0
+```
+
+The user's `max-players: 20` is preserved, and the new fields are appended.
+
+## Full Overwrite
+
+To completely replace the file contents:
+
+```java
+configProvider.save(config, true).getOrThrow();
+```
+
+**Use with caution** - this will:
+- Replace all existing values with the in-memory config values
+- Remove any comments in the file
+- Reset user customizations to defaults
+
+### When to Use Each Mode
+
+| Scenario | Method |
+|---------|--------|
+| Adding new fields to an existing config | `save(config)` (merge) |
+| User clicked "Reset to defaults" | `save(config, true)` (overwrite) |
+| Programmatic config changes | `save(config, true)` (overwrite) |
+| Plugin update with new config options | `save(config)` (merge) |
+
+## Manual Serialization
+
+Even without Guice, you can serialize configs directly:
+
+```java
+PluginConfig config = new PluginConfig("MyPlugin", 20, true, 100.0);
+
+// Serialize to DataTree
+DataTree data = config.serialize();
+
+// Write to file using your preferred format
+yamlWriter.write(data, new FileWriter("config.yml"));
+```
+
+## Serialization with Custom Types
+
+Custom serializers are automatically used when saving:
+
+```java
+@Config
+public class ServerConfigDTO {
+    @CustomSerializer(LocationSerializer.class)
+    Location spawnLocation;
+}
+```
+
+The `LocationSerializer` will be invoked during `save()` to convert the `Location` object back to its serialized form.
+
+## Save on Shutdown
+
+A common pattern is to save modified configs when your plugin disables:
+
+```java
+public class MyPlugin extends JavaPlugin {
+    @Inject
+    private ConfigProvider<PluginConfig> configProvider;
+    
+    @Override
+    public void onDisable() {
+        if (configProvider instanceof ReadingConfigProvider<PluginConfig> reading) {
+            PluginConfig config = configProvider.get();
+            reading.save(config).ifFailure(errors -> {
+                getLogger().warning("Failed to save config: " + errors);
+            });
+        }
+    }
+}
+```
+
+## Validation on Save
+
+Saved configs are automatically validated. If the config contains invalid data, the save will fail:
+
+```java
+Result<Unit> result = configProvider.save(config);
+
+result.ifFailure(errors -> {
+    System.err.println("Cannot save invalid config:");
+    errors.forEach(error -> System.err.println("  - " + error));
+});
+```
+
+## Best Practices
+
+### 1. Prefer Merge for Updates
+
+Always use `save(config)` (merge mode) when updating configs with new fields. This respects user customizations.
+
+### 2. Preserve Comments
+
+Use merge mode to maintain YAML comments that document config options for users.
+
+### 3. Validate Before Saving
+
+Ensure your in-memory config is valid before saving to prevent writing bad data:
+
+```java
+PluginConfig config = buildConfigFromUI();
+configProvider.save(config).ifFailure(errors -> {
+    showErrorToUser("Invalid configuration: " + errors);
+});
+```
+
+### 4. Don't Save on Every Change
+
+Batch config saves or save on specific events (plugin disable, user clicks "Save") rather than on every config modification.
+
+## Complete Example
+
+```java
+@Config
+@Source("config.yml")
+public class PluginConfigDTO {
+    String pluginName = "MyPlugin";
+    int maxPlayers = 20;
+    boolean enableEconomy = true;
+    Map<String, Double> itemPrices = Map.of(
+        "diamond", 100.0,
+        "emerald", 50.0
+    );
+}
+
+public class ConfigService {
+    private final ReadingConfigProvider<PluginConfig> provider;
+    
+    @Inject
+    public ConfigService(ConfigProvider<PluginConfig> provider) {
+        this.provider = (ReadingConfigProvider<PluginConfig>) provider;
+    }
+    
+    public void updateItemPrice(String item, double price) {
+        PluginConfig current = provider.get();
+        Map<String, Double> newPrices = new HashMap<>(current.itemPrices());
+        newPrices.put(item, price);
+        
+        PluginConfig updated = current.withItemPrices(newPrices);
+        provider.save(updated, true).getOrThrow();
+    }
+    
+    public void addNewFieldDefaults() {
+        // After adding fields to DTO, call this to update existing user configs
+        provider.save(provider.get()).getOrThrow();
+    }
+}
+```
+
+## Next Steps
+
+- **[Validation](./validation)** - Ensure configs are valid before saving
+- **[Data Types & Collections](./data-types)** - Supported types for serialization
