@@ -134,16 +134,6 @@ public class MittenLib<T extends Plugin> {
 
     /**
      * Finalizes the setup process and returns the {@link Injector}
-     *
-     * @deprecated use {@link #setup()} which has a less ambiguous method name.
-     */
-    @Deprecated
-    public @NotNull Injector build() {
-        return setup();
-    }
-
-    /**
-     * Finalizes the setup process and returns the {@link Injector}
      */
     public @NotNull Injector setup() {
         List<Module> allModules = new ArrayList<>(modules.values());
