@@ -24,7 +24,9 @@ guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto-service" }
 auto-service = { group = "com.google.auto.service", name = "auto-service", version.ref = "auto-service" }
 jimfs = { group = "com.google.jimfs", name = "jimfs", version = "1.2" }
-gson = { group = "com.google.code.gson", name = "gson", version = "2.3.1" }
+gson = { group = "com.google.code.gson", name = "gson", version = "2.11.0" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.18.2" }
+snakeyaml = { group = "org.yaml", name = "snakeyaml", version = "2.3" }
 compile-testing = { group = "com.google.testing.compile", name = "compile-testing", version = "0.19" }
 
 adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }

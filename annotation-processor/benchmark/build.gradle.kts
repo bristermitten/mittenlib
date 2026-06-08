@@ -9,10 +9,11 @@ java {
 }
 
 jmh {
-    warmupIterations.set(2)
-    iterations.set(3)
+    warmupIterations.set(5)
+    iterations.set(5)
     failOnError.set(true)
-    fork.set(2)
+    fork.set(1)
+    resultFormat.set("JSON")
 }
 
 tasks.javadoc {
@@ -28,6 +29,7 @@ dependencies {
     annotationProcessor(project(":annotation-processor"))
     implementation(project(":core"))
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.21.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.1")
+    implementation(libs.jackson.databind)
+    implementation(libs.gson)
+    implementation(libs.snakeyaml)
 }
