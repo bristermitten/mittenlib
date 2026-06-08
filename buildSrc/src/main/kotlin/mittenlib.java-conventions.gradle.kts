@@ -15,10 +15,9 @@ plugins {
 val libs = versionCatalogs.named("libs")
 
 group = "me.bristermitten"
-version = "5.2.0-SNAPSHOT"
+version = "6.0.0-SNAPSHOT"
 
 spotbugs {
-//    ignoreFailures.set(true)
     effort = Effort.MORE
     excludeFilter.set(rootProject.file("gradle/spotbugs-exclude.xml"))
 }
