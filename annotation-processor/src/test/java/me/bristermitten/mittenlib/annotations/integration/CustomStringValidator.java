@@ -27,6 +27,11 @@ public class CustomStringValidator implements Validator<String> {
     public static class ValidationDependency {
         private final String prefix;
 
+        // used in other tests where the manually constructed instance isn't explicitly bound
+        public ValidationDependency() {
+            this("mitten-lib");
+        }
+
         public ValidationDependency(String prefix) {
             this.prefix = prefix;
         }
