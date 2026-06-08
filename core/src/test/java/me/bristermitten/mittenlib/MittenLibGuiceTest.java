@@ -38,7 +38,7 @@ class MittenLibGuiceTest {
                                         Multibinder.newSetBinder(binder(), Listener.class);
                                     }
                 })
-                        .build();
+                        .setup();
 
         assertEquals(plugin.getName(), build.getInstance(MittenLibConsumer.class).getName());
     }

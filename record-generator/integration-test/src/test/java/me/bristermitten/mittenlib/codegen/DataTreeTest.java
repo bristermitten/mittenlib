@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.codegen;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class DataTreeTest {
     @Test
     void simpleTest() {
