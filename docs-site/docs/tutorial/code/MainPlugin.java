@@ -8,11 +8,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MainPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
-        // Initialize MittenLib with default Spigot bindings
-        MittenLib<JavaPlugin> mittenLib = MittenLib.withDefaults(this).build();
+        // Initialize MittenLib with some default modules
+        MittenLib<JavaPlugin> mittenLib = MittenLib.withDefaults(this);
 
-        // Create the Guice injector
-        Injector injector = Guice.createInjector(mittenLib);
+        // Setup the Guice injector
+        Injector injector = mittenLib.setup();
 
         // Instantiate your main application logic
         MyService service = injector.getInstance(MyService.class);

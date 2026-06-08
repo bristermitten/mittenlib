@@ -1,9 +1,7 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# General Setup
-
-MittenLib is a highly modular library. Its core is built around **Guice** to encourage scalable, injection-based architectures for your Spigot plugins.
+# Getting Started
 
 This tutorial guides you through adding the `core` module and bootstrapping your plugin's dependency injection environment.
 
@@ -51,7 +49,7 @@ dependencies {
   </TabItem>
 </Tabs>
 
-## 2. Bootstrapping Guice
+## 2. Setting up Guice
 
 To use MittenLib, you need to create a Guice `Injector` in your main plugin class. MittenLib handles binding your plugin instance, the server, standard loggers, and other Bukkit internals automatically.
 
@@ -60,7 +58,10 @@ To use MittenLib, you need to create a Guice `Injector` in your main plugin clas
 
 ## 3. Using Dependency Injection
 
-Once the injector is created, you can write clean, testable classes that request their dependencies via the constructor using `@Inject`. MittenLib has automatically bound common Spigot types for you.
+Once the injector is created, you can write clean, testable classes that request their dependencies via the constructor using `@Inject`.
+
+MittenLib automatically binds common Spigot types such as `Server` and `Plugin`.
+See <Javadoc type="me.bristermitten.mittenlib.MittenLibCoreModule"/> to see what exactly is bound.
 
 ```java file=./code/MyService.java
 ```

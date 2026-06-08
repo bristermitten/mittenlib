@@ -6,7 +6,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
-    "strict": true
+    "strict": true,
+  },
+  "mdx": {
+    "checkMdx": true
   },
   "exclude": [".docusaurus", "build"]
 }

@@ -7,7 +7,7 @@ import codeImport from 'remark-code-import';
 
 const config: Config = {
     title: 'MittenLib',
-    tagline: 'Modern Java Configurations',
+    tagline: 'General purpose, capable Spigot Framework',
     favicon: 'img/favicon.ico',
 
     // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -61,18 +61,13 @@ const config: Config = {
     ],
 
     themeConfig: {
-        // Replace with your project's social card
-        image: 'img/docusaurus-social-card.jpg',
 
         colorMode: {
             respectPrefersColorScheme: true,
         },
         navbar: {
             title: 'MittenLib',
-            logo: {
-                alt: 'My Site Logo',
-                src: 'img/logo.svg',
-            },
+        
             items: [
                 {
                     type: 'docSidebar',

@@ -1,0 +1,58 @@
+# MittenLib Core Configuration System
+
+While MittenLib's annotation processor handles much of the boilerplate, the underlying core system is highly modular and can be used directly. This document outlines the key components that handle configuration loading, caching, and hot-reloading.
+
+## 1. ConfigProvider
+
+The `ConfigProvider<T>` is the central interface for accessing configuration data. It extends Guice's `Provider<T>` but adds features specific to configuration files.
+
+```java
+public interface ConfigProvider<T> extends Provider<T> {
+    // Standard Guice Provider method to get the config instance
+    T get();
+
+    // Returns the Path to the config file, if applicable
+    Optional<Path> path();
+
+    // Clears any cached data, forcing a reload on the next get()
+    void clearCache();
+}
+```
+
+By injecting a `ConfigProvider<T>` instead of the raw config class, your application supports **dynamic reloading**. When `get()` is called, the provider returns the current instance, which may be updated if the file changes.
+
+## 2. Configuration Lifecyle: Factory and Improver
+
+MittenLib uses a two-stage process to create configuration providers. This separation allows the library to create a basic "functional" loader first, and then "improve" it with features like caching and file watching.
+
+### ConfigProviderFactory
+The `ConfigProviderFactory` is responsible for creating the initial, raw `ConfigProvider`. 
+* **`FileBasedConfigProvider`**: The most common implementation. It handles reading from the filesystem, merging default values from the jar, and saving missing fields back to the disk.
+* **`StringReadingConfigProvider`**: Useful for unit tests or remote configurations, reading data from a raw String.
+
+### ConfigProviderImprover
+Once a raw provider is created, it is passed through a `ConfigProviderImprover`. The default implementation, `SimpleConfigProviderImprover`, applies two main "improvements":
+1. **Caching**: Wraps the provider in a `CachingConfigProvider` so that the file isn't re-parsed every time `get()` is called.
+2. **Hot Reloading**: If the provider has a valid `path()`, it is further wrapped in a `FileWatchingConfigProvider`.
+
+## 3. Hot Reloading with FileWatcher
+
+MittenLib provides a robust system for monitoring configuration files and automatically invalidating caches when they change.
+
+### FileWatcherService
+The `FileWatcherService` runs a background thread that monitors the filesystem using the Java `WatchService` API. It is designed to be efficient, grouping multiple watchers on the same directory into a single system watch.
+
+### FileWatchingConfigProvider
+This is a decorator that links a `CachingConfigProvider` to the `FileWatcherService`. When the service detects a change to the config file:
+1. It triggers the `FileWatcher`.
+2. The watcher calls `invalidate()` on the `CachingConfigProvider`.
+3. The next time your application calls `config.get()`, the provider re-reads the file from disk.
+
+## 4. Summary of Component Flow
+
+1. **`ConfigLoaderModule`** (Generated or manual) defines the **`Configuration`** (path, type).
+2. **`ConfigProviderFactory`** creates a **`FileBasedConfigProvider`**.
+3. **`ConfigProviderImprover`** wraps it:
+   `FileBasedConfigProvider` → `CachingConfigProvider` → `FileWatchingConfigProvider`.
+4. The final `FileWatchingConfigProvider` is bound to the Guice `Injector`.
+5. Your code injects `ConfigProvider<MyConfig>` and calls `get()`.

@@ -1,6 +1,9 @@
-# 2. Adding Features
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
-In the previous step, we defined a very simple configuration. However, real-world configurations are rarely that simple. They require default values, validation constraints, collections, and nested structures.
+# 2. Adding Features to the Config
+
+In the previous step, we defined a basic configuration. However, real-world configurations are rarely that simple. They require default values, validation constraints, collections, and nested structures.
 
 Let's expand our simple config into a more robust `AdvancedConfig`.
 
@@ -13,24 +16,92 @@ Here is our expanded interface:
 
 Let's break down the new features we added.
 
-### 1. Defaults (`default` methods)
+### 1. The <Javadoc type="me.bristermitten.mittenlib.config.Source">`@Source`</Javadoc> Annotation
+This annotation actually binds the config to a real file on the filesystem. When this annotation is present, MittenLib will automatically:
+
+1. Perform some extra validation on the config to ensure that a default config can be generated.
+2. Add a constant <Javadoc type="me.bristermitten.mittenlib.config.Configuration"/> field to the implementation, storing the target file name.
+3. Set up Guice bindings for the config
+
+#### Automated Guice Features
+The generated Guice bindings handle the following automatically:
+1. Create a default config file if it doesn't exist _OR_ load a handwritten default from the JAR.
+2. Automatically read the config file and deserialize it into the config object.
+3. Live-reload the config file when it changes!
+
+:::warning
+When a config has a `@Source`, MittenLib requires it to be **dynamically initializable** (meaning every field has a default or is `@Nullable`). This allows the library to create a default config file if it's missing. If it's not, MittenLib will throw a compile-time error by default.
+
+If you don't want this, and instead want to hand-write the default, you can set `requireDynamicInitialization = false`, which disables this check. You _MUST_ have a default config file present in your plugin's JAR if you take this approach, or an error will be thrown on startup.
+
+For the sake of this example, we set `requireDynamicInitialization = false` because `host` and `database` do not have defaults.
+:::
+
+### 2. Defaults and Nullable Fields
 By default, all fields in a MittenLib configuration are **required**. If a user omits them from the `config.yml`, the application will fail to start.
-By using a Java `default` method, the `port` field becomes optional. If the user doesn't specify a port, the loader will automatically use the value returned by `return 3306;`.
-This is incredibly powerful because it allows you to use standard, idiomatic Java to define complex defaults (like `List.of(...)`).
+
+There are two ways to disable this:
+
+#### Nullable Fields
+If you want to allow a field to be omitted from the config, you can mark it as `@Nullable`. We do this on the `password()` property in `DatabaseConfig`.
+
+#### Defaults
+We can also provide a default value for a field, which will be used if it's not present in the config.
+
+
+<Tabs>
+    <TabItem value="interface" label="Interface Configs" default>
+        Default values can be defined with a `default` method, as demonstrated with the `port()` method.
+        If the user doesn't specify a port, the loader will automatically use the value returned by `return 3306;`.
+
+        This means we can use standard Java code to provide backup default values!
+
+    </TabItem>
+    <TabItem value="class" label="Class Configs">
+        Classes also support default values with standard field initializers, e.g.:
+
+        ```java
+        @Config class DemoDTO {
+        int port = 3306;
+    }
+        ```
+
+        Class default values are a little less powerful and more janky. The class _must_ have a public no-arg
+        constructor, and the default values have to be constant expressions. This is one of the reasons why interfaces
+        are preferred.
+    </TabItem>
+</Tabs>
 
 ### 2. Validation (`@NotBlank`, `@Min`)
-Configurations are notoriously fragile when users provide invalid data. MittenLib solves this with a built-in validation pipeline.
+MittenLib has built-in support for automatically validating your config.
+
 * `@NotBlank` ensures the `host` string isn't empty or whitespace.
 * `@Min(1)` ensures the `port` is a positive number.
 
-If any of these constraints fail during loading, MittenLib will collect all the errors and present them to you, rather than crashing unpredictably later in your application.
+If any of these constraints fail during loading, MittenLib will collect all the errors and present them in a user-friendly way.
+
 
 ### 3. Collections (`List<String>`)
-MittenLib supports standard Java collections out of the box (`List`, `Set`, `Map`). You don't need any special wrappers; just declare the type and the annotation processor handles the mapping.
+MittenLib supports a subset of standard Java collections out of the box (`List`, and `Map`), which work in the way you'd expect.
 
 ### 4. Nested Configurations
-As your configuration grows, you'll want to organize it into sections. You can do this by defining another `@Config` interface (like `DatabaseConfig` above) and using it as a return type. 
-MittenLib will recursively generate logic to load the nested sections from your YAML/JSON file.
+As your configuration grows, it's helpful to organize it into subsections. You can do this by defining another `@Config` type (like `DatabaseConfig` above) and using it like normal. This also allows reusing the same type for multiple subsections.
+
+Using other configurations as properties translates to a nested structure in the YAML/JSON file.
+
+### Example
+
+The config class we've written handles files with this structure:
+
+```yaml
+host:
+port: 3306
+motd:
+    - Welcome to the server!
+database:
+    username:
+    password:
+```
 
 ## What's Next?
 We now have a robust, validated, and feature-rich configuration definition. The final step is learning how to actually load this configuration into your application and use it.

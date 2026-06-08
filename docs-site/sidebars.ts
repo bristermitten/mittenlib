@@ -19,7 +19,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Tutorials',
       items: [
-        'tutorial/general-setup',
+        'tutorial/getting-started',
         {
           type: 'category',
           label: 'Config System',
@@ -34,6 +34,10 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Config Reference',
+      link: {
+        type: 'doc',
+        id: 'config/index',
+      },
       items: [
         'config/getting-started',
         'config/data-types',
@@ -41,6 +45,7 @@ const sidebars: SidebarsConfig = {
         'config/validation',
         'config/guice-integration',
         'config/persistence',
+
       ],
     },
     {
@@ -57,7 +62,9 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Advanced',
-      items: ['config/pipeline'],
+      items: [
+        'config/core-system',
+      ],
     },
   ],
 };

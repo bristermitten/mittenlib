@@ -1,33 +1,52 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Validation
 
-MittenLib ensures your configs are valid before they reach your application code. The validation system runs during deserialization and prevents your plugin from starting with bad configuration data.
+MittenLib ensures your configs are valid before they reach your application code. The validation system runs during deserialization and prevents your plugin from accepting bad configuration data.
 
 ## Built-in Constraints
 
-Apply annotations directly to fields in your DTO:
+MittenLib provides several built-in annotations to validate common data types. 
+
+<Tabs>
+<TabItem value="java" label="Java" default>
 
 ```java
 import me.bristermitten.mittenlib.config.validation.*;
 
 @Config
-public class ServerConfigDTO {
+public interface CombatConfig {
     @NotBlank
-    String serverName;
+    String killMessage();
     
     @Positive
-    int port;
+    int comboWindowTicks();
     
     @Min(1)
     @Max(100)
-    int maxPlayers = 20;
+    default int maxReach() {
+        return 5;
+    }
     
-    @Range(min = 1024, max = 65535)
-    int queryPort;
-    
-    @Negative
-    double penaltyMultiplier = -1.5;
+    @Range(min = 0, max = 1)
+    double knockbackMultiplier();
 }
 ```
+
+</TabItem>
+<TabItem value="yaml" label="YAML (Invalid Example)">
+
+```yaml
+# This would fail validation:
+killMessage: "" # Error: Cannot be blank
+comboWindowTicks: -10 # Error: Must be positive
+maxReach: 150 # Error: Must be 100 or less
+knockbackMultiplier: 1.5 # Error: Must be between 0 and 1
+```
+
+</TabItem>
+</Tabs>
 
 ### Constraint Reference
 
@@ -40,111 +59,66 @@ public class ServerConfigDTO {
 | `@Max(value)`      | Number is less than or equal to value       | Numeric types |
 | `@Range(min, max)` | Number is between min and max (inclusive)   | Numeric types |
 
+The lack of a `@Nullable` annotation is also considered a form of constraint, which adds a check that the property is not null.
+
 ## How Validation Works
 
-When a config is loaded, the generated validator runs **before** the config object is constructed:
-
-```java
-// Loading with validation
-Result<ServerConfig> result = ServerConfig.deserializeServerConfig(data);
-
-result.ifFailure(errors -> {
-    // Validation failures are collected here
-    errors.forEach(error -> 
-        System.err.println("Config error: " + error.getMessage())
-    );
-});
-```
+When a configuration is loaded, MittenLib generates a dedicated `...Validator` class. This validator is automatically invoked by the configuration provider when reading the file.
 
 **Key behaviors:**
-- Validation runs **after** deserialization but **before** object creation
-- All validation errors are collected and reported together
-- The config object is **never created** if validation fails
+- **Safe Loading:** Validation runs _before_ the final configuration object is constructed.
+- **Fail-Fast:** If any constraint is violated, the configuration is not returned, and the loading process fails.
+- **Informative Effort Collection:** All validation errors are collected and reported at once in a pretty format, allowing the admin to fix all issues in one go.
 
 ## Custom Validators
 
-For complex validation logic, implement the `Validator<T>` interface:
+For more complex logic that the built-in constraints can't handle, implement the <Javadoc type="Validator [me.bristermitten.mittenlib.config.validation.Validator]"/> interface, and then mark the properties to validate with <Javadoc type='ValidateWith [me.bristermitten.mittenlib.config.validation.ValidateWith]'/>.
+
+<Tabs>
+<TabItem value="java" label="Java">
 
 ```java
 import me.bristermitten.mittenlib.config.validation.Validator;
+import org.bukkit.Material;
 
-public class EmailValidator implements Validator<String> {
+public class TestValidator implements Validator<String> {
     @Override
     public Optional<String> validate(String value) {
-        if (value == null || !value.contains("@")) {
-            return Optional.of("Must be a valid email address");
+        if (!value.equals("hunter2")) {
+            return Optional.of("Invalid password: " + value);
         }
         return Optional.empty(); // Valid
     }
 }
-```
 
-Apply it to your DTO field:
-
-```java
 @Config
-public class UserConfigDTO {
-    @ValidateWith(EmailValidator.class)
-    String contactEmail;
-    
-    @ValidateWith(PortValidator.class)
-    int gamePort;
+public interface SecretConfig {
+    @ValidateWith(TestValidator.class)
+    String password();
 }
 ```
 
-### Validator Requirements
+</TabItem>
+<TabItem value="yaml" label="YAML">
 
-- Return `Optional.empty()` when valid
-- Return `Optional.of("error message")` when invalid
-- The error message will be displayed to the user/admin
+```yaml
+password: adm1n # Error: Invalid password: adm1n
+```
+
+</TabItem>
+</Tabs>
 
 ## Validation with Collections
 
-Constraints apply to each element in collections:
-
-```java
-@Config
-public class WhitelistDTO {
-    @NotBlank
-    List<String> playerNames;
-    
-    @Range(min = 1, max = 100)
-    Map<String, Integer> playerLevels;
-}
-```
-
-Each player name must be non-blank, and each level must be between 1 and 100.
-
-## Combining Constraints
-
-Multiple constraints can be applied to the same field:
-
-```java
-@Config
-public class DatabaseConfigDTO {
-    @NotBlank
-    @ConfigName("db-host")
-    String host;
-    
-    @Min(1024)
-    @Max(65535)
-    int port;
-}
-```
+Right now, validation does not work on collections and will throw an error. This will be improved in the future, but for the time being we recommend writing a custom validator if this is required.
 
 ## Validation in Guice
 
-When using Guice integration, validation errors prevent the config from being bound:
+Since config loading is always lazy by default, validation errors won't be thrown until the config is loaded, either from a  <Javadoc type="ConfigProvider [me.bristermitten.mittenlib.config.provider.ConfigProvider]"/> or provisioning an instance directly.
 
-```java
-// In your module
-install(new ConfigModule(ServerConfig.CONFIG));
+There are many cases where _eager_ validation is required, e.g. to disable the plugin on startup if a critical config file is invalid.
+There is currently no clean way to do this, but it is easy to approximate by simply loading your config instance (e.g. with `Injector#getInstance`) on startup. This will be improved in the future.
 
-// Validation failures during startup will throw ConfigValidationException
-// with all collected violations
-```
-
-This ensures your plugin fails fast with a clear error message rather than running with invalid data.
 
 ## Next Steps
 

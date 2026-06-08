@@ -1,272 +1,376 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Javadoc from "@site/src/components/Javadoc";
+
 # Data Types & Collections
 
-MittenLib supports a wide range of Java types out of the box, from primitives to complex nested structures. This guide shows how to use them effectively in your config DTOs.
+MittenLib supports a wide range of Java types out of the box, from primitives to complex nested structures. This guide shows how to use them effectively in your config interfaces.
+
+:::info[Interfaces vs. Classes]
+While MittenLib technically supports using classes (DTOs) for configuration, **Interfaces are the recommended and primary way** to define configurations, with classes being deprecated. This guide focuses exclusively on the Interface approach.
+:::
 
 ## Primitive Types
 
-All Java primitives and their wrapper types are supported:
+All Java primitives and their wrapper types are supported.
 
-```java
-@Config
-public interface ServerConfig {
-    String name();
-    int port();
-    double tickRate();
-    boolean debug();
-    long timeout();
-    float multiplier();
-}
-```
+<Tabs>
+    <TabItem value="java" label="Java" default>
+
+        ```java
+        @Config
+        public interface ServerConfig {
+            String name();
+            int port();
+            double tickRate();
+            boolean debug();
+            long timeout();
+            float multiplier();
+        }
+        ```
+
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
+
+        ```yaml
+        name: "My Server"
+        port: 25565
+        tickRate: 20.0
+        debug: false
+        timeout: 5000
+        multiplier: 1.5
+        ```
+
+    </TabItem>
+</Tabs>
+
+## Spigot Types
+
+Common Spigot types (`Location`, `ItemStack`, etc.) are currently unsupported. There are a few reasons for this:
+- These types are often mutable by default and have complex internals, adding potential footguns.
+- These types don't always have clearly defined ways to serialize and deserialize -- for example, serializing a `Location` can often cause a `StackOverflowError` due to the `World` circular reference.
+
+The recommended approach is to define a custom config type that represents the actual shape of the data you want to work with.
+
+An alternative, but not recommended. option is to define a <Javadoc type='me.bristermitten.mittenlib.config.extension.CustomSerializer'/> for these types.
+
 
 ## Nullable Fields
 
-By default, all fields are required and must be present in the config file. To allow null values, use the `@Nullable` annotation:
+By default, all fields are required and must be present in the config file. To allow null values, use the `@Nullable` annotation.
 
-```java
-@Config
-public interface DatabaseConfig {
-    String host();
-    @Nullable
-    String tablePrefix();  // Can be null or omitted
-}
-```
+<Tabs>
+    <TabItem value="java" label="Java" default>
+
+        ```java
+        @Config
+        public interface DatabaseConfig {
+            String host();
+
+            @Nullable String tablePrefix();  // Can be null or omitted
+    }
+        ```
+
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
+
+        ```yaml
+        host: "localhost"
+        # tablePrefix can be omitted or set to null
+        tablePrefix: null
+        ```
+
+    </TabItem>
+</Tabs>
 
 ## Default Values
 
-Provide defaults using Java `default` methods. Fields with defaults are optional in the config file:
+Provide defaults using Java `default` methods to make fields optional in the config file.
 
-```java
-@Config
-public interface ConnectionConfig {
-    String host();
-    
-    default int port() {
-        return 3306;
-    }
-    
-    default boolean ssl() {
-        return true;
-    }
-    
-    default String driver() {
-        return "mysql";
-    }
-}
-```
+<Tabs>
+    <TabItem value="java" label="Java" default>
+
+        ```java
+        @Config
+        public interface ConnectionConfig {
+            String host();
+
+            default int port() {
+                return 3306;
+            }
+
+            default boolean ssl() {
+                return true;
+            }
+        }
+        ```
+
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
+
+        ```yaml
+        host: "localhost"
+        # port and ssl will use their default values if omitted
+        ```
+
+    </TabItem>
+</Tabs>
 
 ## Collections
 
 ### Lists
 
-```java
-@Config
-public interface Messages {
-    default List<String> motd() {
-        return List.of("Welcome to the server!", "Have fun!");
-    }
-}
-```
+Lists "just work" in the way you'd expect.
 
-**YAML:**
-```yaml
-motd:
-  - "Welcome to the server!"
-  - "Have fun!"
-```
+<Tabs>
+    <TabItem value="java" label="Java" default>
 
-### Sets
+        ```java
+        @Config
+        public interface Messages {
+            default List<String> motd() {
+                return List.of("Welcome!", "Have fun!");
+            }
+        }
+        ```
 
-```java
-@Config
-public interface Features {
-    default Set<String> enabledFeatures() {
-        return Set.of("pvp", "economy");
-    }
-}
-```
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
+
+        ```yaml
+        motd:
+        - "Welcome!"
+        - "Have fun!"
+        ```
+
+    </TabItem>
+</Tabs>
 
 ### Maps
 
-```java
-@Config
-public interface Commands {
-    default Map<String, String> descriptions() {
-        return Map.of(
-            "help", "Show help message",
-            "spawn", "Teleport to spawn"
-        );
-    }
-}
-```
+Maps are represented as objects in YAML/JSON. 
 
-**YAML:**
-```yaml
-descriptions:
-  help: "Show help message"
-  spawn: "Teleport to spawn"
-```
+<Tabs>
+    <TabItem value="java" label="Java" default>
 
-### Maps with Complex Values
+        ```java
+        @Config
+        public interface Commands {
+            Map <String, String> descriptions();
+        }
+        ```
 
-```java
-@Config
-public interface Permissions {
-    Map<String, PermissionConfig> permissions();
-}
-```
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
 
-**YAML:**
-```yaml
-permissions:
-  admin:
-    level: 100
-    inheritedFrom: "moderator"
-  moderator:
-    level: 50
-    inheritedFrom: "user"
-```
+        ```yaml
+        descriptions:
+            help: "Show help message"
+            spawn: "Teleport to spawn"
+        ```
+
+    </TabItem>
+</Tabs>
 
 ## Nested Configs
 
-One of MittenLib's most powerful features is automatic nested configuration processing. When a method's return type is another `@Config` interface, the processor generates recursive deserialization logic.
+When a property's type is another `@Config` interface, the processor treats it as a nested object.
 
-### Basic Nesting
+This means we can split config types into smaller subtypes, which can be reused in multiple places.
 
-```java
-@Config
-public interface DatabaseConfig {
-    String host();
-    default int port() {
-        return 3306;
-    }
-}
+<Tabs>
+    <TabItem value="java" label="Java" default>
 
-@Config
-public interface PluginConfig {
-    String pluginName();
-    DatabaseConfig database();  // Nested config
-    default int version() {
-        return 1;
-    }
-}
-```
+        ```java
+        @Config
+        public interface PluginConfig {
+            String pluginName();
+            DatabaseConfig database(); // Nested config
+        }
 
-**YAML:**
-```yaml
-pluginName: "MyPlugin"
-database:
-  host: localhost
-  port: 3306
-version: 2
-```
+        @Config
+        public interface DatabaseConfig {
+            String host();
+            default int port() {
+                return 3306;
+            }
+        }
+        ```
 
-### Deep Nesting
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
 
-Nesting works to any depth:
+        ```yaml
+        pluginName: "MyPlugin"
+        database:
+            host: "localhost"
+            port: 3306
+        ```
 
-```java
-@Config
-public interface WorldConfig {
-    String name();
-    SpawnConfig spawn();
-}
-
-@Config
-public interface SpawnConfig {
-    LocationConfig location();
-    default String welcomeMessage() {
-        return "Welcome!";
-    }
-}
-
-@Config
-public interface LocationConfig {
-    double x();
-    double y();
-    double z();
-    default String world() {
-        return "world";
-    }
-}
-```
-
-**YAML:**
-```yaml
-name: "survival"
-spawn:
-  location:
-    x: 100.5
-    y: 64.0
-    z: -200.3
-    world: "survival"
-  welcomeMessage: "Welcome to Survival!"
-```
+    </TabItem>
+</Tabs>
 
 ## Enums
 
-Java enums are automatically deserialized by name (case-insensitive by default):
+Java enums are automatically deserialized by name. By default, this is case-sensitive, but can be customised with the <Javadoc type="EnumParsingScheme [me.bristermitten.mittenlib.config.EnumParsingScheme]"/> annotation.
 
-```java
-public enum GameMode {
-    SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
-}
+<Tabs>
+    <TabItem value="java" label="Java" default>
 
-@Config
-public interface WorldSettings {
-    default GameMode defaultGameMode() {
-        return GameMode.SURVIVAL;
-    }
-    
-    default Set<GameMode> allowedModes() {
-        return Set.of(GameMode.SURVIVAL, GameMode.CREATIVE);
-    }
-}
-```
+        ```java
+        public enum GameMode {
+            SURVIVAL,
+            CREATIVE
+        }
 
-**YAML:**
-```yaml
-defaultGameMode: SURVIVAL
-allowedModes:
-  - survival
-  - creative
-```
+        @Config
+        public interface WorldSettings {
+            default GameMode defaultMode() {
+                return GameMode.SURVIVAL;
+            }
+        }
+        ```
+
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
+
+        ```yaml
+        defaultMode: CREATIVE # or "creative" if case-sensitivity disabled
+        ```
+
+    </TabItem>
+</Tabs>
 
 ## Inheritance
 
-Interfaces can extend other interfaces, effectively merging configuration keys:
+Interfaces can extend other interfaces to share fields across multiple configurations.
 
+When we extend an interface, we essentially "absorb" all of its properties alongside any extra ones we define.
+
+This can be extremely useful for defining "templates" which can be extended with properties.
+
+:::tip
+When using interfaces as configs, we can also use multiple-inheritance to extend _multiple_ configs at once!
+:::
+
+<Tabs>
+    <TabItem value="java" label="Java" default>
+
+        ```java
+        public interface BaseConfig {
+            String name();
+        }
+
+        @Config
+        public interface ExtendedConfig extends BaseConfig {
+            int extraField();
+        }
+        ```
+
+    </TabItem>
+    <TabItem value="yaml" label="YAML">
+
+        ```yaml
+        name: "Base Name"
+        extraField: 100
+        ```
+
+    </TabItem>
+</Tabs>
+
+## Union Types
+
+There are often situations when a config property has a variety of different forms. For example, when defining the data storage system for our plugin, we might want to support JSON files _and_ a database:
+
+```yaml
+storage:
+  file: "file.json"
+```
+
+```yaml
+storage:
+  host: 127.0.0.1
+  port: 3306
+  # etc
+```
+
+We can use the <Javadoc type='ConfigUnion [me.bristermitten.mittenlib.config.ConfigUnion]'/> annotation to generate code for this.
+
+First, define a config interface that acts as a root type for all the "variants". This should be marked with <Javadoc type='ConfigUnion [me.bristermitten.mittenlib.config.ConfigUnion]'>`@ConfigUnion`</Javadoc>
+
+We then define all the variants as nested configs, which **must** extend the root type.
+
+The processor will generate code that tries to deserialize each variant _in order_, accepting the first success.
+
+<Tabs>
+    <TabItem value="java" label="Java" default>
+
+        ```java
+        @Config
+        @ConfigUnion
+        public interface StorageConfig {
+            
+            @Config
+            interface FileBasedStorageConfig extends StorageConfig {
+                String file();
+            }
+
+            @Config
+            interface DatabaseStorageConfig extends StorageConfig {
+                String host();
+                int port();
+                // etc
+            }
+            
+        }
+        ```
+
+    </TabItem>
+    <TabItem value="yaml-1" label="YAML (Option 1)">
+
+        ```yaml
+        storage:
+            file: "file.json"
+        ```
+    </TabItem>
+
+    <TabItem value="yaml-2" label="YAML (Option 2)">
+
+        ```yaml
+        storage:
+            host: 127.0.0.1
+            port: 3306
+            # etc
+        ```
+    </TabItem>
+</Tabs>
+
+:::warning
+
+The variants are tried in order, and so each variant needs to be distinct to avoid ambiguity. For example, in this example:
 ```java
-public interface BaseConfig {
-    String name();
-    default boolean enabled() {
-        return true;
+@Config
+@ConfigUnion
+public interface AmbiguousUnionConfig {
+    @Config
+    interface Option1 extends AmbiguousUnionConfig {
+        String blah();
+    }
+
+    @Config
+    interface Option2 extends AmbiguousUnionConfig {
+        String blah();
+        int other();
     }
 }
-
-@Config
-public interface ExtendedConfig extends BaseConfig {
-    String extraField();
-}
 ```
 
-The generated `ExtendedConfigImpl` class will have `name()`, `enabled()`, and `extraField()` methods.
+The `Option2` variant will **never** be matched, because the `Option1` variant will always succed first!
 
-## Union Types (Discriminated)
 
-For polymorphic configs, use `@ConfigUnion` to define variants:
-
-```java
-@Config
-public interface Message {
-    String type();
-    @ConfigUnion({ChatMessage.class, ActionBarMessage.class})
-    MessageContent content();
-}
-```
-
-This is an advanced feature for configs where a field can be one of several distinct shapes.
+:::
 
 ## Next Steps
 
-- **[Naming & Keys](./naming-keys)** - Customize how field names appear in config files
-- **[Validation](./validation)** - Add constraints to ensure data integrity
+- [**Naming & Keys**](./naming-keys) - Customize how field names appear in config files
+- [**Validation**](./validation) - Add constraints to ensure data integrity

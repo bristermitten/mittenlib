@@ -1,39 +1,75 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import Javadoc, {ExternalJavadoc} from "../../../src/components/Javadoc";
 
 # 1. Your First Config
 
-Welcome to MittenLib! While MittenLib is a general-purpose utility library designed to make Spigot development more scalable and modern (heavily leveraging Guice and Adventure), its Configuration Annotation Processor is one of its absolute killer features. 
+This tutorial walks through MittenLib's Configuration Annotation Processor System.
 
 This feature allows you to define configuration structures using simple, clean interfaces, letting the compiler generate all the heavy lifting for parsing, validation, and serialization.
 
 Let's start by defining a basic configuration for a server connection.
 
-## Defining the Structure
+## The Configuration
 
-You can use either an **interface** or a **class** to define your configuration structure. MittenLib will process either, but **interfaces are the preferred approach** because they enforce immutability by default and keep your code cleaner.
+Suppose our plugin connects to some server. We want to let admins configure the host and port of the server.
+Our `config.yml` might look like this:
+
+```yaml
+host: localhost
+port: 25565
+```
+
+MittenLib makes parsing and validating this config easy and safe!
+
+## Defining the Config Structure
+
+We first have to define a type which describes the shape of our configuration.
+This is often called a **DTO** (Data Transfer Object) or **Config Type**.
+
+You can use either an **interface** or a **class** to define your configuration structure. Interfaces are the recommended option in most situations.
 
 <Tabs>
-  <TabItem value="interface" label="Interface (Recommended)" default>
+    <TabItem value="interface" label="Interface (Recommended)" default>
 
-```java file=./code/SimpleInterfaceConfig.java
-```
+        ```java file=./code/SimpleInterfaceConfig.java
+        ```
+        ### What happens here?
+        1. The <Javadoc type="me.bristermitten.mittenlib.config.Config">`@Config`</Javadoc> annotation tells the
+        MittenLib annotation processor to inspect this type during compilation.
+        2. The processor inspects the `host` and `port` methods.
+        3. It generates a full implementation class (`SimpleInterfaceConfigImpl`), along with deserializers and
+        serializers for loading/saving data.
 
-  </TabItem>
-  <TabItem value="class" label="Class (Alternative)">
+    </TabItem>
+    <TabItem value="class" label="Class (Alternative)">
+        :::info
+        When using classes, the recommended naming convention is to end the class name with `DTO`.
+        :::
 
-```java file=./code/SimpleClassConfig.java
-```
+        We then add fields to describe each field in our config. Access modifiers and `final` are **ignored** -- all
+        properties will be public, non-static, and final.
 
-  </TabItem>
+        ```java file=./code/SimpleClassConfig.java
+        ```
+
+        ### What happens here?
+        1. The <Javadoc type="me.bristermitten.mittenlib.config.Config">`@Config`</Javadoc> annotation tells the
+        MittenLib annotation processor to inspect this type during compilation.
+        2. The processor inspects the `host` and `port` fields.
+        3. It generates a full implementation class (`SimpleInterfaceConfig`), along with deserializers and
+        serializers for loading/saving data.
+
+    </TabItem>
 </Tabs>
 
-### What happens here?
-1. The `@Config` annotation tells the MittenLib annotation processor to inspect this type during compilation.
-2. The processor sees the `host` and `port` fields (or methods).
-3. It generates a full implementation class (`SimpleInterfaceConfigImpl` or `SimpleClassConfig`), along with deserializers and serializers for loading/saving data.
-
 ## The Generated Implementation
+
+:::note
+All properties are **non-nullable** by default, and _always_ immutable.
+:::
+
+### Data Class
 
 The generated class provides a type-safe, immutable representation of your configuration.
 
@@ -50,11 +86,52 @@ public class SimpleInterfaceConfigImpl implements SimpleInterfaceConfig {
 
     @Override
     public String host() { return host; }
-    
+
     @Override
     public int port() { return port; }
 
     // Also generated: withHost(), withPort(), equals(), hashCode(), toString()
+}
+```
+
+### Deserializer and Serializer
+
+MittenLib also generates separate deserializer and serializer classes for your config:
+
+```java
+public class SimpleInterfaceConfigDeserializer implements DeserializationFunction<SimpleInterfaceConfig> {
+
+    private Result<String> deserializeHost(DeserializationContext context) {
+        // ...
+    }
+
+    private Result<Integer> deserializePort(DeserializationContext context) {
+        // ...
+    }
+
+    // the function to actually deserialize the config!
+    public Result<SimpleInterfaceConfig> apply(final DeserializationContext context) {
+        // ...
+    }
+}
+
+```
+
+```java
+public class SimpleInterfaceConfigSerializer implements SerializationFunction<SimpleInterfaceConfig> {
+
+    // This function serializes the config to a DataTree
+    public DataTree apply(SimpleInterfaceConfig config, SerializationContext context) {
+        // ...
+    }
+
+    private DataTree serializeHost(String value, SerializationContext context) {
+        // ...
+    }
+
+    private DataTree serializePort(int value, SerializationContext context) {
+        // ...
+    }
 }
 ```
 

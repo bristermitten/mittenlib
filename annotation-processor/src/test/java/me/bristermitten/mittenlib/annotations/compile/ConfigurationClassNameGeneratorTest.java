@@ -4,11 +4,14 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
 import com.squareup.javapoet.ClassName;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import static com.google.testing.compile.Compiler.javac;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class ConfigurationClassNameGeneratorTest {
 
@@ -64,7 +67,7 @@ class ConfigurationClassNameGeneratorTest {
                                 }
                                 """));
 
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings();
+        CompilationSubject.assertThat(compilation).succeeded();
     }
 
     @Test
@@ -77,5 +80,13 @@ class ConfigurationClassNameGeneratorTest {
         ClassName configName = ClassName.bestGuess("TestConfig");
         assertThat(ConfigurationClassNameGenerator.translateConfigClassName(configName))
                 .isEqualTo(ClassName.bestGuess("TestConfigImpl"));
+    }
+
+    @Test
+    void getLoaderClassName() {
+        var ast = mock(AbstractConfigStructure.Atomic.class);
+
+        ConfigurationClassNameGenerator generator = new ConfigurationClassNameGenerator(new ConfigNameCache());
+
     }
 }

@@ -10,12 +10,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class PluginInitExample extends JavaPlugin {
     @Override
     public void onEnable() {
-        MittenLib<JavaPlugin> mittenLib = MittenLib.withDefaults(this)
-                // Register the generated module which binds all your configs
-                .addConfigModule(new ConfigLoaderModule())
-                .build();
+        MittenLib<PluginInitExample> mittenLib = MittenLib.withDefaults(this)
+                // Register the generated config module which binds all your configs
+                .config(new ConfigLoaderModule());
 
-        Injector injector = Guice.createInjector(mittenLib);
+        Injector injector = mittenLib.setup();
         
         // Get your class that depends on the ConfigProvider
         UsageExample example = injector.getInstance(UsageExample.class);

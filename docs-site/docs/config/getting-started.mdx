@@ -1,166 +1,88 @@
 # Getting Started with Configs
 
-While MittenLib provides a wide array of utilities, the Config Annotation Processor is one of its absolute killer features. It transforms simple **interfaces** into fully-functional, immutable configuration classes with serialization, deserialization, and validation built-in.
+MittenLib's **Config Annotation Processor** transforms simple Java interfaces or classes into high-performance, immutable configuration objects with built-in validation and Guice integration.
 
-## Your First Config
+:::tip[New to MittenLib?]
+Follow the **[Config System Tutorial](../tutorial/config-system/01-first-config)** for a step-by-step guide on building your first configuration.
+:::
 
-Define your config structure in a simple **interface**. The processor handles everything else.
+## Core Concept
 
-```java
-import me.bristermitten.mittenlib.config.*;
-
-@Config
-public interface DatabaseConfig {
-    String host();
-    String username();
-    String password();
-    String database();
-    
-    default int port() {
-        return 3306;
-    }
-    
-    @Nullable
-    String tablePrefix();
-}
-```
-
-This single interface generates a `DatabaseConfigImpl` class that can:
-- Load from YAML, JSON, or any supported format
-- Validate required fields
-- Provide immutable getters and copy methods
-- Integrate with Guice for automatic loading
-
-## How It Works
-
-### 1. Define the DTO
-
-Create an interface and annotate it with `@Config`.
+Instead of writing thousands of lines of boilerplate for parsing and validation, you define your configuration's **structure** (often called a DTO).
 
 ```java
 @Config
-public interface ServerSettings {
-    default String serverName() {
-        return "My Server";
-    }
+@Source("config.yml")
+public interface MyConfig {
+    String serverName();
     
+    @Min(1)
     default int maxPlayers() {
         return 20;
     }
-    
-    default boolean whitelistEnabled() {
-        return false;
+}
+```
+
+The annotation processor then generates:
+1. **Implementation**: An immutable class (`MyConfigImpl`) with getters, `equals`, `hashCode`, and `toString`.
+2. **Logic**: Dedicated Deserializer, Serializer, and Validator classes.
+3. **Metadata**: A `public static final Configuration<MyConfig> CONFIG` constant (if `@Source` is present).
+
+## How Generation Works
+
+MittenLib supports two ways of defining configuration structures.
+
+### 1. Interfaces (Recommended)
+Defining your config as an interface is the cleanest approach.
+- **Generated Name**: `[InterfaceName]Impl` (e.g., `MyConfig` -> `MyConfigImpl`).
+- **Defaults**: Use standard Java `default` methods.
+- **Public API**: Your application interacts with the interface directly.
+
+### 2. Classes (DTO Pattern)
+You can also use classes, which is useful if you are porting existing code.
+- **Naming Convention**: If the class name ends in `DTO`, the generated class drops the suffix (e.g., `MyConfigDTO` -> `MyConfig`).
+- **Otherwise**: It appends `Impl` (e.g., `MyConfig` -> `MyConfigImpl`).
+
+## What is Generated?
+
+For every `@Config` type, MittenLib generates several companion classes in the same package:
+
+| Generated Class | Purpose |
+|-----------------|---------|
+| `...Impl` | The concrete, immutable implementation of your config structure. |
+| `...Deserializer` | Handles converting raw data (via <Javadoc type="DataTree [me.bristermitten.mittenlib.config.tree.DataTree]">`DataTree`</Javadoc>) into your config objects. |
+| `...Serializer` | Handles converting your config objects back into <Javadoc type="DataTree [me.bristermitten.mittenlib.config.tree.DataTree]">`DataTree`</Javadoc> format. |
+| `...Validator` | Ensures all `@Min`, `@NotBlank`, etc., constraints are met. |
+
+## Integrating with Guice
+
+The easiest way to use your configs is via the generated `ConfigLoaderModule`.
+
+```java
+public class MyPluginModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        // Registers all your @Config types automatically
+        install(new ConfigLoaderModule());
     }
 }
 ```
 
-**Field Rules:**
-- Methods are **required by default**. If a field has no `default` method and is missing from the config file, loading will fail.
-- Use a `default` method to make a field optional and provide its fallback value.
-- Use `@Nullable` to allow null values for optional fields.
-
-### 2. The Generated Class
-
-The processor creates a class named `ServerSettings` (dropping the `DTO` suffix) with:
-
-| Feature | Generated Code |
-|---------|---------------|
-| **Getters** | `String serverName()`, `int maxPlayers()` |
-| **Copy Methods** | `withServerName(String name)`, `withMaxPlayers(int max)` |
-| **Deserialization** | Static `deserializeServerSettings(DataTree)` method |
-| **Serialization** | Instance `serialize()` method |
-| **Validation** | Static validation logic (if constraints are present) |
-| **Standard Methods** | `toString()`, `equals()`, `hashCode()` |
-
-### 3. Customizing the Class Name
-
-If you don't want to use the `DTO` suffix convention, specify the name explicitly:
+Once registered, you can inject a `ConfigProvider<T>` to access your configuration with support for **hot-reloading**.
 
 ```java
-@Config("ServerConfiguration")
-public class MyConfigClass {
-    String host;
+@Inject
+public MyService(ConfigProvider<MyConfig> config) {
+    this.config = config;
 }
 ```
-
-This generates a class named `ServerConfiguration` instead of `MyConfigClass`.
-
-## Loading Configs Manually
-
-You can deserialize configs directly without Guice:
-
-```java
-// Load from a DataTree (parsed from YAML/JSON)
-DataTree data = yamlLoader.load(new FileInputStream("config.yml"));
-Result<DatabaseConfig> result = DatabaseConfig.deserializeDatabaseConfig(data);
-
-result.ifOk(config -> {
-    System.out.println("Connected to: " + config.host());
-});
-
-result.ifFailure(errors -> {
-    System.err.println("Failed to load config: " + errors);
-});
-```
-
-## Common Patterns
-
-### Required vs. Optional Fields
-
-```java
-@Config
-public interface FeatureFlags {
-    // Required: must be present in config file
-    boolean enabled();
-    
-    // Optional: uses default if missing
-    default String description() {
-        return "No description provided";
-    }
-    
-    // Optional: can be null
-    @Nullable
-    String permission();
-}
-```
-
-### Nested Configs
-
-Configs can contain other configs. The processor recursively generates code for nested types:
-
-```java
-@Config
-public interface PluginConfig {
-    DatabaseConfig database();  // References another @Config interface
-    FeatureFlags features();
-    
-    default int version() {
-        return 1;
-    }
-}
-```
-
-This generates a `PluginConfigImpl` that automatically deserializes `database` and `features` sections.
-
-### Collections
-
-MittenLib supports standard Java collections:
-
-```java
-@Config
-public interface Messages {
-    default List<String> welcomeMessages() {
-        return List.of("Welcome!", "Hello!");
-    }
-    Map<String, String> commandDescriptions();
-    Set<String> blockedCommands();
-}
-```
-
-Collections can contain primitive types, enums, or other DTOs.
 
 ## Next Steps
 
-- **[Data Types & Collections](./data-types)** - Deep dive into supported types and nested structures
-- **[Naming & Keys](./naming-keys)** - Customize how field names map to config file keys
-- **[Guice Integration](./guice-integration)** - Automatic loading, reloading, and dependency injection
+Explore the detailed reference guides to master the configuration system:
+
+- **[Data Types & Collections](./data-types)** - Information about all the supported types.
+- **[Naming & Keys](./naming-keys)** - Customize how Java names map to YAML keys
+- **[Validation](./validation)** - Advanced constraints and custom validators
+- **[Guice Integration](./guice-integration)** - Automatic loading and file watching
+- **[Persistence](./persistence)** - Save and merge config changes programmatically

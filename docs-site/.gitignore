@@ -7,6 +7,9 @@
 # Generated files
 .docusaurus
 .cache-loader
+static/javadoc/**
+src/data/javadoc-meta.json
+src/data/javadoc-types.ts
 
 # Misc
 .DS_Store

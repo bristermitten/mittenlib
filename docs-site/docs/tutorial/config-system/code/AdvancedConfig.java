@@ -7,7 +7,7 @@ import me.bristermitten.mittenlib.config.validation.NotBlank;
 
 import java.util.List;
 
-@Config
+@Config(requireDynamicInitialization = false)
 @Source("config.yml")
 public interface AdvancedConfig {
     @NotBlank
@@ -27,6 +27,6 @@ public interface AdvancedConfig {
     @Config
     interface DatabaseConfig {
         String username();
-        String password();
+        @Nullable String password();
     }
 }
