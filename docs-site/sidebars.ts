@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Tutorials',
       items: [
+        'tutorial/general-setup',
         {
           type: 'category',
           label: 'Config System',
@@ -32,7 +33,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Reference Guide',
+      label: 'Config Reference',
       items: [
         'config/getting-started',
         'config/data-types',
@@ -40,6 +41,17 @@ const sidebars: SidebarsConfig = {
         'config/validation',
         'config/guice-integration',
         'config/persistence',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Other Modules',
+      items: [
+        'modules/commands',
+        'modules/gui',
+        'modules/minimessage',
+        'modules/papi',
+        'modules/record-generator',
       ],
     },
     {

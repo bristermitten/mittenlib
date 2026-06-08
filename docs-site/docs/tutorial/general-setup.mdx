@@ -1,0 +1,73 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# General Setup
+
+MittenLib is a highly modular library. Its core is built around **Guice** to encourage scalable, injection-based architectures for your Spigot plugins.
+
+This tutorial guides you through adding the `core` module and bootstrapping your plugin's dependency injection environment.
+
+## 1. Adding Dependencies
+
+MittenLib is modular. At a minimum, you need the `core` module. We recommend using the Gradle Kotlin DSL.
+
+<Tabs>
+  <TabItem value="gradle" label="build.gradle.kts" default>
+
+```kotlin
+repositories {
+    maven("https://repo.bristermitten.me/public/")
+}
+
+dependencies {
+    implementation("me.bristermitten:mittenlib-core:VERSION")
+    
+    // You can add other modules as needed:
+    // implementation("me.bristermitten:mittenlib-annotation-processor:VERSION")
+    // implementation("me.bristermitten:mittenlib-commands:VERSION")
+}
+```
+
+  </TabItem>
+  <TabItem value="maven" label="pom.xml">
+
+```xml
+<repositories>
+    <repository>
+        <id>bristermitten</id>
+        <url>https://repo.bristermitten.me/public/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>me.bristermitten</groupId>
+        <artifactId>mittenlib-core</artifactId>
+        <version>VERSION</version>
+    </dependency>
+</dependencies>
+```
+
+  </TabItem>
+</Tabs>
+
+## 2. Bootstrapping Guice
+
+To use MittenLib, you need to create a Guice `Injector` in your main plugin class. MittenLib handles binding your plugin instance, the server, standard loggers, and other Bukkit internals automatically.
+
+```java file=./code/MainPlugin.java
+```
+
+## 3. Using Dependency Injection
+
+Once the injector is created, you can write clean, testable classes that request their dependencies via the constructor using `@Inject`. MittenLib has automatically bound common Spigot types for you.
+
+```java file=./code/MyService.java
+```
+
+## Next Steps
+
+Now that you have the base library and dependency injection set up, you can explore MittenLib's other features:
+
+- **[Config System](./config-system/first-config)**: Auto-generate configuration classes and load them seamlessly via Guice.
+- **[Other Modules](../modules/commands)**: Check out the optional modules available to speed up other areas of your development.
