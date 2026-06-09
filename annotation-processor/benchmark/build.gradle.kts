@@ -11,13 +11,21 @@ java {
 jmh {
     warmupIterations.set(5)
     iterations.set(5)
+
+    timeOnIteration.set("2s")
+
     failOnError.set(true)
     fork.set(1)
     resultFormat.set("JSON")
+
+    profilers.add("jfr")
+
+    // only run the mapping json benchmarks if the deserialization timings arent important
+    includes.set(listOf(".*MappingJson.*"))
 }
 
 tasks.javadoc {
-    // This module doesn't need to be documented so disable the annoying warnings
+    // This module doesn't need to be documented, so disable the annoying warnings
     (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
 }
 
