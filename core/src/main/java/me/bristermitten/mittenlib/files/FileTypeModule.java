@@ -9,6 +9,7 @@ import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 import me.bristermitten.mittenlib.files.json.GsonObjectMapper;
 import me.bristermitten.mittenlib.files.json.GsonProvider;
+import me.bristermitten.mittenlib.files.yaml.YamlModule;
 
 /**
  * Module handling registration of an {@link me.bristermitten.mittenlib.config.reader.ObjectMapper},
@@ -50,5 +51,7 @@ public class FileTypeModule extends AbstractModule {
         // This means Guice won't complain even if there aren't any custom type adapters
         Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {});
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class);
+
+        install(new YamlModule());
     }
 }
