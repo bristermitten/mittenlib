@@ -1,8 +1,15 @@
 package me.bristermitten.mittenlib.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import me.bristermitten.mittenlib.util.lambda.Functions;
 import me.bristermitten.mittenlib.util.lambda.SafeConsumer;
 import me.bristermitten.mittenlib.util.lambda.SafeFunction;
 import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
@@ -20,7 +27,7 @@ public interface Result<T> {
     /**
      * Create a {@link Result} from a given value. This will always be an {@link Ok}.
      *
-     * @param t the value
+     * @param t   the value
      * @param <T> the type of the value
      * @return a {@link Result} containing the given value
      */
@@ -32,7 +39,7 @@ public interface Result<T> {
     /**
      * Create a {@link Result} from a given exception. This will always be a {@link Fail}.
      *
-     * @param e the exception
+     * @param e   the exception
      * @param <T> the type of the value
      * @param <E> the type of the exception
      * @return a {@link Result} containing the given exception
@@ -47,7 +54,7 @@ public interface Result<T> {
      * a {@link Result}
      *
      * @param supplier the supplier to run
-     * @param <T> the type of the returned value
+     * @param <T>      the type of the returned value
      * @return a {@link Result} containing the returned value or any thrown exception
      */
     @Contract(value = "_ -> new")
@@ -84,7 +91,7 @@ public interface Result<T> {
      * runCatching(supplier).flatMap(Function.identity())}
      *
      * @param supplier The {@link SafeSupplier} to execute
-     * @param <T> The type of the returned {@link Result}'s value
+     * @param <T>      The type of the returned {@link Result}'s value
      * @return A {@link Result} wrapping the returned {@link Result}'s value or any thrown exception
      */
     @Contract(value = "_ -> new")
@@ -108,9 +115,9 @@ public interface Result<T> {
      * method handles exceptions thrown in the resource supplier.
      *
      * @param resourceSupplier The supplier to generate the resource
-     * @param function The function to execute
-     * @param <T> The type of the returned {@link Result}'s value
-     * @param <R> The type of the resource
+     * @param function         The function to execute
+     * @param <T>              The type of the returned {@link Result}'s value
+     * @param <R>              The type of the resource
      * @return A {@link Result}, which is either the result of the function or an exception
      */
     static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(
@@ -128,8 +135,8 @@ public interface Result<T> {
      *
      * @param resource The resource to use
      * @param function The function to execute
-     * @param <T> The type of the returned {@link Result}'s value
-     * @param <R> The type of the resource
+     * @param <T>      The type of the returned {@link Result}'s value
+     * @param <R>      The type of the resource
      * @return A {@link Result}, which is either the result of the function or an exception
      */
     static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(
@@ -148,11 +155,11 @@ public interface Result<T> {
      * guaranteed to be the same type as the input collection
      *
      * @param results The collection of {@link Result}s
-     * @param <T> The type of the {@link Result}'s value
+     * @param <T>     The type of the {@link Result}'s value
      * @return A {@link Result} holding all the values from the input collection or an exception if
-     *     any of the results are {@link Fail}s
+     * any of the results are {@link Fail}s
      * @see Futures#sequence(Collection) for the same functionality but with {@link
-     *     java.util.concurrent.CompletableFuture}s
+     * CompletableFuture}s
      */
     @Contract(value = "_ -> new")
     static <T> @NotNull Result<Collection<T>> sequence(@NotNull Collection<@NotNull Result<T>> results) {
@@ -187,7 +194,7 @@ public interface Result<T> {
      * Retrieves the value wrapped in an {@code Optional}, if present.
      *
      * @return an {@code Optional} containing the value, or an empty {@code Optional} if no value is
-     *     present
+     * present
      * @apiNote Synonymous with {@link #toOptional()}
      */
     @NotNull @Contract(pure = true)
@@ -206,8 +213,8 @@ public interface Result<T> {
 
     /**
      * Applies a given function to the {@link Result}, threading through the exception if the {@link
-     * Result} is {@link Fail}. This would make {@link Result} a functor if it were not for the fact
-     * that the function can throw an exception.
+     * Result} is {@link Fail}. This ends up being more of a specialized overload of {@link #flatMap(SafeFunction)} than a traditional "map".
+     * If you know the function is safe/pure, consider using {@link #map(Function)} instead which is safer and more efficient.
      *
      * <ul>
      *   <li>If the {@link Result} is {@link Ok}, the function is applied to the value and the result
@@ -217,14 +224,24 @@ public interface Result<T> {
      * </ul>
      *
      * @param function The function to apply
-     * @param <R> The type of the result of the function
+     * @param <R>      The type of the result of the function
      * @return A new {@link Result} containing the result of the function or the exception from this
-     *     {@link Result}
+     * {@link Result}
      */
     @Contract(pure = true)
-    @NotNull default <R> Result<R> map(SafeFunction<T, R> function) {
+    @NotNull default <R> Result<R> mapUnsafe(SafeFunction<T, R> function) {
         return flatMap(t -> ok(function.apply(t)));
     }
+
+    /**
+     * Applies a given function to the {@link Result}, threading through the exception if the {@link Result} is {@link Fail}.
+     *
+     * @param function The function to apply. This function is expected to be safe with regards to throwing exceptions, and ideally should be pure. If your function does not satisfy these requirements, consider using {@link #mapUnsafe(SafeFunction)} instead.
+     * @param <R>      The type of the result of the function
+     * @return A new {@link Result} containing the output of the function or the exception from this {@link Result}
+     */
+    @Contract(pure = true)
+    @NotNull <R> Result<R> map(Function<T, R> function);
 
     /**
      * Applies the given {@link SafeConsumer} if the {@link Result} is {@link Ok}. If the {@link
@@ -262,9 +279,9 @@ public interface Result<T> {
      * Fail} Otherwise, the exception from the left {@link Result} is returned in a {@link Fail}
      *
      * @param function The function to apply
-     * @param <R> The type of the result of the function
+     * @param <R>      The type of the result of the function
      * @return A new {@link Result} containing the result of the function or the exception from this
-     *     {@link Result}
+     * {@link Result}
      * @see #flatMapPure(Function) a version that cannot throw checked exceptions
      */
     @Contract(pure = true)
@@ -274,9 +291,9 @@ public interface Result<T> {
      * Like {@link #flatMap(SafeFunction)}, but the function cannot throw checked exceptions
      *
      * @param function The function to apply
-     * @param <R> The type of the result of the function
+     * @param <R>      The type of the result of the function
      * @return A new {@link Result} containing the result of the function or the exception from this
-     *     {@link Result}
+     * {@link Result}
      * @see #flatMap(SafeFunction) a version that can throw checked exceptions
      */
     @Contract(pure = true)
@@ -288,12 +305,12 @@ public interface Result<T> {
      * Replaces the value of the {@link Result} with a new value. If the {@link Result} is {@link Ok},
      * the new value is returned in a new {@link Ok}. Otherwise, the result is returned unchanged.
      *
-     * @param r The new value
+     * @param r   The new value
      * @param <R> The type of the new value
      * @return A new {@link Result} containing the new value or the exception from this {@link Result}
      */
     default <R> Result<R> replace(R r) {
-        return map(SafeFunction.constant(r));
+        return map(Functions.constant(r));
     }
 
     /**
@@ -302,7 +319,7 @@ public interface Result<T> {
      * returned unchanged.
      *
      * @return A new {@link Result} containing {@link Unit#UNIT} or the exception from this {@link
-     *     Result}
+     * Result}
      */
     default Result<Unit> void_() {
         return map(t -> Unit.UNIT);
@@ -313,8 +330,8 @@ public interface Result<T> {
      *
      * @return The value
      * @throws RuntimeException The exception. Note that if the exception is a checked exception, it
-     *     will <b>not</b> be wrapped in a {@link RuntimeException}. However, {@link RuntimeException}
-     *     is used in the method signature to avoid manual try/catch blocks
+     *                          will <b>not</b> be wrapped in a {@link RuntimeException}. However, {@link RuntimeException}
+     *                          is used in the method signature to avoid manual try/catch blocks
      */
     @NotNull T getOrThrow() throws RuntimeException;
 
@@ -323,9 +340,9 @@ public interface Result<T> {
      * {@link Ok}, the first function is applied to the value. If the {@link Result} is {@link Fail},
      * the second function is applied to the exception.
      *
-     * @param successHandler The function to apply if the {@link Result} is {@link Ok}
+     * @param successHandler   The function to apply if the {@link Result} is {@link Ok}
      * @param exceptionHandler The function to apply if the {@link Result} is {@link Fail}
-     * @param <R> The type of the result of the function
+     * @param <R>              The type of the result of the function
      * @return The result of the function applied to the value or exception
      */
     <R> R handle(Function<T, R> successHandler, Function<Exception, R> exceptionHandler);
@@ -348,7 +365,7 @@ public interface Result<T> {
      *
      * @param exceptionHandler The function to apply if the {@link Result} is {@link Fail}
      * @return A new {@link Result} containing the result of the function applied to the value or
-     *     exception
+     * exception
      */
     Result<T> flatMapException(Function<Exception, Result<T>> exceptionHandler);
 
@@ -363,12 +380,14 @@ public interface Result<T> {
      * Checks if the {@link Result} is a failure.
      *
      * @return If the {@link Result} is {@link Fail}. This should be equivalent to {@code
-     *     !isSuccess()}
+     * !isSuccess()}
      */
     boolean isFailure();
 
     class Fail<T, E extends Exception> implements Result<T> {
-        /** The underlying exception */
+        /**
+         * The underlying exception
+         */
         private final @NotNull E exception;
 
         private Fail(@NotNull E exception) {
@@ -397,7 +416,7 @@ public interface Result<T> {
         }
 
         @Override
-        public @NotNull <R> Result<R> map(SafeFunction<T, R> function) {
+        public @NotNull <R> Result<R> map(Function<T, R> function) {
             //noinspection unchecked
             return (Result<R>) this;
         }
@@ -453,7 +472,9 @@ public interface Result<T> {
     }
 
     class Ok<T> implements Result<T> {
-        /** The underlying value of the {@link Result} */
+        /**
+         * The underlying value of the {@link Result}
+         */
         private final @NotNull T value;
 
         private Ok(@NotNull T value) {
@@ -477,12 +498,16 @@ public interface Result<T> {
 
         @Override
         public <R> @NotNull Result<R> flatMap(SafeFunction<T, Result<R>> function) {
-            return computeCatching(() -> function.apply(value));
+            try {
+                return function.apply(value);
+            } catch (Exception e) {
+                return fail(e);
+            }
         }
 
         @Override
-        public @NotNull <R> Result<R> map(SafeFunction<T, R> function) {
-            return runCatching(() -> function.apply(value));
+        public @NotNull <R> Result<R> map(Function<T, R> function) {
+            return new Ok<>(function.apply(this.value));
         }
 
         @Override
