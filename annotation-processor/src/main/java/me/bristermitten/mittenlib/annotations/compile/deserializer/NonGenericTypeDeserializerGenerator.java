@@ -119,11 +119,13 @@ public class NonGenericTypeDeserializerGenerator {
      * Generate deserialization code for non-generic properties. Tries all the cases described in the
      * documentation of {@link NonGenericTypeDeserializerGenerator}, in order.
      *
-     * @param builder the method spec builder
-     * @param property the property being processed
-     * @param dtoType the enclosing DTO class element
-     * @param elementType the property type mirror
+     * @param builder            the method spec builder
+     * @param property           the property being processed
+     * @param dtoType            the enclosing DTO class element
+     * @param elementType        the property type mirror
      * @param wrappedElementType the wrapped property type mirror
+     * @param fromMapName        the name of the variable containing the raw data
+     * @param safeType           the expected target type
      * @return true if deserialization was fully generated/handled, false otherwise
      */
     public boolean handleNonGenericType(
@@ -131,12 +133,13 @@ public class NonGenericTypeDeserializerGenerator {
             Property property,
             TypeElement dtoType,
             TypeMirror elementType,
-            TypeMirrorWrapper wrappedElementType) {
-        final String fromMapName = property.name() + "FromMap";
-        final TypeName safeType =
-                configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
+            TypeMirrorWrapper wrappedElementType,
+            String fromMapName,
+            TypeName safeType) {
 
-        handleDirectTypeMatch(builder, property, fromMapName, safeType);
+        if (!fromMapName.endsWith(".getData()")) {
+            handleDirectTypeMatch(builder, property, fromMapName, safeType);
+        }
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
 
         Optional<CustomDeserializerInfo> customDeserializerOptional =
@@ -159,7 +162,14 @@ public class NonGenericTypeDeserializerGenerator {
             }
         }
 
-        return handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName);
+        if (handleInvalidPropertyType(builder, property, dtoType, elementType, fromMapName)) {
+            return true;
+        }
+
+        // Final fallback to ObjectMapper if nothing else matched
+        builder.addStatement(
+                "return context.getMapper().map($L, new $T<$T>(){})", fromMapName, TypeToken.class, safeType);
+        return true;
     }
 
     /**

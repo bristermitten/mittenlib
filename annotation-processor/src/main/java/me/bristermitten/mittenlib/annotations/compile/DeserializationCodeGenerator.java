@@ -1,6 +1,5 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
-import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
@@ -72,24 +71,21 @@ public class DeserializationCodeGenerator {
         TypeMirrorWrapper wrappedElementType = TypeMirrorWrapper.wrap(elementType);
         boolean isGenericType = wrappedElementType.hasTypeArguments();
         Optional<TypeElementWrapper> typeElementOpt = wrappedElementType.getTypeElement();
+        String fromMapName = property.name() + "FromMap";
 
         if (isGenericType && typeElementOpt.isPresent()) {
             Optional<MethodSpec> methodSpec = genericTypeDeserializerGenerator.handleGenericType(
-                    builder, property, wrappedElementType, typeElementOpt.get());
+                    builder, dtoType, property, wrappedElementType, typeElementOpt.get());
             if (methodSpec.isPresent()) {
                 return methodSpec.get();
             }
         } else if (!isGenericType) {
             if (nonGenericTypeDeserializerGenerator.handleNonGenericType(
-                    builder, property, dtoType, elementType, wrappedElementType)) {
+                    builder, property, dtoType, elementType, wrappedElementType, fromMapName, elementResultType)) {
                 return builder.build();
             }
         }
 
-        // If no shortcuts work, pass it to the context and do some dynamic-ish deserialization
-        String fromMapName = property.name() + "FromMap";
-        builder.addStatement(
-                "return context.getMapper().map($N, new $T<$T>(){})", fromMapName, TypeToken.class, elementResultType);
         return builder.build();
     }
 
