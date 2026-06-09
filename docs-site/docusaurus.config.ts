@@ -8,7 +8,6 @@ import codeImport from 'remark-code-import';
 const config: Config = {
     title: 'MittenLib',
     tagline: 'General purpose, capable Spigot Framework',
-    favicon: 'img/favicon.ico',
 
     // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
     future: {
