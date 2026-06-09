@@ -1,18 +1,17 @@
 package me.bristermitten.mittenlib.watcher;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import me.bristermitten.mittenlib.TestMittenLibConsumer;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import me.bristermitten.mittenlib.TestMittenLibConsumer;
+import org.junit.jupiter.api.Test;
 
 class FileWatcherServiceTest {
 

@@ -1,17 +1,16 @@
 package me.bristermitten.mittenlib.config.paths;
 
 import com.google.inject.Inject;
-import me.bristermitten.mittenlib.config.GeneratedConfig;
-import me.bristermitten.mittenlib.util.PathUtil;
-import me.bristermitten.mittenlib.util.Result;
-import me.bristermitten.mittenlib.util.Unit;
-import org.bukkit.plugin.Plugin;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import me.bristermitten.mittenlib.config.GeneratedConfig;
+import me.bristermitten.mittenlib.util.PathUtil;
+import me.bristermitten.mittenlib.util.Result;
+import me.bristermitten.mittenlib.util.Unit;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A {@link ConfigInitializationStrategy} that copies a resource from a plugin's jar to its data

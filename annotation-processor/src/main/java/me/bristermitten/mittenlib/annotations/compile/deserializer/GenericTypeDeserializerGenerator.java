@@ -8,6 +8,10 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
@@ -15,11 +19,6 @@ import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.util.Strings;
-
-import javax.lang.model.type.TypeMirror;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Generates deserialization code for generic collection types (specifically {@link List} and {@link

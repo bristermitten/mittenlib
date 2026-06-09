@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.util;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility class for working with nullable values without having to use {@link java.util.Optional}.

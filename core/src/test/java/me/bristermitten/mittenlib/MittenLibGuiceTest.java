@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import be.seeseemelk.mockbukkit.MockBukkit;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -8,8 +10,6 @@ import org.bukkit.event.Listener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MittenLibGuiceTest {
     private TestMittenLib plugin;

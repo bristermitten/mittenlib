@@ -1,18 +1,17 @@
 package me.bristermitten.mittenlib.codegen.union;
 
-import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.codegen.BoilerplateGenerator;
-import me.bristermitten.mittenlib.codegen.GeneratedUnion;
-import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
-import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
+import static javax.lang.model.element.Modifier.*;
 
-import javax.annotation.processing.Generated;
+import com.squareup.javapoet.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-
-import static javax.lang.model.element.Modifier.*;
+import javax.annotation.processing.Generated;
+import me.bristermitten.mittenlib.codegen.BoilerplateGenerator;
+import me.bristermitten.mittenlib.codegen.GeneratedUnion;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
+import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
 
 public class UnionGenerator {
 

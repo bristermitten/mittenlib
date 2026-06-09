@@ -7,6 +7,9 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
+import java.util.Optional;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
@@ -22,10 +25,6 @@ import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Enums;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
-
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-import java.util.Optional;
 
 /**
  * Generates deserialization code for non-generic types (including primitive types, boxed

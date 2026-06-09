@@ -1,15 +1,14 @@
 package me.bristermitten.mittenlib.gui.session;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import me.bristermitten.mittenlib.gui.GUIBase;
 import me.bristermitten.mittenlib.gui.UpdateResult;
 import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 /**
  * Represents an active GUI session with state management and event handling. Follows the Elm

@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.wrapper.AnnotationMirrorWrapper;
+import java.util.StringJoiner;
+import javax.lang.model.element.*;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
@@ -10,9 +12,6 @@ import me.bristermitten.mittenlib.annotations.util.PrivateAnnotations;
 import me.bristermitten.mittenlib.annotations.util.TypeSpecUtil;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.Contract;
-
-import javax.lang.model.element.*;
-import java.util.StringJoiner;
 
 /**
  * Generates accessor methods for configuration classes. This class creates getter methods for

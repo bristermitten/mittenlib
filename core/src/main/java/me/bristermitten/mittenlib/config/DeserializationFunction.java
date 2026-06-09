@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.config;
 
-import me.bristermitten.mittenlib.util.Result;
-
 import java.util.function.Function;
+import me.bristermitten.mittenlib.util.Result;
 
 /**
  * A function that deserializes a config, taking a {@link DeserializationContext} and returning a

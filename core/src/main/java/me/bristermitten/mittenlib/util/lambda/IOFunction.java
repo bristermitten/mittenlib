@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.util.lambda;
 
-import me.bristermitten.mittenlib.util.Errors;
-import me.bristermitten.mittenlib.util.Result;
+import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 import java.io.IOException;
 import java.util.function.Function;
-
-import static me.bristermitten.mittenlib.util.Result.runCatching;
+import me.bristermitten.mittenlib.util.Errors;
+import me.bristermitten.mittenlib.util.Result;
 
 /**
  * Like {@link SafeFunction} but only for {@link IOException}

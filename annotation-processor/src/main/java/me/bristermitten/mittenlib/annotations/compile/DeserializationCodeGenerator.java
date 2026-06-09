@@ -5,6 +5,10 @@ import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
+import java.util.Optional;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.deserializer.GenericTypeDeserializerGenerator;
@@ -15,11 +19,6 @@ import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jspecify.annotations.Nullable;
-
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-import java.util.Optional;
 
 /**
  * Generates deserialization code for configuration classes. This class is responsible for creating

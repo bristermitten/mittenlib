@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.config;
 
-import me.bristermitten.mittenlib.config.tree.DataTree;
-
 import java.util.function.BiFunction;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 
 /**
  * A function that serializes a config object to a {@link DataTree}

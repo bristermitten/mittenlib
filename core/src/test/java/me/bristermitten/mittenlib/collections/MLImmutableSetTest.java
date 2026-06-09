@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.collections;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.Size;
 import org.junit.jupiter.api.Test;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Comprehensive tests for the MLImmutableSet interface using both unit tests and property-based

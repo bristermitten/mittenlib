@@ -3,13 +3,12 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.google.inject.Singleton;
 import com.squareup.javapoet.ClassName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 
 /**
  * A cache for AbstractConfigStructure objects indexed by their class names. This class provides

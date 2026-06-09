@@ -3,6 +3,9 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
+import java.util.*;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.CustomSerializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
@@ -13,10 +16,6 @@ import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
-
-import javax.lang.model.element.Modifier;
-import javax.lang.model.type.TypeMirror;
-import java.util.*;
 
 /**
  * Generates serialization code for configuration classes. This class is responsible for creating

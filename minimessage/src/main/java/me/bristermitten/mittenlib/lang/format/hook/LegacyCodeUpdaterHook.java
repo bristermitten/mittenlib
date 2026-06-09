@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A {@link FormattingHook} that replaces legacy color codes with their MiniMessage equivalent. This

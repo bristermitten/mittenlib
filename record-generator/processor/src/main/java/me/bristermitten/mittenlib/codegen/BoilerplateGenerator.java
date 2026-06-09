@@ -4,11 +4,10 @@ import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
-
-import javax.lang.model.element.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
+import javax.lang.model.element.Modifier;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 
 public class BoilerplateGenerator {
     public static MethodSpec genEquals(RecordConstructorSpec recordConstructorSpec, ClassName name) {

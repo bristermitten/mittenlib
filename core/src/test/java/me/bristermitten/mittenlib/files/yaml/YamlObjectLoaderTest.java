@@ -1,13 +1,13 @@
 package me.bristermitten.mittenlib.files.yaml;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class YamlObjectLoaderTest {
 

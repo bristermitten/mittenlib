@@ -2,6 +2,15 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.processing.Generated;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
@@ -12,16 +21,6 @@ import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
-
-import javax.annotation.processing.Generated;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.type.TypeMirror;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Optional;
 
 public class ConfigImplGenerator {
 

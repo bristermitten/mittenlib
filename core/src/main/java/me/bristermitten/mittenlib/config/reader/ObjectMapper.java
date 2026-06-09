@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.config.reader;
 
 import com.google.gson.reflect.TypeToken;
-import me.bristermitten.mittenlib.util.Result;
-
 import java.util.Map;
+import me.bristermitten.mittenlib.util.Result;
 
 /**
  * Interface for mapping objects It should hold that <code>

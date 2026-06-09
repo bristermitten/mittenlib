@@ -1,14 +1,13 @@
 package me.bristermitten.mittenlib.collections;
 
-import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
 /** Utility functions for creating immutable maps Unnecessary in Java 9+ */
 @NullMarked

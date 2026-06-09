@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.collections;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.Size;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.Size;
+import org.junit.jupiter.api.Test;
 
 /** Comprehensive tests for {@link Sets} using both unit tests and property-based testing */
 class SetsTest {

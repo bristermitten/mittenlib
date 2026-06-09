@@ -9,6 +9,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
@@ -18,11 +22,6 @@ import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import org.openjdk.jmh.annotations.*;
 import org.yaml.snakeyaml.Yaml;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)

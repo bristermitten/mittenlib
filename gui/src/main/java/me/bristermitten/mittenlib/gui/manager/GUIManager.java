@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.gui.manager;
 
+import java.util.Optional;
 import me.bristermitten.mittenlib.gui.GUIBase;
 import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
@@ -7,8 +8,6 @@ import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
-
-import java.util.Optional;
 
 /**
  * Manages GUI sessions and their lifecycles. Provides a centralised way to create, manage, and

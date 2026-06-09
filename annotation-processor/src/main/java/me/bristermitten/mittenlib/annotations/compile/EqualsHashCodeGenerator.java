@@ -3,11 +3,10 @@ package me.bristermitten.mittenlib.annotations.compile;
 import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import me.bristermitten.mittenlib.annotations.ast.Property;
-
-import javax.lang.model.element.Modifier;
 import java.util.List;
 import java.util.Objects;
+import javax.lang.model.element.Modifier;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 
 /**
  * Generates equals and hashCode methods for configuration classes. This class creates standard

@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
+import java.util.*;
 import me.bristermitten.mittenlib.config.*;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
@@ -12,8 +13,6 @@ import me.bristermitten.mittenlib.lang.LangModule;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 public class MittenLib<T extends Plugin> {
 

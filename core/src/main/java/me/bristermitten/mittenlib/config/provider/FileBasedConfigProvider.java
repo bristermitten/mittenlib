@@ -1,5 +1,10 @@
 package me.bristermitten.mittenlib.config.provider;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationContext;
@@ -9,12 +14,6 @@ import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.writer.ConfigWriter;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * A {@link ConfigProvider} that reads and writes from a file, using a {@link ConfigReader}

@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.config.provider;
 
-import me.bristermitten.mittenlib.watcher.FileWatcher;
-import me.bristermitten.mittenlib.watcher.FileWatcherService;
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import me.bristermitten.mittenlib.watcher.FileWatcher;
+import me.bristermitten.mittenlib.watcher.FileWatcherService;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@link ConfigProvider} that watches a file for changes, reloading the config when the file

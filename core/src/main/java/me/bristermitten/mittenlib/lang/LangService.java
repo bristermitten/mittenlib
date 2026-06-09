@@ -1,6 +1,12 @@
 package me.bristermitten.mittenlib.lang;
 
+import static me.bristermitten.mittenlib.util.Cast.safeCast;
+
 import com.google.inject.Inject;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
 import me.bristermitten.mittenlib.lang.format.MessageFormatter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -10,13 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.UnaryOperator;
-
-import static me.bristermitten.mittenlib.util.Cast.safeCast;
 
 /** A basic service for sending language messages to command senders. */
 public class LangService {

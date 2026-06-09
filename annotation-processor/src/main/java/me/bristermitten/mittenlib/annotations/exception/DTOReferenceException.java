@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.annotations.exception;
 
+import java.util.Optional;
+import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.util.Stringify;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import javax.lang.model.element.Element;
-import javax.lang.model.type.TypeMirror;
-import java.util.Optional;
 
 /** Thrown when a DTO class references an invalid type */
 public class DTOReferenceException extends RuntimeException {

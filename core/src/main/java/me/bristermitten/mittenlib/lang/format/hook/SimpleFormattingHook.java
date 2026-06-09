@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
+import java.util.function.BiFunction;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.BiFunction;
 
 /** A formatting hook that is always applied, and uses a lambda to format the string. */
 public class SimpleFormattingHook implements FormattingHook {

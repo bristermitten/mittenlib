@@ -3,21 +3,20 @@ package me.bristermitten.mittenlib.annotations.parser;
 import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import io.toolisticon.aptk.tools.MessagerUtils;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Optional;
+import javax.lang.model.element.*;
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource.ClassConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.compile.SerializationCodeGenerator;
 import me.bristermitten.mittenlib.config.validation.Validator;
-
-import javax.lang.model.element.*;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Optional;
 
 /** Inspects the AST and sends errors/warnings for invalid setups */
 public class ASTVerifier {

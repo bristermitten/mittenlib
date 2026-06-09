@@ -1,7 +1,12 @@
 package me.bristermitten.mittenlib.annotations.integration.enums;
 
+import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.google.inject.*;
 import com.google.inject.util.Types;
+import java.io.IOException;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.annotations.integration.ConfigLoaderModule;
 import me.bristermitten.mittenlib.config.Configuration;
@@ -14,12 +19,6 @@ import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
-import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class EnumIntegrationTest {
 

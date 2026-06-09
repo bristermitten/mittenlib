@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
-import me.bristermitten.mittenlib.config.Config;
-
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+import me.bristermitten.mittenlib.config.Config;
 
 /** Where a config came from (its declaring class/interface annotated with @{@link Config}) */
 public sealed interface ConfigTypeSource {

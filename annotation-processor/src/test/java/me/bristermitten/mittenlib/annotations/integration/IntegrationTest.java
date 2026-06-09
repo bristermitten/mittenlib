@@ -1,7 +1,12 @@
 package me.bristermitten.mittenlib.annotations.integration;
 
+import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
+import static org.assertj.core.api.Assertions.*;
+
 import com.google.inject.*;
 import com.google.inject.util.Types;
+import java.io.IOException;
+import java.util.List;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
@@ -15,12 +20,6 @@ import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.List;
-
-import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadResourceString;
-import static org.assertj.core.api.Assertions.*;
 
 public class IntegrationTest {
 

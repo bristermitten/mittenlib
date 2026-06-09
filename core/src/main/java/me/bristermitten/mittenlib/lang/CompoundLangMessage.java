@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.lang;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.List;
 
 /**
  * A message that is composed of multiple {@link LangMessage}s This allows {@link LangMessage}s to

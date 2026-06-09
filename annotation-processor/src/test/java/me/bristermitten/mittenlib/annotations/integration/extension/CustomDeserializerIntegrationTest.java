@@ -1,5 +1,7 @@
 package me.bristermitten.mittenlib.annotations.integration.extension;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.inject.*;
 import com.google.inject.util.Types;
 import me.bristermitten.mittenlib.MittenLibConsumer;
@@ -18,8 +20,6 @@ import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomDeserializerIntegrationTest {
 

@@ -1,15 +1,14 @@
 package me.bristermitten.mittenlib.util;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import me.bristermitten.mittenlib.util.lambda.SafeConsumer;
 import me.bristermitten.mittenlib.util.lambda.SafeFunction;
 import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A {@link Result} encapsulates a computation that may fail, throwing an exception. It either holds

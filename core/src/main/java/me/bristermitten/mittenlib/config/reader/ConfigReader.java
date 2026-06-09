@@ -2,14 +2,13 @@ package me.bristermitten.mittenlib.config.reader;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
+import java.io.Reader;
+import java.nio.file.Path;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Reader;
-import java.nio.file.Path;
 
 /**
  * Responsible for both reading and mapping data, delegating to {@link ObjectLoader}s and {@link

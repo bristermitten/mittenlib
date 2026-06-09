@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.config.provider;
 
-import me.bristermitten.mittenlib.util.Cached;
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Path;
 import java.util.Optional;
+import me.bristermitten.mittenlib.util.Cached;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A ConfigProvider that caches the config to avoid repeated file reads.

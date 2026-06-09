@@ -1,15 +1,14 @@
 package me.bristermitten.mittenlib.config.writer;
 
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /** Inverse to {@link ObjectLoader} */
 public interface ObjectWriter {

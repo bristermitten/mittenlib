@@ -4,13 +4,10 @@ import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
-import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
-import me.bristermitten.mittenlib.config.Config;
-import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
-import me.bristermitten.mittenlib.config.tree.DataTree;
-import org.jspecify.annotations.Nullable;
-
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -20,10 +17,12 @@ import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
+import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
+import me.bristermitten.mittenlib.config.Config;
+import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
+import me.bristermitten.mittenlib.config.tree.DataTree;
+import org.jspecify.annotations.Nullable;
 
 /** Helper class for working with {@link TypeMirror}s */
 public class TypesUtil {

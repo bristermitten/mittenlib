@@ -1,12 +1,12 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import static com.google.testing.compile.CompilationSubject.assertThat;
+import static com.google.testing.compile.Compiler.javac;
+
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import io.toolisticon.cute.Cute;
 import org.junit.jupiter.api.Test;
-
-import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.Compiler.javac;
 
 class OverriddenNameGeneratorTest {
 

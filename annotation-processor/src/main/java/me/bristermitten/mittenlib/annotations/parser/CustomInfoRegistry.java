@@ -3,9 +3,8 @@ package me.bristermitten.mittenlib.annotations.parser;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.squareup.javapoet.TypeName;
-
-import javax.lang.model.type.TypeMirror;
 import java.util.Optional;
+import javax.lang.model.type.TypeMirror;
 
 public abstract class CustomInfoRegistry<T> {
     private final Multimap<TypeName, T> infoMultimap = HashMultimap.create();

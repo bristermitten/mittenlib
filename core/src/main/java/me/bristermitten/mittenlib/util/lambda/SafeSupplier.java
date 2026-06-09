@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.util.lambda;
 
-import me.bristermitten.mittenlib.util.Errors;
-import me.bristermitten.mittenlib.util.Result;
+import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 import java.util.function.Supplier;
-
-import static me.bristermitten.mittenlib.util.Result.runCatching;
+import me.bristermitten.mittenlib.util.Errors;
+import me.bristermitten.mittenlib.util.Result;
 
 /**
  * A {@link Supplier} that can throw a checked exception.

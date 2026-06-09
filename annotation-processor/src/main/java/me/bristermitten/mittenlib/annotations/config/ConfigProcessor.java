@@ -5,6 +5,14 @@ import com.google.inject.Guice;
 import com.squareup.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
+import java.util.*;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.NestingKind;
+import javax.lang.model.element.TypeElement;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.compile.*;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
@@ -15,15 +23,6 @@ import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
 import me.bristermitten.mittenlib.config.extension.CustomSerializerFor;
-
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.NestingKind;
-import javax.lang.model.element.TypeElement;
-import java.util.*;
 
 /**
  * Annotation processor for generating configuration classes from DTO classes marked with {@link

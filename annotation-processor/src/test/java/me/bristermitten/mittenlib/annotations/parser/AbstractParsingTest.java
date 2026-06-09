@@ -1,9 +1,13 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.inject.Guice;
 import com.squareup.javapoet.ClassName;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
+import java.util.List;
+import javax.lang.model.element.TypeElement;
 import me.bristermitten.mittenlib.annotations.ast.ASTParentReference;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
@@ -12,11 +16,6 @@ import me.bristermitten.mittenlib.annotations.integration.InterfaceConfig;
 import me.bristermitten.mittenlib.annotations.integration.UnionConfig;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
-
-import javax.lang.model.element.TypeElement;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractParsingTest {
 

@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.config.paths;
 
-import me.bristermitten.mittenlib.util.Result;
-
 import java.nio.file.Path;
+import me.bristermitten.mittenlib.util.Result;
 
 /** Responsible for turning simple file names into {@link Path}s */
 public interface ConfigPathResolver {

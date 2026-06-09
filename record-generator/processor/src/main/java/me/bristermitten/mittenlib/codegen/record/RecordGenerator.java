@@ -1,16 +1,15 @@
 package me.bristermitten.mittenlib.codegen.record;
 
-import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.codegen.BoilerplateGenerator;
-import org.jetbrains.annotations.NotNull;
+import static javax.lang.model.element.Modifier.*;
 
-import javax.annotation.processing.Generated;
+import com.squareup.javapoet.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-
-import static javax.lang.model.element.Modifier.*;
+import javax.annotation.processing.Generated;
+import me.bristermitten.mittenlib.codegen.BoilerplateGenerator;
+import org.jetbrains.annotations.NotNull;
 
 public class RecordGenerator {
     public static void addAllArgsConstructor(

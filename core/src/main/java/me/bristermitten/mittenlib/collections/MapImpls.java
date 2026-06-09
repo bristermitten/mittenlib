@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.collections;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
+import org.jetbrains.annotations.NotNull;
 
 /** Implementations for immutable Maps used in {@link Maps} */
 public class MapImpls {

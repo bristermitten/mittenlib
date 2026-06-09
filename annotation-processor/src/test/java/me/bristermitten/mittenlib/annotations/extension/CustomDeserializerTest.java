@@ -2,10 +2,9 @@ package me.bristermitten.mittenlib.annotations.extension;
 
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
+import javax.lang.model.element.TypeElement;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import org.junit.jupiter.api.Test;
-
-import javax.lang.model.element.TypeElement;
 
 public class CustomDeserializerTest {
     @Test

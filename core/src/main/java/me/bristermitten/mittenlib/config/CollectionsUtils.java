@@ -1,18 +1,17 @@
 package me.bristermitten.mittenlib.config;
 
 import com.google.gson.reflect.TypeToken;
-import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.util.MultipleFailuresException;
-import me.bristermitten.mittenlib.util.Result;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.util.MultipleFailuresException;
+import me.bristermitten.mittenlib.util.Result;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility for deserializing collections using the MittenLib config system. This is used by

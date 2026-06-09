@@ -1,14 +1,13 @@
 package me.bristermitten.mittenlib.config.provider;
 
 import com.google.inject.Provider;
+import java.nio.file.Path;
+import java.util.Optional;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
 import me.bristermitten.mittenlib.util.Cached;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Path;
-import java.util.Optional;
 
 /**
  * A {@link ConfigProvider} which delegates to another {@link ConfigProvider}, improving it with a

@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
-import org.junit.jupiter.api.Test;
-
-import javax.tools.JavaFileObject;
-
 import static com.google.testing.compile.Compiler.javac;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.google.testing.compile.JavaFileObjects;
+import javax.tools.JavaFileObject;
+import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
+import org.junit.jupiter.api.Test;
 
 class UsingInvalidTypesTest {
 

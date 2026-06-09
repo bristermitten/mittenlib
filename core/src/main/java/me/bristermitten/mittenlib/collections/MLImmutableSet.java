@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.collections;
 
-import org.jspecify.annotations.NonNull;
-
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.function.Predicate;
+import org.jspecify.annotations.NonNull;
 
 public abstract class MLImmutableSet<E> extends AbstractSet<@NonNull E> {
     @Override

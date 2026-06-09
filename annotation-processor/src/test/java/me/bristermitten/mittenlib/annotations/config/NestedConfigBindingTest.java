@@ -1,15 +1,14 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.testing.compile.Compilation;
-import com.google.testing.compile.JavaFileObjects;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.google.testing.compile.Compilation;
+import com.google.testing.compile.JavaFileObjects;
+import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 class NestedConfigBindingTest {
 

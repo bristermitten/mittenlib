@@ -1,6 +1,10 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.gson.Gson;
+import java.util.Set;
+import java.util.logging.Logger;
 import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.json.GsonObjectLoader;
@@ -13,11 +17,6 @@ import me.bristermitten.mittenlib.util.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
-
-import java.util.Set;
-import java.util.logging.Logger;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SearchingObjectLoaderTest {
     private SearchingObjectLoader searchingObjectLoader;

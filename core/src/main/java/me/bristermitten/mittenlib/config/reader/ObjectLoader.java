@@ -1,14 +1,13 @@
 package me.bristermitten.mittenlib.config.reader;
 
-import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.util.Result;
-import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.util.Result;
+import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Responsible for parsing a tree-like file (JSON, YAML, etc) into a Map of {@link String} keys and

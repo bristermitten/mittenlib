@@ -1,5 +1,10 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import static com.google.testing.compile.Compiler.javac;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
@@ -10,11 +15,6 @@ import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.config.Config;
 import org.junit.jupiter.api.Test;
-
-import static com.google.testing.compile.Compiler.javac;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ConfigurationClassNameGeneratorTest {
 

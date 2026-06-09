@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.config.extension;
 
-import me.bristermitten.mittenlib.config.Config;
-import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import me.bristermitten.mittenlib.config.Config;
+import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
 
 /**
  * Marks a configuration property to use ObjectMapper for serialization. This is an explicit opt-in

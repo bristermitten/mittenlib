@@ -4,12 +4,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.inject.Singleton;
-import me.bristermitten.mittenlib.config.GeneratedConfig;
-
-import javax.lang.model.element.TypeElement;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.lang.model.element.TypeElement;
+import me.bristermitten.mittenlib.config.GeneratedConfig;
 
 /**
  * <b>This class should not be treated as a public API, and is subject to change at any time.</b>

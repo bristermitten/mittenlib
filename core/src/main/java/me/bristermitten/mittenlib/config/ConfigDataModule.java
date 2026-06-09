@@ -5,12 +5,11 @@ import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
+import java.util.Objects;
+import java.util.Set;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.DelegatingConfigProvider;
 import me.bristermitten.mittenlib.util.CompositeType;
-
-import java.util.Objects;
-import java.util.Set;
 
 /** Guice module for binding configurations. */
 public class ConfigDataModule extends AbstractModule {

@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.config.provider.construct;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
+import java.nio.file.Path;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationFunction;
@@ -16,8 +17,6 @@ import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.files.FileType;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Path;
 
 public class SimpleConfigProviderFactory implements ConfigProviderFactory {
 

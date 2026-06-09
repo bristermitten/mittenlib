@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.annotations.integration;
 
+import java.util.List;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.validation.Min;
 import me.bristermitten.mittenlib.config.validation.NotBlank;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 @Config(requireDynamicInitialization = false)
 @Source("config.yml")

@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.gui.spigot.command;
 
-import me.bristermitten.mittenlib.gui.command.Command;
-
 import java.util.function.Consumer;
+import me.bristermitten.mittenlib.gui.command.Command;
 
 /**
  * A command that can be executed in a Spigot GUI context.

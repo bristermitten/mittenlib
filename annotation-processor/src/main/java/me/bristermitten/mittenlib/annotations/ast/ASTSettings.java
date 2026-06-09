@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
+import java.util.List;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.EnumParsingSchemes;
 import me.bristermitten.mittenlib.config.Source;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /** Abstract view of configuration options for some {@link AbstractConfigStructure}. */
 public sealed interface ASTSettings {

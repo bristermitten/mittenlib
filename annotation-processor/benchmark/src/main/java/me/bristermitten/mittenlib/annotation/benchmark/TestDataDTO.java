@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.annotation.benchmark;
 
+import java.util.Map;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.config.names.NamingPatterns;
 import org.bukkit.Material;
-
-import java.util.Map;
 
 @Config
 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)

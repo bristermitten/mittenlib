@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.annotation.benchmark;
 
-import org.bukkit.Material;
-
 import java.util.Map;
+import org.bukkit.Material;
 
 public class TestDataGson {
     private boolean a;

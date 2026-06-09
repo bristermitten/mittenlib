@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.util;
 
 import com.google.common.base.Splitter;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Objects;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 /** Minecraft versions "enum" */
 public class Version implements Comparable<Version> {

@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.config.provider;
 
-import me.bristermitten.mittenlib.config.DeserializationFunction;
-import me.bristermitten.mittenlib.config.reader.ConfigReader;
-
 import java.nio.file.Path;
 import java.util.Optional;
+import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.reader.ConfigReader;
 
 /**
  * A {@link ConfigProvider} that reads from a String.

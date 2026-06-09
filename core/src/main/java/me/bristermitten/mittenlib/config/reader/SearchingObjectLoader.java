@@ -1,17 +1,16 @@
 package me.bristermitten.mittenlib.config.reader;
 
-import com.google.inject.Inject;
-import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.files.FileType;
-import me.bristermitten.mittenlib.util.Result;
-import org.jetbrains.annotations.NotNull;
+import static me.bristermitten.mittenlib.util.Result.fail;
 
+import com.google.inject.Inject;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static me.bristermitten.mittenlib.util.Result.fail;
+import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.files.FileType;
+import me.bristermitten.mittenlib.util.Result;
+import org.jetbrains.annotations.NotNull;
 
 /** An {@link ObjectLoader} which tries each known {@link FileType} in order, until one succeeds. */
 public class SearchingObjectLoader implements ObjectLoader {

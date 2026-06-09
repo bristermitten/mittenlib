@@ -1,11 +1,11 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import static com.google.testing.compile.CompilationSubject.assertThat;
+import static com.google.testing.compile.Compiler.javac;
+
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
-
-import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.Compiler.javac;
 
 /** Tests the error handling for missing required fields in configuration classes. */
 class MissingRequiredFieldsTest {

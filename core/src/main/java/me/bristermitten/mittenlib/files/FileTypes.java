@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.files;
 
-import me.bristermitten.mittenlib.files.json.JSONFileType;
-import me.bristermitten.mittenlib.files.yaml.YamlFileType;
-import org.jetbrains.annotations.Unmodifiable;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import me.bristermitten.mittenlib.files.json.JSONFileType;
+import me.bristermitten.mittenlib.files.yaml.YamlFileType;
+import org.jetbrains.annotations.Unmodifiable;
 
 /**
  * Stores all the known {@link FileType} classes, used for registration in the {@link

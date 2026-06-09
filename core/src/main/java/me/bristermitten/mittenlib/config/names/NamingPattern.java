@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.config.names;
 
-import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
 
 /**
  * Defines a naming pattern for a class or field. See {@link NamingPatterns} for the available

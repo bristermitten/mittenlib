@@ -2,6 +2,8 @@ package me.bristermitten.mittenlib.gui.spigot;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import java.util.Optional;
+import java.util.OptionalInt;
 import me.bristermitten.mittenlib.gui.manager.SpigotGUIManager;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
@@ -14,9 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-
-import java.util.Optional;
-import java.util.OptionalInt;
 
 /**
  * Handles Spigot inventory events and connects them to the GUI framework. Replaces the empty

@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.util;
 
-import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-
-import static org.junit.jupiter.api.Assertions.*;
+import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
+import org.junit.jupiter.api.Test;
 
 class ResultTest {
 

@@ -3,11 +3,6 @@ package me.bristermitten.mittenlib.watcher;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import me.bristermitten.mittenlib.MittenLibConsumer;
-import me.bristermitten.mittenlib.util.Unit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Map;
@@ -15,6 +10,10 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
+import me.bristermitten.mittenlib.MittenLibConsumer;
+import me.bristermitten.mittenlib.util.Unit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Handles file watching operations. */
 @Singleton

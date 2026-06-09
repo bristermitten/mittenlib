@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
+import java.util.*;
+import java.util.function.Supplier;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.function.Supplier;
 
 /** A formatting hook that applies string replacements */
 public class StringReplacingHook implements FormattingHook {

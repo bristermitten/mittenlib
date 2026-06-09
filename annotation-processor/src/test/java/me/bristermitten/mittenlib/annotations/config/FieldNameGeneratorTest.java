@@ -1,16 +1,15 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.testing.compile.Compilation;
-import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.config.names.NamingPatterns;
-import org.junit.jupiter.api.Test;
-
-import javax.annotation.Nullable;
-import javax.tools.JavaFileObject;
-import java.util.regex.Pattern;
-
 import static com.google.testing.compile.Compiler.javac;
 import static com.google.testing.compile.JavaFileObjectSubject.assertThat;
+
+import com.google.testing.compile.Compilation;
+import com.google.testing.compile.JavaFileObjects;
+import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import javax.tools.JavaFileObject;
+import me.bristermitten.mittenlib.config.names.NamingPatterns;
+import org.junit.jupiter.api.Test;
 
 class FieldNameGeneratorTest {
 

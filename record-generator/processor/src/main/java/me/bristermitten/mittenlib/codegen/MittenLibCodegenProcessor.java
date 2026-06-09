@@ -10,10 +10,8 @@ import io.toolisticon.aptk.tools.TypeUtils;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
-import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
-import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
-import me.bristermitten.mittenlib.codegen.union.UnionGenerator;
-
+import java.io.IOException;
+import java.util.*;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedOptions;
@@ -22,8 +20,9 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import java.io.IOException;
-import java.util.*;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
+import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
+import me.bristermitten.mittenlib.codegen.union.UnionGenerator;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)

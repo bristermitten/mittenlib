@@ -2,21 +2,20 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
 import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
-import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
-import me.bristermitten.mittenlib.config.exception.ConfigValidationException;
-import me.bristermitten.mittenlib.util.Result;
-
-import javax.annotation.processing.Generated;
-import javax.lang.model.element.Modifier;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.processing.Generated;
+import javax.lang.model.element.Modifier;
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
+import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
+import me.bristermitten.mittenlib.config.exception.ConfigValidationException;
+import me.bristermitten.mittenlib.util.Result;
 
 public class ConfigValidatorGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;

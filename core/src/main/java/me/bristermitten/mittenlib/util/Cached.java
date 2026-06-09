@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.util;
 
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 /**
  * A {@link Supplier} which caches the value it supplies.

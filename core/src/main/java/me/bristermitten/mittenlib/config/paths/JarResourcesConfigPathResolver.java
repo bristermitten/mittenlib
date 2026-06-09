@@ -1,7 +1,5 @@
 package me.bristermitten.mittenlib.config.paths;
 
-import me.bristermitten.mittenlib.util.Result;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,6 +10,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import me.bristermitten.mittenlib.util.Result;
 
 /** A {@link ConfigPathResolver} that resolves config paths from the jar resources. */
 public class JarResourcesConfigPathResolver implements ConfigPathResolver {

@@ -1,14 +1,13 @@
 package me.bristermitten.mittenlib.config.writer;
 
 import com.google.inject.Inject;
+import java.nio.file.Path;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Result;
-
-import java.nio.file.Path;
 
 /**
  * Responsible for both mapping and writing data, delegating to {@link SerializationFunction}s and

@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.collections;
 
-import net.jqwik.api.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import java.util.Map.Entry;
-
-import static org.junit.jupiter.api.Assertions.*;
+import net.jqwik.api.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Comprehensive tests for the MLImmutableMap interface using both unit tests and property-based

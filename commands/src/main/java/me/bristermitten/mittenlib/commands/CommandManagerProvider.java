@@ -3,10 +3,9 @@ package me.bristermitten.mittenlib.commands;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import java.util.Set;
 import me.bristermitten.mittenlib.commands.handlers.*;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Set;
 
 /**
  * A provider for {@link PaperCommandManager}. This handles registration of {@link Command}, {@link

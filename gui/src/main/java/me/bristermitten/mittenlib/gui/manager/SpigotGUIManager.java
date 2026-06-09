@@ -2,6 +2,11 @@ package me.bristermitten.mittenlib.gui.manager;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import me.bristermitten.mittenlib.gui.GUIBase;
 import me.bristermitten.mittenlib.gui.command.Command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
@@ -18,12 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 /** Spigot implementation of the GUIManager. */
 @Singleton

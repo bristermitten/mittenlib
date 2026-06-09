@@ -2,12 +2,11 @@ package me.bristermitten.mittenlib.files.json;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+import java.io.Reader;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Reader;
 
 /** An {@link ObjectLoader} that uses Gson to parse a JSON string */
 public class GsonObjectLoader implements ObjectLoader {

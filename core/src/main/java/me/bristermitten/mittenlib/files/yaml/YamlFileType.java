@@ -2,12 +2,11 @@ package me.bristermitten.mittenlib.files.yaml;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import java.nio.file.Path;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.files.FileType;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Path;
 
 public class YamlFileType implements FileType {
     private static final String YAML_SHORT_EXTENSION = "yml";

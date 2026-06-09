@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.config.names;
 
-import me.bristermitten.mittenlib.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
+import me.bristermitten.mittenlib.util.Strings;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Transforms strings into different formats based on a {@link NamingPatterns} */
 public class NamingPatternTransformer {

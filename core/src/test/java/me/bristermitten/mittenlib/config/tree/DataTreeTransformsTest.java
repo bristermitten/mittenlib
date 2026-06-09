@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.config.tree;
 
-import net.jqwik.api.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import net.jqwik.api.*;
 
 class DataTreeTransformsTest {
 

@@ -2,12 +2,13 @@ package me.bristermitten.mittenlib.annotations.ast;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
+import java.util.List;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
-/** The abstract shape of a config, before proper resolution */
+/**
+ * The abstract shape of a config, before proper resolution
+ */
 public sealed interface AbstractConfigStructure {
     @Contract(pure = true)
     ClassName name();
@@ -44,7 +45,9 @@ public sealed interface AbstractConfigStructure {
                 .allMatch(p -> p.settings().hasDefaultValue() || p.settings().isNullable());
     }
 
-    /** An atomic config structure, i.e. a type with no parents or interfaces */
+    /**
+     * An atomic config structure, i.e. a type with no parents or interfaces
+     */
     record Atomic(
             ClassName name,
             ConfigTypeSource source,
@@ -74,7 +77,7 @@ public sealed interface AbstractConfigStructure {
      * A union config structure, i.e. a type that can be any of the given alternatives
      *
      * @param alternatives the alternatives of this union
-     * @param properties any properties that are defined as present in any of the alternatives
+     * @param properties   any properties that are defined as present in any of the alternatives
      */
     record Union(
             ClassName name,

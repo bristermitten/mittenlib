@@ -2,17 +2,16 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
-import me.bristermitten.mittenlib.util.Strings;
-
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
+import me.bristermitten.mittenlib.util.Strings;
 
 /**
  * Manages method names for configuration classes to ensure they don't conflict with existing

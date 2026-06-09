@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.gui.spigot;
 
+import java.util.OptionalInt;
 import me.bristermitten.mittenlib.codegen.RecordSpec;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.OptionalInt;
 
 /**
  * Input about a click event in a {@link SpigotGUI}. Used to generate messages from {@link

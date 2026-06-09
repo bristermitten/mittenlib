@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.util.lambda;
 
-import me.bristermitten.mittenlib.util.Errors;
-
 import java.util.function.BiConsumer;
+import me.bristermitten.mittenlib.util.Errors;
 
 /**
  * A {@link BiConsumer} that can throw a checked exception.

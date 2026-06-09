@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.config;
 
-import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
+import me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses;
 
 /**
  * Defines the parsing scheme for an enum value, i.e. how it should be parsed from a string.

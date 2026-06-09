@@ -1,11 +1,15 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatCollection;
+
 import com.google.inject.Guice;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
 import io.toolisticon.cute.PassIn;
+import javax.lang.model.element.TypeElement;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
 import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
@@ -17,11 +21,6 @@ import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
-
-import javax.lang.model.element.TypeElement;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatCollection;
 
 class ConfigClassParserTest {
 

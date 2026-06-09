@@ -1,6 +1,9 @@
 package me.bristermitten.mittenlib.lang.format;
 
 import com.google.inject.Inject;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import me.bristermitten.mittenlib.collections.Sets;
 import me.bristermitten.mittenlib.lang.format.hook.FormattingHook;
 import net.kyori.adventure.text.Component;
@@ -8,10 +11,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Default implementation of {@link MessageFormatter} that uses {@link LegacyComponentSerializer} to

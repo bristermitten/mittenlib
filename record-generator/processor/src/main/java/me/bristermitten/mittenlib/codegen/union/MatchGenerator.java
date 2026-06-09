@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.codegen.union;
 
-import com.squareup.javapoet.*;
-import me.bristermitten.mittenlib.codegen.MatchStrategies;
-import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
-
-import java.util.function.*;
-
 import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.PUBLIC;
+
+import com.squareup.javapoet.*;
+import java.util.function.*;
+import me.bristermitten.mittenlib.codegen.MatchStrategies;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 
 public class MatchGenerator {
     public static MethodSpec makeVoidMatchMethodSpec(ResolvedUnionSpec spec) {

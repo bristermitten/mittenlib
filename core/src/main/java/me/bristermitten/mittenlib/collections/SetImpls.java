@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.collections;
 
 import com.google.common.collect.Iterators;
+import java.util.*;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
-
-import java.util.*;
 
 /** Implementations for immutable sets used in {@link Sets} */
 public class SetImpls {

@@ -5,6 +5,12 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
+import java.util.List;
+import java.util.function.Function;
+import javax.lang.model.element.NestingKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.ASTParentReference;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
@@ -12,13 +18,6 @@ import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jspecify.annotations.Nullable;
-
-import javax.lang.model.element.NestingKind;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeMirror;
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * Responsible for generating proper class names for configuration classes. This class handles the

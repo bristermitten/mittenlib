@@ -1,7 +1,10 @@
 package me.bristermitten.mittenlib.annotations.integration.extension;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.inject.*;
 import com.google.inject.util.Types;
+import java.util.List;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.annotations.integration.ConfigLoaderModule;
 import me.bristermitten.mittenlib.config.Configuration;
@@ -16,10 +19,6 @@ import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomSerializerIntegrationTest {
 

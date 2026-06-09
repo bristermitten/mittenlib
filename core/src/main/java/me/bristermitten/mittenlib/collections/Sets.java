@@ -2,12 +2,11 @@ package me.bristermitten.mittenlib.collections;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.InlineMe;
+import java.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.*;
 
 /** Utility functions for creating immutable sets. */
 @NullMarked

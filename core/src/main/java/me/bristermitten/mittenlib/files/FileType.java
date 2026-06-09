@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.files;
 
+import java.nio.file.Path;
 import me.bristermitten.mittenlib.config.reader.ObjectLoader;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Path;
 
 /**
  * A specific type of file such as JSON or YAML which can be loaded into a Map-like data structure.

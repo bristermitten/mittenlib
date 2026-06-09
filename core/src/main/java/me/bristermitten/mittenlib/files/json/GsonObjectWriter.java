@@ -2,12 +2,11 @@ package me.bristermitten.mittenlib.files.json;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+import java.io.Writer;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.writer.ObjectWriter;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Writer;
 
 /**
  * An {@link ObjectWriter} implementation that writes {@link DataTree} instances to JSON using a

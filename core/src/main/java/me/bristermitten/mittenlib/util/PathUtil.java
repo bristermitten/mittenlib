@@ -1,8 +1,5 @@
 package me.bristermitten.mittenlib.util;
 
-import me.bristermitten.mittenlib.util.lambda.IOFunction;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +11,8 @@ import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
 import java.util.Objects;
+import me.bristermitten.mittenlib.util.lambda.IOFunction;
+import org.jetbrains.annotations.NotNull;
 
 /** Utility class for working with {@link Path}s */
 public class PathUtil {

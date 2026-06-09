@@ -4,6 +4,11 @@ import com.google.inject.*;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import com.squareup.javapoet.*;
 import io.toolisticon.aptk.tools.MessagerUtils;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+import javax.annotation.processing.Generated;
+import javax.lang.model.element.Modifier;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.config.*;
@@ -11,12 +16,6 @@ import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
 import org.jspecify.annotations.Nullable;
-
-import javax.annotation.processing.Generated;
-import javax.lang.model.element.Modifier;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
 
 public class ConfigLoaderModuleGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;

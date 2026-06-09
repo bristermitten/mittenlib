@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import me.bristermitten.mittenlib.util.Version;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This is a truly outrageous hack Essentially, when a papi expansion returns a hex color, it

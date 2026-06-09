@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.config;
 
 import com.google.errorprone.annotations.InlineMe;
-import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
+import org.jetbrains.annotations.Nullable;
 
 /** Used in generated code to help with the loading of config maps */
 public class ConfigMapLoader {

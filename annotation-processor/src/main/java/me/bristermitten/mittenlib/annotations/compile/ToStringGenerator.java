@@ -4,10 +4,9 @@ import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import me.bristermitten.mittenlib.annotations.ast.Property;
-
-import javax.lang.model.element.Modifier;
 import java.util.List;
+import javax.lang.model.element.Modifier;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 
 /**
  * Generates toString methods for configuration classes. This class creates a standard toString

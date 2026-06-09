@@ -5,14 +5,13 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 
 public class DataTreeTypeAdapter extends ExtraTypeAdapter<DataTree> {
     private final Provider<Gson> gson;

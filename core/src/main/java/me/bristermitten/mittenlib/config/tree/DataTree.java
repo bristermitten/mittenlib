@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.config.tree;
 
+import java.util.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.util.*;
 
 /** Like {@link com.google.gson.JsonElement} but without a strict dependency on json */
 @NullMarked
