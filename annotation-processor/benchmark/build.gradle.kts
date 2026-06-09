@@ -18,7 +18,8 @@ jmh {
     fork.set(1)
     resultFormat.set("JSON")
 
-    profilers.add("jfr")
+    // enable profiling (uncomment for debugging slow performance)
+//    profilers.add("jfr")
 
     // only run the mapping json benchmarks if the deserialization timings arent important
     includes.set(listOf(".*MappingJson.*"))
