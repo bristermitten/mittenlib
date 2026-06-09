@@ -21,9 +21,7 @@ public class CustomStringValidator implements Validator<String> {
         return Optional.of("Must start with expected prefix, but was '" + value + "'");
     }
 
-    /**
-     * A dummy dependency that the Validator needs.
-     */
+    /** A dummy dependency that the Validator needs. */
     public static class ValidationDependency {
         private final String prefix;
 
@@ -38,6 +36,6 @@ public class CustomStringValidator implements Validator<String> {
 
         public boolean check(String val) {
             return val != null && val.startsWith(prefix);
+        }
     }
-  }
 }

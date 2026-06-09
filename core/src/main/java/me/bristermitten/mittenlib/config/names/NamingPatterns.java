@@ -9,33 +9,21 @@ package me.bristermitten.mittenlib.config.names;
  * automatically transform the field name into the key.
  */
 public enum NamingPatterns {
-    /**
-     * Match the field name
-     */
+    /** Match the field name */
     DEFAULT,
     /**
      * lowerCamelCase. If you're following Java conventions then this is identical to {@link
      * NamingPatterns#DEFAULT}
      */
     LOWER_CAMEL_CASE,
-    /**
-     * UpperCamelCase / PascalCase
-     */
+    /** UpperCamelCase / PascalCase */
     UPPER_CAMEL_CASE,
-    /**
-     * lower_snake_case
-     */
+    /** lower_snake_case */
     LOWER_SNAKE_CASE,
-    /**
-     * Upper_Snake_Case
-     */
+    /** Upper_Snake_Case */
     UPPER_SNAKE_CASE,
-    /**
-     * lower-kebab-case
-     */
+    /** lower-kebab-case */
     LOWER_KEBAB_CASE,
-    /**
-     * Upper-Kebab-Case
-     */
+    /** Upper-Kebab-Case */
     UPPER_KEBAB_CASE
 }

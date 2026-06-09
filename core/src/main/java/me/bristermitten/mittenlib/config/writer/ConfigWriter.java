@@ -27,10 +27,10 @@ public class ConfigWriter {
     /**
      * Serializes the given config instance and saves it to the given path.
      *
-     * @param instance    the config instance to save
-     * @param function    the serialization function to use
+     * @param instance the config instance to save
+     * @param function the serialization function to use
      * @param destination the path to save to
-     * @param <T>         the type of the config
+     * @param <T> the type of the config
      * @return a Result indicating success or failure
      */
     public <T> Result<Void> write(T instance, SerializationFunction<T> function, Path destination) {
@@ -42,7 +42,7 @@ public class ConfigWriter {
      *
      * @param instance the config instance to serialize
      * @param function the serialization function to use
-     * @param <T>      the type of the config
+     * @param <T> the type of the config
      * @return a Result containing the serialized DataTree
      */
     public <T> Result<DataTree> serialize(T instance, SerializationFunction<T> function) {
@@ -54,7 +54,9 @@ public class ConfigWriter {
     }
 
     public <T> Result<DataTree> serialize(T instance, Class<T> type) {
-        return serialize(instance, (val, ctx) -> DataTreeTransforms.loadFrom(ctx.getMapper().map(val)));
+        return serialize(
+                instance,
+                (val, ctx) -> DataTreeTransforms.loadFrom(ctx.getMapper().map(val)));
     }
 
     /**
@@ -72,6 +74,6 @@ public class ConfigWriter {
      * @return the ObjectWriter
      */
     public ObjectWriter getWriter() {
-    return writer;
-  }
+        return writer;
+    }
 }

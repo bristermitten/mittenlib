@@ -55,5 +55,5 @@ public class FileTypes {
      */
     public @Unmodifiable Set<Class<? extends FileType>> getTypes() {
         return Collections.unmodifiableSet(types);
-  }
+    }
 }

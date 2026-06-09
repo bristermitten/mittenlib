@@ -25,5 +25,5 @@ public class MittenLibConsumer {
      */
     public String getName() {
         return name;
-  }
+    }
 }

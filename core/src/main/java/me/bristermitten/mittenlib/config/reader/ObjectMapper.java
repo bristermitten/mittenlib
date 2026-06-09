@@ -19,7 +19,7 @@ public interface ObjectMapper {
      *
      * @param data The data to map. Usually, this will be a {@link Map}}, but not always
      * @param type Class of the type to map to
-     * @param <T>  The type to map to
+     * @param <T> The type to map to
      * @return A result containing either a mapped object, or an error
      */
     <T> Result<T> map(Object data, TypeToken<T> type);

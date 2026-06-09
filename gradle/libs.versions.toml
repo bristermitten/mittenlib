@@ -14,10 +14,12 @@ freefair = "9.5.0"
 errorprone-plugin = "5.1.0"
 spotbugs-plugin = "6.5.5"
 spotless-plugin = "8.6.0"
+githook-plugin = "1.2.1"
 
 [libraries]
 spotless-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless-plugin" }
 spotbugs-gradle = { group = "com.github.spotbugs.snom", name = "spotbugs-gradle-plugin", version.ref = "spotbugs-plugin" }
+githook-gradle = { group = "com.star-zero.gradle.githook", name = "com.star-zero.gradle.githook.gradle.plugin", version.ref = "githook-plugin"}
 errorprone-gradle = { group = "net.ltgt.gradle", name = "gradle-errorprone-plugin", version.ref = "errorprone-plugin" }
 spigot-api = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }

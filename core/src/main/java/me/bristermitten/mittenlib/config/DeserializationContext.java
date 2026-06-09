@@ -3,9 +3,7 @@ package me.bristermitten.mittenlib.config;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 
-/**
- * Context for deserializing a config, making it easier to pass around
- */
+/** Context for deserializing a config, making it easier to pass around */
 public class DeserializationContext {
     private final ObjectMapper mapper;
     private final DataTree data;
@@ -14,7 +12,7 @@ public class DeserializationContext {
      * Create a new DeserializationContext
      *
      * @param mapper the mapper to use
-     * @param data   the data to deserialize
+     * @param data the data to deserialize
      */
     public DeserializationContext(ObjectMapper mapper, DataTree data) {
         this.mapper = mapper;
@@ -43,5 +41,5 @@ public class DeserializationContext {
 
     public DeserializationContext withData(DataTree data) {
         return new DeserializationContext(this.mapper, data);
-  }
+    }
 }

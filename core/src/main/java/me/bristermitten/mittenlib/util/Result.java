@@ -21,7 +21,7 @@ public interface Result<T> {
     /**
      * Create a {@link Result} from a given value. This will always be an {@link Ok}.
      *
-     * @param t   the value
+     * @param t the value
      * @param <T> the type of the value
      * @return a {@link Result} containing the given value
      */
@@ -33,7 +33,7 @@ public interface Result<T> {
     /**
      * Create a {@link Result} from a given exception. This will always be a {@link Fail}.
      *
-     * @param e   the exception
+     * @param e the exception
      * @param <T> the type of the value
      * @param <E> the type of the exception
      * @return a {@link Result} containing the given exception
@@ -48,7 +48,7 @@ public interface Result<T> {
      * a {@link Result}
      *
      * @param supplier the supplier to run
-     * @param <T>      the type of the returned value
+     * @param <T> the type of the returned value
      * @return a {@link Result} containing the returned value or any thrown exception
      */
     @Contract(value = "_ -> new")
@@ -85,7 +85,7 @@ public interface Result<T> {
      * runCatching(supplier).flatMap(Function.identity())}
      *
      * @param supplier The {@link SafeSupplier} to execute
-     * @param <T>      The type of the returned {@link Result}'s value
+     * @param <T> The type of the returned {@link Result}'s value
      * @return A {@link Result} wrapping the returned {@link Result}'s value or any thrown exception
      */
     @Contract(value = "_ -> new")
@@ -109,9 +109,9 @@ public interface Result<T> {
      * method handles exceptions thrown in the resource supplier.
      *
      * @param resourceSupplier The supplier to generate the resource
-     * @param function         The function to execute
-     * @param <T>              The type of the returned {@link Result}'s value
-     * @param <R>              The type of the resource
+     * @param function The function to execute
+     * @param <T> The type of the returned {@link Result}'s value
+     * @param <R> The type of the resource
      * @return A {@link Result}, which is either the result of the function or an exception
      */
     static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(
@@ -129,8 +129,8 @@ public interface Result<T> {
      *
      * @param resource The resource to use
      * @param function The function to execute
-     * @param <T>      The type of the returned {@link Result}'s value
-     * @param <R>      The type of the resource
+     * @param <T> The type of the returned {@link Result}'s value
+     * @param <R> The type of the resource
      * @return A {@link Result}, which is either the result of the function or an exception
      */
     static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(
@@ -149,15 +149,14 @@ public interface Result<T> {
      * guaranteed to be the same type as the input collection
      *
      * @param results The collection of {@link Result}s
-     * @param <T>     The type of the {@link Result}'s value
+     * @param <T> The type of the {@link Result}'s value
      * @return A {@link Result} holding all the values from the input collection or an exception if
-     * any of the results are {@link Fail}s
+     *     any of the results are {@link Fail}s
      * @see Futures#sequence(Collection) for the same functionality but with {@link
-     * java.util.concurrent.CompletableFuture}s
+     *     java.util.concurrent.CompletableFuture}s
      */
     @Contract(value = "_ -> new")
-    static <T> @NotNull Result<Collection<T>> sequence(
-            @NotNull Collection<@NotNull Result<T>> results) {
+    static <T> @NotNull Result<Collection<T>> sequence(@NotNull Collection<@NotNull Result<T>> results) {
         if (results.isEmpty()) {
             return ok(Collections.emptySet());
         }
@@ -182,8 +181,7 @@ public interface Result<T> {
      *
      * @return The value, if present, in an {@link Optional}
      */
-    @NotNull
-    @Contract(pure = true)
+    @NotNull @Contract(pure = true)
     Optional<T> toOptional();
 
     /**
@@ -193,8 +191,7 @@ public interface Result<T> {
      *     present
      * @apiNote Synonymous with {@link #toOptional()}
      */
-    @NotNull
-    @Contract(pure = true)
+    @NotNull @Contract(pure = true)
     default Optional<T> value() {
         return toOptional();
     }
@@ -205,8 +202,7 @@ public interface Result<T> {
      *
      * @return The exception, if present, in an {@link Optional}
      */
-    @NotNull
-    @Contract(pure = true)
+    @NotNull @Contract(pure = true)
     Optional<Exception> error();
 
     /**
@@ -227,8 +223,7 @@ public interface Result<T> {
      *     {@link Result}
      */
     @Contract(pure = true)
-    @NotNull
-    default <R> Result<R> map(SafeFunction<T, R> function) {
+    @NotNull default <R> Result<R> map(SafeFunction<T, R> function) {
         return flatMap(t -> ok(function.apply(t)));
     }
 
@@ -238,15 +233,13 @@ public interface Result<T> {
      *
      * @param t The {@link SafeConsumer} to apply
      * @return The {@link Result} after the {@link SafeConsumer} has been applied
-   */
+     */
     @Contract(pure = true)
-    @NotNull
-    default Result<Unit> ifOk(SafeConsumer<T> t) {
-        return flatMap(
-                t1 -> {
-                    t.consume(t1);
-                    return ok(Unit.UNIT);
-                });
+    @NotNull default Result<Unit> ifOk(SafeConsumer<T> t) {
+        return flatMap(t1 -> {
+            t.consume(t1);
+            return ok(Unit.UNIT);
+        });
     }
 
     /**
@@ -258,8 +251,7 @@ public interface Result<T> {
      * @return The result of the "or" operation
      */
     @Contract(pure = true)
-    @NotNull
-    Result<T> orElse(Supplier<Result<T>> supplier);
+    @NotNull Result<T> orElse(Supplier<Result<T>> supplier);
 
     /**
      * Applies a function to the {@link Result}, passing through the exception if the {@link Result}
@@ -277,8 +269,7 @@ public interface Result<T> {
      * @see #flatMapPure(Function) a version that cannot throw checked exceptions
      */
     @Contract(pure = true)
-    @NotNull
-    <R> Result<R> flatMap(SafeFunction<T, Result<R>> function);
+    @NotNull <R> Result<R> flatMap(SafeFunction<T, Result<R>> function);
 
     /**
      * Like {@link #flatMap(SafeFunction)}, but the function cannot throw checked exceptions
@@ -290,8 +281,7 @@ public interface Result<T> {
      * @see #flatMap(SafeFunction) a version that can throw checked exceptions
      */
     @Contract(pure = true)
-    @NotNull
-    default <R> Result<R> flatMapPure(Function<T, Result<R>> function) {
+    @NotNull default <R> Result<R> flatMapPure(Function<T, Result<R>> function) {
         return flatMap(function::apply);
     }
 
@@ -327,8 +317,7 @@ public interface Result<T> {
      *     will <b>not</b> be wrapped in a {@link RuntimeException}. However, {@link RuntimeException}
      *     is used in the method signature to avoid manual try/catch blocks
      */
-    @NotNull
-    T getOrThrow() throws RuntimeException;
+    @NotNull T getOrThrow() throws RuntimeException;
 
     /**
      * Handle the 2 cases of the {@link Result} separately with 2 functions If the {@link Result} is
@@ -380,9 +369,7 @@ public interface Result<T> {
     boolean isFailure();
 
     class Fail<T, E extends Exception> implements Result<T> {
-        /**
-         * The underlying exception
-         */
+        /** The underlying exception */
         private final @NotNull E exception;
 
         private Fail(@NotNull E exception) {
@@ -535,16 +522,16 @@ public interface Result<T> {
             if (!(obj instanceof Ok)) return false;
             Ok<?> ok = (Ok<?>) obj;
             return Objects.equals(value, ok.value);
-    }
+        }
 
-    @Override
-    public int hashCode() {
-      return Objects.hash(value);
-    }
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
 
-    @Override
-    public String toString() {
-      return "Ok{" + "value=" + value + '}';
+        @Override
+        public String toString() {
+            return "Ok{" + "value=" + value + '}';
+        }
     }
-  }
 }

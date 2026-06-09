@@ -6,12 +6,9 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-/**
- * Implementations for immutable sets used in {@link Sets}
- */
+/** Implementations for immutable sets used in {@link Sets} */
 public class SetImpls {
-    private SetImpls() {
-    }
+    private SetImpls() {}
 
     static class Set0<E> extends MLImmutableSet<E> {
         @Override
@@ -25,8 +22,7 @@ public class SetImpls {
         }
 
         @Override
-        @NonNull
-        public Iterator<E> iterator() {
+        @NonNull public Iterator<E> iterator() {
             return Collections.emptyIterator();
         }
 
@@ -61,8 +57,7 @@ public class SetImpls {
         }
 
         @Override
-        @NonNull
-        public Iterator<E> iterator() {
+        @NonNull public Iterator<E> iterator() {
             return new Iterator<E>() {
                 private boolean hasNext = true;
 
@@ -116,8 +111,7 @@ public class SetImpls {
         }
 
         @Override
-        @NonNull
-        public Iterator<E> iterator() {
+        @NonNull public Iterator<E> iterator() {
             return new Iterator<E>() {
                 private int count = 0;
 
@@ -177,8 +171,7 @@ public class SetImpls {
         }
 
         @Override
-        @NonNull
-        public Iterator<E> iterator() {
+        @NonNull public Iterator<E> iterator() {
             return new Iterator<E>() {
                 private int count = 0;
 
@@ -235,8 +228,7 @@ public class SetImpls {
         }
 
         @Override
-        @NonNull
-        public Iterator<E> iterator() {
+        @NonNull public Iterator<E> iterator() {
             return set.iterator();
         }
 
@@ -257,9 +249,7 @@ public class SetImpls {
         }
     }
 
-    /**
-     * Union of 2 sets
-     */
+    /** Union of 2 sets */
     static class UnionOf<E> extends AbstractSet<E> { // NOSONAR
         private final @Unmodifiable Set<E> first;
         private final @Unmodifiable Set<E> second;
@@ -287,9 +277,8 @@ public class SetImpls {
         }
 
         @Override
-        @NonNull
-        public Iterator<E> iterator() {
+        @NonNull public Iterator<E> iterator() {
             return Iterators.concat(first.iterator(), second.iterator());
+        }
     }
-  }
 }

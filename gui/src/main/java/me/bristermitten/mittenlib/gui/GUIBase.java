@@ -12,15 +12,11 @@ import org.jetbrains.annotations.NotNull;
  * @param <View> the type of view that renders the model and waits for commands
  * @param <Cmd> the type of commands that can be sent to perform side effects
  */
-public interface GUIBase<
-        Model, Msg, View, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>> {
+public interface GUIBase<Model, Msg, View, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>> {
 
-    @NotNull
-    Model init();
+    @NotNull Model init();
 
-    @NotNull
-    UpdateResult<Model, Msg, Ctx, Cmd> update(Model model, Msg message);
+    @NotNull UpdateResult<Model, Msg, Ctx, Cmd> update(Model model, Msg message);
 
-    @NotNull
-    View render(Model model);
+    @NotNull View render(Model model);
 }

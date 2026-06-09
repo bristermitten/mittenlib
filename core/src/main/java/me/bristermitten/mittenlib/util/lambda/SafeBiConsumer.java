@@ -15,7 +15,7 @@ public interface SafeBiConsumer<T, T2> {
     /**
      * Consume the input, possibly throwing an exception.
      *
-     * @param t  the first input
+     * @param t the first input
      * @param t2 the second input
      */
     void consume(T t, T2 t2) throws Exception;
@@ -32,6 +32,6 @@ public interface SafeBiConsumer<T, T2> {
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
             }
-    };
-  }
+        };
+    }
 }

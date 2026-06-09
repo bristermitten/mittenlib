@@ -11,5 +11,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Inherited
 @CascadeToInnerClasses
-public @interface GenerateToString {
-}
+public @interface GenerateToString {}

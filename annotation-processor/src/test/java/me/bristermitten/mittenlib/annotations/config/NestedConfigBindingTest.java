@@ -15,13 +15,8 @@ class NestedConfigBindingTest {
 
     @Test
     void testNestedConfigBindingsAreGenerated() throws IOException {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.RootConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.RootConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -47,33 +42,24 @@ class NestedConfigBindingTest {
 
         assertThat(compilation).succeeded();
 
-        var module =
-                compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
+        var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
 
         String content = module.get().getCharContent(true).toString();
         assertTrue(
                 content.contains("public RootConfig.ChildConfig provideChildConfig(RootConfig parent)"),
                 "Missing provideChildConfig method");
-        assertTrue(
-                content.contains("return parent.child();"), "Missing return parent.child() statement");
+        assertTrue(content.contains("return parent.child();"), "Missing return parent.child() statement");
         assertTrue(
                 content.contains("public RootConfig.ChildConfig.GrandChildConfig provideGrandChildConfig("),
                 "Missing provideGrandChildConfig method");
-        assertTrue(
-                content.contains("return parent.grandChild();"),
-                "Missing return parent.grandChild() statement");
+        assertTrue(content.contains("return parent.grandChild();"), "Missing return parent.grandChild() statement");
     }
 
     @Test
     void testNestedInterfaceConfigBindingsAreGenerated() throws IOException {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.RootInterfaceConfig",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.RootInterfaceConfig", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -93,8 +79,7 @@ class NestedConfigBindingTest {
 
         assertThat(compilation).succeeded();
 
-        var module =
-                compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
+        var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
 
         String content = module.get().getCharContent(true).toString();
@@ -102,19 +87,13 @@ class NestedConfigBindingTest {
                 content.contains(
                         "public RootInterfaceConfig.ChildInterface provideChildInterface(RootInterfaceConfig parent)"),
                 "Missing provideChildInterface method");
-        assertTrue(
-                content.contains("return parent.child();"), "Missing return parent.child() statement");
+        assertTrue(content.contains("return parent.child();"), "Missing return parent.child() statement");
     }
 
     @Test
     void testAmbiguousNestedConfigBindingsAreNotGenerated() throws IOException {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.AmbiguousConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.AmbiguousConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -135,25 +114,18 @@ class NestedConfigBindingTest {
 
         assertThat(compilation).succeeded();
 
-        var module =
-                compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
+        var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
 
         String content = module.get().getCharContent(true).toString();
-        assertFalse(
-                content.contains("provideChildConfig"),
-                "Should not have provideChildConfig due to ambiguity");
+        assertFalse(content.contains("provideChildConfig"), "Should not have provideChildConfig due to ambiguity");
     }
 
     @Test
     void testAmbiguousNestedConfigBindingsWithOverrideAreGenerated() throws IOException {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.OverrideAmbiguousConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.OverrideAmbiguousConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -176,8 +148,7 @@ class NestedConfigBindingTest {
 
         assertThat(compilation).succeeded();
 
-        var module =
-                compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
+        var module = compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.ConfigLoaderModule");
         assertTrue(module.isPresent(), "ConfigLoaderModule was not generated");
 
         String content = module.get().getCharContent(true).toString();
@@ -190,13 +161,9 @@ class NestedConfigBindingTest {
 
     @Test
     void testMultipleBindPropertyAnnotationsFails() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.DoubleOverrideConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.DoubleOverrideConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -220,7 +187,6 @@ class NestedConfigBindingTest {
 
         assertThat(compilation).failed();
         assertThat(compilation)
-                .hadErrorContaining(
-                        "Multiple properties of type ChildConfig are marked with @BindProperty");
+                .hadErrorContaining("Multiple properties of type ChildConfig are marked with @BindProperty");
     }
 }

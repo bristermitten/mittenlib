@@ -28,11 +28,10 @@ public class CompositeType implements ParameterizedType {
         this.baseClass = baseClass;
         this.parameters = arguments.clone();
 
-        this.name =
-                String.format(
-                        "%s<%s>",
-                        baseClass.getName(),
-                        Arrays.stream(arguments).map(Class::getName).collect(Collectors.joining(", ")));
+        this.name = String.format(
+                "%s<%s>",
+                baseClass.getName(),
+                Arrays.stream(arguments).map(Class::getName).collect(Collectors.joining(", ")));
     }
 
     @Override
@@ -55,8 +54,7 @@ public class CompositeType implements ParameterizedType {
         if (this == o) return true;
         if (!(o instanceof ParameterizedType)) return false;
         ParameterizedType that = (ParameterizedType) o;
-        return Objects.equals(baseClass, that.getRawType())
-                && Arrays.equals(parameters, that.getActualTypeArguments());
+        return Objects.equals(baseClass, that.getRawType()) && Arrays.equals(parameters, that.getActualTypeArguments());
     }
 
     @Override
@@ -67,5 +65,5 @@ public class CompositeType implements ParameterizedType {
     @Override
     public String getTypeName() {
         return name;
-  }
+    }
 }

@@ -28,10 +28,10 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class ConfigBenchmark {
 
-
     @Benchmark
     public TestData benchmarkMittenLibFullJson(BenchState state) {
-        return state.jsonLoader.load(state.jsonData)
+        return state.jsonLoader
+                .load(state.jsonData)
                 .map(tree -> new DeserializationContext(state.mittenMapper, tree))
                 .flatMap(state.deserializer::apply)
                 .getOrThrow();
@@ -47,10 +47,11 @@ public class ConfigBenchmark {
         return state.jackson.readValue(state.jsonData, TestDataGson.class);
     }
 
-
     @Benchmark
     public TestData benchmarkMittenLibMappingJson(BenchState state) {
-        return state.deserializer.apply(new DeserializationContext(state.mittenMapper, state.jsonTree)).getOrThrow();
+        return state.deserializer
+                .apply(new DeserializationContext(state.mittenMapper, state.jsonTree))
+                .getOrThrow();
     }
 
     @Benchmark
@@ -86,15 +87,13 @@ public class ConfigBenchmark {
             this.yamlData = getYamlFile();
             this.jsonData = getJSONFile();
 
-            Injector injector =
-                    Guice.createInjector(
-                            new ConfigLoaderModule().asModuleWithInfrastructure(),
-                            new BenchmarkingModule(),
-                            new FileTypeModule());
+            Injector injector = Guice.createInjector(
+                    new ConfigLoaderModule().asModuleWithInfrastructure(),
+                    new BenchmarkingModule(),
+                    new FileTypeModule());
 
             this.mittenMapper = injector.getInstance(me.bristermitten.mittenlib.config.reader.ObjectMapper.class);
-            this.deserializer = injector.getInstance(Key.get(new TypeLiteral<>() {
-            }));
+            this.deserializer = injector.getInstance(Key.get(new TypeLiteral<>() {}));
 
             this.jsonLoader = injector.getInstance(JSONFileType.class).loader();
             this.yamlLoader = injector.getInstance(YamlFileType.class).loader();

@@ -23,13 +23,11 @@ public class YamlObjectLoader implements ObjectLoader {
 
     @Override
     public @NotNull Result<@NotNull DataTree> load(@NotNull Reader source) {
-        return runCatching(
-                () -> {
-                    Object obj =
-                            yaml.load(source); // todo: let's perhaps move away from snakeyaml because it's very
-                    // vulnerable
+        return runCatching(() -> {
+            Object obj = yaml.load(source); // todo: let's perhaps move away from snakeyaml because it's very
+            // vulnerable
 
-                    return DataTreeTransforms.loadFrom(obj);
+            return DataTreeTransforms.loadFrom(obj);
         });
     }
 }

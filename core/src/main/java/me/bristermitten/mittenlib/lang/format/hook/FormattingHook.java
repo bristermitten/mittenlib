@@ -28,10 +28,9 @@ public interface FormattingHook {
      * and should not be called if {@link #shouldRegister()} returns false.
      *
      * @param message the message to format
-     * @param player  the player to format for. This can be used for player-specific formatting, such
-     *                as PlaceholderAPI
+     * @param player the player to format for. This can be used for player-specific formatting, such
+     *     as PlaceholderAPI
      * @return the formatted String
      */
-    @NotNull
-    String format(@NotNull String message, @Nullable OfflinePlayer player);
+    @NotNull String format(@NotNull String message, @Nullable OfflinePlayer player);
 }

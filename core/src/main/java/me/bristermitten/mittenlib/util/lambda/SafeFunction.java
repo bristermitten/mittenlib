@@ -18,7 +18,7 @@ public interface SafeFunction<T, R> {
     /**
      * A {@link SafeFunction} that always returns the same value, ignoring the input.
      *
-     * @param r   the value to return
+     * @param r the value to return
      * @param <T> the type of the input
      * @param <R> the type of the result
      * @return a {@link SafeFunction} that always returns the given value
@@ -31,8 +31,8 @@ public interface SafeFunction<T, R> {
      * Wrap a {@link Function} in a {@link SafeFunction}
      *
      * @param function the function to wrap
-     * @param <T>      the type of the input
-     * @param <R>      the type of the result
+     * @param <T> the type of the input
+     * @param <R> the type of the result
      * @return a {@link SafeFunction} that delegates to the given function
      */
     static <T, R> SafeFunction<T, R> of(Function<T, R> function) {
@@ -68,8 +68,8 @@ public interface SafeFunction<T, R> {
                 return apply(t);
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
-        return null;
-      }
-    };
-  }
+                return null;
+            }
+        };
+    }
 }

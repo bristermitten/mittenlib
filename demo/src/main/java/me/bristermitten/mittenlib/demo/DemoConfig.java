@@ -7,8 +7,7 @@ import me.bristermitten.mittenlib.config.validation.Positive;
 @Config
 @Source("config.yml")
 public interface DemoConfig {
-    @Positive
-    default int port() {
+    @Positive default int port() {
         return 25565;
     }
 }

@@ -9,24 +9,22 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
 import java.util.Optional;
 
-/**
- * Thrown when a DTO class references an invalid type
- */
+/** Thrown when a DTO class references an invalid type */
 public class DTOReferenceException extends RuntimeException {
     private final transient TypeMirror typeUsed;
     private final transient GeneratedTypeCache typeCache;
 
     private final @Nullable Class<?> replaceWith;
-    @Nullable
-    private final transient Element source;
+
+    @Nullable private final transient Element source;
 
     /**
      * Create a new DTOReferenceException
      *
-     * @param typeUsed    The invalid type that was used
-     * @param typeCache   The type cache, used for generating the error message
+     * @param typeUsed The invalid type that was used
+     * @param typeCache The type cache, used for generating the error message
      * @param replaceWith The type to replace the invalid type with, if known
-     * @param source      The source element (i.e., the element referencing the invalid type), if known
+     * @param source The source element (i.e., the element referencing the invalid type), if known
      */
     public DTOReferenceException(
             TypeMirror typeUsed,
@@ -50,21 +48,19 @@ public class DTOReferenceException extends RuntimeException {
                 return "Unknown type %s".formatted(typeUsed);
             }
 
-            typesReplaceWith =
-                    types.size() == 1
-                            ? Stringify.prettyStringify(types.iterator().next())
-                            : "any of " + types.stream().map(Stringify::prettyStringify).toList();
-    }
+            typesReplaceWith = types.size() == 1
+                    ? Stringify.prettyStringify(types.iterator().next())
+                    : "any of " + types.stream().map(Stringify::prettyStringify).toList();
+        }
 
-    return """
+        return """
                 You seem to be using a generated type in a DTO.
                 This results in weird behaviour and so is not allowed.
                 You should replace %s with %s.
                 This issue occurred in %s.
-            """
-            .formatted(
-                    typeUsed,
-                    typesReplaceWith,
-                    Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
-  }
+            """.formatted(
+                typeUsed,
+                typesReplaceWith,
+                Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
+    }
 }

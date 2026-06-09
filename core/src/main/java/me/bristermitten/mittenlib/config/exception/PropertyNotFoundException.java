@@ -6,8 +6,7 @@ public class PropertyNotFoundException extends ConfigDeserialisationException {
     private final String propertyType;
     private final String keyName;
 
-    public PropertyNotFoundException(
-            Class<?> configClass, String propertyName, String propertyType, String keyName) {
+    public PropertyNotFoundException(Class<?> configClass, String propertyName, String propertyType, String keyName) {
         this.configClass = configClass;
         this.propertyName = propertyName;
         this.propertyType = propertyType;

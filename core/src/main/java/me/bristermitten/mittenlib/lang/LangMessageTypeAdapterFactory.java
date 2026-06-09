@@ -24,42 +24,40 @@ public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
         }
 
         //noinspection unchecked
-        final TypeAdapter<LangMessage> delegateAdapter =
-                (TypeAdapter<LangMessage>) gson.getDelegateAdapter(this, type);
+        final TypeAdapter<LangMessage> delegateAdapter = (TypeAdapter<LangMessage>) gson.getDelegateAdapter(this, type);
         //noinspection unchecked
-        return (TypeAdapter<T>)
-                new TypeAdapter<LangMessage>() {
-                    @Override
-                    public void write(JsonWriter out, LangMessage value) throws IOException {
-                        if (value.getTitle() == null
-                                && value.getSubtitle() == null
-                                && value.getActionBar() == null
-                                && value.getSound() == null) {
-                            if (value.getMessage() == null) {
-                                throw new IllegalArgumentException("Empty LangElement!");
-                            }
-                            out.value(value.getMessage()); // just write the message as a string
-                            return;
-                        }
-                        delegateAdapter.write(out, value);
+        return (TypeAdapter<T>) new TypeAdapter<LangMessage>() {
+            @Override
+            public void write(JsonWriter out, LangMessage value) throws IOException {
+                if (value.getTitle() == null
+                        && value.getSubtitle() == null
+                        && value.getActionBar() == null
+                        && value.getSound() == null) {
+                    if (value.getMessage() == null) {
+                        throw new IllegalArgumentException("Empty LangElement!");
                     }
+                    out.value(value.getMessage()); // just write the message as a string
+                    return;
+                }
+                delegateAdapter.write(out, value);
+            }
 
-                    @Override
-                    public LangMessage read(JsonReader in) throws IOException {
-                        if (in.peek() == JsonToken.STRING) {
-                            return new LangMessage(in.nextString(), null, null, null, null);
-                        }
-                        if (in.peek() == JsonToken.BEGIN_ARRAY) {
-                            final List<String> lines = new ArrayList<>();
-                            in.beginArray();
-                            while (in.hasNext()) {
-                                lines.add(in.nextString());
-                            }
-                            in.endArray();
-                            return new LangMessage(String.join("\n", lines), null, null, null, null);
-                        }
-                        return delegateAdapter.read(in);
+            @Override
+            public LangMessage read(JsonReader in) throws IOException {
+                if (in.peek() == JsonToken.STRING) {
+                    return new LangMessage(in.nextString(), null, null, null, null);
+                }
+                if (in.peek() == JsonToken.BEGIN_ARRAY) {
+                    final List<String> lines = new ArrayList<>();
+                    in.beginArray();
+                    while (in.hasNext()) {
+                        lines.add(in.nextString());
                     }
+                    in.endArray();
+                    return new LangMessage(String.join("\n", lines), null, null, null, null);
+                }
+                return delegateAdapter.read(in);
+            }
         };
     }
 }

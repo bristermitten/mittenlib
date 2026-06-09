@@ -43,6 +43,6 @@ public interface SafeSupplier<T> {
                 Errors.sneakyThrow(e);
                 return null;
             }
-    };
-  }
+        };
+    }
 }

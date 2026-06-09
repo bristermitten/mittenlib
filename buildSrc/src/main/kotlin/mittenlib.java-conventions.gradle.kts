@@ -1,4 +1,3 @@
-import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
 import com.github.spotbugs.snom.SpotBugsTask
 import net.ltgt.gradle.errorprone.errorprone
@@ -11,6 +10,7 @@ plugins {
     id("net.ltgt.errorprone")
     id("com.github.spotbugs")
     id("com.diffplug.spotless")
+    id("com.star-zero.gradle.githook")
 }
 
 val libs = versionCatalogs.named("libs")
@@ -20,10 +20,8 @@ version = "6.0.0-SNAPSHOT"
 
 spotless {
     java {
-        googleJavaFormat()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
+        palantirJavaFormat()
+        formatAnnotations()
     }
     kotlinGradle {
         target("*.gradle.kts")
@@ -40,6 +38,17 @@ spotless {
 spotbugs {
     effort = Effort.MORE
     excludeFilter.set(rootProject.file("gradle/spotbugs-exclude.xml"))
+}
+
+githook {
+    failOnMissingHooksDir = false
+    createHooksDirIfNotExist = true
+
+    hooks {
+        create("pre-commit") {
+            task = "spotlessCheck"
+        }
+    }
 }
 
 java {

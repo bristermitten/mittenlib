@@ -18,9 +18,9 @@ public abstract class ExtraTypeAdapter<T> extends TypeAdapter<T> {
     /**
      * Creates an {@link ExtraTypeAdapter} from an existing {@link TypeAdapter}.
      *
-     * @param type    the type of the TypeAdapter
+     * @param type the type of the TypeAdapter
      * @param adapter the TypeAdapter
-     * @param <T>     the type of the TypeAdapter
+     * @param <T> the type of the TypeAdapter
      * @return the ExtraTypeAdapter
      */
     public static <T> ExtraTypeAdapter<T> of(Type type, TypeAdapter<T> adapter) {

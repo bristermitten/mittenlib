@@ -7,9 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * The abstract shape of a config, before proper resolution
- */
+/** The abstract shape of a config, before proper resolution */
 public sealed interface AbstractConfigStructure {
     @Contract(pure = true)
     ClassName name();
@@ -36,10 +34,9 @@ public sealed interface AbstractConfigStructure {
 
     default boolean needsValidation() {
         return properties().stream()
-                .anyMatch(
-                        p ->
-                                !p.settings().constraints().isEmpty()
-                                        || !TypeName.get(p.propertyType()).isPrimitive() && !p.settings().isNullable());
+                .anyMatch(p -> !p.settings().constraints().isEmpty()
+                        || !TypeName.get(p.propertyType()).isPrimitive()
+                                && !p.settings().isNullable());
     }
 
     default boolean isDynamicallyInitializable() {
@@ -47,9 +44,7 @@ public sealed interface AbstractConfigStructure {
                 .allMatch(p -> p.settings().hasDefaultValue() || p.settings().isNullable());
     }
 
-    /**
-     * An atomic config structure, i.e. a type with no parents or interfaces
-     */
+    /** An atomic config structure, i.e. a type with no parents or interfaces */
     record Atomic(
             ClassName name,
             ConfigTypeSource source,
@@ -57,8 +52,7 @@ public sealed interface AbstractConfigStructure {
             List<AbstractConfigStructure> enclosed,
             @Nullable ASTParentReference enclosedIn,
             List<Property> properties)
-            implements AbstractConfigStructure {
-    }
+            implements AbstractConfigStructure {}
 
     /**
      * An intersection config structure, i.e. a type with some super classes/interfaces that it
@@ -74,14 +68,13 @@ public sealed interface AbstractConfigStructure {
             List<AbstractConfigStructure> enclosed,
             List<ClassName> roots,
             List<Property> properties)
-            implements AbstractConfigStructure {
-    }
+            implements AbstractConfigStructure {}
 
     /**
      * A union config structure, i.e. a type that can be any of the given alternatives
      *
      * @param alternatives the alternatives of this union
-     * @param properties   any properties that are defined as present in any of the alternatives
+     * @param properties any properties that are defined as present in any of the alternatives
      */
     record Union(
             ClassName name,
@@ -95,6 +88,6 @@ public sealed interface AbstractConfigStructure {
         @Override
         public List<AbstractConfigStructure> enclosed() {
             return alternatives;
+        }
     }
-  }
 }

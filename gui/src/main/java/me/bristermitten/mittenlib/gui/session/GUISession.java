@@ -22,24 +22,16 @@ public class GUISession<
         Viewer extends InventoryViewer<Msg, V>,
         Ctx extends CommandContext> {
 
-    /**
-     * The unique session ID.
-     */
+    /** The unique session ID. */
     private final SessionID<Model, Msg, V, Viewer> sessionId;
 
-    /**
-     * The viewer (e.g. player) interacting with the GUI.
-     */
+    /** The viewer (e.g. player) interacting with the GUI. */
     private final Viewer viewer;
 
-    /**
-     * The GUI itself
-     */
+    /** The GUI itself */
     private final GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui;
 
-    /**
-     * Renderer for a view
-     */
+    /** Renderer for a view */
     private final Consumer<V> renderer;
 
     private final CommandRunner<Ctx, Msg> commandRunner;
@@ -103,8 +95,7 @@ public class GUISession<
                 // first, update the model
                 Model oldModel = currentModel.get();
 
-                UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result =
-                        gui.update(oldModel, msg);
+                UpdateResult<Model, Msg, Ctx, ? extends Command<Ctx, Msg>> result = gui.update(oldModel, msg);
 
                 Model newModel = result.getModel();
                 currentModel.set(newModel);
@@ -175,6 +166,6 @@ public class GUISession<
 
     @FunctionalInterface
     public interface CommandRunner<Ctx extends CommandContext, Msg> {
-    void run(Command<Ctx, Msg> cmd, Consumer<Msg> dispatcher);
-  }
+        void run(Command<Ctx, Msg> cmd, Consumer<Msg> dispatcher);
+    }
 }

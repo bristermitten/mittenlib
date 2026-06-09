@@ -13,9 +13,7 @@ import java.util.logging.Logger;
 
 import static me.bristermitten.mittenlib.util.Result.fail;
 
-/**
- * An {@link ObjectLoader} which tries each known {@link FileType} in order, until one succeeds.
- */
+/** An {@link ObjectLoader} which tries each known {@link FileType} in order, until one succeeds. */
 public class SearchingObjectLoader implements ObjectLoader {
     private final Set<FileType> loaders;
 
@@ -35,38 +33,32 @@ public class SearchingObjectLoader implements ObjectLoader {
             }
             return fileType.loader().load(source);
         }
-        return fail(
-                new IllegalStateException("Could not find a matching file type for path " + source));
+        return fail(new IllegalStateException("Could not find a matching file type for path " + source));
     }
 
     @Override
     public @NotNull Result<DataTree> load(@NotNull Reader source) {
         logger.warning(
-                () ->
-                        "SearchingObjectLoader used with load(Reader). "
-                                + "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them."
-                                + "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
+                () -> "SearchingObjectLoader used with load(Reader). "
+                        + "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them."
+                        + "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
 
         for (FileType fileType : loaders) {
             Result<DataTree> res =
-                    fileType
-                            .loader()
-                            .load(source); // TODO this won't actually work as the reader is already consumed
+                    fileType.loader().load(source); // TODO this won't actually work as the reader is already consumed
             if (res.isSuccess()) {
                 return res;
             }
         }
-        return fail(
-                new IllegalStateException("Could not find a matching file type for reader " + source));
+        return fail(new IllegalStateException("Could not find a matching file type for reader " + source));
     }
 
     @Override
     public @NotNull Result<DataTree> load(@NotNull String source) {
         logger.warning(
-                () ->
-                        "SearchingObjectLoader used with load(String). "
-                                + "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them."
-                                + "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
+                () -> "SearchingObjectLoader used with load(String). "
+                        + "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them."
+                        + "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
 
         for (FileType fileType : loaders) {
             Result<DataTree> res = fileType.loader().load(source);
@@ -74,7 +66,6 @@ public class SearchingObjectLoader implements ObjectLoader {
                 return res;
             }
         }
-        return fail(
-                new IllegalStateException("Could not find a matching file type for reader " + source));
-  }
+        return fail(new IllegalStateException("Could not find a matching file type for reader " + source));
+    }
 }

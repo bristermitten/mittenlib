@@ -3,12 +3,9 @@ package me.bristermitten.mittenlib.annotations.util;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 
-/**
- * Generic utilities for converting objects to strings.
- */
+/** Generic utilities for converting objects to strings. */
 public class Stringify {
-    private Stringify() {
-    }
+    private Stringify() {}
 
     /**
      * Returns a generic pretty string representation of the given {@link Element} object.
@@ -28,5 +25,5 @@ public class Stringify {
         }
 
         return element.toString();
-  }
+    }
 }

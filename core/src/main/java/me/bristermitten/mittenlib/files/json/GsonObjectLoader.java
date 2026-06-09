@@ -9,9 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Reader;
 
-/**
- * An {@link ObjectLoader} that uses Gson to parse a JSON string
- */
+/** An {@link ObjectLoader} that uses Gson to parse a JSON string */
 public class GsonObjectLoader implements ObjectLoader {
     private final Gson gson;
 
@@ -23,5 +21,5 @@ public class GsonObjectLoader implements ObjectLoader {
     @Override
     public @NotNull Result<DataTree> load(@NotNull Reader source) {
         return Result.runCatching(() -> gson.fromJson(source, DataTree.class));
-  }
+    }
 }

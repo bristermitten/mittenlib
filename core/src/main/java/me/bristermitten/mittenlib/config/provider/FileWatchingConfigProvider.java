@@ -20,22 +20,17 @@ public class FileWatchingConfigProvider<T> implements ConfigProvider<T>, Wrappin
     /**
      * Create a new FileWatchingConfigProvider
      *
-     * @param delegate       the delegate to watch. This must have a present {@link ConfigProvider#path()},
-     *                       which indicates the file to watch.
+     * @param delegate the delegate to watch. This must have a present {@link ConfigProvider#path()},
+     *     which indicates the file to watch.
      * @param watcherService the service to use to watch the file
      * @throws IllegalArgumentException if the given {@code delegate} does not have a present {@link
-     *                                  ConfigProvider#path()}
+     *     ConfigProvider#path()}
      */
-    public FileWatchingConfigProvider(
-            CachingConfigProvider<T> delegate, FileWatcherService watcherService) {
+    public FileWatchingConfigProvider(CachingConfigProvider<T> delegate, FileWatcherService watcherService) {
         this.delegate = delegate;
-        final Path path =
-                delegate
-                        .path()
-                        .orElseThrow(
-                                () ->
-                                        new IllegalArgumentException(
-                                                "FileWatchingConfigProvider requires delegate.path() to be present"));
+        final Path path = delegate.path()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "FileWatchingConfigProvider requires delegate.path() to be present"));
 
         try {
             watcherService
@@ -62,8 +57,7 @@ public class FileWatchingConfigProvider<T> implements ConfigProvider<T>, Wrappin
     }
 
     @Override
-    @NotNull
-  public ConfigProvider<T> getWrapped() {
-    return delegate;
-  }
+    @NotNull public ConfigProvider<T> getWrapped() {
+        return delegate;
+    }
 }

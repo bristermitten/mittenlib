@@ -79,13 +79,10 @@ public class SerializationCodeGenerator {
         return unsupported;
     }
 
-    /**
-     * Checks if a single property can be serialized.
-     */
+    /** Checks if a single property can be serialized. */
     private boolean propertyIsUnserializable(Property property) {
         // explicitly marked as using ObjectMapper serialization - always serializable
-        if (typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class)
-                != null) {
+        if (typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class) != null) {
             return false;
         }
 
@@ -100,8 +97,7 @@ public class SerializationCodeGenerator {
                 var typeArguments = wrappedType.getTypeArguments();
                 for (TypeMirror typeArgument : typeArguments) {
                     if (propertyIsUnserializable(
-                            new Property(
-                                    property.name(), typeArgument, property.source(), property.settings()))) {
+                            new Property(property.name(), typeArgument, property.source(), property.settings()))) {
                         return true;
                     }
                 }
@@ -130,10 +126,9 @@ public class SerializationCodeGenerator {
      * class.
      *
      * @param typeSpecBuilder the builder for the saver class
-     * @param ast             the configuration structure
+     * @param ast the configuration structure
      */
-    public void addSerializeMethodsToSaver(
-            TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
+    public void addSerializeMethodsToSaver(TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
         // Generate serialize methods for each property
         for (Property property : ast.properties()) {
             MethodSpec serializeMethod = createSerializeMethodFor(property);
@@ -153,10 +148,9 @@ public class SerializationCodeGenerator {
         if (typeName instanceof ParameterizedTypeName parameterizedTypeName) {
             ClassName rawType = parameterizedTypeName.rawType;
             if (rawType.equals(ClassName.get(List.class)) || rawType.equals(ClassName.get(Map.class))) {
-                List<TypeName> typeArguments =
-                        parameterizedTypeName.typeArguments.stream()
-                                .map(arg -> (TypeName) WildcardTypeName.subtypeOf(arg))
-                                .toList();
+                List<TypeName> typeArguments = parameterizedTypeName.typeArguments.stream()
+                        .map(arg -> (TypeName) WildcardTypeName.subtypeOf(arg))
+                        .toList();
                 return ParameterizedTypeName.get(rawType, typeArguments.toArray(new TypeName[0]));
             }
         }
@@ -178,7 +172,7 @@ public class SerializationCodeGenerator {
      * }</pre>
      *
      * @param property the property to create a serialization method for, used for the method name
-     *                 (e.g. {@code serializeCount}) and return type
+     *     (e.g. {@code serializeCount}) and return type
      * @return a method spec for the serialization method
      */
     private MethodSpec createSerializeMethodFor(Property property) {
@@ -187,15 +181,14 @@ public class SerializationCodeGenerator {
 
         // Check if the property is annotated with @UseObjectMapperSerialization
         boolean useObjectMapper =
-                typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class)
-                        != null;
+                typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class) != null;
 
-        MethodSpec.Builder builder =
-                MethodSpec.methodBuilder(methodName)
-                        .addModifiers(Modifier.PRIVATE)
-                        .returns(DataTree.class)
-                        .addParameter(ParameterSpec.builder(propertyType, "value").build())
-                        .addParameter(ParameterSpec.builder(SerializationContext.class, "context").build());
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PRIVATE)
+                .returns(DataTree.class)
+                .addParameter(ParameterSpec.builder(propertyType, "value").build())
+                .addParameter(ParameterSpec.builder(SerializationContext.class, "context")
+                        .build());
 
         // Handle null values
         if (property.settings().isNullable()) {
@@ -217,9 +210,7 @@ public class SerializationCodeGenerator {
         return builder.build();
     }
 
-    /**
-     * Checks if a type is a known serializable type (primitives, String, Boolean, Number, enums).
-     */
+    /** Checks if a type is a known serializable type (primitives, String, Boolean, Number, enums). */
     private boolean isKnownSerializableType(TypeMirrorWrapper wrappedType) {
         if (wrappedType.getTypeElement().isEmpty() && wrappedType.isPrimitive()) {
             return true;
@@ -253,8 +244,7 @@ public class SerializationCodeGenerator {
         // Use ObjectMapper to map the value and then load it as DataTree
         // We use mapper.map(value) which returns an Object (likely a Map or List)
         // then pass that to DataTreeTransforms.loadFrom
-        builder.addStatement(
-                "return $T.loadFrom(context.getMapper().map(value))", DataTreeTransforms.class);
+        builder.addStatement("return $T.loadFrom(context.getMapper().map(value))", DataTreeTransforms.class);
     }
 
     /**
@@ -273,18 +263,17 @@ public class SerializationCodeGenerator {
      * result = DataTree.array(arr0);
      * }</pre>
      *
-     * @param type             the type of the element being serialized
-     * @param inputVar         the name of the local variable holding the value to serialize (e.g. {@code
-     *                         value})
+     * @param type the type of the element being serialized
+     * @param inputVar the name of the local variable holding the value to serialize (e.g. {@code
+     *     value})
      * @param targetExpression the code expression to assign the resulting {@link DataTree} to (e.g.
-     *                         {@code result} or {@code arr0[i0]})
-     * @param depth            the current recursion depth, used to generate unique variable names and avoid
-     *                         local variable scope clashes (e.g. {@code arr0}, {@code i0}, {@code el0} vs {@code arr1},
-     *                         {@code i1}, {@code el1})
+     *     {@code result} or {@code arr0[i0]})
+     * @param depth the current recursion depth, used to generate unique variable names and avoid
+     *     local variable scope clashes (e.g. {@code arr0}, {@code i0}, {@code el0} vs {@code arr1},
+     *     {@code i1}, {@code el1})
      * @return a {@link CodeBlock} containing the serialization logic statements
      */
-    private CodeBlock generateSerialization(
-            TypeMirror type, String inputVar, String targetExpression, int depth) {
+    private CodeBlock generateSerialization(TypeMirror type, String inputVar, String targetExpression, int depth) {
         CodeBlock.Builder builder = CodeBlock.builder();
         TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(type);
 
@@ -301,9 +290,9 @@ public class SerializationCodeGenerator {
                         publicTypeName,
                         inputVar);
             } else {
-                String fieldName =
-                        Strings.uncapitalize(info.serializerClass().getSimpleName().toString())
-                                + ConfigurationClassNameGenerator.PROVIDER_SUFFIX;
+                String fieldName = Strings.uncapitalize(
+                                info.serializerClass().getSimpleName().toString())
+                        + ConfigurationClassNameGenerator.PROVIDER_SUFFIX;
                 builder.addStatement(
                         "$L = this.$L.get().apply(($T) $L, context)",
                         targetExpression,
@@ -331,24 +320,17 @@ public class SerializationCodeGenerator {
             String canonicalName = wrappedType.erasure().getQualifiedName();
             if (canonicalName.equals(List.class.getName())) {
                 TypeMirror elementType = wrappedType.getTypeArguments().getFirst();
-                TypeName elementTypeName =
-                        configurationClassNameGenerator.publicPropertyClassName(elementType);
+                TypeName elementTypeName = configurationClassNameGenerator.publicPropertyClassName(elementType);
                 String arrayVar = "arr" + depth;
                 String indexVar = "i" + depth;
                 String elementVar = "el" + depth;
                 String elementTarget = arrayVar + "[" + indexVar + "]";
 
-                builder.addStatement(
-                        "$T[] $L = new $T[$L.size()]", DataTree.class, arrayVar, DataTree.class, inputVar);
+                builder.addStatement("$T[] $L = new $T[$L.size()]", DataTree.class, arrayVar, DataTree.class, inputVar);
                 builder.beginControlFlow(
                         "for (int $L = 0; $L < $L.size(); $L++)", indexVar, indexVar, inputVar, indexVar);
                 builder.addStatement(
-                        "$T $L = ($T) $L.get($L)",
-                        elementTypeName,
-                        elementVar,
-                        elementTypeName,
-                        inputVar,
-                        indexVar);
+                        "$T $L = ($T) $L.get($L)", elementTypeName, elementVar, elementTypeName, inputVar, indexVar);
                 builder.add(generateSerialization(elementType, elementVar, elementTarget, depth + 1));
                 builder.endControlFlow();
                 builder.addStatement("$L = $T.array($L)", targetExpression, DataTree.class, arrayVar);
@@ -369,27 +351,20 @@ public class SerializationCodeGenerator {
                         DataTree.class,
                         mapVar,
                         LinkedHashMap.class);
-                builder.beginControlFlow(
-                        "for ($T<?, ?> $L : $L.entrySet())", Map.Entry.class, entryVar, inputVar);
-                builder.addStatement(
-                        "$T $L = ($T) $L.getValue()", valueTypeName, valueVar, valueTypeName, entryVar);
+                builder.beginControlFlow("for ($T<?, ?> $L : $L.entrySet())", Map.Entry.class, entryVar, inputVar);
+                builder.addStatement("$T $L = ($T) $L.getValue()", valueTypeName, valueVar, valueTypeName, entryVar);
                 builder.addStatement("$T $L", DataTree.class, valTarget);
                 builder.add(generateSerialization(valueType, valueVar, valTarget, depth + 1));
                 builder.addStatement(
-                        "$L.put($T.loadFrom($L.getKey()), $L)",
-                        mapVar,
-                        DataTreeTransforms.class,
-                        entryVar,
-                        valTarget);
+                        "$L.put($T.loadFrom($L.getKey()), $L)", mapVar, DataTreeTransforms.class, entryVar, valTarget);
                 builder.endControlFlow();
                 builder.addStatement("$L = $T.map($L)", targetExpression, DataTree.class, mapVar);
-        return builder.build();
-      }
-    }
+                return builder.build();
+            }
+        }
 
-    // Basic known serializable types or fallback
-    builder.addStatement(
-        "$L = $T.loadFrom($L)", targetExpression, DataTreeTransforms.class, inputVar);
-    return builder.build();
-  }
+        // Basic known serializable types or fallback
+        builder.addStatement("$L = $T.loadFrom($L)", targetExpression, DataTreeTransforms.class, inputVar);
+        return builder.build();
+    }
 }

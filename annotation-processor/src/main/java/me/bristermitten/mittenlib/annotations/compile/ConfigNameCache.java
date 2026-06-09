@@ -36,7 +36,7 @@ public class ConfigNameCache {
      *
      * @param mirror The type mirror to look up
      * @return An Optional containing the AbstractConfigStructure if found, or empty if not found or
-     * if the TypeMirror is not a declared type
+     *     if the TypeMirror is not a declared type
      */
     public Optional<AbstractConfigStructure> lookupAST(TypeMirror mirror) {
         if (mirror.getKind() != TypeKind.DECLARED) {
@@ -53,5 +53,5 @@ public class ConfigNameCache {
      */
     public void put(AbstractConfigStructure ast) {
         astCache.put(ast.name(), ast);
-  }
+    }
 }

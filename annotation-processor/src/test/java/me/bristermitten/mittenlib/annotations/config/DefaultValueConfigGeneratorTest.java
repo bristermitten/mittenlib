@@ -12,13 +12,9 @@ class DefaultValueConfigGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.DefaultValueConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(
+                        JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.DefaultValueConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -42,9 +38,7 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "DefaultValueConfig",
-                        """
+                .andSourceFile("DefaultValueConfig", """
                         package me.bristermitten.mittenlib.tests;
 
                         import me.bristermitten.mittenlib.config.Config;
@@ -74,9 +68,7 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "DefaultValueConfigAllDefault",
-                        """
+                .andSourceFile("DefaultValueConfigAllDefault", """
                         package me.bristermitten.mittenlib.tests;
 
                         import me.bristermitten.mittenlib.config.Config;
@@ -105,9 +97,7 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "NoArgConstructorDTO",
-                        """
+                .andSourceFile("NoArgConstructorDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -135,9 +125,7 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "NonPublicConstructorDTO",
-                        """
+                .andSourceFile("NonPublicConstructorDTO", """
                         package me.bristermitten.mittenlib.tests;
 
                         import me.bristermitten.mittenlib.config.Config;
@@ -165,20 +153,18 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "ConstructorAndDefaultValueDTO",
-                        """
+                .andSourceFile("ConstructorAndDefaultValueDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
-                                
+
                         @Config
                         public class ConstructorAndDefaultValueDTO {
                             public int x = 3;
                             public int y;
-                                
+
                             ConstructorAndDefaultValueDTO() {}
-                                
+
                             public ConstructorAndDefaultValueDTO(int y) {
                                 this.y = y;
                             }
@@ -198,18 +184,16 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "ConstructorAndDefaultValueNoNoArgDTO",
-                        """
+                .andSourceFile("ConstructorAndDefaultValueNoNoArgDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
-                                
+
                         @Config
                         public class ConstructorAndDefaultValueNoNoArgDTO {
                             public int x = 3;
                             public int y;
-                                
+
                             public ConstructorAndDefaultValueNoNoArgDTO(int y) {
                                 this.y = y;
                             }
@@ -231,17 +215,15 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "PrivateNoArgDTO",
-                        """
+                .andSourceFile("PrivateNoArgDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
-                                
+
                         @Config
                         public class PrivateNoArgDTO {
                             public int x = 3;
-                                
+
                             private PrivateNoArgDTO() {}
                         }
                         """)
@@ -261,18 +243,15 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "InvalidNumericConstraintDTO",
-                        """
+                .andSourceFile("InvalidNumericConstraintDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
                         import me.bristermitten.mittenlib.config.validation.Positive;
-                                
+
                         @Config
                         public class InvalidNumericConstraintDTO {
-                            @Positive
-                            public String name;
+                            @Positive public String name;
                         }
                         """)
                 .whenCompiled()
@@ -291,18 +270,15 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "InvalidStringConstraintDTO",
-                        """
+                .andSourceFile("InvalidStringConstraintDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
                         import me.bristermitten.mittenlib.config.validation.NotBlank;
-                                
+
                         @Config
                         public class InvalidStringConstraintDTO {
-                            @NotBlank
-                            public int age;
+                            @NotBlank public int age;
                         }
                         """)
                 .whenCompiled()
@@ -321,29 +297,25 @@ class DefaultValueConfigGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "InvalidValidateWithDTO",
-                        """
+                .andSourceFile("InvalidValidateWithDTO", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
                         import me.bristermitten.mittenlib.config.validation.ValidateWith;
-                                
+
                         @Config
                         public class InvalidValidateWithDTO {
                             @ValidateWith(DummyValidator.class)
                             public int age;
                         }
                         """)
-                .andSourceFile(
-                        "DummyValidator",
-                        """
+                .andSourceFile("DummyValidator", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.validation.Validator;
-                                
+
                         import java.util.Optional;
-                                
+
                         public class DummyValidator implements Validator<String> {
                             @Override
                             public Optional<String> validate(String value) {

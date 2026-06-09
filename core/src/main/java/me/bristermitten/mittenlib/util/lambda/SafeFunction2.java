@@ -19,7 +19,7 @@ public interface SafeFunction2<T, R1, R2> {
     /**
      * Apply the function, possibly throwing an exception.
      *
-     * @param t  the first argument
+     * @param t the first argument
      * @param r1 the second argument
      * @return the result
      */
@@ -39,7 +39,7 @@ public interface SafeFunction2<T, R1, R2> {
     /**
      * Apply the function, catching any exceptions and wrapping them in a {@link Result}
      *
-     * @param t  the first argument
+     * @param t the first argument
      * @param r1 the second argument
      * @return the result
      */
@@ -59,7 +59,7 @@ public interface SafeFunction2<T, R1, R2> {
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
                 return null;
-      }
-    };
-  }
+            }
+        };
+    }
 }

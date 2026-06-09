@@ -13,9 +13,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A {@link ConfigPathResolver} that resolves config paths from the jar resources.
- */
+/** A {@link ConfigPathResolver} that resolves config paths from the jar resources. */
 public class JarResourcesConfigPathResolver implements ConfigPathResolver {
 
     @Override
@@ -42,5 +40,5 @@ public class JarResourcesConfigPathResolver implements ConfigPathResolver {
             env.put("create", "true");
             return FileSystems.newFileSystem(uri, env);
         }
-  }
+    }
 }

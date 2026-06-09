@@ -27,44 +27,33 @@ public class EnumIntegrationTest {
 
     @BeforeEach
     void setup() {
-        injector =
-                Guice.createInjector(
-                        new ConfigLoaderModule().asModuleWithInfrastructure(),
-                        new FileWatcherModule(),
-                        new FileTypeModule(),
-                        new AbstractModule() {
-                            @Override
-                            protected void configure() {
-                                bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("EnumTests"));
-                            }
-                        });
+        injector = Guice.createInjector(
+                new ConfigLoaderModule().asModuleWithInfrastructure(),
+                new FileWatcherModule(),
+                new FileTypeModule(),
+                new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("EnumTests"));
+                    }
+                });
     }
 
     @Test
     void testEnums() throws IOException {
         var fileContents = loadResourceString("integration/enums/TestEnumConfig_1.yml");
 
-        TestEnumConfig config =
-                injector
-                        .getInstance(ConfigProviderFactory.class)
-                        .createStringReaderProvider(
-                                injector.getInstance(YamlFileType.class),
-                                fileContents,
-                                new Configuration<>(null, TestEnumConfig.class),
-                                (DeserializationFunction<TestEnumConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        DeserializationFunction.class, TestEnumConfig.class)))),
-                                (SerializationFunction<TestEnumConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        SerializationFunction.class, TestEnumConfig.class)))))
-                        .getOrThrow()
-                        .get();
+        TestEnumConfig config = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, TestEnumConfig.class),
+                        (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
+                        (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(SerializationFunction.class, TestEnumConfig.class)))))
+                .getOrThrow()
+                .get();
 
         assertThat(config).isNotNull().extracting(TestEnumConfig::testEnum).isEqualTo(TestEnum.HELLO);
 
@@ -75,27 +64,18 @@ public class EnumIntegrationTest {
     void testEnumsCascading() throws IOException {
         var fileContents = loadResourceString("integration/enums/TestEnumConfig_1.yml");
 
-        TestEnumCascadeConfig config =
-                injector
-                        .getInstance(ConfigProviderFactory.class)
-                        .createStringReaderProvider(
-                                injector.getInstance(YamlFileType.class),
-                                fileContents,
-                                new Configuration<>(null, TestEnumCascadeConfig.class),
-                                (DeserializationFunction<TestEnumCascadeConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        DeserializationFunction.class, TestEnumCascadeConfig.class)))),
-                                (SerializationFunction<TestEnumCascadeConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        SerializationFunction.class, TestEnumCascadeConfig.class)))))
-                        .getOrThrow()
-                        .get();
+        TestEnumCascadeConfig config = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, TestEnumCascadeConfig.class),
+                        (DeserializationFunction<TestEnumCascadeConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        DeserializationFunction.class, TestEnumCascadeConfig.class)))),
+                        (SerializationFunction<TestEnumCascadeConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(SerializationFunction.class, TestEnumCascadeConfig.class)))))
+                .getOrThrow()
+                .get();
 
         assertThat(config)
                 .isNotNull()
@@ -109,26 +89,16 @@ public class EnumIntegrationTest {
     void testEnumsInvalid() throws IOException {
         var fileContents = loadResourceString("integration/enums/TestEnumConfig_invalid.yml");
 
-        var provider =
-                injector
-                        .getInstance(ConfigProviderFactory.class)
-                        .createStringReaderProvider(
-                                injector.getInstance(YamlFileType.class),
-                                fileContents,
-                                new Configuration<>(null, TestEnumConfig.class),
-                                (DeserializationFunction<TestEnumConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        DeserializationFunction.class, TestEnumConfig.class)))),
-                                (SerializationFunction<TestEnumConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        SerializationFunction.class, TestEnumConfig.class)))))
-                        .getOrThrow();
+        var provider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, TestEnumConfig.class),
+                        (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
+                        (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(SerializationFunction.class, TestEnumConfig.class)))))
+                .getOrThrow();
 
         assertThatThrownBy(provider::get).isInstanceOf(InvalidEnumValueException.class);
     }

@@ -30,9 +30,7 @@ public class ConfigInfrastructureModule extends AbstractModule {
     private final Class<? extends ConfigInitializationStrategy> initializationStrategy;
     private final Class<? extends ConfigPathResolver> pathResolver;
 
-    /**
-     * Create a new ConfigInfrastructureModule with default (non-plugin specific) implementations.
-     */
+    /** Create a new ConfigInfrastructureModule with default (non-plugin specific) implementations. */
     public ConfigInfrastructureModule() {
         this(NoOpConfigInitializationStrategy.class, JarResourcesConfigPathResolver.class);
     }
@@ -41,7 +39,7 @@ public class ConfigInfrastructureModule extends AbstractModule {
      * Create a new ConfigInfrastructureModule with specified implementations.
      *
      * @param initializationStrategy the strategy to use for initializing configs
-     * @param pathResolver           the resolver to use for finding config files
+     * @param pathResolver the resolver to use for finding config files
      */
     public ConfigInfrastructureModule(
             Class<? extends ConfigInitializationStrategy> initializationStrategy,
@@ -60,12 +58,11 @@ public class ConfigInfrastructureModule extends AbstractModule {
         bind(ConfigProviderFactory.class).to(SimpleConfigProviderFactory.class);
         bind(ConfigProviderImprover.class).to(SimpleConfigProviderImprover.class);
 
-        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {
-                })
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {})
                 .addBinding()
                 .to(DataTreeTypeAdapter.class);
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class)
                 .addBinding()
                 .to(DataTreeTypeAdapterFactory.class);
-  }
+    }
 }

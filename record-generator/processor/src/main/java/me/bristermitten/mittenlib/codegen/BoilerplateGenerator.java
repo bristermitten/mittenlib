@@ -12,14 +12,16 @@ import java.util.Objects;
 
 public class BoilerplateGenerator {
     public static MethodSpec genEquals(RecordConstructorSpec recordConstructorSpec, ClassName name) {
-        MethodSpec.Builder equalsBuilder =
-                MethodSpec.methodBuilder("equals")
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(boolean.class)
-                        .addParameter(Object.class, "o")
-                        .addAnnotation(Override.class);
+        MethodSpec.Builder equalsBuilder = MethodSpec.methodBuilder("equals")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(boolean.class)
+                .addParameter(Object.class, "o")
+                .addAnnotation(Override.class);
 
-        equalsBuilder.beginControlFlow("if (this == o)").addStatement("return true").endControlFlow();
+        equalsBuilder
+                .beginControlFlow("if (this == o)")
+                .addStatement("return true")
+                .endControlFlow();
 
         equalsBuilder
                 .beginControlFlow("if (!(o instanceof $T))", name)
@@ -33,10 +35,9 @@ public class BoilerplateGenerator {
             equalsBuilder.addStatement("return true");
             return equalsBuilder.build();
         }
-        equalsBuilder.addStatement(
-                recordConstructorSpec.fields().stream()
-                        .map(BoilerplateGenerator::equalsCall)
-                        .collect(CodeBlock.joining(" && ", "return ", "")));
+        equalsBuilder.addStatement(recordConstructorSpec.fields().stream()
+                .map(BoilerplateGenerator::equalsCall)
+                .collect(CodeBlock.joining(" && ", "return ", "")));
 
         return equalsBuilder.build();
     }
@@ -66,11 +67,10 @@ public class BoilerplateGenerator {
     }
 
     public static MethodSpec genHashCode(RecordConstructorSpec recordConstructorSpec) {
-        MethodSpec.Builder hashCodeBuilder =
-                MethodSpec.methodBuilder("hashCode")
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(int.class)
-                        .addAnnotation(Override.class);
+        MethodSpec.Builder hashCodeBuilder = MethodSpec.methodBuilder("hashCode")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(int.class)
+                .addAnnotation(Override.class);
 
         if (recordConstructorSpec.fields().isEmpty()) {
             // If there are no fields, use identity hash code
@@ -78,39 +78,28 @@ public class BoilerplateGenerator {
             return hashCodeBuilder.build();
         }
 
-        CodeBlock hashCodeExpression =
-                recordConstructorSpec.fields().stream()
-                        .map(BoilerplateGenerator::hashCodeCall)
-                        .collect(CodeBlock.joining(", "));
+        CodeBlock hashCodeExpression = recordConstructorSpec.fields().stream()
+                .map(BoilerplateGenerator::hashCodeCall)
+                .collect(CodeBlock.joining(", "));
 
         hashCodeBuilder.addStatement("return $T.hash($L)", Objects.class, hashCodeExpression);
         return hashCodeBuilder.build();
     }
 
-    public static MethodSpec genToString(
-            RecordConstructorSpec recordConstructorSpec, ClassName name) {
-        MethodSpec.Builder builder =
-                MethodSpec.methodBuilder("toString")
-                        .addAnnotation(Override.class)
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(String.class);
+    public static MethodSpec genToString(RecordConstructorSpec recordConstructorSpec, ClassName name) {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("toString")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(String.class);
         var code = CodeBlock.builder();
         code.add("return \"$T{\"", name);
 
         var properties = recordConstructorSpec.fields();
 
-        code.add(
-                properties.stream()
-                        .map(
-                                property ->
-                                        CodeBlock.of(
-                                                """
-                                                        + "$L=" + $L\s""",
-                                                property.name(),
-                                                toStringCall(property)))
-                        .collect(
-                                CodeBlock.joining(
-                                        """
+        code.add(properties.stream()
+                .map(property -> CodeBlock.of("""
+                                                        + "$L=" + $L\s""", property.name(), toStringCall(property)))
+                .collect(CodeBlock.joining("""
                         + ", \"""")));
 
         code.add("+ \"}\"");

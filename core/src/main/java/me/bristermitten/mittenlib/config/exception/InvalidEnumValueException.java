@@ -5,8 +5,7 @@ public class InvalidEnumValueException extends ConfigDeserialisationException {
     private final String propertyName;
     private final Object actualValue;
 
-    public InvalidEnumValueException(
-            Class<? extends Enum<?>> enumClass, String propertyName, Object actualValue) {
+    public InvalidEnumValueException(Class<? extends Enum<?>> enumClass, String propertyName, Object actualValue) {
         this.enumClass = enumClass;
         this.propertyName = propertyName;
         this.actualValue = actualValue;

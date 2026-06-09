@@ -7,20 +7,14 @@ import org.junit.jupiter.api.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-/**
- * Tests the deserialization of collections with custom types in configuration classes.
- */
+/** Tests the deserialization of collections with custom types in configuration classes. */
 class CollectionsWithCustomTypesTest {
 
     @Test
     void testListWithCustomType() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -55,21 +49,16 @@ class CollectionsWithCustomTypesTest {
 
         // Verify that the generated code includes list deserialization
         assertThat(compilation)
-                .generatedSourceFile(
-                        "me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDeserializer")
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.ListWithCustomTypeConfigDeserializer")
                 .contentsAsUtf8String()
                 .contains("CollectionsUtils.deserializeList");
     }
 
     @Test
     void testMapWithCustomType() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.MapWithCustomTypeConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -111,13 +100,9 @@ class CollectionsWithCustomTypesTest {
 
     @Test
     void testNestedCollections() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.NestedCollectionsConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.NestedCollectionsConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;

@@ -11,5 +11,4 @@ import javax.lang.model.element.TypeElement;
  * @param isGlobal whether the deserializer is globally applied
  */
 public record CustomDeserializerInfo(
-        TypeElement deserializerClass, boolean isStatic, boolean isFallback, boolean isGlobal) {
-}
+        TypeElement deserializerClass, boolean isStatic, boolean isFallback, boolean isGlobal) {}

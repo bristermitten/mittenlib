@@ -8,14 +8,11 @@ import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.config.names.NamingPatternTransformer;
 import org.jspecify.annotations.Nullable;
 
-/**
- * Responsible for generating serial keys based on DTO fields
- */
+/** Responsible for generating serial keys based on DTO fields */
 public class FieldNameGenerator {
 
     @Inject
-    FieldNameGenerator() {
-    }
+    FieldNameGenerator() {}
 
     /**
      * Get a suitable serialization key for a given property. This is the String that is looked up
@@ -23,7 +20,7 @@ public class FieldNameGenerator {
      *
      * @param property The property
      * @return The key to use when reading from {@link DeserializationContext#getData()} for the given
-     * property.
+     *     property.
      */
     public String getConfigFieldName(Property property) {
         ConfigName configName = property.settings().configName();
@@ -36,9 +33,9 @@ public class FieldNameGenerator {
     /**
      * Helper method to get the config field name based on annotations and field name.
      *
-     * @param configName    The ConfigName annotation, if present
+     * @param configName The ConfigName annotation, if present
      * @param namingPattern The NamingPattern annotation, if present
-     * @param fieldName     The name of the field
+     * @param fieldName The name of the field
      * @return The config field name
      */
     private String getConfigFieldName(
@@ -49,8 +46,8 @@ public class FieldNameGenerator {
 
         if (namingPattern != null) {
             return NamingPatternTransformer.format(fieldName, namingPattern.value());
-    }
+        }
 
-    return fieldName;
-  }
+        return fieldName;
+    }
 }

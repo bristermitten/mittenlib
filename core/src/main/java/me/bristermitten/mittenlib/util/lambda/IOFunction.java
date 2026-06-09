@@ -19,7 +19,7 @@ public interface IOFunction<T, R> {
     /**
      * A {@link IOFunction} that always returns the same value, ignoring the input.
      *
-     * @param r   the value to return
+     * @param r the value to return
      * @param <T> the type of the input
      * @param <R> the type of the result
      * @return a {@link IOFunction} that always returns the given value
@@ -32,8 +32,8 @@ public interface IOFunction<T, R> {
      * Wrap a {@link Function} in a {@link IOFunction}
      *
      * @param function the function to wrap
-     * @param <T>      the type of the input
-     * @param <R>      the type of the result
+     * @param <T> the type of the input
+     * @param <R> the type of the result
      * @return a {@link IOFunction} that delegates to the given function
      */
     static <T, R> IOFunction<T, R> of(Function<T, R> function) {
@@ -70,8 +70,8 @@ public interface IOFunction<T, R> {
                 return apply(t);
             } catch (IOException e) {
                 Errors.sneakyThrow(e);
-        return null;
-      }
-    };
-  }
+                return null;
+            }
+        };
+    }
 }

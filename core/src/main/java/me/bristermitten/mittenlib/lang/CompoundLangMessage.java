@@ -37,16 +37,14 @@ public class CompoundLangMessage extends LangMessage {
      * more efficient concatenation in ({@link LangMessage#add(LangMessage)})
      *
      * @param components the components of this message
-     * @param others     extra components to add
+     * @param others extra components to add
      */
-    public CompoundLangMessage(
-            @NotNull List<LangMessage> components, @NotNull LangMessage... others) {
+    public CompoundLangMessage(@NotNull List<LangMessage> components, @NotNull LangMessage... others) {
         //noinspection UnstableApiUsage
-        this(
-                ImmutableList.<LangMessage>builderWithExpectedSize(components.size() + others.length)
-                        .addAll(components)
-                        .add(others)
-                        .build());
+        this(ImmutableList.<LangMessage>builderWithExpectedSize(components.size() + others.length)
+                .addAll(components)
+                .add(others)
+                .build());
     }
 
     /**
@@ -55,6 +53,6 @@ public class CompoundLangMessage extends LangMessage {
      * @return the components of this message
      */
     public @Unmodifiable List<LangMessage> getComponents() {
-    return components;
-  }
+        return components;
+    }
 }

@@ -18,7 +18,7 @@ public class Configuration<T> {
      * Create a new Configuration
      *
      * @param fileName the name of the file to load
-     * @param type     the type to deserialize to
+     * @param type the type to deserialize to
      */
     public Configuration(@Nullable String fileName, Class<T> type, Class<?> implementationType) {
         this.fileName = fileName;
@@ -30,9 +30,9 @@ public class Configuration<T> {
      * Create a new Configuration
      *
      * @param fileName the name of the file to load
-     * @param type     the type to deserialize to
+     * @param type the type to deserialize to
      * @deprecated Use {@link #Configuration(String, Class, Class)} to provide the implementation type
-     * for better error messages
+     *     for better error messages
      */
     @Deprecated
     public Configuration(@Nullable String fileName, Class<T> type) {
@@ -59,6 +59,6 @@ public class Configuration<T> {
      * DTO type.
      */
     public Class<?> getImplementationType() {
-    return implementationType;
-  }
+        return implementationType;
+    }
 }

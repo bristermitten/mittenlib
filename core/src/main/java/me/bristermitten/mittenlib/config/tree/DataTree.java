@@ -7,14 +7,11 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * Like {@link com.google.gson.JsonElement} but without a strict dependency on json
- */
+/** Like {@link com.google.gson.JsonElement} but without a strict dependency on json */
 @NullMarked
 public abstract class DataTree {
 
-    private DataTree() {
-    }
+    private DataTree() {}
 
     // static factories
 
@@ -64,8 +61,7 @@ public abstract class DataTree {
     public static class DataTreeNull extends DataTree {
         public static final DataTreeNull INSTANCE = new DataTreeNull();
 
-        private DataTreeNull() {
-        }
+        private DataTreeNull() {}
 
         @Override
         public @Nullable Object value() {
@@ -255,5 +251,5 @@ public abstract class DataTree {
         public int hashCode() {
             return Objects.hashCode(values);
         }
-  }
+    }
 }

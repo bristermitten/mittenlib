@@ -67,7 +67,7 @@ public class DataTreeTransforms {
      *
      * @param tree the DataTree to convert, must not be {@code null}
      * @return the POJO representation of the DataTree, or {@code null} if the DataTree is an instance
-     * of {@link DataTree.DataTreeNull}
+     *     of {@link DataTree.DataTreeNull}
      */
     public static @Nullable Object toPOJO(@NotNull DataTree tree) {
         if (tree instanceof DataTree.DataTreeNull) {
@@ -91,5 +91,5 @@ public class DataTreeTransforms {
             return pojoList;
         }
         throw new IllegalArgumentException("Unknown type: " + tree.getClass());
-  }
+    }
 }

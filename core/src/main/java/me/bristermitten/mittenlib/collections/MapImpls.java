@@ -4,12 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * Implementations for immutable Maps used in {@link Maps}
- */
+/** Implementations for immutable Maps used in {@link Maps} */
 public class MapImpls {
-    private MapImpls() {
-    }
+    private MapImpls() {}
 
     static class MLEntry<K, V> implements Map.Entry<K, V> {
         private final K key;
@@ -60,8 +57,7 @@ public class MapImpls {
             return false;
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return Collections.emptySet();
         }
@@ -93,8 +89,7 @@ public class MapImpls {
             return v.equals(value);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -137,8 +132,7 @@ public class MapImpls {
             return v1.equals(value) || v2.equals(value);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -185,8 +179,7 @@ public class MapImpls {
             return v1.equals(value) || v2.equals(value) || v3.equals(value);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -200,12 +193,8 @@ public class MapImpls {
 
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {
-            return new MapN<>(
-                    Sets.of(
-                            new MLEntry<>(k1, v1),
-                            new MLEntry<>(k2, v2),
-                            new MLEntry<>(k3, v3),
-                            new MLEntry<>(key, value)));
+            return new MapN<>(Sets.of(
+                    new MLEntry<>(k1, v1), new MLEntry<>(k2, v2), new MLEntry<>(k3, v3), new MLEntry<>(key, value)));
         }
     }
 
@@ -216,8 +205,7 @@ public class MapImpls {
             this.entrySet = entrySet;
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -228,5 +216,5 @@ public class MapImpls {
             newEntries.add(new MLEntry<>(key, value));
             return new MapN<>(Sets.ofAll(newEntries));
         }
-  }
+    }
 }

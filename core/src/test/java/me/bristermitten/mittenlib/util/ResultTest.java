@@ -37,22 +37,20 @@ class ResultTest {
 
     @Test
     void runCatchingWithFail() {
-        Result<String> result =
-                Result.runCatching(
-                        () -> {
-                            throw new IllegalArgumentException();
-                        });
+        Result<String> result = Result.runCatching(() -> {
+            throw new IllegalArgumentException();
+        });
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
         assertEquals(
-                IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
     void execCatching() {
-        Result<Unit> result = Result.execCatching(() -> {
-        });
+        Result<Unit> result = Result.execCatching(() -> {});
 
         assertTrue(result.isSuccess());
         assertFalse(result.isFailure());
@@ -61,16 +59,15 @@ class ResultTest {
 
     @Test
     void execCatchingWithFail() {
-        Result<Unit> result =
-                Result.execCatching(
-                        () -> {
-                            throw new IllegalArgumentException();
-                        });
+        Result<Unit> result = Result.execCatching(() -> {
+            throw new IllegalArgumentException();
+        });
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
         assertEquals(
-                IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
@@ -83,18 +80,15 @@ class ResultTest {
 
     @Test
     void computeCatchingWithFail() {
-        Result<String> result =
-                Result.computeCatching(
-                        () ->
-                                Result.runCatching(
-                                        () -> {
-                                            throw new IllegalArgumentException();
-                                        }));
+        Result<String> result = Result.computeCatching(() -> Result.runCatching(() -> {
+            throw new IllegalArgumentException();
+        }));
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
         assertEquals(
-                IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
@@ -112,12 +106,9 @@ class ResultTest {
     void tryWithResourcesWithFail() {
         AtomicBoolean closed = new AtomicBoolean(false);
         AutoCloseable i = () -> closed.set(true);
-        Result<String> result =
-                Result.tryWithResources(
-                        i,
-                        ignored -> {
-                            throw new RuntimeException();
-                        });
+        Result<String> result = Result.tryWithResources(i, ignored -> {
+            throw new RuntimeException();
+        });
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(RuntimeException.class, result::getOrThrow);
@@ -128,9 +119,8 @@ class ResultTest {
     void tryWithResourcesWithFailInSupplier() {
         AtomicBoolean closed = new AtomicBoolean(false);
         AutoCloseable i = () -> closed.set(true);
-        SafeSupplier<AutoCloseable> supplier =
-                () -> {
-                    throw new RuntimeException();
+        SafeSupplier<AutoCloseable> supplier = () -> {
+            throw new RuntimeException();
         };
         Result<String> result = Result.tryWithResources(supplier, ignored -> Result.ok("Hello"));
         assertFalse(result.isSuccess());
@@ -143,16 +133,12 @@ class ResultTest {
     void tryWithResourcesWithFailInBoth() {
         AtomicBoolean closed = new AtomicBoolean(false);
         AutoCloseable i = () -> closed.set(true);
-        SafeSupplier<AutoCloseable> supplier =
-                () -> {
-                    throw new RuntimeException("1");
+        SafeSupplier<AutoCloseable> supplier = () -> {
+            throw new RuntimeException("1");
         };
-        Result<String> result =
-                Result.tryWithResources(
-                        supplier,
-                        ignored -> {
-                            throw new RuntimeException("2");
-                        });
+        Result<String> result = Result.tryWithResources(supplier, ignored -> {
+            throw new RuntimeException("2");
+        });
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(RuntimeException.class, result::getOrThrow);
@@ -206,15 +192,15 @@ class ResultTest {
         assertTrue(result2.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
         assertEquals(
-                IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
     void orElse() {
         Result<String> result = Result.ok("Hello");
         assertEquals(Result.ok("Hello"), result.orElse(() -> Result.ok("World")));
-        assertEquals(
-                Result.ok("Hello"), result.orElse(() -> Result.fail(new IllegalArgumentException())));
+        assertEquals(Result.ok("Hello"), result.orElse(() -> Result.fail(new IllegalArgumentException())));
 
         Result<String> result2 = Result.fail(new IllegalArgumentException());
         assertEquals(Result.ok("World"), result2.orElse(() -> Result.ok("World")));

@@ -7,9 +7,7 @@ import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.util.Result;
 
-/**
- * An {@link ObjectMapper} implementation using {@link Gson}.
- */
+/** An {@link ObjectMapper} implementation using {@link Gson}. */
 public class GsonObjectMapper implements ObjectMapper {
     private final Gson gson;
 
@@ -20,16 +18,14 @@ public class GsonObjectMapper implements ObjectMapper {
 
     @Override
     public <T> Result<T> map(Object map, TypeToken<T> type) {
-        return Result.runCatching(
-                () -> {
-                    final JsonElement tree =
-                            map instanceof JsonElement ? (JsonElement) map : gson.toJsonTree(map);
-                    return gson.fromJson(tree, type.getType());
-                });
+        return Result.runCatching(() -> {
+            final JsonElement tree = map instanceof JsonElement ? (JsonElement) map : gson.toJsonTree(map);
+            return gson.fromJson(tree, type.getType());
+        });
     }
 
     @Override
     public JsonElement map(Object value) {
         return gson.toJsonTree(value);
-  }
+    }
 }

@@ -27,14 +27,11 @@ public class DemoCounterGUI extends SpigotGUI<Counter, CounterMessage> {
     }
 
     @Override
-    public @NotNull UpdateResult<
-            Counter, CounterMessage, SpigotCommandContext, SpigotCommand<CounterMessage>>
-    update(Counter counter, CounterMessage message) {
+    public @NotNull UpdateResult<Counter, CounterMessage, SpigotCommandContext, SpigotCommand<CounterMessage>> update(
+            Counter counter, CounterMessage message) {
         return message.matchTo(
-                increment ->
-                        UpdateResult.of(
-                                Counter.create(counter.value() + 1),
-                                new SendMessageCommand<>("hello from increment!")),
+                increment -> UpdateResult.of(
+                        Counter.create(counter.value() + 1), new SendMessageCommand<>("hello from increment!")),
                 decrement -> UpdateResult.pure(Counter.create(counter.value() - 1)),
                 setValue -> UpdateResult.pure(Counter.create(setValue.value())),
                 displayCount -> UpdateResult.pure(counter));

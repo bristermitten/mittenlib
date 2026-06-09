@@ -8,9 +8,5 @@ import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 import java.util.List;
 
 public record UnionSpec(
-        ClassName source,
-        ClassName name,
-        MatchStrategies strategy,
-        List<RecordConstructorSpec> constructors)
-        implements GenericTypeSpec {
-}
+        ClassName source, ClassName name, MatchStrategies strategy, List<RecordConstructorSpec> constructors)
+        implements GenericTypeSpec {}

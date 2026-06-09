@@ -8,21 +8,17 @@ import java.util.Arrays;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
-/**
- * Transforms strings into different formats based on a {@link NamingPatterns}
- */
+/** Transforms strings into different formats based on a {@link NamingPatterns} */
 public class NamingPatternTransformer {
     // https://stackoverflow.com/questions/1097901/regular-expression-split-string-by-capital-letter-but-ignore-tla
-    private static final Pattern CAMEL_CASE_PATTERN =
-            Pattern.compile("(?=(?<=[a-z])[A-Z]|[A-Z](?=[a-z]))");
+    private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(?=(?<=[a-z])[A-Z]|[A-Z](?=[a-z]))");
 
-    private NamingPatternTransformer() {
-    }
+    private NamingPatternTransformer() {}
 
     /**
      * Format a given input string into a different format based on a {@link NamingPatterns}
      *
-     * @param input   the input string
+     * @param input the input string
      * @param pattern the pattern to format to
      * @return the formatted string
      */
@@ -41,13 +37,10 @@ public class NamingPatternTransformer {
         final UnaryOperator<String> transformer;
         if (pattern == NamingPatterns.LOWER_KEBAB_CASE || pattern == NamingPatterns.UPPER_KEBAB_CASE) {
             separator = "-";
-            transformer =
-                    pattern == NamingPatterns.LOWER_KEBAB_CASE ? String::toLowerCase : Strings::capitalize;
-        } else if (pattern == NamingPatterns.LOWER_SNAKE_CASE
-                || pattern == NamingPatterns.UPPER_SNAKE_CASE) {
+            transformer = pattern == NamingPatterns.LOWER_KEBAB_CASE ? String::toLowerCase : Strings::capitalize;
+        } else if (pattern == NamingPatterns.LOWER_SNAKE_CASE || pattern == NamingPatterns.UPPER_SNAKE_CASE) {
             separator = "_";
-            transformer =
-                    pattern == NamingPatterns.LOWER_SNAKE_CASE ? String::toLowerCase : Strings::capitalize;
+            transformer = pattern == NamingPatterns.LOWER_SNAKE_CASE ? String::toLowerCase : Strings::capitalize;
         } else {
             throw new IllegalStateException("what");
         }
@@ -55,8 +48,7 @@ public class NamingPatternTransformer {
         return Strings.joinWith(Arrays.asList(parts), transformer, separator);
     }
 
-    @Nullable
-    private static String camelCaseFormat(@NotNull NamingPatterns pattern, String[] parts) {
+    @Nullable private static String camelCaseFormat(@NotNull NamingPatterns pattern, String[] parts) {
         if (pattern != NamingPatterns.LOWER_CAMEL_CASE && pattern != NamingPatterns.UPPER_CAMEL_CASE) {
             return null;
         }
@@ -67,5 +59,5 @@ public class NamingPatternTransformer {
             parts[0] = Strings.uncapitalize(parts[0]);
         }
         return String.join("", parts);
-  }
+    }
 }

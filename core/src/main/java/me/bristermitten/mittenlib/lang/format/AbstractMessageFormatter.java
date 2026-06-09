@@ -19,9 +19,7 @@ import java.util.Set;
  * {@link Component} creation to the subclasses.
  */
 public abstract class AbstractMessageFormatter implements MessageFormatter {
-    /**
-     * The set of {@link FormattingHook}s to use.
-     */
+    /** The set of {@link FormattingHook}s to use. */
     protected final @Unmodifiable Set<FormattingHook> hooks;
 
     /**
@@ -41,5 +39,5 @@ public abstract class AbstractMessageFormatter implements MessageFormatter {
             }
         }
         return message;
-  }
+    }
 }

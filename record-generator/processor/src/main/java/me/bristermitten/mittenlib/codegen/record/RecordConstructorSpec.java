@@ -10,6 +10,5 @@ import java.util.List;
  * @param fields the fields of the record
  */
 public record RecordConstructorSpec(String name, List<RecordFieldSpec> fields) {
-    public record RecordFieldSpec(String name, TypeName type) {
-    }
+    public record RecordFieldSpec(String name, TypeName type) {}
 }

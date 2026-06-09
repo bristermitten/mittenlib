@@ -70,8 +70,8 @@ public class MittenLib<T extends Plugin> {
      * Register a configuration that will be loaded from a file.
      *
      * @param fileName the name of the file to load
-     * @param type     the type to deserialize to
-     * @param <C>      the type of the configuration
+     * @param type the type to deserialize to
+     * @param <C> the type of the configuration
      * @return this
      */
     public <C> MittenLib<T> config(@NotNull String fileName, @NotNull Class<C> type) {
@@ -81,16 +81,14 @@ public class MittenLib<T extends Plugin> {
     /**
      * Register a configuration that will be loaded from a file.
      *
-     * @param fileName           the name of the file to load
-     * @param type               the type to deserialize to
+     * @param fileName the name of the file to load
+     * @param type the type to deserialize to
      * @param implementationType the concrete implementation type of the configuration
-     * @param <C>                the type of the configuration
+     * @param <C> the type of the configuration
      * @return this
      */
     public <C> MittenLib<T> config(
-            @NotNull String fileName,
-            @NotNull Class<C> type,
-            @NotNull Class<? extends C> implementationType) {
+            @NotNull String fileName, @NotNull Class<C> type, @NotNull Class<? extends C> implementationType) {
         return config(new Configuration<>(fileName, type, implementationType));
     }
 
@@ -147,9 +145,8 @@ public class MittenLib<T extends Plugin> {
                 allModules.add(new ConfigDataModule(manualConfigs));
             }
 
-            allModules.add(
-                    new ConfigInfrastructureModule(
-                            PluginConfigInitializationStrategy.class, PluginConfigPathResolver.class));
+            allModules.add(new ConfigInfrastructureModule(
+                    PluginConfigInitializationStrategy.class, PluginConfigPathResolver.class));
         }
 
         return Guice.createInjector(allModules);
@@ -161,11 +158,11 @@ public class MittenLib<T extends Plugin> {
 
             if (existingKey.isAssignableFrom(module.getClass())) {
                 Module merged = Modules.override(entry.getValue()).with(module);
-        entry.setValue(merged);
-        return;
-      }
-    }
+                entry.setValue(merged);
+                return;
+            }
+        }
 
-    this.modules.put(module.getClass(), module);
-  }
+        this.modules.put(module.getClass(), module);
+    }
 }

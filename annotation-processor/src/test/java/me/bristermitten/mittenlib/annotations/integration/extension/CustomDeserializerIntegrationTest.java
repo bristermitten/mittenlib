@@ -27,51 +27,38 @@ public class CustomDeserializerIntegrationTest {
 
     @BeforeEach
     void setup() {
-        injector =
-                Guice.createInjector(
-                        new ConfigInfrastructureModule(),
-                        new ConfigLoaderModule().asModule(),
-                        new FileWatcherModule(),
-                        new FileTypeModule(),
-                        new AbstractModule() {
-                            @Override
-                            protected void configure() {
-                                bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("EnumTests"));
-                            }
-                        });
+        injector = Guice.createInjector(
+                new ConfigInfrastructureModule(),
+                new ConfigLoaderModule().asModule(),
+                new FileWatcherModule(),
+                new FileTypeModule(),
+                new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("EnumTests"));
+                    }
+                });
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void test() {
-        var stringReaderProvider =
-                injector
-                        .getInstance(ConfigProviderFactory.class)
-                        .createStringReaderProvider(
-                                injector.getInstance(YamlFileType.class),
-                                """
+        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        """
                                    customType: 'blahblah'
                                    customTypes: [ 'f' ]
                                 """,
-                                new Configuration<>(null, CustomTypeConfig.class, CustomTypeConfigImpl.class),
-                                (DeserializationFunction<CustomTypeConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        DeserializationFunction.class, CustomTypeConfig.class)))),
-                                (SerializationFunction<CustomTypeConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        SerializationFunction.class, CustomTypeConfig.class)))))
-                        .getOrThrow();
+                        new Configuration<>(null, CustomTypeConfig.class, CustomTypeConfigImpl.class),
+                        (DeserializationFunction<CustomTypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(DeserializationFunction.class, CustomTypeConfig.class)))),
+                        (SerializationFunction<CustomTypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(SerializationFunction.class, CustomTypeConfig.class)))))
+                .getOrThrow();
 
         CustomTypeConfig customTypeConfig = stringReaderProvider.get();
-        assertThat(customTypeConfig)
-                .extracting(CustomTypeConfig::customType)
-                .isEqualTo(new CustomType("hello"));
+        assertThat(customTypeConfig).extracting(CustomTypeConfig::customType).isEqualTo(new CustomType("hello"));
 
         assertThat(customTypeConfig)
                 .extracting(CustomTypeConfig::customTypes)
@@ -83,28 +70,18 @@ public class CustomDeserializerIntegrationTest {
     @Test
     @SuppressWarnings("unchecked")
     void testFallback() {
-        var stringReaderProvider =
-                injector
-                        .getInstance(ConfigProviderFactory.class)
-                        .createStringReaderProvider(
-                                injector.getInstance(YamlFileType.class),
-                                "customType: { test: blahblah }",
-                                new Configuration<>(
-                                        null, CustomTypeFallbackConfig.class, CustomTypeFallbackConfigImpl.class),
-                                (DeserializationFunction<CustomTypeFallbackConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        DeserializationFunction.class,
-                                                                        CustomTypeFallbackConfig.class)))),
-                                (SerializationFunction<CustomTypeFallbackConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        SerializationFunction.class, CustomTypeFallbackConfig.class)))))
-                        .getOrThrow();
+        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        "customType: { test: blahblah }",
+                        new Configuration<>(null, CustomTypeFallbackConfig.class, CustomTypeFallbackConfigImpl.class),
+                        (DeserializationFunction<CustomTypeFallbackConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        DeserializationFunction.class, CustomTypeFallbackConfig.class)))),
+                        (SerializationFunction<CustomTypeFallbackConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        SerializationFunction.class, CustomTypeFallbackConfig.class)))))
+                .getOrThrow();
 
         var customTypeConfig = stringReaderProvider.get();
         assertThat(customTypeConfig)

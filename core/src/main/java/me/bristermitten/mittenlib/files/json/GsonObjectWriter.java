@@ -30,20 +30,18 @@ public class GsonObjectWriter implements ObjectWriter {
      * <p>This method does not close or flush the provided {@code Writer}; the caller is responsible
      * for managing the lifecycle of the writer.
      *
-     * @param tree   the configuration tree to serialize, not {@code null}
+     * @param tree the configuration tree to serialize, not {@code null}
      * @param output the writer to which the JSON representation of the tree will be written, not
-     *               {@code null}
+     *     {@code null}
      * @return a {@link Result} that is successful if the write completes without throwing, or failed
-     * with the thrown exception otherwise
+     *     with the thrown exception otherwise
      */
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer output) {
-        return Result.runCatching(
-                () -> {
-                    gson.toJson(
-                            tree, output); // we don't need to transform to POJO since we have a TypeAdapter for
-                    // DataTree
-                    return null;
+        return Result.runCatching(() -> {
+            gson.toJson(tree, output); // we don't need to transform to POJO since we have a TypeAdapter for
+            // DataTree
+            return null;
         });
-  }
+    }
 }

@@ -27,50 +27,42 @@ public class CustomSerializerIntegrationTest {
 
     @BeforeEach
     void setup() {
-        injector =
-                Guice.createInjector(
-                        new ConfigLoaderModule().asModuleWithInfrastructure(),
-                        new FileWatcherModule(),
-                        new FileTypeModule(),
-                        new AbstractModule() {
-                            @Override
-                            protected void configure() {
-                                bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("SerializerTests"));
-                            }
-                        });
+        injector = Guice.createInjector(
+                new ConfigLoaderModule().asModuleWithInfrastructure(),
+                new FileWatcherModule(),
+                new FileTypeModule(),
+                new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer("SerializerTests"));
+                    }
+                });
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void testSerialization() {
         SerializationFunction<SerializerCustomTypeConfig> saver =
-                (SerializationFunction<SerializerCustomTypeConfig>)
-                        injector.getInstance(
-                                Key.get(
-                                        TypeLiteral.get(
-                                                Types.newParameterizedType(
-                                                        SerializationFunction.class, SerializerCustomTypeConfig.class))));
+                (SerializationFunction<SerializerCustomTypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                        Types.newParameterizedType(SerializationFunction.class, SerializerCustomTypeConfig.class))));
 
-        SerializerCustomTypeConfig config =
-                new SerializerCustomTypeConfig() {
-                    @Override
-                    public SerializerCustomType customType() {
-                        return new SerializerCustomType("test-value");
-                    }
+        SerializerCustomTypeConfig config = new SerializerCustomTypeConfig() {
+            @Override
+            public SerializerCustomType customType() {
+                return new SerializerCustomType("test-value");
+            }
 
-                    @Override
-                    public List<SerializerCustomType> customTypeList() {
-                        return List.of(
-                                new SerializerCustomType("value-1"), new SerializerCustomType("value-2"));
-                    }
+            @Override
+            public List<SerializerCustomType> customTypeList() {
+                return List.of(new SerializerCustomType("value-1"), new SerializerCustomType("value-2"));
+            }
 
-                    @Override
-                    public List<List<SerializerCustomType>> nestedCustomTypeList() {
-                        return List.of(
-                                List.of(new SerializerCustomType("nested-1")),
-                                List.of(
-                                        new SerializerCustomType("nested-2"), new SerializerCustomType("nested-3")));
-                    }
+            @Override
+            public List<List<SerializerCustomType>> nestedCustomTypeList() {
+                return List.of(
+                        List.of(new SerializerCustomType("nested-1")),
+                        List.of(new SerializerCustomType("nested-2"), new SerializerCustomType("nested-3")));
+            }
         };
 
         ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
@@ -82,8 +74,7 @@ public class CustomSerializerIntegrationTest {
 
         assertThat(result.get("customTypeList")).isInstanceOf(DataTree.DataTreeArray.class);
         assertThat(((DataTree.DataTreeArray) result.get("customTypeList")).value())
-                .containsExactly(
-                        DataTree.string("serialized-value-1"), DataTree.string("serialized-value-2"));
+                .containsExactly(DataTree.string("serialized-value-1"), DataTree.string("serialized-value-2"));
 
         assertThat(result.get("nestedCustomTypeList")).isInstanceOf(DataTree.DataTreeArray.class);
         var outerArray = (DataTree.DataTreeArray) result.get("nestedCustomTypeList");
@@ -94,51 +85,37 @@ public class CustomSerializerIntegrationTest {
 
         var innerArray2 = (DataTree.DataTreeArray) outerArray.value().get(1);
         assertThat(innerArray2.value())
-                .containsExactly(
-                        DataTree.string("serialized-nested-2"), DataTree.string("serialized-nested-3"));
+                .containsExactly(DataTree.string("serialized-nested-2"), DataTree.string("serialized-nested-3"));
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void testDeserialization() {
-        var stringReaderProvider =
-                injector
-                        .getInstance(ConfigProviderFactory.class)
-                        .createStringReaderProvider(
-                                injector.getInstance(YamlFileType.class),
-                                """
+        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        """
                                 customType: 'anything'
                                 customTypeList: ['anything1', 'anything2']
                                 nestedCustomTypeList: [['anything3'], ['anything4', 'anything5']]
                                 """,
-                                new Configuration<>(null, SerializerCustomTypeConfig.class),
-                                (DeserializationFunction<SerializerCustomTypeConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        DeserializationFunction.class,
-                                                                        SerializerCustomTypeConfig.class)))),
-                                (SerializationFunction<SerializerCustomTypeConfig>)
-                                        injector.getInstance(
-                                                Key.get(
-                                                        TypeLiteral.get(
-                                                                Types.newParameterizedType(
-                                                                        SerializationFunction.class,
-                                                                        SerializerCustomTypeConfig.class)))))
-                        .getOrThrow();
+                        new Configuration<>(null, SerializerCustomTypeConfig.class),
+                        (DeserializationFunction<SerializerCustomTypeConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        DeserializationFunction.class, SerializerCustomTypeConfig.class)))),
+                        (SerializationFunction<SerializerCustomTypeConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        SerializationFunction.class, SerializerCustomTypeConfig.class)))))
+                .getOrThrow();
 
         SerializerCustomTypeConfig config = stringReaderProvider.get();
         assertThat(config).isNotNull();
         assertThat(config.customType()).isEqualTo(new SerializerCustomType("deserialized"));
         assertThat(config.customTypeList())
-                .containsExactly(
-                        new SerializerCustomType("deserialized"), new SerializerCustomType("deserialized"));
+                .containsExactly(new SerializerCustomType("deserialized"), new SerializerCustomType("deserialized"));
         assertThat(config.nestedCustomTypeList())
                 .containsExactly(
                         List.of(new SerializerCustomType("deserialized")),
-                        List.of(
-                                new SerializerCustomType("deserialized"),
-                                new SerializerCustomType("deserialized")));
+                        List.of(new SerializerCustomType("deserialized"), new SerializerCustomType("deserialized")));
     }
 }

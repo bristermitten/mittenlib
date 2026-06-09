@@ -50,22 +50,23 @@ public class GenericTypeDeserializerGenerator {
      * <pre>
      *     MyDeserializer::deserialize
      * </pre>
-     * <p>
-     * or
+     *
+     * <p>or
      *
      * <pre>
      *     this.myDeserializer
      * </pre>
      *
      * @param info the custom deserializer metadata, used to determine if the generated code should be
-     *             static or not
+     *     static or not
      * @return a code block referencing the deserializer
      */
     private CodeBlock getDeserializationFunctionReference(CustomDeserializerInfo info) {
         if (info.isStatic()) {
             return CodeBlock.of("$T::deserialize", info.deserializerClass());
         }
-        String fieldName = Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
+        String fieldName =
+                Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
         return CodeBlock.of("this.$L", fieldName);
     }
 
@@ -78,11 +79,11 @@ public class GenericTypeDeserializerGenerator {
      *     return CollectionsUtils.deserializeList(itemsFromMap, context, ctx0 -> ...);
      * </pre>
      *
-     * @param builder            the method spec builder
-     * @param property           the property being processed, used to generate the variable name (e.g. {@code
-     *                           itemsFromMap})
+     * @param builder the method spec builder
+     * @param property the property being processed, used to generate the variable name (e.g. {@code
+     *     itemsFromMap})
      * @param wrappedElementType the wrapped property type mirror
-     * @param elementType        the wrapped property type element
+     * @param elementType the wrapped property type element
      * @return an optional method spec if handled successfully
      */
     public Optional<MethodSpec> handleGenericType(
@@ -98,11 +99,9 @@ public class GenericTypeDeserializerGenerator {
         ElementWrapper.wrap(property.source().element())
                 .validate()
                 .asError()
-                .check(
-                        $ ->
-                                AptkCoreMatchers.BY_RAW_TYPE
-                                        .getValidator()
-                                        .hasOneOf(elementType.unwrap(), List.class, Map.class))
+                .check($ -> AptkCoreMatchers.BY_RAW_TYPE
+                        .getValidator()
+                        .hasOneOf(elementType.unwrap(), List.class, Map.class))
                 .validateAndIssueMessages();
 
         final String fromMapName = property.name() + "FromMap";
@@ -123,7 +122,7 @@ public class GenericTypeDeserializerGenerator {
      *
      * @param type the type to check
      * @return true if the type or any nested type argument contains a custom deserializer or a config
-     * type
+     *     type
      */
     private boolean hasNestedCustomDeserializerOrConfig(TypeMirror type) {
         if (customDeserializers.getCustomInfo(type).isPresent() || typesUtil.isConfigType(type)) {
@@ -160,8 +159,7 @@ public class GenericTypeDeserializerGenerator {
         TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
 
         // Custom Deserializer
-        Optional<CustomDeserializerInfo> customDeserializerOptional =
-                customDeserializers.getCustomInfo(type);
+        Optional<CustomDeserializerInfo> customDeserializerOptional = customDeserializers.getCustomInfo(type);
         if (customDeserializerOptional.isPresent()) {
             return getDeserializationFunctionReference(customDeserializerOptional.get());
         }
@@ -222,9 +220,9 @@ public class GenericTypeDeserializerGenerator {
      *     return CollectionsUtils.deserializeList(fromMap, context, ctx0 -> ...);
      * </pre>
      *
-     * @param builder            the method spec builder
+     * @param builder the method spec builder
      * @param wrappedElementType the wrapped property type mirror
-     * @param fromMapName        the name of the variable containing the raw data (e.g. {@code fromMap})
+     * @param fromMapName the name of the variable containing the raw data (e.g. {@code fromMap})
      * @return an optional method spec
      */
     private Optional<MethodSpec> handleListType(
@@ -248,9 +246,9 @@ public class GenericTypeDeserializerGenerator {
      *     return CollectionsUtils.deserializeMap(KeyType.class, fromMap, context, ctx0 -> ...);
      * </pre>
      *
-     * @param builder            the method spec builder
+     * @param builder the method spec builder
      * @param wrappedElementType the wrapped property type mirror
-     * @param fromMapName        the name of the variable containing the raw data (e.g. {@code fromMap})
+     * @param fromMapName the name of the variable containing the raw data (e.g. {@code fromMap})
      * @return an optional method spec
      */
     private Optional<MethodSpec> handleMapType(
@@ -262,10 +260,10 @@ public class GenericTypeDeserializerGenerator {
         CodeBlock deserializationFunction = getDeserializationFunction(valueType, 0);
         builder.addStatement(
                 "return $T.deserializeMap($T.class, $L, context, $L)",
-        CollectionsUtils.class,
-        typesUtil.getSafeType(keyType),
-        fromMapName,
-        deserializationFunction);
-    return Optional.of(builder.build());
-  }
+                CollectionsUtils.class,
+                typesUtil.getSafeType(keyType),
+                fromMapName,
+                deserializationFunction);
+        return Optional.of(builder.build());
+    }
 }

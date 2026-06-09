@@ -65,10 +65,9 @@ class MapsTest {
 
     @Test
     void assertThat_largeMap_creationWorks() {
-        final Map<String, String> maps =
-                Maps.of(
-                        "k1", "v1", "k2", "v2", "k3", "v3", "k4", "v4", "k5", "v5", "k6", "v6", "k7", "v7",
-                        "k8", "v8", "k9", "v9", "k10", "v10");
+        final Map<String, String> maps = Maps.of(
+                "k1", "v1", "k2", "v2", "k3", "v3", "k4", "v4", "k5", "v5", "k6", "v6", "k7", "v7", "k8", "v8", "k9",
+                "v9", "k10", "v10");
         assertEquals(10, maps.size());
         for (int i = 1; i <= 10; i++) {
             assertEquals("v" + i, maps.get("k" + i));
@@ -102,8 +101,7 @@ class MapsTest {
         assertThrows(UnsupportedOperationException.class, () -> map.replace("key", 42, 99));
         assertThrows(UnsupportedOperationException.class, () -> map.remove("key", 42));
         assertThrows(UnsupportedOperationException.class, () -> map.computeIfAbsent("new", k -> 99));
-        assertThrows(
-                UnsupportedOperationException.class, () -> map.computeIfPresent("key", (k, v) -> 99));
+        assertThrows(UnsupportedOperationException.class, () -> map.computeIfPresent("key", (k, v) -> 99));
         assertThrows(UnsupportedOperationException.class, () -> map.compute("key", (k, v) -> 99));
     }
 
@@ -221,9 +219,7 @@ class MapsTest {
         assertEquals(ourMap, reconstructed);
     }
 
-    /**
-     * Property-based tests for complex map operations and edge cases
-     */
+    /** Property-based tests for complex map operations and edge cases */
     @Property
     void mapEntriesShouldBeImmutable(@ForAll Map<String, Integer> standardMap) {
         List<Entry<String, Integer>> entries = new ArrayList<>(standardMap.entrySet());
@@ -278,9 +274,9 @@ class MapsTest {
 
         // A modified entry should not be contained
         if (!standardMap.isEmpty()) {
-            Entry<String, Integer> firstEntry = standardMap.entrySet().iterator().next();
-            Entry<String, Integer> modifiedEntry =
-                    Maps.entry(firstEntry.getKey(), firstEntry.getValue() + 1000);
+            Entry<String, Integer> firstEntry =
+                    standardMap.entrySet().iterator().next();
+            Entry<String, Integer> modifiedEntry = Maps.entry(firstEntry.getKey(), firstEntry.getValue() + 1000);
             assertFalse(entrySet.contains(modifiedEntry));
         }
     }
@@ -387,6 +383,6 @@ class MapsTest {
         // Test retrieval performance
         for (int i = 0; i < 1000; i++) {
             assertEquals(Integer.valueOf(i), map.get("key" + i));
+        }
     }
-  }
 }

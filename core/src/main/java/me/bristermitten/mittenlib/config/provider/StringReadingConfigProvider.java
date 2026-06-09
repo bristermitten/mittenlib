@@ -16,8 +16,7 @@ public class StringReadingConfigProvider<T> implements ConfigProvider<T> {
     private final DeserializationFunction<T> deserializer;
     private final String data;
 
-    public StringReadingConfigProvider(
-            String data, ConfigReader reader, DeserializationFunction<T> deserializer) {
+    public StringReadingConfigProvider(String data, ConfigReader reader, DeserializationFunction<T> deserializer) {
         this.data = data;
         this.reader = reader;
         this.deserializer = deserializer;
@@ -44,5 +43,5 @@ public class StringReadingConfigProvider<T> implements ConfigProvider<T> {
     @Override
     public void clearCache() {
         // nothing to clear
-  }
+    }
 }

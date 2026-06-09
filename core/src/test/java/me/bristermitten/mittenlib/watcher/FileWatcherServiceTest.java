@@ -28,7 +28,8 @@ class FileWatcherServiceTest {
             FileWatcherService service = new FileWatcherService(() -> ws, new TestMittenLibConsumer());
 
             CompletableFuture<Void> viewed = new CompletableFuture<>();
-            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null))).get();
+            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null)))
+                    .get();
 
             Files.writeString(testFile, "test");
 
@@ -49,7 +50,8 @@ class FileWatcherServiceTest {
             FileWatcherService service = new FileWatcherService(() -> ws, new TestMittenLibConsumer());
 
             CompletableFuture<Void> viewed = new CompletableFuture<>();
-            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null))).get();
+            service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null)))
+                    .get();
 
             Files.writeString(testFile, "test");
 

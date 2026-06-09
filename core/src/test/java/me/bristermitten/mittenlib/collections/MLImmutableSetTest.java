@@ -14,9 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MLImmutableSetTest {
 
-    /**
-     * Create a concrete MLImmutableSet for testing purposes
-     */
+    /** Create a concrete MLImmutableSet for testing purposes */
     private static <E> MLImmutableSet<E> createTestSet(Collection<E> elements) {
         // Use the existing Sets implementation which should return MLImmutableSet instances
         MLImmutableSet<E> set = Sets.ofAll(elements);
@@ -158,5 +156,5 @@ class MLImmutableSetTest {
     @Provide
     Arbitrary<String> nonNullString() {
         return Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10);
-  }
+    }
 }

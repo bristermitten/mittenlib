@@ -20,8 +20,6 @@ public class MiniMessageModule extends LangModule {
         bind(MessageFormatter.class).to(MiniMessageFormatter.class);
         bind(AbstractMiniMessageFactory.class).to(DefaultMiniMessageFactory.class);
 
-        Multibinder.newSetBinder(binder(), FormattingHook.class)
-                .addBinding()
-                .to(LegacyCodeUpdaterHook.class);
+        Multibinder.newSetBinder(binder(), FormattingHook.class).addBinding().to(LegacyCodeUpdaterHook.class);
     }
 }

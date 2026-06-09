@@ -7,5 +7,4 @@ import co.aikar.commands.BaseCommand;
  *
  * @see BaseCommand
  */
-public abstract class Command extends BaseCommand {
-}
+public abstract class Command extends BaseCommand {}

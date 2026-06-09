@@ -15,6 +15,5 @@ public interface ArgumentContext<T> extends ContextResolver<T, BukkitCommandExec
      *
      * @return The type that this context applies to.
      */
-    @NotNull
-    Class<T> type();
+    @NotNull Class<T> type();
 }

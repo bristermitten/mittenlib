@@ -10,13 +10,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Utility functions for creating immutable maps Unnecessary in Java 9+
- */
+/** Utility functions for creating immutable maps Unnecessary in Java 9+ */
 @NullMarked
 public class Maps {
-    private Maps() {
-    }
+    private Maps() {}
 
     public static <K, V> @Unmodifiable MLImmutableMap<K, V> empty() {
         return new MapImpls.Map0<>();
@@ -86,12 +83,10 @@ public class Maps {
             @NonNull V v4,
             @NonNull K k5,
             @NonNull V v5) {
-        return new MapImpls.MapN<>(
-                Sets.of(entry(k1, v1), entry(k2, v2), entry(k3, v3), entry(k4, v4), entry(k5, v5)));
+        return new MapImpls.MapN<>(Sets.of(entry(k1, v1), entry(k2, v2), entry(k3, v3), entry(k4, v4), entry(k5, v5)));
     }
 
-    @NonNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
+    @NonNull public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
             @NonNull K k1,
             @NonNull V v1,
             @NonNull K k2,
@@ -105,17 +100,10 @@ public class Maps {
             @NonNull K k6,
             @NonNull V v6) {
         return new MapImpls.MapN<>(
-                Sets.of(
-                        entry(k1, v1),
-                        entry(k2, v2),
-                        entry(k3, v3),
-                        entry(k4, v4),
-                        entry(k5, v5),
-                        entry(k6, v6)));
+                Sets.of(entry(k1, v1), entry(k2, v2), entry(k3, v3), entry(k4, v4), entry(k5, v5), entry(k6, v6)));
     }
 
-    @NonNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
+    @NonNull public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
             @NonNull K k1,
             @NonNull V v1,
             @NonNull K k2,
@@ -130,19 +118,17 @@ public class Maps {
             @NonNull V v6,
             @NonNull K k7,
             @NonNull V v7) {
-        return new MapImpls.MapN<>(
-                Sets.of(
-                        entry(k1, v1),
-                        entry(k2, v2),
-                        entry(k3, v3),
-                        entry(k4, v4),
-                        entry(k5, v5),
-                        entry(k6, v6),
-                        entry(k7, v7)));
+        return new MapImpls.MapN<>(Sets.of(
+                entry(k1, v1),
+                entry(k2, v2),
+                entry(k3, v3),
+                entry(k4, v4),
+                entry(k5, v5),
+                entry(k6, v6),
+                entry(k7, v7)));
     }
 
-    @NonNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
+    @NonNull public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
             @NonNull K k1,
             @NonNull V v1,
             @NonNull K k2,
@@ -159,20 +145,18 @@ public class Maps {
             @NonNull V v7,
             @NonNull K k8,
             @NonNull V v8) {
-        return new MapImpls.MapN<>(
-                Sets.of(
-                        entry(k1, v1),
-                        entry(k2, v2),
-                        entry(k3, v3),
-                        entry(k4, v4),
-                        entry(k5, v5),
-                        entry(k6, v6),
-                        entry(k7, v7),
-                        entry(k8, v8)));
+        return new MapImpls.MapN<>(Sets.of(
+                entry(k1, v1),
+                entry(k2, v2),
+                entry(k3, v3),
+                entry(k4, v4),
+                entry(k5, v5),
+                entry(k6, v6),
+                entry(k7, v7),
+                entry(k8, v8)));
     }
 
-    @NonNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
+    @NonNull public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
             @NonNull K k1,
             @NonNull V v1,
             @NonNull K k2,
@@ -191,21 +175,19 @@ public class Maps {
             @NonNull V v8,
             @NonNull K k9,
             @NonNull V v9) {
-        return new MapImpls.MapN<>(
-                Sets.of(
-                        entry(k1, v1),
-                        entry(k2, v2),
-                        entry(k3, v3),
-                        entry(k4, v4),
-                        entry(k5, v5),
-                        entry(k6, v6),
-                        entry(k7, v7),
-                        entry(k8, v8),
-                        entry(k9, v9)));
+        return new MapImpls.MapN<>(Sets.of(
+                entry(k1, v1),
+                entry(k2, v2),
+                entry(k3, v3),
+                entry(k4, v4),
+                entry(k5, v5),
+                entry(k6, v6),
+                entry(k7, v7),
+                entry(k8, v8),
+                entry(k9, v9)));
     }
 
-    @NonNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
+    @NonNull public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
             @NonNull K k1,
             @NonNull V v1,
             @NonNull K k2,
@@ -226,36 +208,34 @@ public class Maps {
             @NonNull V v9,
             @NonNull K k10,
             @NonNull V v10) {
-        return new MapImpls.MapN<>(
-                Sets.of(
-                        entry(k1, v1),
-                        entry(k2, v2),
-                        entry(k3, v3),
-                        entry(k4, v4),
-                        entry(k5, v5),
-                        entry(k6, v6),
-                        entry(k7, v7),
-                        entry(k8, v8),
-                        entry(k9, v9),
-                        entry(k10, v10)));
+        return new MapImpls.MapN<>(Sets.of(
+                entry(k1, v1),
+                entry(k2, v2),
+                entry(k3, v3),
+                entry(k4, v4),
+                entry(k5, v5),
+                entry(k6, v6),
+                entry(k7, v7),
+                entry(k8, v8),
+                entry(k9, v9),
+                entry(k10, v10)));
     }
 
-  /*
-  Copies
-   */
+    /*
+    Copies
+     */
 
     /**
      * Creates a copy of the given map with the specified key and value added.
      *
      * @param map the map to copy
-     * @param k   the key to add
-     * @param v   the value to add at the specified key
+     * @param k the key to add
+     * @param v the value to add at the specified key
      * @param <K> the type of keys in the map
      * @param <V> the type of values in the map
      * @return a new map containing all entries from the original map plus the new key-value pair
      */
-    public static @NonNull <K, V> MLImmutableMap<K, V> of(
-            @NonNull Map<K, V> map, @NonNull K k, @NonNull V v) {
+    public static @NonNull <K, V> MLImmutableMap<K, V> of(@NonNull Map<K, V> map, @NonNull K k, @NonNull V v) {
         if (map instanceof MLImmutableMap) {
             return ((MLImmutableMap<K, V>) map).plus(k, v);
         }
@@ -263,9 +243,7 @@ public class Maps {
     }
 
     @SafeVarargs
-    @NonNull
-    public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(
-            Map.@NonNull Entry<K, V> @NonNull ... entries) {
+    @NonNull public static <K, V> @Unmodifiable MLImmutableMap<K, V> of(Map.@NonNull Entry<K, V> @NonNull ... entries) {
         if (entries.length == 0) {
             return empty();
         }
@@ -276,8 +254,7 @@ public class Maps {
         return new MapImpls.MapN<>(Sets.of(entries));
     }
 
-    public static <K, V> @Unmodifiable @NonNull MLImmutableMap<K, V> of(
-            Collection<Map.Entry<K, V>> entries) {
+    public static <K, V> @Unmodifiable @NonNull MLImmutableMap<K, V> of(Collection<Map.Entry<K, V>> entries) {
         if (entries.isEmpty()) {
             return empty();
         }
@@ -286,15 +263,13 @@ public class Maps {
             return of(entry.getKey(), entry.getValue());
         }
 
-        Set<Map.Entry<K, V>> collect =
-                entries.stream()
-                        .map(entry -> entry(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toSet());
+        Set<Map.Entry<K, V>> collect = entries.stream()
+                .map(entry -> entry(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toSet());
         return new MapImpls.MapN<>(Sets.ofAll(collect));
     }
 
-    public static <K, V> Map.@NonNull @Unmodifiable Entry<K, V> entry(
-            @NonNull K key, @NonNull V value) {
+    public static <K, V> Map.@NonNull @Unmodifiable Entry<K, V> entry(@NonNull K key, @NonNull V value) {
         return new MapImpls.MLEntry<>(key, value);
-  }
+    }
 }

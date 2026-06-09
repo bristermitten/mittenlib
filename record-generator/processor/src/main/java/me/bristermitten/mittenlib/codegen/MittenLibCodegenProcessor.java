@@ -30,39 +30,29 @@ import java.util.*;
 @SupportedOptions("org.gradle.annotation.processing.isolating")
 public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
-    private static Optional<RecordConstructorSpec> parseRecord(
-            TypeElementWrapper typeElementWrapper) {
-        List<ExecutableElement> getters =
-                typeElementWrapper
-                        .filterEnclosedElements()
-                        .applyFilter(AptkCoreMatchers.IS_METHOD)
-                        .applyFilter(AptkCoreMatchers.HAS_NO_PARAMETERS)
-                        .getResult();
+    private static Optional<RecordConstructorSpec> parseRecord(TypeElementWrapper typeElementWrapper) {
+        List<ExecutableElement> getters = typeElementWrapper
+                .filterEnclosedElements()
+                .applyFilter(AptkCoreMatchers.IS_METHOD)
+                .applyFilter(AptkCoreMatchers.HAS_NO_PARAMETERS)
+                .getResult();
 
-        var fields =
-                getters.stream()
-                        .map(
-                                method ->
-                                        new RecordConstructorSpec.RecordFieldSpec(
-                                                method.getSimpleName().toString(), TypeName.get(method.getReturnType())))
-                        .toList();
+        var fields = getters.stream()
+                .map(method -> new RecordConstructorSpec.RecordFieldSpec(
+                        method.getSimpleName().toString(), TypeName.get(method.getReturnType())))
+                .toList();
 
-        return Optional.of(
-                new RecordConstructorSpec(
-                        "create", // TODO: make customisable
-                        fields));
+        return Optional.of(new RecordConstructorSpec(
+                "create", // TODO: make customisable
+                fields));
     }
 
     private static Optional<RecordConstructorSpec> parseConstructor(
-            ExecutableElement method,
-            TypeElementWrapper typeElement,
-            Collection<String> existingConstructors) {
+            ExecutableElement method, TypeElementWrapper typeElement, Collection<String> existingConstructors) {
         if (!TypeUtils.TypeComparison.isTypeEqual(
                 method.getReturnType(), typeElement.asType().unwrap())) {
             MessagerUtils.error(
-                    method,
-                    MittenLibCodegenProcessorCompilerMessages.METHOD_BAD_RETURN,
-                    typeElement.unwrap());
+                    method, MittenLibCodegenProcessorCompilerMessages.METHOD_BAD_RETURN, typeElement.unwrap());
             return Optional.empty();
         }
         String constructorName = method.getSimpleName().toString();
@@ -71,25 +61,20 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
                     method, MittenLibCodegenProcessorCompilerMessages.DUPLICATE_CONSTRUCTOR, constructorName);
             return Optional.empty();
         }
-        return Optional.of(
-                new RecordConstructorSpec(
-                        constructorName,
-                        method.getParameters().stream()
-                                .map(
-                                        param ->
-                                                new RecordConstructorSpec.RecordFieldSpec(
-                                                        param.getSimpleName().toString(), TypeName.get(param.asType())))
-                                .toList()));
+        return Optional.of(new RecordConstructorSpec(
+                constructorName,
+                method.getParameters().stream()
+                        .map(param -> new RecordConstructorSpec.RecordFieldSpec(
+                                param.getSimpleName().toString(), TypeName.get(param.asType())))
+                        .toList()));
     }
 
     private static ClassName getSpecName(TypeElement spec) {
         TypeElementWrapper wrapped = TypeElementWrapper.wrap(spec);
-        var explicitName =
-                wrapped
-                        .getAnnotation(RecordSpec.class)
-                        .map(RecordSpec::name)
-                        .or(() -> wrapped.getAnnotation(UnionSpec.class).map(UnionSpec::name))
-                        .filter(name -> !name.isBlank());
+        var explicitName = wrapped.getAnnotation(RecordSpec.class)
+                .map(RecordSpec::name)
+                .or(() -> wrapped.getAnnotation(UnionSpec.class).map(UnionSpec::name))
+                .filter(name -> !name.isBlank());
 
         var recordSpecName = ClassName.get(spec);
         if (explicitName.isPresent()) {
@@ -114,8 +99,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
             code = "002",
             enumValueName = "DUPLICATE_CONSTRUCTOR",
             message = "Constructors must have distinct names, overloading is not allowed")
-    public boolean processAnnotations(
-            Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         var unions = processUnions(roundEnv);
         var records = processRecords(roundEnv);
@@ -123,10 +107,7 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
         return unions && records;
     }
 
-    @DeclareCompilerMessage(
-            code = "003",
-            enumValueName = "INVALID_RECORD",
-            message = "Could not parse record ${0}.")
+    @DeclareCompilerMessage(code = "003", enumValueName = "INVALID_RECORD", message = "Could not parse record ${0}.")
     private boolean processRecords(RoundEnvironment roundEnv) {
         var records = new ArrayList<me.bristermitten.mittenlib.codegen.record.RecordSpec>();
 
@@ -141,17 +122,15 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
             Optional<RecordConstructorSpec> recordConstructorSpec = parseRecord(typeElement);
             if (recordConstructorSpec.isEmpty()) {
-                MessagerUtils.error(
-                        element, MittenLibCodegenProcessorCompilerMessages.INVALID_RECORD, typeElement);
+                MessagerUtils.error(element, MittenLibCodegenProcessorCompilerMessages.INVALID_RECORD, typeElement);
                 return false; // Skip invalid records
             }
             RecordConstructorSpec constructor = recordConstructorSpec.get();
 
             ClassName recordSpecName = getSpecName(typeElement.unwrap());
 
-            var recordSpec =
-                    new me.bristermitten.mittenlib.codegen.record.RecordSpec(
-                            ClassName.get(typeElement.unwrap()), recordSpecName, constructor);
+            var recordSpec = new me.bristermitten.mittenlib.codegen.record.RecordSpec(
+                    ClassName.get(typeElement.unwrap()), recordSpecName, constructor);
             records.add(recordSpec);
         }
 
@@ -179,17 +158,15 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
             TypeElementWrapper typeElement = TypeElementWrapper.toTypeElement(wrap);
             var constructors = new ArrayList<RecordConstructorSpec>();
-            for (ExecutableElement method :
-                    typeElement
-                            .filterEnclosedElements()
-                            .applyFilter(AptkCoreMatchers.IS_METHOD)
-                            .getResult()) {
+            for (ExecutableElement method : typeElement
+                    .filterEnclosedElements()
+                    .applyFilter(AptkCoreMatchers.IS_METHOD)
+                    .getResult()) {
 
-                Optional<RecordConstructorSpec> recordConstructorSpec =
-                        parseConstructor(
-                                method,
-                                typeElement,
-                                constructors.stream().map(RecordConstructorSpec::name).toList());
+                Optional<RecordConstructorSpec> recordConstructorSpec = parseConstructor(
+                        method,
+                        typeElement,
+                        constructors.stream().map(RecordConstructorSpec::name).toList());
 
                 if (recordConstructorSpec.isEmpty()) {
                     continue; // Skip invalid constructors
@@ -199,15 +176,13 @@ public class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
             ClassName recordSpecName = getSpecName(typeElement.unwrap());
 
-            var matchStrategy =
-                    typeElement
-                            .getAnnotation(MatchStrategy.class)
-                            .map(MatchStrategy::value)
-                            .orElse(MatchStrategies.NOMINAL);
+            var matchStrategy = typeElement
+                    .getAnnotation(MatchStrategy.class)
+                    .map(MatchStrategy::value)
+                    .orElse(MatchStrategies.NOMINAL);
 
-            var recordSpec =
-                    new me.bristermitten.mittenlib.codegen.union.UnionSpec(
-                            ClassName.get(typeElement.unwrap()), recordSpecName, matchStrategy, constructors);
+            var recordSpec = new me.bristermitten.mittenlib.codegen.union.UnionSpec(
+                    ClassName.get(typeElement.unwrap()), recordSpecName, matchStrategy, constructors);
             unions.add(recordSpec);
         }
 

@@ -9,8 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Strings {
-    private Strings() {
-    }
+    private Strings() {}
 
     /**
      * Capitalize the first letter of a given String
@@ -23,7 +22,7 @@ public class Strings {
      *
      * @param str the String to capitalize
      * @return If the String is empty, then the string itself (i.e <code>s == capitalize(s)</code>),
-     * otherwise a copy of the string with the first character capitalized
+     *     otherwise a copy of the string with the first character capitalized
      */
     public static String capitalize(String str) {
         if (str.isEmpty()) {
@@ -44,7 +43,7 @@ public class Strings {
      *
      * @param str the String to uncapitalize
      * @return If the String is empty, then the string itself (i.e <code>s == capitalize(s)</code>),
-     * otherwise a copy of the string with the first character in lower case
+     *     otherwise a copy of the string with the first character in lower case
      */
     public static String uncapitalize(String str) {
         if (str.isEmpty()) {
@@ -60,9 +59,9 @@ public class Strings {
      * overhead of Streams ({@link Collectors#joining()}), and the boilerplate of a for loop
      *
      * @param collection The collection to join
-     * @param toString   A function to transform an element to a String
-     * @param separator  A separator for the joined string
-     * @param <T>        The type of the collection
+     * @param toString A function to transform an element to a String
+     * @param separator A separator for the joined string
+     * @param <T> The type of the collection
      * @return A joined string
      */
     public static <T> String joinWith(
@@ -88,7 +87,7 @@ public class Strings {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
             stringJoiner.add(Objects.requireNonNull(toString.apply(t)));
+        }
+        return stringJoiner.toString();
     }
-    return stringJoiner.toString();
-  }
 }

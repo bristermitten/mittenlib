@@ -7,20 +7,14 @@ import org.junit.jupiter.api.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-/**
- * Tests the deserialization of primitive types in configuration classes.
- */
+/** Tests the deserialization of primitive types in configuration classes. */
 class PrimitiveTypesDeserializationTest {
 
     @Test
     void testPrimitiveTypesDeserialization() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.PrimitiveTypesConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.PrimitiveTypesConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;

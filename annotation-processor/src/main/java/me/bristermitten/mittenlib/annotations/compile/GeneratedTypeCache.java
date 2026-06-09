@@ -29,9 +29,7 @@ import java.util.stream.Collectors;
 @Beta
 @Singleton
 public class GeneratedTypeCache {
-    /**
-     * Map of source type to generated type's qualified name
-     */
+    /** Map of source type to generated type's qualified name */
     private final BiMap<TypeElement, String> generatedSpecs = HashBiMap.create();
 
     /**
@@ -46,5 +44,5 @@ public class GeneratedTypeCache {
                 .filter(entry -> entry.getValue().contains(name) || name.contains(entry.getValue()))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
-  }
+    }
 }

@@ -16,9 +16,7 @@ class UsingInvalidTypesTest {
         var compilation = javac().withProcessors(new ConfigProcessor());
 
         JavaFileObject source1 =
-                JavaFileObjects.forSourceString(
-                        "me.bristermitten.mittenlib.tests.OverriddenNameDTO",
-                        """
+                JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OverriddenNameDTO", """
                         package me.bristermitten.mittenlib.tests;
                         import java.util.Map;
                         import me.bristermitten.mittenlib.config.*;
@@ -27,10 +25,7 @@ class UsingInvalidTypesTest {
                             public int clone;
                         }
                         """);
-        JavaFileObject source2 =
-                JavaFileObjects.forSourceString(
-                        "me.bristermitten.mittenlib.tests.OtherDTO",
-                        """
+        JavaFileObject source2 = JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OtherDTO", """
                         package me.bristermitten.mittenlib.tests;
                         import java.util.Map;
                         import me.bristermitten.mittenlib.config.*;
@@ -40,8 +35,7 @@ class UsingInvalidTypesTest {
                         }
                         """);
 
-        assertThatThrownBy(() -> compilation.compile(source1, source2))
-                .hasCauseInstanceOf(DTOReferenceException.class);
+        assertThatThrownBy(() -> compilation.compile(source1, source2)).hasCauseInstanceOf(DTOReferenceException.class);
     }
 
     @Test
@@ -49,9 +43,7 @@ class UsingInvalidTypesTest {
         var compilation = javac().withProcessors(new ConfigProcessor());
 
         JavaFileObject source1 =
-                JavaFileObjects.forSourceString(
-                        "me.bristermitten.mittenlib.tests.OverriddenNameDTO",
-                        """
+                JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OverriddenNameDTO", """
                         package me.bristermitten.mittenlib.tests;
                         import java.util.Map;
                         import me.bristermitten.mittenlib.config.*;

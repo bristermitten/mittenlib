@@ -7,20 +7,14 @@ import org.junit.jupiter.api.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-/**
- * Tests the deserialization of nullable fields in configuration classes.
- */
+/** Tests the deserialization of nullable fields in configuration classes. */
 class NullableFieldsDeserializationTest {
 
     @Test
     void testNullableFieldsDeserialization() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.NullableFieldsConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.NullableFieldsConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;

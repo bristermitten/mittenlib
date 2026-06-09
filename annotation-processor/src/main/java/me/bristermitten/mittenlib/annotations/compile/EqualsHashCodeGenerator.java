@@ -28,21 +28,19 @@ public class EqualsHashCodeGenerator {
      * class types - It compares all properties for equality using Objects.equals
      *
      * @param configClassName The name of the class for which the equals method is being generated
-     * @param properties      The list of properties to compare in the equals method
+     * @param properties The list of properties to compare in the equals method
      * @return A MethodSpec representing the generated equals method
      */
     public MethodSpec generateEquals(ClassName configClassName, List<Property> properties) {
-        var builder =
-                MethodSpec.methodBuilder("equals")
-                        .addAnnotation(Override.class)
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(boolean.class)
-                        .addParameter(Object.class, "o");
+        var builder = MethodSpec.methodBuilder("equals")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(boolean.class)
+                .addParameter(Object.class, "o");
 
         builder.beginControlFlow("if (this == o)").addStatement("return true").endControlFlow();
 
-        builder
-                .beginControlFlow("if (o == null || getClass() != o.getClass())")
+        builder.beginControlFlow("if (o == null || getClass() != o.getClass())")
                 .addStatement("return false")
                 .endControlFlow();
 
@@ -70,11 +68,10 @@ public class EqualsHashCodeGenerator {
      * @return A MethodSpec representing the generated hashCode method
      */
     public MethodSpec generateHashCode(List<Property> properties) {
-        var builder =
-                MethodSpec.methodBuilder("hashCode")
-                        .addAnnotation(Override.class)
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(int.class);
+        var builder = MethodSpec.methodBuilder("hashCode")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(int.class);
 
         builder.addStatement(
                 "return $T.hash($L)",
@@ -84,6 +81,6 @@ public class EqualsHashCodeGenerator {
                         .reduce((a, b) -> a + ", " + b)
                         .orElse(""));
 
-    return builder.build();
-  }
+        return builder.build();
+    }
 }

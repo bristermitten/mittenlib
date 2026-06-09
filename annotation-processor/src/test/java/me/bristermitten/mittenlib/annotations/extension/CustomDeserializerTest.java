@@ -14,8 +14,7 @@ public class CustomDeserializerTest {
                 .when()
                 .passInElement()
                 .<TypeElement>fromSourceString(
-                        "me.bristermitten.mittenlib.annotations.integration.extension.CustomTypeDeserializer",
-                        """
+                        "me.bristermitten.mittenlib.annotations.integration.extension.CustomTypeDeserializer", """
                         import io.toolisticon.cute.PassIn;import me.bristermitten.mittenlib.annotations.integration.extension.CustomType;
                         import me.bristermitten.mittenlib.config.DeserializationContext;
                         import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
@@ -31,14 +30,13 @@ public class CustomDeserializerTest {
                                 );
                             }
                         }
-                                
+
                         """)
-                .intoUnitTest(
-                        (processingEnvironment, element) -> {
-                            ToolingProvider.setTooling(processingEnvironment);
-                            CustomDeserializers customDeserializers = new CustomDeserializers();
-                            customDeserializers.registerCustomDeserializer(element);
-                        })
+                .intoUnitTest((processingEnvironment, element) -> {
+                    ToolingProvider.setTooling(processingEnvironment);
+                    CustomDeserializers customDeserializers = new CustomDeserializers();
+                    customDeserializers.registerCustomDeserializer(element);
+                })
                 .thenExpectThat()
                 .compilationSucceeds()
                 .executeTest();
@@ -50,31 +48,29 @@ public class CustomDeserializerTest {
                 .when()
                 .passInElement()
                 .<TypeElement>fromSourceString(
-                        "me.bristermitten.mittenlib.annotations.integration.extension.CustomTypeDeserializer",
-                        """
+                        "me.bristermitten.mittenlib.annotations.integration.extension.CustomTypeDeserializer", """
                         import io.toolisticon.cute.PassIn;import me.bristermitten.mittenlib.annotations.integration.extension.CustomType;
                         import me.bristermitten.mittenlib.config.DeserializationContext;
                         import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
                         import me.bristermitten.mittenlib.util.Result;
-                                
+
                         @CustomDeserializerFor(CustomType.class)
                         @PassIn
                         public class CustomTypeDeserializer {
-                                
+
                             public Result<CustomType> deserialize(DeserializationContext context) {
                                 return Result.ok(
                                         new CustomType("hello")
                                 );
                             }
                         }
-                                
+
                         """)
-                .intoUnitTest(
-                        (processingEnvironment, element) -> {
-                            ToolingProvider.setTooling(processingEnvironment);
-                            CustomDeserializers customDeserializers = new CustomDeserializers();
-                            customDeserializers.registerCustomDeserializer(element);
-                        })
+                .intoUnitTest((processingEnvironment, element) -> {
+                    ToolingProvider.setTooling(processingEnvironment);
+                    CustomDeserializers customDeserializers = new CustomDeserializers();
+                    customDeserializers.registerCustomDeserializer(element);
+                })
                 .thenExpectThat()
                 .compilationFails()
                 .andThat()

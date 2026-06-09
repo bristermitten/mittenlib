@@ -65,18 +65,16 @@ public class ConfigClassParser {
     private ConfigTypeSource getSource(TypeElement element) {
         var wrapped = TypeElementWrapper.wrap(element);
 
-        List<TypeMirror> parents =
-                Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream())
-                        .filter(c -> c.getKind() != TypeKind.NONE)
-                        .filter(c -> !ClassName.get(c).equals(ClassName.OBJECT))
-                        .toList();
+        List<TypeMirror> parents = Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream())
+                .filter(c -> c.getKind() != TypeKind.NONE)
+                .filter(c -> !ClassName.get(c).equals(ClassName.OBJECT))
+                .toList();
 
         if (wrapped.isClass()) {
             if (parents.size() > 1) {
                 return throwInvalidConfigError();
             }
-            Optional<TypeMirror> parent =
-                    parents.isEmpty() ? Optional.empty() : Optional.of(parents.getFirst());
+            Optional<TypeMirror> parent = parents.isEmpty() ? Optional.empty() : Optional.of(parents.getFirst());
 
             return new ConfigTypeSource.ClassConfigTypeSource(element, parent);
         } else if (wrapped.isInterface()) {
@@ -86,8 +84,7 @@ public class ConfigClassParser {
         }
     }
 
-    private List<Property> getPropertiesIn(
-            TypeElement element, @Nullable NamingPattern namingPattern) {
+    private List<Property> getPropertiesIn(TypeElement element, @Nullable NamingPattern namingPattern) {
         var wrapped = TypeElementWrapper.wrap(element);
         List<? extends Element> elements;
         if (wrapped.isClass()) {
@@ -98,65 +95,60 @@ public class ConfigClassParser {
             return throwInvalidConfigError();
         }
         return elements.stream()
-                .map(
-                        propertyElement -> {
-                            var propertySource =
-                                    switch (propertyElement) {
-                                        case ExecutableElement e -> new Property.PropertySource.MethodSource(e);
-                                        case VariableElement e -> new Property.PropertySource.FieldSource(e);
-                                        default -> throw new IllegalStateException(
-                                                "Unexpected value: " + propertyElement.getKind());
-                                    };
-                            var propertyType =
-                                    propertyElement instanceof ExecutableElement executableElement
-                                            ? executableElement.getReturnType()
-                                            : propertyElement.asType();
-                            var configName = typesUtil.getAnnotation(propertyElement, ConfigName.class);
-                            var namingPatternSub =
-                                    Null.orElse(
-                                            typesUtil.getAnnotation(propertyElement, NamingPattern.class), namingPattern);
+                .map(propertyElement -> {
+                    var propertySource =
+                            switch (propertyElement) {
+                                case ExecutableElement e -> new Property.PropertySource.MethodSource(e);
+                                case VariableElement e -> new Property.PropertySource.FieldSource(e);
+                                default ->
+                                    throw new IllegalStateException("Unexpected value: " + propertyElement.getKind());
+                            };
+                    var propertyType = propertyElement instanceof ExecutableElement executableElement
+                            ? executableElement.getReturnType()
+                            : propertyElement.asType();
+                    var configName = typesUtil.getAnnotation(propertyElement, ConfigName.class);
+                    var namingPatternSub =
+                            Null.orElse(typesUtil.getAnnotation(propertyElement, NamingPattern.class), namingPattern);
 
-                            var isNullable = typesUtil.isNullable(propertyElement);
+                    var isNullable = typesUtil.isNullable(propertyElement);
 
-                            var enumParsingScheme =
-                                    typesUtil.getAnnotation(propertyElement, EnumParsingScheme.class);
-                            if (enumParsingScheme != null
-                                    && propertyElement.getAnnotation(EnumParsingScheme.class)
+                    var enumParsingScheme = typesUtil.getAnnotation(propertyElement, EnumParsingScheme.class);
+                    if (enumParsingScheme != null
+                            && propertyElement.getAnnotation(EnumParsingScheme.class)
                                     != null // if the annotation is precisely present on the property
-                                    && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
-                                MessagerUtils.warning(
-                                        propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
-                            }
+                            && !TypeMirrorWrapper.wrap(propertyType).isEnum()) {
+                        MessagerUtils.warning(propertyElement, ConfigVerificationErrors.ENUM_PARSING_SCHEME_NOT_ENUM);
+                    }
 
-                            var hasDefault =
-                                    switch (propertySource) {
-                                        case Property.PropertySource.MethodSource(var m) -> m.isDefault();
-                                        case Property.PropertySource.FieldSource(var f) -> {
-                                            if (trees != null) {
-                        var path = trees.getPath(f);
-                        if (path != null) {
-                            var tree = (VariableTree) path.getLeaf();
-                            yield tree.getInitializer() != null;
-                        }
-                                            }
-                                            yield true; // can't tell so assume true
+                    var hasDefault =
+                            switch (propertySource) {
+                                case Property.PropertySource.MethodSource(var m) -> m.isDefault();
+                                case Property.PropertySource.FieldSource(var f) -> {
+                                    if (trees != null) {
+                                        var path = trees.getPath(f);
+                                        if (path != null) {
+                                            var tree = (VariableTree) path.getLeaf();
+                                            yield tree.getInitializer() != null;
                                         }
-                                    };
+                                    }
+                                    yield true; // can't tell so assume true
+                                }
+                            };
 
-                            return new Property(
-                                    propertyElement.getSimpleName().toString(),
-                                    propertyType,
-                                    propertySource,
-                                    new ASTSettings.PropertyASTSettings(
-                                            namingPatternSub,
-                                            configName,
-                                            enumParsingScheme == null
-                                                    ? EnumParsingSchemes.EXACT_MATCH
-                                                    : enumParsingScheme.value(),
-                                            isNullable,
-                                            hasDefault,
-                                            parseConstraints(propertyElement)));
-                        })
+                    return new Property(
+                            propertyElement.getSimpleName().toString(),
+                            propertyType,
+                            propertySource,
+                            new ASTSettings.PropertyASTSettings(
+                                    namingPatternSub,
+                                    configName,
+                                    enumParsingScheme == null
+                                            ? EnumParsingSchemes.EXACT_MATCH
+                                            : enumParsingScheme.value(),
+                                    isNullable,
+                                    hasDefault,
+                                    parseConstraints(propertyElement)));
+                })
                 .toList();
     }
 
@@ -173,92 +165,83 @@ public class ConfigClassParser {
             throw new IllegalStateException();
         }
 
-        return new ASTSettings.ConfigASTSettings(
-                namingPattern, source, config, generateToString != null);
+        return new ASTSettings.ConfigASTSettings(namingPattern, source, config, generateToString != null);
     }
 
-    private AbstractConfigStructure parseAbstract(
-            TypeElement element, @Nullable ASTParentReference parentReference) {
+    private AbstractConfigStructure parseAbstract(TypeElement element, @Nullable ASTParentReference parentReference) {
         TypeElementWrapper wrapper = TypeElementWrapper.wrap(element);
 
-        Optional<TypeElementWrapper> enclosingType =
-                wrapper
-                        .getEnclosingElement()
-                        .filter(ElementWrapper::isTypeElement)
-                        .map(ElementWrapper::toTypeElement);
+        Optional<TypeElementWrapper> enclosingType = wrapper.getEnclosingElement()
+                .filter(ElementWrapper::isTypeElement)
+                .map(ElementWrapper::toTypeElement);
 
-        List<ClassName> parents =
-                Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream())
-                        .map(TypeMirrorWrapper::wrap)
-                        .<TypeElementWrapper>mapMulti((a, b) -> a.getTypeElement().ifPresent(b))
-                        .map(TypeElementWrapper::unwrap)
-                        .map(ClassName::get)
-                        .filter(c -> !c.equals(ClassName.OBJECT))
-                        .toList();
+        List<ClassName> parents = Stream.concat(Stream.of(element.getSuperclass()), element.getInterfaces().stream())
+                .map(TypeMirrorWrapper::wrap)
+                .<TypeElementWrapper>mapMulti((a, b) -> a.getTypeElement().ifPresent(b))
+                .map(TypeElementWrapper::unwrap)
+                .map(ClassName::get)
+                .filter(c -> !c.equals(ClassName.OBJECT))
+                .toList();
 
-        ClassName enclosingName =
-                enclosingType.map(TypeElementWrapper::unwrap).map(ClassName::get).orElse(null);
+        ClassName enclosingName = enclosingType
+                .map(TypeElementWrapper::unwrap)
+                .map(ClassName::get)
+                .orElse(null);
 
-        boolean isEnclosingInterface = enclosingType.map(TypeElementWrapper::isInterface).orElse(false);
-        String manualClassName =
-                enclosingType
-                        .map(TypeElementWrapper::unwrap)
-                        .map(e -> e.getAnnotation(Config.class))
-                        .map(Config::className)
-                        .orElse(null);
+        boolean isEnclosingInterface =
+                enclosingType.map(TypeElementWrapper::isInterface).orElse(false);
+        String manualClassName = enclosingType
+                .map(TypeElementWrapper::unwrap)
+                .map(e -> e.getAnnotation(Config.class))
+                .map(Config::className)
+                .orElse(null);
 
-        var thisParentReference =
-                enclosingName == null
-                        ? null
-                        : new ASTParentReference(
-                        enclosingName, isEnclosingInterface, manualClassName, parentReference);
+        var thisParentReference = enclosingName == null
+                ? null
+                : new ASTParentReference(enclosingName, isEnclosingInterface, manualClassName, parentReference);
 
-        var enclosedConfigs =
-                wrapper
-                        .filterEnclosedElements()
-                        .applyFilter(AptkCoreMatchers.IS_TYPE_ELEMENT)
-                        .applyFilter(AptkCoreMatchers.BY_ELEMENT_KIND)
-                        .filterByOneOf(ElementKind.CLASS, ElementKind.INTERFACE)
-                        .getResult()
-                        .stream()
-                        .map((e) -> parseAbstract(e, thisParentReference))
-                        .toList();
+        var enclosedConfigs = wrapper
+                .filterEnclosedElements()
+                .applyFilter(AptkCoreMatchers.IS_TYPE_ELEMENT)
+                .applyFilter(AptkCoreMatchers.BY_ELEMENT_KIND)
+                .filterByOneOf(ElementKind.CLASS, ElementKind.INTERFACE)
+                .getResult()
+                .stream()
+                .map((e) -> parseAbstract(e, thisParentReference))
+                .toList();
 
         var namingPattern = typesUtil.getAnnotation(element, NamingPattern.class);
         List<Property> properties = getPropertiesIn(element, namingPattern);
 
         var source = getSource(element);
         if (wrapper.hasAnnotation(ConfigUnion.class)) {
-            return putInCache(
-                    new AbstractConfigStructure.Union(
-                            ClassName.get(element),
-                            source,
-                            getSettings(element),
-                            thisParentReference,
-                            parents,
-                            enclosedConfigs,
-                            properties));
+            return putInCache(new AbstractConfigStructure.Union(
+                    ClassName.get(element),
+                    source,
+                    getSettings(element),
+                    thisParentReference,
+                    parents,
+                    enclosedConfigs,
+                    properties));
         }
         if (parents.isEmpty()) {
-            return putInCache(
-                    new AbstractConfigStructure.Atomic(
-                            ClassName.get(element),
-                            source,
-                            getSettings(element),
-                            enclosedConfigs,
-                            thisParentReference,
-                            properties));
+            return putInCache(new AbstractConfigStructure.Atomic(
+                    ClassName.get(element),
+                    source,
+                    getSettings(element),
+                    enclosedConfigs,
+                    thisParentReference,
+                    properties));
         }
 
-        return putInCache(
-                new AbstractConfigStructure.Intersection(
-                        ClassName.get(element),
-                        source,
-                        getSettings(element),
-                        thisParentReference,
-                        enclosedConfigs,
-                        parents,
-                        properties));
+        return putInCache(new AbstractConfigStructure.Intersection(
+                ClassName.get(element),
+                source,
+                getSettings(element),
+                thisParentReference,
+                enclosedConfigs,
+                parents,
+                properties));
     }
 
     private AbstractConfigStructure putInCache(AbstractConfigStructure configStructure) {
@@ -275,8 +258,9 @@ public class ConfigClassParser {
     private List<ValidationConstraint> parseConstraints(Element element) {
         List<ValidationConstraint> constraints = new ArrayList<>();
         for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
-            String qName =
-                    ((TypeElement) mirror.getAnnotationType().asElement()).getQualifiedName().toString();
+            String qName = ((TypeElement) mirror.getAnnotationType().asElement())
+                    .getQualifiedName()
+                    .toString();
             switch (qName) {
                 case "me.bristermitten.mittenlib.config.validation.Positive":
                 case "jakarta.validation.constraints.Positive":
@@ -305,16 +289,14 @@ public class ConfigClassParser {
                     break;
                 case "me.bristermitten.mittenlib.config.validation.Range":
                 case "org.hibernate.validator.constraints.Range":
-                    constraints.add(
-                            new ValidationConstraint.Range(
-                                    getDoubleAttributeValue(mirror, "min"), getDoubleAttributeValue(mirror, "max")));
+                    constraints.add(new ValidationConstraint.Range(
+                            getDoubleAttributeValue(mirror, "min"), getDoubleAttributeValue(mirror, "max")));
                     break;
                 case "me.bristermitten.mittenlib.config.validation.ValidateWith":
                     TypeMirror validatorType = getTypeAttributeValue(mirror, "value");
                     if (validatorType != null) {
-                        constraints.add(
-                                new ValidationConstraint.Custom(
-                                        ClassName.get((TypeElement) ((DeclaredType) validatorType).asElement())));
+                        constraints.add(new ValidationConstraint.Custom(
+                                ClassName.get((TypeElement) ((DeclaredType) validatorType).asElement())));
                     }
                     break;
             }

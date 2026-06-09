@@ -10,19 +10,15 @@ public class TypeSpecUtil {
     public static void methodAddAnnotation(MethodSpec.Builder builder, Class<?> annotation) {
         // check if the builder already has the annotation, if so, only add it if the annotation is
         // repeatable
-        methodAddAnnotation(builder, annotation, b -> {
-        });
+        methodAddAnnotation(builder, annotation, b -> {});
     }
 
     public static void methodAddAnnotation(
-            MethodSpec.Builder builder,
-            Class<?> annotation,
-            Consumer<AnnotationSpec.Builder> builderConsumer) {
+            MethodSpec.Builder builder, Class<?> annotation, Consumer<AnnotationSpec.Builder> builderConsumer) {
         // check if the builder already has the annotation, if so, only add it if the annotation is
         // repeatable
-        boolean hasAnnotation =
-                builder.annotations.stream()
-                        .anyMatch(existing -> existing.type.toString().equals(annotation.getCanonicalName()));
+        boolean hasAnnotation = builder.annotations.stream()
+                .anyMatch(existing -> existing.type.toString().equals(annotation.getCanonicalName()));
 
         if (!hasAnnotation || annotation.isAnnotationPresent(Repeatable.class)) {
             AnnotationSpec.Builder annotationBuilder = AnnotationSpec.builder(annotation);

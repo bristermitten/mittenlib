@@ -19,17 +19,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
 
-/**
- * Inspects the AST and sends errors/warnings for invalid setups
- */
+/** Inspects the AST and sends errors/warnings for invalid setups */
 public class ASTVerifier {
     private final Types types;
     private final Elements elements;
     private final SerializationCodeGenerator serializationCodeGenerator;
 
     @Inject
-    public ASTVerifier(
-            Types types, Elements elements, SerializationCodeGenerator serializationCodeGenerator) {
+    public ASTVerifier(Types types, Elements elements, SerializationCodeGenerator serializationCodeGenerator) {
         this.types = types;
         this.elements = elements;
         this.serializationCodeGenerator = serializationCodeGenerator;
@@ -42,8 +39,7 @@ public class ASTVerifier {
             if (!union.properties().isEmpty()) {
                 // if there are some properties, all alternatives must extend the union
                 for (AbstractConfigStructure alternative : union.alternatives()) {
-                    if (alternative.source().parents().stream()
-                            .noneMatch(t -> types.isSameType(t, unionType))) {
+                    if (alternative.source().parents().stream().noneMatch(t -> types.isSameType(t, unionType))) {
                         MessagerUtils.error(
                                 alternative.source().element(),
                                 ConfigVerificationErrors.UNION_ALTERNATIVE_NOT_EXTENDING_UNION,
@@ -59,12 +55,11 @@ public class ASTVerifier {
                     structure.properties().stream().anyMatch(p -> p.settings().hasDefaultValue());
             if (hasAnyDefault) {
                 TypeElement element = classSource.element();
-                Optional<ExecutableElement> noArgConstructor =
-                        element.getEnclosedElements().stream()
-                                .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
-                                .map(ExecutableElement.class::cast)
-                                .filter(c -> c.getParameters().isEmpty())
-                                .findFirst();
+                Optional<ExecutableElement> noArgConstructor = element.getEnclosedElements().stream()
+                        .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
+                        .map(ExecutableElement.class::cast)
+                        .filter(c -> c.getParameters().isEmpty())
+                        .findFirst();
                 if (noArgConstructor.isEmpty()
                         || noArgConstructor.get().getModifiers().contains(Modifier.PRIVATE)) {
                     MessagerUtils.error(
@@ -94,11 +89,11 @@ public class ASTVerifier {
 
         // Error/warn if a config with a @Source is not dynamically initializable
         if (structure.settings().source() != null && !structure.isDynamicallyInitializable()) {
-            var missingDefaults =
-                    structure.properties().stream()
-                            .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
-                            .map(Property::name)
-                            .toList();
+            var missingDefaults = structure.properties().stream()
+                    .filter(p ->
+                            !p.settings().hasDefaultValue() && !p.settings().isNullable())
+                    .map(Property::name)
+                    .toList();
             if (!missingDefaults.isEmpty()) {
                 if (structure.settings().config().requireDynamicInitialization()) {
                     MessagerUtils.error(
@@ -201,10 +196,9 @@ public class ASTVerifier {
                                     "Custom validator class " + val.canonicalName() + " not found");
                             success = false;
                         } else {
-                            TypeMirror boxedType =
-                                    type.getKind().isPrimitive()
-                                            ? types.boxedClass((PrimitiveType) type).asType()
-                                            : type;
+                            TypeMirror boxedType = type.getKind().isPrimitive()
+                                    ? types.boxedClass((PrimitiveType) type).asType()
+                                    : type;
                             TypeMirror wildcard = types.getWildcardType(null, boxedType); // <?>
                             TypeMirror expectedValidatorType =
                                     types.getDeclaredType(validatorElement, wildcard); // Validator<?>
@@ -255,5 +249,5 @@ public class ASTVerifier {
             return typeStr.equals(String.class.getName()) || typeStr.equals(CharSequence.class.getName());
         }
         return false;
-  }
+    }
 }

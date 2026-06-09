@@ -37,9 +37,7 @@ import java.util.*;
 @AutoService(Processor.class)
 public class ConfigProcessor extends AbstractAnnotationProcessor {
 
-    /**
-     * Public constructor for the compiler
-     */
+    /** Public constructor for the compiler */
     public ConfigProcessor() {
         super();
     }
@@ -52,24 +50,22 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
      * Generates implementation classes for each structure 5. Writes the generated files to the filer
      *
      * @param annotations The annotation types requested to be processed
-     * @param roundEnv    The environment for this round of annotation processing
+     * @param roundEnv The environment for this round of annotation processing
      * @return true if the annotations were processed successfully, false otherwise
      * @throws ConfigProcessingException if there is an error writing the generated files
      */
     @Override
-    public boolean processAnnotations(
-            Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         ToolingProvider.setTooling(processingEnv);
         var injector = Guice.createInjector(new ConfigProcessorModule(processingEnv));
 
-        final List<TypeElement> types =
-                annotations.stream()
-                        .map(roundEnv::getElementsAnnotatedWith)
-                        .flatMap(Collection::stream)
-                        .filter(TypeElement.class::isInstance)
-                        .map(TypeElement.class::cast)
-                        .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
-                        .toList();
+        final List<TypeElement> types = annotations.stream()
+                .map(roundEnv::getElementsAnnotatedWith)
+                .flatMap(Collection::stream)
+                .filter(TypeElement.class::isInstance)
+                .map(TypeElement.class::cast)
+                .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
+                .toList();
 
         CustomDeserializers customDeserializers = injector.getInstance(CustomDeserializers.class);
         roundEnv.getElementsAnnotatedWith(CustomDeserializerFor.class).stream()
@@ -124,26 +120,24 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
             var classNameGenerator = injector.getInstance(ConfigurationClassNameGenerator.class);
 
             // Sort by package name and then simple name for stability
-            asts.sort(
-                    Comparator.comparing(
-                                    (AbstractConfigStructure ast) ->
-                                            classNameGenerator.getPublicClassName(ast).packageName())
-                            .thenComparing(ast -> classNameGenerator.getPublicClassName(ast).simpleName()));
+            asts.sort(Comparator.comparing((AbstractConfigStructure ast) ->
+                            classNameGenerator.getPublicClassName(ast).packageName())
+                    .thenComparing(
+                            ast -> classNameGenerator.getPublicClassName(ast).simpleName()));
 
             // Use the shortest package name as the "root" package for the module
-            String rootPackage =
-                    asts.stream()
-                            .map(ast -> classNameGenerator.getPublicClassName(ast).packageName())
-                            .min(Comparator.comparingInt(String::length))
-                            .orElse("");
+            String rootPackage = asts.stream()
+                    .map(ast -> classNameGenerator.getPublicClassName(ast).packageName())
+                    .min(Comparator.comparingInt(String::length))
+                    .orElse("");
 
             JavaFile moduleEmit = moduleGenerator.emit(asts, rootPackage);
             try {
                 moduleEmit.writeTo(processingEnv.getFiler());
             } catch (Exception e) {
                 throw new ConfigProcessingException("Could not create ConfigLoaderModule file", e);
-      }
+            }
+        }
+        return true;
     }
-    return true;
-  }
 }

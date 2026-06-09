@@ -11,13 +11,8 @@ class CollectionDTOTransformationTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.CollectionConfig",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.CollectionConfig", """
                                 package me.bristermitten.mittenlib.tests;
                                 import me.bristermitten.mittenlib.config.Config;
                                 import me.bristermitten.mittenlib.config.Source;

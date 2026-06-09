@@ -9,7 +9,6 @@ public interface DeeplyNestedIntegrationConfig {
     @Config
     interface Child1Config {
         @Config
-        interface Child2Config {
-        }
+        interface Child2Config {}
     }
 }

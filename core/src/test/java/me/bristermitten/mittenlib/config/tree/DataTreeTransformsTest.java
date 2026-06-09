@@ -19,12 +19,9 @@ class DataTreeTransformsTest {
     Arbitrary<DataTree> dataTreeArbitrary() {
         return Arbitraries.recursive(
                 DataTreeTransformsTest::atomicDataTreeArbitrary,
-                arb ->
-                        Arbitraries.oneOf(
-                                arb.list()
-                                        .ofMaxSize(5)
-                                        .map(list -> new DataTree.DataTreeArray(list.toArray(new DataTree[0]))),
-                                Arbitraries.maps(arb, arb).ofMaxSize(5).map(DataTree.DataTreeMap::new)),
+                arb -> Arbitraries.oneOf(
+                        arb.list().ofMaxSize(5).map(list -> new DataTree.DataTreeArray(list.toArray(new DataTree[0]))),
+                        Arbitraries.maps(arb, arb).ofMaxSize(5).map(DataTree.DataTreeMap::new)),
                 4);
     }
 

@@ -7,12 +7,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-/**
- * Utility class for working with {@link Future}s and {@link CompletableFuture}s
- */
+/** Utility class for working with {@link Future}s and {@link CompletableFuture}s */
 public class Futures {
-    private Futures() {
-    }
+    private Futures() {}
 
     /**
      * Transform an array of {@link CompletableFuture}s into a single {@link CompletableFuture}
@@ -22,23 +19,21 @@ public class Futures {
      * kinded types in Java :(
      *
      * @param futures An array of futures
-     * @param <T>     The type of the future
+     * @param <T> The type of the future
      * @return A single future that will be completed when all the arguments have completed,
-     * containing all the argument results in a List. The order of the results should be the same
-     * as the order of the arguments, but this is not guaranteed.
+     *     containing all the argument results in a List. The order of the results should be the same
+     *     as the order of the arguments, but this is not guaranteed.
      */
     @SafeVarargs
     public static <T> CompletableFuture<Collection<T>> sequence(CompletableFuture<T>... futures) {
-        return CompletableFuture.allOf(futures)
-                .thenApply(
-                        v -> {
-                            List<T> list = new ArrayList<>(futures.length);
-                            for (CompletableFuture<T> future : futures) {
-                                T join = future.join();
-                                list.add(join);
-                            }
-                            return list;
-                        });
+        return CompletableFuture.allOf(futures).thenApply(v -> {
+            List<T> list = new ArrayList<>(futures.length);
+            for (CompletableFuture<T> future : futures) {
+                T join = future.join();
+                list.add(join);
+            }
+            return list;
+        });
     }
 
     /**
@@ -46,13 +41,12 @@ public class Futures {
      * holding a <code>Collection&lt;T&gt;</code>
      *
      * @param futures A collection of futures
-     * @param <T>     The type of the future
+     * @param <T> The type of the future
      * @return A single future that will be completed when all the arguments have completed,
-     * containing all the argument results in a List.
+     *     containing all the argument results in a List.
      * @see Futures#sequence(CompletableFuture[])
      */
-    public static <T> CompletableFuture<Collection<T>> sequence(
-            Collection<CompletableFuture<T>> futures) {
+    public static <T> CompletableFuture<Collection<T>> sequence(Collection<CompletableFuture<T>> futures) {
         //noinspection unchecked
         return sequence(futures.toArray(new CompletableFuture[0]));
     }
@@ -62,13 +56,12 @@ public class Futures {
      * CompletableFuture} holding a <code>Collection&lt;T&gt;</code>
      *
      * @param futures An iterable of futures
-     * @param <T>     The type of the futures
+     * @param <T> The type of the futures
      * @return A single future that will be completed when all the arguments have completed,
-     * containing all the argument results in a List.
+     *     containing all the argument results in a List.
      * @see Futures#sequence(CompletableFuture[])
      */
-    public static <T> CompletableFuture<Collection<T>> sequence(
-            Iterable<CompletableFuture<T>> futures) {
+    public static <T> CompletableFuture<Collection<T>> sequence(Iterable<CompletableFuture<T>> futures) {
         List<CompletableFuture<T>> futuresList;
         if (futures instanceof Collection) {
             futuresList = new ArrayList<>(((Collection<?>) futures).size());
@@ -76,6 +69,6 @@ public class Futures {
             futuresList = new ArrayList<>();
         }
         Iterators.addAll(futuresList, futures.iterator());
-    return sequence(futuresList);
-  }
+        return sequence(futuresList);
+    }
 }

@@ -8,5 +8,4 @@ import co.aikar.commands.contexts.IssuerOnlyContextResolver;
  * argument's value.
  */
 public interface IssuerOnlyArgumentContext<T>
-        extends ArgumentContext<T>, IssuerOnlyContextResolver<T, BukkitCommandExecutionContext> {
-}
+        extends ArgumentContext<T>, IssuerOnlyContextResolver<T, BukkitCommandExecutionContext> {}

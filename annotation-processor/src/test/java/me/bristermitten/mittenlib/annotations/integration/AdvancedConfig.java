@@ -11,11 +11,9 @@ import java.util.List;
 @Config(requireDynamicInitialization = false)
 @Source("config.yml")
 public interface AdvancedConfig {
-    @NotBlank
-    String host();
+    @NotBlank String host();
 
-    @Min(1)
-    default int port() {
+    @Min(1) default int port() {
         return 3306;
     }
 

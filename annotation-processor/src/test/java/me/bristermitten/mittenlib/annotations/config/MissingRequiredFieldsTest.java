@@ -7,20 +7,14 @@ import org.junit.jupiter.api.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-/**
- * Tests the error handling for missing required fields in configuration classes.
- */
+/** Tests the error handling for missing required fields in configuration classes. */
 class MissingRequiredFieldsTest {
 
     @Test
     void testMissingRequiredFields() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.RequiredFieldsConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.RequiredFieldsConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -42,8 +36,7 @@ class MissingRequiredFieldsTest {
 
                                     // Optional fields (with default values)
                                     public double optionalDouble = 3.14;
-                                    @Nullable
-                                    public String optionalString = null;
+                                    @Nullable public String optionalString = null;
 
                                     // Required nested config
                                     public NestedConfigDTO nestedConfig;

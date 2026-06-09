@@ -51,8 +51,7 @@ public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConf
     }
 
     @Override
-    @NotNull
-    public ConfigProvider<T> getWrapped() {
+    @NotNull public ConfigProvider<T> getWrapped() {
         return new ConfigProvider<T>() {
             @Override
             public Optional<Path> path() {
@@ -69,6 +68,6 @@ public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConf
             public T get() {
                 return delegate.get();
             }
-    };
-  }
+        };
+    }
 }

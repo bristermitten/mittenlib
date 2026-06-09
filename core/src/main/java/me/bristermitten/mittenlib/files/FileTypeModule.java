@@ -30,7 +30,7 @@ public class FileTypeModule extends AbstractModule {
     /**
      * Create a new FileTypeModule, using a provided {@link FileTypes} and {@link ObjectMapper} class
      *
-     * @param types        the {@link FileTypes} to register
+     * @param types the {@link FileTypes} to register
      * @param objectMapper the {@link ObjectMapper} class to register
      */
     public FileTypeModule(FileTypes types, Class<? extends ObjectMapper> objectMapper) {
@@ -40,8 +40,7 @@ public class FileTypeModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        final Multibinder<FileType> fileTypeMultibinder =
-                Multibinder.newSetBinder(binder(), FileType.class);
+        final Multibinder<FileType> fileTypeMultibinder = Multibinder.newSetBinder(binder(), FileType.class);
         for (Class<? extends FileType> type : types.getTypes()) {
             fileTypeMultibinder.addBinding().to(type);
         }
@@ -49,8 +48,7 @@ public class FileTypeModule extends AbstractModule {
         bind(ObjectMapper.class).to(objectMapper);
         bind(Gson.class).toProvider(GsonProvider.class);
         // This means Guice won't complain even if there aren't any custom type adapters
-        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {
-        });
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {});
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class);
-  }
+    }
 }

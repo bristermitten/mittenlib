@@ -28,12 +28,10 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
     @Override
     public <Command> SpigotGUIView<Command> createSpigotView(int size, String title) {
         if (size <= 0 || size % INVENTORY_ROW_SIZE != 0) {
-            throw new IllegalArgumentException(
-                    "Inventory size must be a positive multiple of " + INVENTORY_ROW_SIZE);
+            throw new IllegalArgumentException("Inventory size must be a positive multiple of " + INVENTORY_ROW_SIZE);
         }
         if (size > MAX_INVENTORY_SIZE) {
-            throw new IllegalArgumentException(
-                    "Inventory size cannot exceed " + MAX_INVENTORY_SIZE + " slots");
+            throw new IllegalArgumentException("Inventory size cannot exceed " + MAX_INVENTORY_SIZE + " slots");
         }
         Component formattedTitle = messageFormatter.format(title, null);
 
@@ -54,8 +52,7 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
     }
 
     @Override
-    public <Command> InventoryButton<Command> createButton(
-            ItemStack itemStack, Command command, String displayName) {
+    public <Command> InventoryButton<Command> createButton(ItemStack itemStack, Command command, String displayName) {
         if (itemStack == null) {
             throw new IllegalArgumentException("ItemStack cannot be null");
         }

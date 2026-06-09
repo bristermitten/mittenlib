@@ -5,8 +5,7 @@ import me.bristermitten.mittenlib.gui.view.View;
 
 import java.util.UUID;
 
-public class SessionID<
-        Model, Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
+public class SessionID<Model, Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
     private final UUID id;
 
     public SessionID(UUID id) {

@@ -9,7 +9,7 @@
  * @Config public interface TestConfig {
  * int number();
  * }
- *}
+ * }
  *
  * <p>We can then compose config types into bigger ones using inheritance, creating an intersection
  * structure:
@@ -19,7 +19,7 @@
  *     public interface AddedConfig extends TestConfig {
  *         int anotherNumber();
  *     }
- *}
+ * }
  *
  * This describes a structure with 2 properties, the <code>int number</code> and the <code>
  * int anotherNumber</code>. When using interfaces, multiple inheritance is allowed for more
@@ -44,7 +44,7 @@
  *             String path();
  *         }
  *     }
- *}
+ * }
  *
  * which essentially says that anytime a <code>RepositoryConfig</code> is referenced, it can be in
  * the form of either of the subtypes. Note that this is an <i>undiscriminated</i> union, i.e.

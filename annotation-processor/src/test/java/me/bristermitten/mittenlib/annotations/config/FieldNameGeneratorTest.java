@@ -19,13 +19,9 @@ class FieldNameGeneratorTest {
     }
 
     private JavaFileObject compileField(String source, @Nullable NamingPatterns pattern) {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO", """
                         package me.bristermitten.mittenlib.tests;
                         import java.util.Map;
 
@@ -36,16 +32,12 @@ class FieldNameGeneratorTest {
                         public class FieldClassNameGeneratorTestDTO {
                         %s
                         }
-                                                """
-                                                .formatted(
-                                                        pattern == null
-                                                                ? ""
-                                                                : "@NamingPattern(NamingPatterns." + pattern.name() + ")",
-                                                        source)));
+                                                """.formatted(
+                                        pattern == null ? "" : "@NamingPattern(NamingPatterns." + pattern.name() + ")",
+                                        source)));
 
         return compilation
-                .generatedSourceFile(
-                        "me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDeserializer")
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDeserializer")
                 .orElseThrow();
     }
 
@@ -63,9 +55,7 @@ class FieldNameGeneratorTest {
 
     @Test
     void assertThat_annotatedFieldName_hasHigherPriority_withConfigName() {
-        var source =
-                compileField(
-                        """
+        var source = compileField("""
                 @ConfigName("field-name")
                 int hello;
                 """);
@@ -74,36 +64,27 @@ class FieldNameGeneratorTest {
 
     @Test
     void assertThat_annotatedConfigName_hasHigherPriority_thanNamingPattern() {
-        var source =
-                compileField(
-                        """
+        var source = compileField("""
                 @ConfigName("field-name")
                 int hello;
-                                """,
-                        NamingPatterns.LOWER_SNAKE_CASE);
+                                """, NamingPatterns.LOWER_SNAKE_CASE);
         assertConfigKeyUsed(source, "field-name");
     }
 
     @Test
     void assertThat_field_with_NamingPattern_hasHigherPriority_than_class_with_NamingPattern() {
-        var source =
-                compileField(
-                        """
+        var source = compileField("""
                 @NamingPattern(NamingPatterns.UPPER_CAMEL_CASE)
                 int fieldName;
-                                """,
-                        NamingPatterns.LOWER_SNAKE_CASE);
+                                """, NamingPatterns.LOWER_SNAKE_CASE);
         assertConfigKeyUsed(source, "FieldName");
     }
 
     @Test
     void assertThat_unannotatedFieldName_usesClass_withNamingPattern() {
-        var source =
-                compileField(
-                        """
+        var source = compileField("""
                 int fieldName;
-                                """,
-                        NamingPatterns.LOWER_KEBAB_CASE);
+                                """, NamingPatterns.LOWER_KEBAB_CASE);
         assertConfigKeyUsed(source, "field-name");
     }
 }

@@ -66,29 +66,28 @@ public class NonGenericTypeDeserializerGenerator {
      * Creates a {@link CodeBlock} invoking a custom deserializer. Only supports static deserializers
      * for now.
      *
-     * @param info               the custom deserializer metadata
+     * @param info the custom deserializer metadata
      * @param withDataExpression the code block providing the deserialization data (e.g. {@code
-     *                           context.withData(data)})
+     *     context.withData(data)})
      * @return a code block invoking the custom deserializer
      */
-    private CodeBlock getDeserializationFunction(
-            CustomDeserializerInfo info, CodeBlock withDataExpression) {
+    private CodeBlock getDeserializationFunction(CustomDeserializerInfo info, CodeBlock withDataExpression) {
         if (info.isStatic()) {
-            return CodeBlock.of(
-                    "$T.deserialize(context.withData($L))", info.deserializerClass(), withDataExpression);
+            return CodeBlock.of("$T.deserialize(context.withData($L))", info.deserializerClass(), withDataExpression);
         }
-        String fieldName = Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
+        String fieldName =
+                Strings.uncapitalize(info.deserializerClass().getSimpleName().toString());
         return CodeBlock.of("this.$L.apply(context.withData($L))", fieldName, withDataExpression);
     }
 
     /**
      * Translates a {@link DataTree} literal value to its corresponding JVM primitive type.
      *
-     * @param type         the target type we want to convert to (e.g. {@code int}, {@code float})
+     * @param type the target type we want to convert to (e.g. {@code int}, {@code float})
      * @param dataTreeType the actual type wrapper inside the {@link DataTree}
-     * @param value        the code block representing the expression to convert
+     * @param value the code block representing the expression to convert
      * @return a code block performing the primitive conversion (e.g. {@code ((Integer)
-     * value).intValue()})
+     *     value).intValue()})
      */
     public CodeBlock dataTreeConvert(TypeName type, TypeName dataTreeType, CodeBlock value) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
@@ -121,10 +120,10 @@ public class NonGenericTypeDeserializerGenerator {
      * Generate deserialization code for non-generic properties. Tries all the cases described in the
      * documentation of {@link NonGenericTypeDeserializerGenerator}, in order.
      *
-     * @param builder            the method spec builder
-     * @param property           the property being processed
-     * @param dtoType            the enclosing DTO class element
-     * @param elementType        the property type mirror
+     * @param builder the method spec builder
+     * @param property the property being processed
+     * @param dtoType the enclosing DTO class element
+     * @param elementType the property type mirror
      * @param wrappedElementType the wrapped property type mirror
      * @return true if deserialization was fully generated/handled, false otherwise
      */
@@ -136,8 +135,7 @@ public class NonGenericTypeDeserializerGenerator {
             TypeMirrorWrapper wrappedElementType) {
         final String fromMapName = property.name() + "FromMap";
         final TypeName safeType =
-                configurationClassNameGenerator.getConfigPropertyClassName(
-                        typesUtil.getSafeType(elementType));
+                configurationClassNameGenerator.getConfigPropertyClassName(typesUtil.getSafeType(elementType));
 
         handleDirectTypeMatch(builder, property, fromMapName, safeType);
         handleDataTreeTypeMatch(builder, fromMapName, safeType);
@@ -175,16 +173,16 @@ public class NonGenericTypeDeserializerGenerator {
      *     return Result.ok((ExpectedType) deserialisedValue);
      * }
      * }</pre>
-     * <p>
-     * The justification for the default value requirement is not obvious upon immediate inspection.
-     * However, if a property doesn't have a default value, we instead load it as a {@link DataTree},
-     * so the {@code instanceof} would fail with a compile time error. If there is a default value, we
-     * instead load it as {@link Object} so can try this case safely.
      *
-     * @param builder     the method spec builder
-     * @param property    the property being processed
+     * <p>The justification for the default value requirement is not obvious upon immediate
+     * inspection. However, if a property doesn't have a default value, we instead load it as a {@link
+     * DataTree}, so the {@code instanceof} would fail with a compile time error. If there is a
+     * default value, we instead load it as {@link Object} so can try this case safely.
+     *
+     * @param builder the method spec builder
+     * @param property the property being processed
      * @param fromMapName the name of the variable containing the raw data (e.g. {@code countFromMap})
-     * @param safeType    the expected target type (e.g. {@code Integer})
+     * @param safeType the expected target type (e.g. {@code Integer})
      */
     private void handleDirectTypeMatch(
             MethodSpec.Builder builder, Property property, String fromMapName, TypeName safeType) {
@@ -206,40 +204,33 @@ public class NonGenericTypeDeserializerGenerator {
      * }
      * }</pre>
      *
-     * @param builder     the method spec builder
+     * @param builder the method spec builder
      * @param fromMapName the name of the variable containing the raw data (e.g. {@code countFromMap})
-     * @param safeType    the expected target type (e.g. {@code Integer})
+     * @param safeType the expected target type (e.g. {@code Integer})
      */
-    private void handleDataTreeTypeMatch(
-            MethodSpec.Builder builder, String fromMapName, TypeName safeType) {
+    private void handleDataTreeTypeMatch(MethodSpec.Builder builder, String fromMapName, TypeName safeType) {
         var treeType = typesUtil.getDataTreeType(safeType);
         if (treeType.isPresent()) {
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, treeType.get());
-            var convert =
-                    dataTreeConvert(
-                            safeType,
-                            treeType.get(),
-                            CodeBlock.of("(($T) $L).value()", treeType.get(), fromMapName));
+            var convert = dataTreeConvert(
+                    safeType, treeType.get(), CodeBlock.of("(($T) $L).value()", treeType.get(), fromMapName));
 
             builder.addStatement("return $T.ok($L)", Result.class, convert);
             builder.endControlFlow();
         }
     }
 
-    /**
-     * Generate code to invoke a custom deserialiser
-     */
+    /** Generate code to invoke a custom deserialiser */
     private boolean handleCustomDeserializer(
-            MethodSpec.Builder builder,
-            String fromMapName,
-            CustomDeserializerInfo info,
-            boolean isFallback) {
+            MethodSpec.Builder builder, String fromMapName, CustomDeserializerInfo info, boolean isFallback) {
         if (info.isFallback() == isFallback) {
-            CodeBlock deserializationFunction =
-                    getDeserializationFunction(
-                            info, CodeBlock.of("$T.loadFrom($L)", DataTreeTransforms.class, fromMapName));
+            CodeBlock deserializationFunction = getDeserializationFunction(
+                    info, CodeBlock.of("$T.loadFrom($L)", DataTreeTransforms.class, fromMapName));
 
-            builder.addStatement(CodeBlock.builder().add("return ").add(deserializationFunction).build());
+            builder.addStatement(CodeBlock.builder()
+                    .add("return ")
+                    .add(deserializationFunction)
+                    .build());
             return true;
         }
         return false;
@@ -249,23 +240,18 @@ public class NonGenericTypeDeserializerGenerator {
      * Generates code to parse enum property values from either raw {@link String} values or {@link
      * DataTree.DataTreeLiteral.DataTreeLiteralString} literal strings.
      */
-    private void handleEnumType(
-            MethodSpec.Builder builder, Property property, String fromMapName, TypeName safeType) {
+    private void handleEnumType(MethodSpec.Builder builder, Property property, String fromMapName, TypeName safeType) {
         if (property.settings().hasDefaultValue()) {
             builder.beginControlFlow("if ($L instanceof $T)", fromMapName, String.class);
-            addEnumDeserialisation(
-                    property, builder, fromMapName, safeType, CodeBlock.of("$L", fromMapName));
+            addEnumDeserialisation(property, builder, fromMapName, safeType, CodeBlock.of("$L", fromMapName));
             builder.endControlFlow();
         }
 
         builder.beginControlFlow(
                 "if ($L instanceof $T)", fromMapName, DataTree.DataTreeLiteral.DataTreeLiteralString.class);
         {
-            var convert =
-                    CodeBlock.of(
-                            "(($T) $L).value()",
-                            DataTree.DataTreeLiteral.DataTreeLiteralString.class,
-                            fromMapName);
+            var convert = CodeBlock.of(
+                    "(($T) $L).value()", DataTree.DataTreeLiteral.DataTreeLiteralString.class, fromMapName);
             addEnumDeserialisation(property, builder, fromMapName, safeType, convert);
         }
         builder.endControlFlow();
@@ -276,10 +262,8 @@ public class NonGenericTypeDeserializerGenerator {
      * value to a {@link DataTree.DataTreeMap} and invoking the nested implementation's deserialize
      * method.
      */
-    private void handleConfigType(
-            MethodSpec.Builder builder, TypeMirror elementType, String fromMapName) {
-        String loaderFieldName =
-                configurationClassNameGenerator.getDeserializerProviderFieldName(elementType);
+    private void handleConfigType(MethodSpec.Builder builder, TypeMirror elementType, String fromMapName) {
+        String loaderFieldName = configurationClassNameGenerator.getDeserializerProviderFieldName(elementType);
         builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeMap.class);
         builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
         builder.addStatement("return this.$L.get().apply(context.withData(mapData))", loaderFieldName);
@@ -291,10 +275,10 @@ public class NonGenericTypeDeserializerGenerator {
      * generates code to delegate deserialization to our {@link ObjectMapper}. Otherwise, it generates
      * a failure result indicating an invalid property type.
      *
-     * @param builder     the method spec builder
-     * @param property    the property being processed, used to determine the return type and check for
-     *                    annotations
-     * @param dtoType     the enclosing DTO class element, used for error reporting
+     * @param builder the method spec builder
+     * @param property the property being processed, used to determine the return type and check for
+     *     annotations
+     * @param dtoType the enclosing DTO class element, used for error reporting
      * @param elementType the property type mirror, used for error reporting
      * @param fromMapName the name of the variable containing the raw data (e.g. {@code countFromMap})
      * @return true if handled, false otherwise
@@ -338,44 +322,42 @@ public class NonGenericTypeDeserializerGenerator {
      * Helper method to generate enum lookup logic using either exact case matching or
      * case-insensitive matching depending on property configuration.
      *
-     * @param property    the property being processed, used to determine the parsing scheme and property
-     *                    name
-     * @param builder     the method spec builder
+     * @param property the property being processed, used to determine the parsing scheme and property
+     *     name
+     * @param builder the method spec builder
      * @param fromMapName the name of the variable containing the raw data (e.g. {@code typeFromMap})
-     * @param safeType    the expected target type (e.g. {@code MyEnum})
-     * @param convert     the code block performing the conversion to String (e.g. {@code
-     *                    typeFromMap.value()})
+     * @param safeType the expected target type (e.g. {@code MyEnum})
+     * @param convert the code block performing the conversion to String (e.g. {@code
+     *     typeFromMap.value()})
      */
     private void addEnumDeserialisation(
-            Property property,
-            MethodSpec.Builder builder,
-            String fromMapName,
-            TypeName safeType,
-            CodeBlock convert) {
+            Property property, MethodSpec.Builder builder, String fromMapName, TypeName safeType, CodeBlock convert) {
         switch (property.settings().enumParsingScheme()) {
-            case EXACT_MATCH -> builder.addStatement(
-                    "$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
-                    safeType,
-                    Enums.class,
-                    String.class,
-                    convert);
-            case CASE_INSENSITIVE -> builder.addStatement(
-                    "$1T enumValue = $2T.valueOfIgnoreCase(($3T) $4L, $1T.class)",
-                    safeType,
-                    Enums.class,
-                    String.class,
-                    convert);
+            case EXACT_MATCH ->
+                builder.addStatement(
+                        "$1T enumValue = $2T.valueOfOrNull(($3T) $4L, $1T.class)",
+                        safeType,
+                        Enums.class,
+                        String.class,
+                        convert);
+            case CASE_INSENSITIVE ->
+                builder.addStatement(
+                        "$1T enumValue = $2T.valueOfIgnoreCase(($3T) $4L, $1T.class)",
+                        safeType,
+                        Enums.class,
+                        String.class,
+                        convert);
         }
         builder.beginControlFlow("if (enumValue == null)");
-    builder.addStatement(
-        "return $T.fail($T.invalidEnumException($T.class, $S, $L))",
-        Result.class,
-        ConfigLoadingErrors.class,
-        safeType,
-        property.name(),
-        fromMapName);
-    builder.endControlFlow();
+        builder.addStatement(
+                "return $T.fail($T.invalidEnumException($T.class, $S, $L))",
+                Result.class,
+                ConfigLoadingErrors.class,
+                safeType,
+                property.name(),
+                fromMapName);
+        builder.endControlFlow();
 
-    builder.addStatement("return $T.ok(enumValue)", Result.class);
-  }
+        builder.addStatement("return $T.ok(enumValue)", Result.class);
+    }
 }

@@ -11,5 +11,4 @@ import java.util.function.Function;
  * @param <T> the type to deserialize to
  */
 @FunctionalInterface
-public interface DeserializationFunction<T> extends Function<DeserializationContext, Result<T>> {
-}
+public interface DeserializationFunction<T> extends Function<DeserializationContext, Result<T>> {}

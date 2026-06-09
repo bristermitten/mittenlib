@@ -18,9 +18,7 @@ import java.util.function.UnaryOperator;
 
 import static me.bristermitten.mittenlib.util.Cast.safeCast;
 
-/**
- * A basic service for sending language messages to command senders.
- */
+/** A basic service for sending language messages to command senders. */
 public class LangService {
 
     private final MessageFormatter formatter;
@@ -35,9 +33,7 @@ public class LangService {
     }
 
     public LangService(
-            MessageFormatter formatter,
-            BukkitAudiences audiences,
-            UnaryOperator<Component> componentPostProcessor) {
+            MessageFormatter formatter, BukkitAudiences audiences, UnaryOperator<Component> componentPostProcessor) {
         this.formatter = formatter;
         this.audiences = audiences;
         this.componentPostProcessor = componentPostProcessor;
@@ -59,9 +55,7 @@ public class LangService {
     }
 
     public void send(
-            @NotNull CommandSender receiver,
-            @NotNull LangMessage langMessage,
-            @Nullable String messagePrefix) {
+            @NotNull CommandSender receiver, @NotNull LangMessage langMessage, @Nullable String messagePrefix) {
         send(receiver, langMessage, Collections.emptyMap(), messagePrefix);
     }
 
@@ -76,13 +70,12 @@ public class LangService {
                 send(receiver, message, placeholders, messagePrefix);
             }
         }
-        UnaryOperator<String> applyPlaceholders =
-                str -> {
-                    for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
-                        str = str.replace(entry.getKey(), entry.getValue().toString());
-                    }
-                    return str;
-                };
+        UnaryOperator<String> applyPlaceholders = str -> {
+            for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
+                str = str.replace(entry.getKey(), entry.getValue().toString());
+            }
+            return str;
+        };
 
         if (langMessage.getMessage() != null) {
             String message = langMessage.getMessage();
@@ -92,10 +85,12 @@ public class LangService {
         }
 
         if (langMessage.getTitle() != null || langMessage.getSubtitle() != null) {
-            final String title =
-                    Optional.ofNullable(langMessage.getTitle()).map(applyPlaceholders).orElse(null);
-            final String subtitle =
-                    Optional.ofNullable(langMessage.getSubtitle()).map(applyPlaceholders).orElse("");
+            final String title = Optional.ofNullable(langMessage.getTitle())
+                    .map(applyPlaceholders)
+                    .orElse(null);
+            final String subtitle = Optional.ofNullable(langMessage.getSubtitle())
+                    .map(applyPlaceholders)
+                    .orElse("");
 
             sendTitle(receiver, title, subtitle);
         }
@@ -115,8 +110,7 @@ public class LangService {
     }
 
     private Component getFormattedComponent(CommandSender receiver, String message) {
-        return componentPostProcessor.apply(
-                formatter.format(message, safeCast(receiver, OfflinePlayer.class)));
+        return componentPostProcessor.apply(formatter.format(message, safeCast(receiver, OfflinePlayer.class)));
     }
 
     public void sendActionBar(CommandSender receiver, String message) {
@@ -127,7 +121,6 @@ public class LangService {
         audiences
                 .sender(receiver)
                 .showTitle(
-                        Title.title(
-                                getFormattedComponent(receiver, title), getFormattedComponent(receiver, subtitle)));
-  }
+                        Title.title(getFormattedComponent(receiver, title), getFormattedComponent(receiver, subtitle)));
+    }
 }

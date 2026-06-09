@@ -4,14 +4,10 @@ import me.bristermitten.mittenlib.util.Errors;
 import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Unit;
 
-/**
- * A {@link Runnable} that can throw a checked exception.
- */
+/** A {@link Runnable} that can throw a checked exception. */
 @FunctionalInterface
 public interface SafeRunnable {
-    /**
-     * Run the code, possibly throwing an exception.
-     */
+    /** Run the code, possibly throwing an exception. */
     void run() throws Exception;
 
     /**
@@ -20,11 +16,10 @@ public interface SafeRunnable {
      * @return the result
      */
     default Result<Unit> runCatching() {
-        return Result.runCatching(
-                () -> {
-                    run();
-                    return Unit.UNIT;
-                });
+        return Result.runCatching(() -> {
+            run();
+            return Unit.UNIT;
+        });
     }
 
     /**
@@ -38,7 +33,7 @@ public interface SafeRunnable {
                 run();
             } catch (Exception e) {
                 Errors.sneakyThrow(e);
-      }
-    };
-  }
+            }
+        };
+    }
 }

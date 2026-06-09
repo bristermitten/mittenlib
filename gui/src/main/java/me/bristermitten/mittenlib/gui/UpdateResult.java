@@ -15,12 +15,12 @@ public class UpdateResult<Model, Msg, Ctx extends CommandContext, Cmd extends Co
     }
 
     public static <Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>>
-    UpdateResult<Model, Msg, Ctx, Cmd> of(@NonNull Model model, @NonNull Cmd command) {
+            UpdateResult<Model, Msg, Ctx, Cmd> of(@NonNull Model model, @NonNull Cmd command) {
         return new UpdateResult<>(model, command);
     }
 
     public static <Model, Msg, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>>
-    UpdateResult<Model, Msg, Ctx, Cmd> pure(@NonNull Model model) {
+            UpdateResult<Model, Msg, Ctx, Cmd> pure(@NonNull Model model) {
         return new UpdateResult<>(model, null);
     }
 

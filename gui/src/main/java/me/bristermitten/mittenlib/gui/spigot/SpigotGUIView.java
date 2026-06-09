@@ -14,8 +14,7 @@ import java.util.Optional;
  *
  * @param <Msg> the message type
  */
-public class SpigotGUIView<Msg>
-        implements View<Msg, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>> {
+public class SpigotGUIView<Msg> implements View<Msg, SpigotGUIView<Msg>, SpigotInventoryViewer<Msg>> {
     private final int size;
     private final String title;
 
@@ -23,10 +22,7 @@ public class SpigotGUIView<Msg>
     private final @Nullable Msg onClose;
 
     public SpigotGUIView(
-            int size,
-            String title,
-            @Unmodifiable Map<Integer, InventoryButton<Msg>> buttons,
-            @Nullable Msg onClose) {
+            int size, String title, @Unmodifiable Map<Integer, InventoryButton<Msg>> buttons, @Nullable Msg onClose) {
         this.size = size;
         this.title = title;
         this.buttons = Maps.of(buttons.entrySet());

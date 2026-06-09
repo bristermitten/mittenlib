@@ -47,12 +47,11 @@ public class MethodNames {
      * This method uses caching to improve performance for repeated calls with the same element.
      *
      * @param variableElement The variable element to generate a method name for
-     * @param enclosingClass  The class that encloses the variable element
+     * @param enclosingClass The class that encloses the variable element
      * @return A safe method name that doesn't conflict with existing methods
      */
     public String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
-        return safeNameCache.computeIfAbsent(
-                variableElement, elem -> safeMethodName0(elem, enclosingClass));
+        return safeNameCache.computeIfAbsent(variableElement, elem -> safeMethodName0(elem, enclosingClass));
     }
 
     /**
@@ -67,14 +66,14 @@ public class MethodNames {
     public String safeMethodName(Property property) {
         return switch (property.source()) {
             case Property.PropertySource.FieldSource(var field) ->
-                    safeMethodName(field, (TypeElement) field.getEnclosingElement());
-            case Property.PropertySource.MethodSource(var method) -> method.getSimpleName().toString();
+                safeMethodName(field, (TypeElement) field.getEnclosingElement());
+            case Property.PropertySource.MethodSource(var method) ->
+                method.getSimpleName().toString();
         };
     }
 
     private String safeMethodName0(VariableElement variableElement, TypeElement enclosingClass) {
-        var methodNames =
-                methodNamesCache.computeIfAbsent(variableElement, x -> getNoArgMethodNames(enclosingClass));
+        var methodNames = methodNamesCache.computeIfAbsent(variableElement, x -> getNoArgMethodNames(enclosingClass));
 
         var name = new StringBuilder(variableElement.getSimpleName());
         while (methodNames.contains(name.toString())) {
@@ -115,6 +114,6 @@ public class MethodNames {
      */
     public String getSerializeMethodName(Property property) {
         var name = Strings.capitalize(property.name());
-    return SERIALIZE_METHOD_PREFIX + name;
-  }
+        return SERIALIZE_METHOD_PREFIX + name;
+    }
 }

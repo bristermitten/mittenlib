@@ -61,25 +61,26 @@ public class ConfigImplGenerator {
      * @return A JavaFile containing the generated implementation class
      */
     public JavaFile emit(AbstractConfigStructure ast) {
-        ClassName configImplClassName =
-                configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
+        ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(
+                ast.source().element());
         TypeSpec.Builder source = TypeSpec.classBuilder(configImplClassName);
 
         emitInto(ast, source);
 
-        return JavaFile.builder(configImplClassName.packageName(), source.build()).build();
+        return JavaFile.builder(configImplClassName.packageName(), source.build())
+                .build();
     }
 
     /**
      * Adds all necessary elements to the {@link TypeSpec.Builder} to create a complete implementation
      * class.
      *
-     * @param ast    The abstract configuration structure to generate an implementation for
+     * @param ast The abstract configuration structure to generate an implementation for
      * @param source The {@link TypeSpec.Builder} to add elements to
      */
     private void emitInto(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        ClassName configImplClassName =
-                configurationClassNameGenerator.generateConfigurationClassName(ast.source().element());
+        ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(
+                ast.source().element());
         source.addModifiers(Modifier.PUBLIC);
         makeAbstractIfUnion(ast, source);
         addSourceElement(ast, source);
@@ -104,21 +105,18 @@ public class ConfigImplGenerator {
      * public static final Configuration<MyConfig> CONFIG = new Configuration<>("config.yml", MyConfig.class);
      * }</pre>
      *
-     * @param ast     the configuration structure, used to determine the public class name (e.g. {@code
-     *                MyConfig}) and source (e.g. {@code "config.yml"})
+     * @param ast the configuration structure, used to determine the public class name (e.g. {@code
+     *     MyConfig}) and source (e.g. {@code "config.yml"})
      * @param builder the class builder
      */
     private void addSourceElement(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         if (ast.settings().source() != null) {
             ClassName publicClassName = configurationClassNameGenerator.getPublicClassName(ast);
-            ClassName implementationClassName =
-                    configurationClassNameGenerator.translateConfigClassName(ast);
+            ClassName implementationClassName = configurationClassNameGenerator.translateConfigClassName(ast);
 
-            FieldSpec.Builder configFieldBuilder =
-                    FieldSpec.builder(
-                                    ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName),
-                                    "CONFIG")
-                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
+            FieldSpec.Builder configFieldBuilder = FieldSpec.builder(
+                            ParameterizedTypeName.get(ClassName.get(Configuration.class), publicClassName), "CONFIG")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
 
             configFieldBuilder.initializer(
                     "new $T<>($S, $T.class, $T.class)",
@@ -140,8 +138,8 @@ public class ConfigImplGenerator {
      * public class MyConfigImpl extends BaseConfigImpl implements MyConfig
      * }</pre>
      *
-     * @param ast    the configuration structure, used to determine the parent class (e.g. {@code
-     *               BaseConfigImpl}) and interfaces (e.g. {@code MyConfig})
+     * @param ast the configuration structure, used to determine the parent class (e.g. {@code
+     *     BaseConfigImpl}) and interfaces (e.g. {@code MyConfig})
      * @param source the class builder
      */
     private void addInheritance(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -152,30 +150,26 @@ public class ConfigImplGenerator {
             classParent
                     .parent()
                     .flatMap(configNameCache::lookupAST)
-                    .ifPresent(
-                            parent ->
-                                    source.superclass(
-                                            configurationClassNameGenerator.translateConfigClassName(parent)));
+                    .ifPresent(parent ->
+                            source.superclass(configurationClassNameGenerator.translateConfigClassName(parent)));
         }
     }
 
     /**
      * Adds {@link GeneratedConfig} and {@link Generated} annotations to the class.
      *
-     * @param ast    the configuration structure
+     * @param ast the configuration structure
      * @param source the class builder
      */
     private void addGeneratedConfigAnnotations(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        final List<String> unserializableProperties =
-                ast.properties().stream()
-                        .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
-                        .map(Property::name)
-                        .toList();
+        final List<String> unserializableProperties = ast.properties().stream()
+                .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
+                .map(Property::name)
+                .toList();
 
-        AnnotationSpec.Builder generatedConfigBuilder =
-                AnnotationSpec.builder(GeneratedConfig.class)
-                        .addMember("source", "$T.class", ast.name())
-                        .addMember("isDynamicallyInitializable", "$L", ast.isDynamicallyInitializable());
+        AnnotationSpec.Builder generatedConfigBuilder = AnnotationSpec.builder(GeneratedConfig.class)
+                .addMember("source", "$T.class", ast.name())
+                .addMember("isDynamicallyInitializable", "$L", ast.isDynamicallyInitializable());
 
         for (String property : unserializableProperties) {
             generatedConfigBuilder.addMember("uninitializableProperties", "$S", property);
@@ -183,21 +177,18 @@ public class ConfigImplGenerator {
 
         source.addAnnotation(generatedConfigBuilder.build());
 
-        source.addAnnotation(
-                AnnotationSpec.builder(Generated.class)
-                        .addMember("value", "$S", ConfigProcessor.class.getName())
-                        .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
-                        .addMember(
-                                "date",
-                                "$S",
-                                ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
-                        .build());
+        source.addAnnotation(AnnotationSpec.builder(Generated.class)
+                .addMember("value", "$S", ConfigProcessor.class.getName())
+                .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
+                .addMember(
+                        "date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
+                .build());
     }
 
     /**
      * Ensures nested classes are marked as {@code static}.
      *
-     * @param ast    the configuration structure
+     * @param ast the configuration structure
      * @param source the class builder
      */
     private void addNestedClassModifiers(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -210,7 +201,7 @@ public class ConfigImplGenerator {
     /**
      * Adds all properties as fields and accessors to the implementation class.
      *
-     * @param ast    the configuration structure
+     * @param ast the configuration structure
      * @param source the class builder
      */
     private void addProperties(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -223,9 +214,9 @@ public class ConfigImplGenerator {
      * Adds {@code equals} and {@code hashCode} methods, plus {@code toString} if {@link
      * ASTSettings.ConfigASTSettings#generateToString()} is true
      *
-     * @param ast                 the configuration structure
+     * @param ast the configuration structure
      * @param configImplClassName the name of the implementation class
-     * @param source              the class builder
+     * @param source the class builder
      */
     private void addStandardObjectMethods(
             AbstractConfigStructure ast, ClassName configImplClassName, TypeSpec.Builder source) {
@@ -243,7 +234,7 @@ public class ConfigImplGenerator {
      * enclosed structure, we create a subclass builder and call {@link
      * #emitInto(AbstractConfigStructure, TypeSpec.Builder)} to add the subclass config values.
      *
-     * @param ast    the parent configuration structure
+     * @param ast the parent configuration structure
      * @param source the parent class builder
      */
     private void addChildClasses(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -270,26 +261,25 @@ public class ConfigImplGenerator {
      * }</pre>
      *
      * @param property the property to add, used for the field name and getter (e.g. {@code name})
-     * @param source   the class builder
+     * @param source the class builder
      */
     private void addProperty(Property property, TypeSpec.Builder source) {
-        FieldSpec field =
-                FieldSpec.builder(
-                                configurationClassNameGenerator
-                                        .publicPropertyClassName(property)
-                                        .annotated(Nullity.getNullityAnnotationSpec(property)),
-                                property.name(),
-                                Modifier.FINAL,
-                                Modifier.PRIVATE)
-                        .build();
+        FieldSpec field = FieldSpec.builder(
+                        configurationClassNameGenerator
+                                .publicPropertyClassName(property)
+                                .annotated(Nullity.getNullityAnnotationSpec(property)),
+                        property.name(),
+                        Modifier.FINAL,
+                        Modifier.PRIVATE)
+                .build();
 
         source.addField(field);
 
         switch (property.source()) {
             case Property.PropertySource.FieldSource(var element) ->
-                    accessorGenerator.createGetterMethod(source, element, field);
+                accessorGenerator.createGetterMethod(source, element, field);
             case Property.PropertySource.MethodSource(var method) ->
-                    accessorGenerator.createGetterMethodOverriding(source, method, field);
+                accessorGenerator.createGetterMethodOverriding(source, method, field);
         }
     }
 
@@ -342,7 +332,7 @@ public class ConfigImplGenerator {
      * }
      * }</pre>
      *
-     * @param ast         the configuration structure, used to find the parent configuration
+     * @param ast the configuration structure, used to find the parent configuration
      * @param constructor the constructor builder to add the parameter and super call to
      */
     private void addSuperClassParameter(AbstractConfigStructure ast, MethodSpec.Builder constructor) {
@@ -351,27 +341,21 @@ public class ConfigImplGenerator {
         // and then call `super(parent.a(), parent.b(), ...)`
         var parentMirror = getSuperClass(ast);
 
-        parentMirror.ifPresent(
-                parent -> {
-                    var parentConfig =
-                            configNameCache
-                                    .lookupAST(parent)
-                                    .orElseThrow(
-                                            () ->
-                                                    new IllegalStateException(
-                                                            "could not determine a config for parent class " + parent));
-                    ClassName parentName =
-                            configurationClassNameGenerator.translateConfigClassName(parentConfig);
+        parentMirror.ifPresent(parent -> {
+            var parentConfig = configNameCache
+                    .lookupAST(parent)
+                    .orElseThrow(
+                            () -> new IllegalStateException("could not determine a config for parent class " + parent));
+            ClassName parentName = configurationClassNameGenerator.translateConfigClassName(parentConfig);
 
-                    String superParameterName = "parent";
-                    constructor.addParameter(
-                            ParameterSpec.builder(parentName, superParameterName, Modifier.FINAL).build());
+            String superParameterName = "parent";
+            constructor.addParameter(ParameterSpec.builder(parentName, superParameterName, Modifier.FINAL)
+                    .build());
 
-                    List<String> parentParams =
-                            buildSuperConstructorParams(parent, parentConfig, superParameterName);
-                    constructor.addStatement("super($L)", String.join(", ", parentParams));
-                    constructor.addStatement("this.parent = parent");
-                });
+            List<String> parentParams = buildSuperConstructorParams(parent, parentConfig, superParameterName);
+            constructor.addStatement("super($L)", String.join(", ", parentParams));
+            constructor.addStatement("this.parent = parent");
+        });
     }
 
     /**
@@ -389,22 +373,16 @@ public class ConfigImplGenerator {
     private void addSuperClassField(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         var parentMirror = getSuperClass(ast);
 
-        parentMirror.ifPresent(
-                parent -> {
-                    var parentConfig =
-                            configNameCache
-                                    .lookupAST(parent)
-                                    .orElseThrow(
-                                            () ->
-                                                    new IllegalStateException(
-                                                            "could not determine a config for parent class " + parent));
-                    ClassName parentName =
-                            configurationClassNameGenerator.translateConfigClassName(parentConfig);
-                    FieldSpec.Builder field =
-                            FieldSpec.builder(parentName, "parent", Modifier.PRIVATE, Modifier.FINAL);
+        parentMirror.ifPresent(parent -> {
+            var parentConfig = configNameCache
+                    .lookupAST(parent)
+                    .orElseThrow(
+                            () -> new IllegalStateException("could not determine a config for parent class " + parent));
+            ClassName parentName = configurationClassNameGenerator.translateConfigClassName(parentConfig);
+            FieldSpec.Builder field = FieldSpec.builder(parentName, "parent", Modifier.PRIVATE, Modifier.FINAL);
 
-                    builder.addField(field.build());
-                });
+            builder.addField(field.build());
+        });
     }
 
     /**
@@ -416,19 +394,16 @@ public class ConfigImplGenerator {
      * parent.a(), parent.b()
      * }</pre>
      *
-     * @param parent             the type mirror of the parent class
-     * @param parentConfig       the configuration structure of the parent
+     * @param parent the type mirror of the parent class
+     * @param parentConfig the configuration structure of the parent
      * @param superParameterName the name of the parent parameter (e.g. {@code parent})
      * @return a list of code strings for the super constructor parameters
      */
     private List<String> buildSuperConstructorParams(
             TypeMirror parent, AbstractConfigStructure parentConfig, String superParameterName) {
-        var parentParams =
-                parentConfig.properties().stream()
-                        .map(
-                                variableElement ->
-                                        superParameterName + "." + methodNames.safeMethodName(variableElement) + "()")
-                        .toList();
+        var parentParams = parentConfig.properties().stream()
+                .map(variableElement -> superParameterName + "." + methodNames.safeMethodName(variableElement) + "()")
+                .toList();
 
         Optional<TypeMirror> parentParent = getSuperClass(parent);
         // when the superclass has a superclass, we need to also pass the superclass to the parent
@@ -453,7 +428,7 @@ public class ConfigImplGenerator {
      * }
      * }</pre>
      *
-     * @param ast         the configuration structure
+     * @param ast the configuration structure
      * @param constructor the constructor builder
      */
     private void addPropertyParameters(AbstractConfigStructure ast, MethodSpec.Builder constructor) {
@@ -466,13 +441,13 @@ public class ConfigImplGenerator {
 
     private ParameterSpec createPropertyParameter(Property property) {
         var nullityAnnotation = Nullity.getNullityAnnotation(property);
-        ParameterSpec.Builder builder =
-                ParameterSpec.builder(
-                                configurationClassNameGenerator
-                                        .publicPropertyClassName(property)
-                                        .annotated(AnnotationSpec.builder(nullityAnnotation).build()),
-                                property.name())
-                        .addModifiers(Modifier.FINAL);
+        ParameterSpec.Builder builder = ParameterSpec.builder(
+                        configurationClassNameGenerator
+                                .publicPropertyClassName(property)
+                                .annotated(AnnotationSpec.builder(nullityAnnotation)
+                                        .build()),
+                        property.name())
+                .addModifiers(Modifier.FINAL);
 
         return builder.build();
     }
@@ -498,15 +473,14 @@ public class ConfigImplGenerator {
             return Optional.empty(); // nothing to do
         }
 
-        boolean hasAnyDefaultValue =
-                ast.properties().stream().anyMatch(property -> property.settings().hasDefaultValue());
+        boolean hasAnyDefaultValue = ast.properties().stream()
+                .anyMatch(property -> property.settings().hasDefaultValue());
         // if no properties have default values, there's nothing to do
         if (!hasAnyDefaultValue) {
             return Optional.empty();
         }
 
-        ClassName concreteConfigClassName =
-                configurationClassNameGenerator.getConcreteConfigClassName(ast);
+        ClassName concreteConfigClassName = configurationClassNameGenerator.getConcreteConfigClassName(ast);
         var innerName = configurationClassNameGenerator.getDefaultMethodAccessClassName(ast);
 
         var innerBuilder = TypeSpec.classBuilder(innerName);
@@ -518,20 +492,19 @@ public class ConfigImplGenerator {
                 continue;
             }
 
-            innerBuilder.addMethod(
-                    MethodSpec.methodBuilder(property.name())
-                            .addModifiers(Modifier.PUBLIC)
-                            .addAnnotation(Override.class)
-                            .returns(configurationClassNameGenerator.publicPropertyClassName(property))
-              .addStatement(
-                  "throw $T.defaultValueProxyException($T.class, $S)",
-                  ConfigLoadingErrors.class,
-                  concreteConfigClassName,
-                  property.name())
-              .build());
-    }
+            innerBuilder.addMethod(MethodSpec.methodBuilder(property.name())
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
+                    .returns(configurationClassNameGenerator.publicPropertyClassName(property))
+                    .addStatement(
+                            "throw $T.defaultValueProxyException($T.class, $S)",
+                            ConfigLoadingErrors.class,
+                            concreteConfigClassName,
+                            property.name())
+                    .build());
+        }
 
-    typeSpecBuilder.addType(innerBuilder.build());
-    return Optional.of(innerName);
-  }
+        typeSpecBuilder.addType(innerBuilder.build());
+        return Optional.of(innerName);
+    }
 }

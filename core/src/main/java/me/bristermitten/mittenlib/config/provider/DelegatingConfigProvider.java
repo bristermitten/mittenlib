@@ -30,12 +30,8 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T>, WrappingC
             Configuration<T> configuration,
             Provider<ConfigProviderFactory> providerFactory,
             Provider<ConfigProviderImprover> improver) {
-        this.delegate =
-                new Cached<>(
-                        () ->
-                                improver
-                                        .get()
-                                        .improve(providerFactory.get().createProvider(configuration).getOrThrow()));
+        this.delegate = new Cached<>(() -> improver.get()
+                .improve(providerFactory.get().createProvider(configuration).getOrThrow()));
     }
 
     @Override
@@ -58,8 +54,7 @@ public class DelegatingConfigProvider<T> implements ConfigProvider<T>, WrappingC
     }
 
     @Override
-    @NotNull
-    public ConfigProvider<T> getWrapped() {
+    @NotNull public ConfigProvider<T> getWrapped() {
         return getDelegate();
-  }
+    }
 }

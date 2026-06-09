@@ -11,13 +11,8 @@ class EmptyConfigGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.EmptyConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.EmptyConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
                                 import java.util.Map;
                                 import me.bristermitten.mittenlib.config.*;

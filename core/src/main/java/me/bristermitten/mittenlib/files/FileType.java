@@ -28,14 +28,12 @@ public interface FileType {
      *
      * @return an Object Loader for this file type
      */
-    @NotNull
-    ObjectLoader loader();
+    @NotNull ObjectLoader loader();
 
     /**
      * Returns an {@link ObjectWriter} for this file type.
      *
      * @return an {@link ObjectWriter} for this file type
      */
-    @NotNull
-    ObjectWriter writer();
+    @NotNull ObjectWriter writer();
 }

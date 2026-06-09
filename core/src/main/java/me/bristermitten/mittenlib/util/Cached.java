@@ -27,8 +27,8 @@ public class Cached<T> implements Supplier<T> {
      * Create a new Cached with the given supplier.
      *
      * @param computeWith The supplier to compute the value with.
-     * @param eager       Whether to eagerly compute the value. If true, the supplier will be called
-     *                    immediately.
+     * @param eager Whether to eagerly compute the value. If true, the supplier will be called
+     *     immediately.
      */
     public Cached(Supplier<@NotNull T> computeWith, boolean eager) {
         this.computeWith = computeWith;
@@ -56,11 +56,10 @@ public class Cached<T> implements Supplier<T> {
      * @return The cached value.
      */
     @Override
-    @NotNull
-    public T get() {
+    @NotNull public T get() {
         if (t == null) {
-      return update();
+            return update();
+        }
+        return t;
     }
-    return t;
-  }
 }

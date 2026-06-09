@@ -44,5 +44,5 @@ public abstract class MittenLibConfigLoader {
     @ApiStatus.Internal
     public final Module asModuleWithInfrastructure() {
         return Modules.combine(asModule(), new ConfigInfrastructureModule());
-  }
+    }
 }

@@ -8,5 +8,4 @@ import javax.lang.model.element.TypeElement;
  * @param serializerClass the class where the serialization function is held
  * @param isStatic whether the method is static
  */
-public record CustomSerializerInfo(TypeElement serializerClass, boolean isStatic) {
-}
+public record CustomSerializerInfo(TypeElement serializerClass, boolean isStatic) {}

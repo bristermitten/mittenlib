@@ -2,14 +2,11 @@ package me.bristermitten.mittenlib.util;
 
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Unit value
- */
+/** Unit value */
 public class Unit {
     public static final Unit UNIT = new Unit();
 
-    private Unit() {
-    }
+    private Unit() {}
 
     public static CompletableFuture<Unit> unitFuture() {
         return CompletableFuture.completedFuture(UNIT);
@@ -32,5 +29,5 @@ public class Unit {
     @Override
     public String toString() {
         return "Unit";
-  }
+    }
 }

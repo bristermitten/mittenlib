@@ -2,9 +2,7 @@ package me.bristermitten.mittenlib.config;
 
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 
-/**
- * Context for serializing a config
- */
+/** Context for serializing a config */
 public class SerializationContext {
     private final ObjectMapper mapper;
 
@@ -24,5 +22,5 @@ public class SerializationContext {
      */
     public ObjectMapper getMapper() {
         return mapper;
-  }
+    }
 }

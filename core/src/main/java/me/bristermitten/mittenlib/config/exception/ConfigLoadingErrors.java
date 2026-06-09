@@ -6,8 +6,8 @@ public class ConfigLoadingErrors {
      * Creates an exception to use when a value cannot be deserialized as it is not found (i.e. is
      * null)
      *
-     * @param fieldName      the name of the field that is trying to be deserialized
-     * @param typeName       the name of the type that is trying to be deserialized
+     * @param fieldName the name of the field that is trying to be deserialized
+     * @param typeName the name of the type that is trying to be deserialized
      * @param enclosingClass the name of the enclosing class
      * @return the exception to throw
      */
@@ -18,17 +18,16 @@ public class ConfigLoadingErrors {
 
     public static RuntimeException invalidPropertyTypeException(
             Class<?> enclosingClass, String propertyName, String expectedType, Object actualValue) {
-        return new IllegalArgumentException(
-                "Invalid value for property "
-                        + enclosingClass.getSimpleName()
-                        + "."
-                        + propertyName
-                        + ", expected value of type "
-                        + expectedType
-                        + " but got value "
-                        + actualValue
-                        + " of type "
-                        + actualValue.getClass());
+        return new IllegalArgumentException("Invalid value for property "
+                + enclosingClass.getSimpleName()
+                + "."
+                + propertyName
+                + ", expected value of type "
+                + expectedType
+                + " but got value "
+                + actualValue
+                + " of type "
+                + actualValue.getClass());
     }
 
     public static RuntimeException noUnionMatch() {
@@ -40,13 +39,8 @@ public class ConfigLoadingErrors {
         return new InvalidEnumValueException(enumClass, propertyName, actualValue);
     }
 
-    public static RuntimeException defaultValueProxyException(
-            Class<?> configClass, String propertyName) {
+    public static RuntimeException defaultValueProxyException(Class<?> configClass, String propertyName) {
         return new UnsupportedOperationException(
-                "Default value proxy called for property "
-                        + configClass.getSimpleName()
-                        + "."
-                        + propertyName
-            + "!");
-  }
+                "Default value proxy called for property " + configClass.getSimpleName() + "." + propertyName + "!");
+    }
 }

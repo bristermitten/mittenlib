@@ -13,7 +13,7 @@ public interface ConfigProviderImprover {
      * the original {@link ConfigProvider} should be returned
      *
      * @param provider the provider to improve
-     * @param <T>      the type of the config
+     * @param <T> the type of the config
      * @return an improved provider
      */
     <T> ConfigProvider<T> improve(ConfigProvider<T> provider);

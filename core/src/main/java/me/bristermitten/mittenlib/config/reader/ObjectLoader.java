@@ -22,10 +22,8 @@ public interface ObjectLoader {
      * @param source the source to load from
      * @return the loaded object
      */
-    @NotNull
-    default Result<@NotNull DataTree> load(@NotNull final Path source) {
-        return Result.tryWithResources(
-                (SafeSupplier<Reader>) () -> Files.newBufferedReader(source), this::load);
+    @NotNull default Result<@NotNull DataTree> load(@NotNull final Path source) {
+        return Result.tryWithResources((SafeSupplier<Reader>) () -> Files.newBufferedReader(source), this::load);
     }
 
     /**
@@ -35,12 +33,9 @@ public interface ObjectLoader {
      * @param source the source to load from
      * @return the loaded object
      */
-    @NotNull
-    Result<@NotNull DataTree> load(@NotNull final Reader source);
+    @NotNull Result<@NotNull DataTree> load(@NotNull final Reader source);
 
-    @NotNull
-    default Result<@NotNull DataTree> load(@NotNull final String source) {
-        return Result.tryWithResources(
-                (SafeSupplier<Reader>) () -> new StringReader(source), this::load);
-  }
+    @NotNull default Result<@NotNull DataTree> load(@NotNull final String source) {
+        return Result.tryWithResources((SafeSupplier<Reader>) () -> new StringReader(source), this::load);
+    }
 }

@@ -12,13 +12,8 @@ class OverriddenNameGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.OverriddenNameDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OverriddenNameDTO", """
                                 package me.bristermitten.mittenlib.tests;
                                 import java.util.Map;
                                 import me.bristermitten.mittenlib.config.*;
@@ -36,9 +31,7 @@ class OverriddenNameGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "OverriddenImplConfig",
-                        """
+                .andSourceFile("OverriddenImplConfig", """
                         import me.bristermitten.mittenlib.config.Config;
                         @Config(className = "ThisIsTheImpl")
                         public interface OverriddenImplConfig {
@@ -59,15 +52,13 @@ class OverriddenNameGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "OverriddenImplConfig",
-                        """
+                .andSourceFile("OverriddenImplConfig", """
                         import me.bristermitten.mittenlib.config.Config;
 
                         @Config(className = "ThisIsTheImpl")
                         public interface OverriddenImplConfig {
                             int id();
-                                
+
                             @Config
                             interface NormalSubConfig {
                                 int id2();

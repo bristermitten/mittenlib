@@ -48,12 +48,10 @@ public class CommandManagerProvider implements Provider<PaperCommandManager> {
             manager.getCommandCompletions().setDefaultCompletion(completer.id(), context.type());
         }
         if (context instanceof IssuerAwareArgumentContext) {
-            manager
-                    .getCommandContexts()
+            manager.getCommandContexts()
                     .registerIssuerAwareContext(context.type(), (IssuerAwareArgumentContext<T>) context);
         } else if (context instanceof IssuerOnlyArgumentContext) {
-            manager
-                    .getCommandContexts()
+            manager.getCommandContexts()
                     .registerIssuerOnlyContext(context.type(), (IssuerOnlyArgumentContext<T>) context);
         } else {
             manager.getCommandContexts().registerContext(context.type(), context);

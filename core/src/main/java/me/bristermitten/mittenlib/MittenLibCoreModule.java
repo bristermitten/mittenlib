@@ -50,5 +50,5 @@ public class MittenLibCoreModule<T extends Plugin> extends AbstractModule {
             bind((Class<T>) plugin.getClass()).toInstance(plugin);
             bind(MittenLibConsumer.class).toInstance(new MittenLibConsumer(plugin.getName()));
         }
-  }
+    }
 }

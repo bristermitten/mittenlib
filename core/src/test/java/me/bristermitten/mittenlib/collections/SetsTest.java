@@ -9,9 +9,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Comprehensive tests for {@link Sets} using both unit tests and property-based testing
- */
+/** Comprehensive tests for {@link Sets} using both unit tests and property-based testing */
 class SetsTest {
 
     @Test
@@ -375,9 +373,7 @@ class SetsTest {
         assertEquals(originalSet, newSet);
     }
 
-    /**
-     * Property-based tests for complex set operations and edge cases
-     */
+    /** Property-based tests for complex set operations and edge cases */
     @Property
     void setContainsNoMoreThanUniqueElements(@ForAll @Size(min = 1, max = 20) List<String> elements) {
         Assume.that(elements.stream().allMatch(Objects::nonNull));
@@ -396,8 +392,7 @@ class SetsTest {
 
     @Property
     void setUnionSizeIsCorrect(
-            @ForAll("nonNullStringLists") List<String> list1,
-            @ForAll("nonNullStringLists") List<String> list2) {
+            @ForAll("nonNullStringLists") List<String> list1, @ForAll("nonNullStringLists") List<String> list2) {
 
         Set<String> set1 = Sets.ofAll(list1);
         Set<String> set2 = Sets.ofAll(list2);
@@ -456,8 +451,7 @@ class SetsTest {
     }
 
     @Property
-    void addingElementsToSetViaStreamProducesCorrectResult(
-            @ForAll("nonNullStringLists") List<String> elements) {
+    void addingElementsToSetViaStreamProducesCorrectResult(@ForAll("nonNullStringLists") List<String> elements) {
         // Get unique elements via stream
         Set<String> expectedSet = elements.stream().collect(Collectors.toSet());
 
@@ -593,6 +587,6 @@ class SetsTest {
         // Check non-existing elements
         for (int i = 0; i < 100; i++) {
             assertFalse(set.contains("missing" + i));
+        }
     }
-  }
 }

@@ -11,5 +11,4 @@ import me.bristermitten.mittenlib.gui.spigot.command.SpigotCommandContext;
  * @param <Msg> the message type
  */
 public abstract class SpigotGUI<Model, Msg>
-        implements GUIBase<Model, Msg, SpigotGUIView<Msg>, SpigotCommandContext, SpigotCommand<Msg>> {
-}
+        implements GUIBase<Model, Msg, SpigotGUIView<Msg>, SpigotCommandContext, SpigotCommand<Msg>> {}

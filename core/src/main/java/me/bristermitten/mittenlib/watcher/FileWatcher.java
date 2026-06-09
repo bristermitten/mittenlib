@@ -39,5 +39,5 @@ public class FileWatcher {
      */
     public Consumer<WatchEvent<Path>> getOnModify() {
         return onModify;
-  }
+    }
 }

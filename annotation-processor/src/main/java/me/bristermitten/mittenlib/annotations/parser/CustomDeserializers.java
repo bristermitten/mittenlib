@@ -37,18 +37,14 @@ public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerIn
         CustomDeserializerForWrapper deserializerTypeAnnotation =
                 CustomDeserializerForWrapper.wrap(customDeserializerType);
         if (deserializerTypeAnnotation == null) {
-            throw new IllegalArgumentException(
-                    "CustomDeserializer must be annotated with @CustomDeserializerFor");
+            throw new IllegalArgumentException("CustomDeserializer must be annotated with @CustomDeserializerFor");
         }
 
-        var implementsCustomDeserializer =
-                TypeElementWrapper.wrap(customDeserializerType).getAllInterfaces().stream()
-                        .anyMatch(
-                                i -> i.getQualifiedName().equals(CustomDeserializer.class.getCanonicalName()));
+        var implementsCustomDeserializer = TypeElementWrapper.wrap(customDeserializerType).getAllInterfaces().stream()
+                .anyMatch(i -> i.getQualifiedName().equals(CustomDeserializer.class.getCanonicalName()));
 
         Optional<ExecutableElementWrapper> deserializeMethodOpt =
-                TypeElementWrapper.wrap(customDeserializerType)
-                        .getMethod("deserialize", DeserializationContext.class);
+                TypeElementWrapper.wrap(customDeserializerType).getMethod("deserialize", DeserializationContext.class);
 
         if (!implementsCustomDeserializer && deserializeMethodOpt.isEmpty()) {
             throw new IllegalArgumentException(
@@ -72,22 +68,19 @@ public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerIn
             }
         }
 
-        boolean isStatic =
-                !implementsCustomDeserializer
-                        && deserializeMethodOpt.isPresent()
-                        && deserializeMethodOpt.get().unwrap().getModifiers().contains(Modifier.STATIC);
+        boolean isStatic = !implementsCustomDeserializer
+                && deserializeMethodOpt.isPresent()
+                && deserializeMethodOpt.get().unwrap().getModifiers().contains(Modifier.STATIC);
 
         if (!isStatic && !implementsCustomDeserializer) {
-            MessagerUtils.error(
-                    customDeserializerType, CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC);
+            MessagerUtils.error(customDeserializerType, CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC);
             return;
         }
 
         var isFallback = customDeserializerType.getAnnotation(Fallback.class) != null;
 
-        var customDeserializerInfo =
-                new CustomDeserializerInfo(
-                        customDeserializerType, isStatic, isFallback, false // TODO
+        var customDeserializerInfo = new CustomDeserializerInfo(
+                customDeserializerType, isStatic, isFallback, false // TODO
                 );
 
         register(ClassName.get(deserializerFor), customDeserializerInfo);

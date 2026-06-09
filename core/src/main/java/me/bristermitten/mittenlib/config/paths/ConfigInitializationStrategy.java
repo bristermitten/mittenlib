@@ -25,11 +25,11 @@ public interface ConfigInitializationStrategy {
     /**
      * Attempt to initialize the config
      *
-     * @param filePath    the path to the config file
+     * @param filePath the path to the config file
      * @param configClass the class of the config
      * @return a {@link Result} representing whether the initialization was successful
      */
     default <T> Result<Unit> initializeConfig(String filePath, Class<T> configClass) {
         return initializeConfig(filePath);
-  }
+    }
 }

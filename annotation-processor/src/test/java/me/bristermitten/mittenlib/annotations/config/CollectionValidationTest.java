@@ -10,9 +10,7 @@ class CollectionValidationTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "ListValidationConfig",
-                        """
+                .andSourceFile("ListValidationConfig", """
                         package me.bristermitten.mittenlib.tests;
 
                         import me.bristermitten.mittenlib.config.Config;
@@ -21,8 +19,7 @@ class CollectionValidationTest {
 
                         @Config
                         public interface ListValidationConfig {
-                            @NotBlank
-                            List<String> playerNames();
+                            @NotBlank List<String> playerNames();
                         }
                         """)
                 .whenCompiled()
@@ -41,15 +38,13 @@ class CollectionValidationTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(
-                        "MapValidationConfig",
-                        """
+                .andSourceFile("MapValidationConfig", """
                         package me.bristermitten.mittenlib.tests;
-                                
+
                         import me.bristermitten.mittenlib.config.Config;
                         import me.bristermitten.mittenlib.config.validation.Range;
                         import java.util.Map;
-                                
+
                         @Config
                         public interface MapValidationConfig {
                             @Range(min = 1, max = 100)

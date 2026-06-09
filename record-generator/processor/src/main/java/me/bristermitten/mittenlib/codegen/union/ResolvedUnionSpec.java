@@ -7,9 +7,5 @@ import me.bristermitten.mittenlib.codegen.MatchStrategies;
 import java.util.List;
 
 public record ResolvedUnionSpec(
-        ClassName source,
-        ClassName name,
-        MatchStrategies strategy,
-        List<ResolvedUnionConstructor> constructors)
-        implements GenericTypeSpec {
-}
+        ClassName source, ClassName name, MatchStrategies strategy, List<ResolvedUnionConstructor> constructors)
+        implements GenericTypeSpec {}

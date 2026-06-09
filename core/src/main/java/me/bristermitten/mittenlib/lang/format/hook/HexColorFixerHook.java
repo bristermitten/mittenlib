@@ -29,8 +29,7 @@ public class HexColorFixerHook implements FormattingHook {
 
         final StringBuffer stringBuilder = new StringBuffer();
         while (matcher.find()) {
-            final String replacement =
-                    "<#" + matcher.group(1).replace("" + ChatColor.COLOR_CHAR, "") + ">";
+            final String replacement = "<#" + matcher.group(1).replace("" + ChatColor.COLOR_CHAR, "") + ">";
             matcher.appendReplacement(stringBuilder, replacement);
         }
         matcher.appendTail(stringBuilder);

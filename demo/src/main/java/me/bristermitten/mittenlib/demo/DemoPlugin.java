@@ -21,11 +21,10 @@ public class DemoPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
-        injector =
-                MittenLib.withDefaults(this)
-                        .addModule(new GUIModule()) // setup the GUI features
-                        .config(new ConfigLoaderModule()) // setup the config module
-                        .setup();
+        injector = MittenLib.withDefaults(this)
+                .addModule(new GUIModule()) // setup the GUI features
+                .config(new ConfigLoaderModule()) // setup the config module
+                .setup();
 
         counterGUI = injector.getInstance(DemoCounterGUI.class);
 
@@ -44,10 +43,10 @@ public class DemoPlugin extends JavaPlugin implements Listener {
                                     new SpigotInventoryViewer<>(event.getPlayer());
                             SpigotGUIManager guiManager = injector.getInstance(SpigotGUIManager.class);
                             SessionID<
-                                    Counter,
-                                    CounterMessage,
-                                    SpigotGUIView<CounterMessage>,
-                                    SpigotInventoryViewer<CounterMessage>>
+                                            Counter,
+                                            CounterMessage,
+                                            SpigotGUIView<CounterMessage>,
+                                            SpigotInventoryViewer<CounterMessage>>
                                     sessionID = guiManager.startSession(counterGUI, viewer);
 
                             guiManager.getSession(sessionID).get().start();

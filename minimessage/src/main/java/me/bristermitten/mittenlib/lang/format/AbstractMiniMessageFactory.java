@@ -18,6 +18,5 @@ public interface AbstractMiniMessageFactory {
      * @param player the player to create the {@link MiniMessage} for
      * @return a {@link MiniMessage} instance
      */
-    @NotNull
-    MiniMessage create(@Nullable OfflinePlayer player);
+    @NotNull MiniMessage create(@Nullable OfflinePlayer player);
 }

@@ -72,24 +72,18 @@ public class SpigotEventHandler implements Listener {
         if (layoutObj instanceof SpigotGUIView) { // should we error if this is not the case?
             SpigotGUIView<?> layout = (SpigotGUIView<?>) layoutObj;
 
-            layout
-                    .getButton(slot)
-                    .ifPresent(
-                            button -> {
-                                ClickInput clickInput =
-                                        new ClickInput(
+            layout.getButton(slot).ifPresent(button -> {
+                ClickInput clickInput = new ClickInput(
                         event.getClick(),
                         event.getAction(),
-                                                event.getHotbarButton() == -1
-                                                        ? OptionalInt.empty()
-                                                        : OptionalInt.of(event.getHotbarButton()),
-                                                event.getCursor());
+                        event.getHotbarButton() == -1 ? OptionalInt.empty() : OptionalInt.of(event.getHotbarButton()),
+                        event.getCursor());
                 PureFunction<ClickInput, ?> messageFunction = button.getMessageFunction();
                 Object message = messageFunction.apply(clickInput);
                 if (message != null) {
                     guiManager.sendMessage((SessionID) session.getSessionId(), message);
                 }
-                            });
+            });
         }
     }
 
@@ -101,13 +95,10 @@ public class SpigotEventHandler implements Listener {
 
         Player player = (Player) event.getPlayer();
 
-        guiManager
-                .getSessionByViewer(new SpigotInventoryViewer<>(player))
-                .ifPresent(
-                        session -> {
-                            if (!session.isTransitioning()) {
-                                guiManager.closeSession(session.getSessionId());
-                            }
-                        });
+        guiManager.getSessionByViewer(new SpigotInventoryViewer<>(player)).ifPresent(session -> {
+            if (!session.isTransitioning()) {
+                guiManager.closeSession(session.getSessionId());
+            }
+        });
     }
 }

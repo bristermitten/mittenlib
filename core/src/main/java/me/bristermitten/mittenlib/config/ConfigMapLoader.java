@@ -8,12 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-/**
- * Used in generated code to help with the loading of config maps
- */
+/** Used in generated code to help with the loading of config maps */
 public class ConfigMapLoader {
-    private ConfigMapLoader() {
-    }
+    private ConfigMapLoader() {}
 
     /**
      * Get a value from a map, or return an empty optional if the value is null This tries a few
@@ -24,15 +21,15 @@ public class ConfigMapLoader {
      *   <li>If it is a {@link Map}, use {@code fromMap}
      *   <li>Use the default value, if present
      * </ol>
-     * <p>
-     * If all of them fail, an {@link IllegalArgumentException} is thrown
      *
-     * @param map          the map to get the value from
-     * @param key          the key to get the value with
-     * @param type         the type to cast the value to
+     * <p>If all of them fail, an {@link IllegalArgumentException} is thrown
+     *
+     * @param map the map to get the value from
+     * @param key the key to get the value with
+     * @param type the type to cast the value to
      * @param defaultValue the default value to use if the value is null
-     * @param fromMap      the function to use to load the value from a map structure
-     * @param <T>          the type to cast the value to
+     * @param fromMap the function to use to load the value from a map structure
+     * @param <T> the type to cast the value to
      * @return the value, or an empty optional if the value is null
      * @throws IllegalArgumentException if all the ways to load the value fail
      */
@@ -65,19 +62,18 @@ public class ConfigMapLoader {
      * Creates an exception to use when a value cannot be deserialized as it is not found (i.e. is
      * null)
      *
-     * @param fieldName      the name of the field that is trying to be deserialized
-     * @param typeName       the name of the type that is trying to be deserialized
+     * @param fieldName the name of the field that is trying to be deserialized
+     * @param typeName the name of the type that is trying to be deserialized
      * @param enclosingClass the name of the enclosing class
      * @return the exception to throw
      * @deprecated Use {@link ConfigLoadingErrors#notFoundException(String, String, Class, String)}
      */
     @Deprecated
     @InlineMe(
-            replacement =
-                    "ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName)",
+            replacement = "ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName)",
             imports = "me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors")
     public static RuntimeException throwNotFound(
             String fieldName, String typeName, Class<?> enclosingClass, String keyName) {
         return ConfigLoadingErrors.notFoundException(fieldName, typeName, enclosingClass, keyName);
-  }
+    }
 }

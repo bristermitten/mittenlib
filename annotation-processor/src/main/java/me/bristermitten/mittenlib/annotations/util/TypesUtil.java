@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * Helper class for working with {@link TypeMirror}s
- */
+/** Helper class for working with {@link TypeMirror}s */
 public class TypesUtil {
     private final Types types;
 
@@ -117,9 +115,9 @@ public class TypesUtil {
      * different to {@link Element#getAnnotation(Class)}, in that it respects the semantics described
      * in {@link CascadeToInnerClasses}
      *
-     * @param e    The element
+     * @param e The element
      * @param type The class of the annotation
-     * @param <A>  The annotation type
+     * @param <A> The annotation type
      * @return The annotation value, if present, else null
      */
     public <A extends Annotation> @Nullable A getAnnotation(Element e, Class<A> type) {
@@ -175,8 +173,8 @@ public class TypesUtil {
             }
             if (p.rawType.equals(ClassName.get(List.class))) {
                 return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
-      }
+            }
+        }
+        return Optional.empty();
     }
-    return Optional.empty();
-  }
 }

@@ -29,8 +29,8 @@ public class ConfigReader {
      * Read the data from the given path, and map it to the given type
      *
      * @param function the deserialization function to use
-     * @param source   the path to read from
-     * @param <T>      the type to map to
+     * @param source the path to read from
+     * @param <T> the type to map to
      * @return the result of the mapping
      */
     public <T> Result<T> load(DeserializationFunction<T> function, Path source) {
@@ -45,11 +45,8 @@ public class ConfigReader {
         return read(loader.load(source), function);
     }
 
-    private <T> Result<T> read(
-            Result<@NotNull DataTree> rawData, DeserializationFunction<T> mappingFunction) {
-        return rawData
-                .map(data -> new DeserializationContext(mapper, data))
-                .flatMap(mappingFunction::apply);
+    private <T> Result<T> read(Result<@NotNull DataTree> rawData, DeserializationFunction<T> mappingFunction) {
+        return rawData.map(data -> new DeserializationContext(mapper, data)).flatMap(mappingFunction::apply);
     }
 
     public <T> Result<T> load(Class<T> type, Path source) {
@@ -85,6 +82,6 @@ public class ConfigReader {
     }
 
     public ObjectLoader getLoader() {
-    return loader;
-  }
+        return loader;
+    }
 }

@@ -38,5 +38,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @CascadeToInnerClasses
-public @interface UseObjectMapperSerialization {
-}
+public @interface UseObjectMapperSerialization {}

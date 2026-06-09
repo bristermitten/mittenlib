@@ -5,9 +5,7 @@ import com.google.inject.Provider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
 
-/**
- * A provider for {@link BukkitAudiences} that uses the {@link Plugin}
- */
+/** A provider for {@link BukkitAudiences} that uses the {@link Plugin} */
 public class AdventureAudienceProvider implements Provider<BukkitAudiences> {
     private final Plugin plugin;
 
@@ -19,5 +17,5 @@ public class AdventureAudienceProvider implements Provider<BukkitAudiences> {
     @Override
     public BukkitAudiences get() {
         return BukkitAudiences.create(plugin);
-  }
+    }
 }

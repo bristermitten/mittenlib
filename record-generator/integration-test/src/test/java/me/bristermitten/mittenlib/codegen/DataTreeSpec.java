@@ -2,9 +2,7 @@ package me.bristermitten.mittenlib.codegen;
 
 import java.util.Map;
 
-/**
- * Copy of {@link me.bristermitten.mittenlib.config.tree.DataTree}
- */
+/** Copy of {@link me.bristermitten.mittenlib.config.tree.DataTree} */
 @UnionSpec
 public interface DataTreeSpec {
     DataTreeSpec Null();

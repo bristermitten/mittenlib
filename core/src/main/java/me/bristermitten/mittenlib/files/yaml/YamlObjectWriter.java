@@ -12,9 +12,7 @@ import java.io.Writer;
 
 import static me.bristermitten.mittenlib.util.Result.runCatching;
 
-/**
- * Responsible for writing DataTree objects to YAML format.
- */
+/** Responsible for writing DataTree objects to YAML format. */
 public class YamlObjectWriter implements ObjectWriter {
     private final Yaml yaml;
 
@@ -26,18 +24,17 @@ public class YamlObjectWriter implements ObjectWriter {
     /**
      * Writes a DataTree to the given writer as YAML. This method does not close the writer.
      *
-     * @param tree   The DataTree to write
+     * @param tree The DataTree to write
      * @param writer The writer to write to
      * @return A Result indicating success or failure
      */
     @Override
     public @NotNull Result<Void> write(@NotNull DataTree tree, @NotNull Writer writer) {
-        return runCatching(
-                () -> {
-                    Object pojo = DataTreeTransforms.toPOJO(tree);
-                    yaml.dump(pojo, writer);
-                    writer.flush();
-                    return null;
+        return runCatching(() -> {
+            Object pojo = DataTreeTransforms.toPOJO(tree);
+            yaml.dump(pojo, writer);
+            writer.flush();
+            return null;
         });
-  }
+    }
 }

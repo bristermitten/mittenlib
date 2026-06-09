@@ -20,13 +20,8 @@ class ConfigurationClassNameGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation =
-                javac()
-                        .withProcessors(new ConfigProcessor())
-                        .compile(
-                                JavaFileObjects.forSourceString(
-                                        "me.bristermitten.mittenlib.tests.LangConfigDTO",
-                                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.LangConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -103,10 +98,8 @@ class ConfigurationClassNameGeneratorTest {
 
         when(ast.name()).thenReturn(ClassName.bestGuess("TestConfig"));
 
-        ConfigurationClassNameGenerator generator =
-                new ConfigurationClassNameGenerator(new ConfigNameCache());
+        ConfigurationClassNameGenerator generator = new ConfigurationClassNameGenerator(new ConfigNameCache());
 
-        assertThat(generator.getDeserializerClassName(ast))
-                .isEqualTo(ClassName.bestGuess("TestConfigDeserializer"));
+        assertThat(generator.getDeserializerClassName(ast)).isEqualTo(ClassName.bestGuess("TestConfigDeserializer"));
     }
 }

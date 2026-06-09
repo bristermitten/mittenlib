@@ -31,5 +31,5 @@ public class ConfigProcessorModule extends AbstractModule {
         bind(ProcessingEnvironment.class).toInstance(processingEnvironment);
         bind(Elements.class).toInstance(processingEnvironment.getElementUtils());
         bind(Types.class).toInstance(processingEnvironment.getTypeUtils());
-  }
+    }
 }

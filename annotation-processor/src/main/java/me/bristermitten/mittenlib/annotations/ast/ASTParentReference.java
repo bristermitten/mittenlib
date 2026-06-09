@@ -13,5 +13,4 @@ public record ASTParentReference(
         ClassName parentClassName,
         boolean isInterface,
         @Nullable String manualClassName,
-        @Nullable ASTParentReference parent) {
-}
+        @Nullable ASTParentReference parent) {}

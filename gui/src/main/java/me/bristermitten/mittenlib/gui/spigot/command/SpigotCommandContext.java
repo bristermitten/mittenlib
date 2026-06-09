@@ -3,13 +3,9 @@ package me.bristermitten.mittenlib.gui.spigot.command;
 import me.bristermitten.mittenlib.gui.command.CommandContext;
 import org.bukkit.entity.Player;
 
-/**
- * The context for a Spigot command execution.
- */
+/** The context for a Spigot command execution. */
 public interface SpigotCommandContext extends CommandContext {
-    /**
-     * The player executing the command / viewing the GUI.
-     */
+    /** The player executing the command / viewing the GUI. */
     Player player();
 
     /**

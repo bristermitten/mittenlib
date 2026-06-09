@@ -9,5 +9,4 @@ import me.bristermitten.mittenlib.config.SerializationFunction;
  *
  * @param <T> the type that this serializer handles
  */
-public interface CustomSerializer<T> extends SerializationFunction<T> {
-}
+public interface CustomSerializer<T> extends SerializationFunction<T> {}

@@ -25,15 +25,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-/**
- * Spigot implementation of the GUIManager.
- */
+/** Spigot implementation of the GUIManager. */
 @Singleton
 public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
     // Map of active sessions from SessionID to GUISession
-    private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?, SpigotCommandContext>>
-            activeSessions;
+    private final Map<SessionID<?, ?, ?, ?>, GUISession<?, ?, ?, ?, SpigotCommandContext>> activeSessions;
 
     // Map of viewers to their corresponding SessionID
     private final Map<SpigotInventoryViewer<?>, SessionID<?, ?, ?, ?>> viewerToSession;
@@ -50,13 +47,13 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     @SuppressWarnings("rawtypes")
     @Override
     public <
-            Model,
-            Msg,
-            V extends View<Msg, V, Viewer>,
-            Cmd extends Command<SpigotCommandContext, Msg>,
-            Viewer extends InventoryViewer<Msg, V>>
-    SessionID<Model, Msg, V, Viewer> startSession(
-            GUIBase<Model, Msg, V, SpigotCommandContext, Cmd> gui, Viewer viewer) {
+                    Model,
+                    Msg,
+                    V extends View<Msg, V, Viewer>,
+                    Cmd extends Command<SpigotCommandContext, Msg>,
+                    Viewer extends InventoryViewer<Msg, V>>
+            SessionID<Model, Msg, V, Viewer> startSession(
+                    GUIBase<Model, Msg, V, SpigotCommandContext, Cmd> gui, Viewer viewer) {
         if (!(viewer instanceof SpigotInventoryViewer)) {
             throw new IllegalArgumentException("SpigotGUIManager requires SpigotInventoryViewer");
         }
@@ -67,8 +64,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
         // create new session
         SessionID<Model, Msg, V, Viewer> sessionId = new SessionID<>(UUID.randomUUID());
-        GUISession<Model, Msg, V, Viewer, SpigotCommandContext> session =
-                getSession(gui, viewer, sessionId);
+        GUISession<Model, Msg, V, Viewer, SpigotCommandContext> session = getSession(gui, viewer, sessionId);
 
         activeSessions.put(sessionId, session);
         viewerToSession.put(spigotViewer, sessionId);
@@ -76,13 +72,10 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
         session.start();
 
         // when session completes, remove from active sessions
-        session
-                .getCompletionFuture()
-                .whenComplete(
-                        (model, throwable) -> {
-                            activeSessions.remove(sessionId);
-                            viewerToSession.remove(viewer);
-                        });
+        session.getCompletionFuture().whenComplete((model, throwable) -> {
+            activeSessions.remove(sessionId);
+            viewerToSession.remove(viewer);
+        });
 
         return sessionId;
     }
@@ -94,42 +87,37 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     }
 
     private <
-            Model,
-            Msg,
-            V extends View<Msg, V, Viewer>,
-            Cmd extends Command<SpigotCommandContext, Msg>,
-            Viewer extends InventoryViewer<Msg, V>>
-    @NotNull GUISession<Model, Msg, V, Viewer, SpigotCommandContext> getSession(
+                    Model,
+                    Msg,
+                    V extends View<Msg, V, Viewer>,
+                    Cmd extends Command<SpigotCommandContext, Msg>,
+                    Viewer extends InventoryViewer<Msg, V>>
+            @NotNull GUISession<Model, Msg, V, Viewer, SpigotCommandContext> getSession(
             GUIBase<Model, Msg, V, SpigotCommandContext, Cmd> gui,
             Viewer viewer,
             SessionID<Model, Msg, V, Viewer> sessionId) {
 
         if (!(viewer instanceof SpigotInventoryViewer)) {
-            throw new IllegalArgumentException(
-                    "SpigotGUIManager requires a SpigotInventoryViewer, but got "
-                            + viewer.getClass().getSimpleName());
+            throw new IllegalArgumentException("SpigotGUIManager requires a SpigotInventoryViewer, but got "
+                    + viewer.getClass().getSimpleName());
         }
 
         //noinspection unchecked
         SpigotInventoryViewer<Msg> spigotViewer = (SpigotInventoryViewer<Msg>) viewer;
 
-        Consumer<V> renderer =
-                layout -> {
-                    if (layout instanceof SpigotGUIView) {
-                        //noinspection unchecked
-                        updateInventory(spigotViewer.getPlayer(), (SpigotGUIView<Msg>) layout);
-                    } else {
-                        throw new IllegalStateException(
-                                "SpigotGUIManager received a non-Spigot view: " + layout.getClass());
-                    }
-                };
+        Consumer<V> renderer = layout -> {
+            if (layout instanceof SpigotGUIView) {
+                //noinspection unchecked
+                updateInventory(spigotViewer.getPlayer(), (SpigotGUIView<Msg>) layout);
+            } else {
+                throw new IllegalStateException("SpigotGUIManager received a non-Spigot view: " + layout.getClass());
+            }
+        };
 
-        GUISession.CommandRunner<SpigotCommandContext, Msg> commandRunner =
-                (cmd, dispatch) -> {
-                    DefaultSpigotCommandContext context =
-                            new DefaultSpigotCommandContext(spigotViewer.getPlayer());
-                    cmd.run(context, dispatch);
-                };
+        GUISession.CommandRunner<SpigotCommandContext, Msg> commandRunner = (cmd, dispatch) -> {
+            DefaultSpigotCommandContext context = new DefaultSpigotCommandContext(spigotViewer.getPlayer());
+            cmd.run(context, dispatch);
+        };
 
         return new GUISession<>(sessionId, gui, viewer, gui.init(), renderer, commandRunner);
     }
@@ -139,7 +127,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
      *
      * @param player the player whose inventory to update
      * @param layout the layout to apply
-     * @param <Msg>  the message type
+     * @param <Msg> the message type
      */
     private <Msg> void updateInventory(Player player, SpigotGUIView<Msg> layout) {
         Inventory current = player.getOpenInventory().getTopInventory();
@@ -149,10 +137,9 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
         Inventory target;
 
         // we can reuse the current inventory if it matches size and title
-        boolean canReuse =
-                current != null
-                        && current.getSize() == size
-                        && player.getOpenInventory().getTitle().equals(title);
+        boolean canReuse = current != null
+                && current.getSize() == size
+                && player.getOpenInventory().getTitle().equals(title);
 
         if (canReuse) {
             target = current;
@@ -170,12 +157,12 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
     @Override
     public <
-            Model,
-            Msg,
-            V extends View<Msg, V, Viewer>,
-            Cmd extends Command<SpigotCommandContext, Msg>,
-            Viewer extends InventoryViewer<Msg, V>>
-    boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command) {
+                    Model,
+                    Msg,
+                    V extends View<Msg, V, Viewer>,
+                    Cmd extends Command<SpigotCommandContext, Msg>,
+                    Viewer extends InventoryViewer<Msg, V>>
+            boolean sendMessage(SessionID<Model, Msg, V, Viewer> sessionId, Msg command) {
 
         GUISession<Model, Msg, V, Viewer, ? extends CommandContext> session =
                 getSession(sessionId).orElse(null);
@@ -187,12 +174,12 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
     @Override
     public <
-            Model,
-            Msg,
-            V extends View<Msg, V, Viewer>,
-            Cmd extends Command<SpigotCommandContext, Msg>,
-            Viewer extends InventoryViewer<Msg, V>>
-    boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId) {
+                    Model,
+                    Msg,
+                    V extends View<Msg, V, Viewer>,
+                    Cmd extends Command<SpigotCommandContext, Msg>,
+                    Viewer extends InventoryViewer<Msg, V>>
+            boolean closeSession(SessionID<Model, Msg, V, Viewer> sessionId) {
         GUISession<Model, Msg, V, Viewer, SpigotCommandContext> session =
                 getSession(sessionId).orElse(null);
 
@@ -218,8 +205,8 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
 
     @Override
     public <Model, Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>>
-    Optional<GUISession<Model, Msg, V, Viewer, SpigotCommandContext>> getSession(
-            SessionID<Model, Msg, V, Viewer> sessionId) {
+            Optional<GUISession<Model, Msg, V, Viewer, SpigotCommandContext>> getSession(
+                    SessionID<Model, Msg, V, Viewer> sessionId) {
         //noinspection unchecked
         return Optional.ofNullable(
                 (GUISession<Model, Msg, V, Viewer, SpigotCommandContext>) activeSessions.get(sessionId));
@@ -228,7 +215,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public <Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>>
-    Optional<GUISession<?, ?, ?, ?, SpigotCommandContext>> getSessionByViewer(Viewer viewer) {
+            Optional<GUISession<?, ?, ?, ?, SpigotCommandContext>> getSessionByViewer(Viewer viewer) {
         SessionID sessionId = viewerToSession.get(viewer);
         if (sessionId != null) {
             return getSession(sessionId);
@@ -251,5 +238,5 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
      */
     public int getActiveSessionCount() {
         return activeSessions.size();
-  }
+    }
 }

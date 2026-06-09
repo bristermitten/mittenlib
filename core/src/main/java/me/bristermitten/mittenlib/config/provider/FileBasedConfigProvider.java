@@ -32,12 +32,12 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
     /**
      * Create a new ReadingConfigProvider
      *
-     * @param path         the path to read from
-     * @param reader       the reader to use
+     * @param path the path to read from
+     * @param reader the reader to use
      * @param deserializer the deserialization function to use
-     * @param saver        the saver to use
-     * @param serializer   the serialization function to use
-     * @param writer       the writer to use for saving
+     * @param saver the saver to use
+     * @param serializer the serialization function to use
+     * @param writer the writer to use for saving
      */
     public FileBasedConfigProvider(
             Path path,
@@ -57,8 +57,7 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
     @Override
     public T get() {
         if (!Files.exists(path)) {
-            final SerializationContext serializationContext =
-                    new SerializationContext(reader.getMapper());
+            final SerializationContext serializationContext = new SerializationContext(reader.getMapper());
             final DataTree defaultTree = serializer.generateDefault(serializationContext);
 
             // Check if the config is actually dynamically initializable.
@@ -101,29 +100,24 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
      * Saves the given config instance back to the file. This can be used to save default values for
      * missing fields.
      *
-     * @param instance         the config instance to save
+     * @param instance the config instance to save
      * @param overrideExisting if true, overwrites the entire file; if false, only adds missing fields
      * @return a Result indicating success or failure
      */
     public Result<Void> save(T instance, boolean overrideExisting) {
-        return saver
-                .serialize(instance, serializer)
-                .flatMap(
-                        serializedTree -> {
-              if (overrideExisting) {
-                  return writer.write(serializedTree, path);
-              }
-                            // Read existing file and merge with new values
-                            return reader
-                                    .load(ctx -> Result.ok(ctx.getData()), path)
-                                    .map(existingTree -> mergeDataTrees(existingTree, serializedTree))
-                                    .flatMap(mergedTree -> writer.write(mergedTree, path))
-                  .flatMapException(
-                      error -> {
+        return saver.serialize(instance, serializer).flatMap(serializedTree -> {
+            if (overrideExisting) {
+                return writer.write(serializedTree, path);
+            }
+            // Read existing file and merge with new values
+            return reader.load(ctx -> Result.ok(ctx.getData()), path)
+                    .map(existingTree -> mergeDataTrees(existingTree, serializedTree))
+                    .flatMap(mergedTree -> writer.write(mergedTree, path))
+                    .flatMapException(error -> {
                         // If file doesn't exist or can't be read, just write the new config
-                          return writer.write(serializedTree, path);
-                      });
-                        });
+                        return writer.write(serializedTree, path);
+                    });
+        });
     }
 
     /**
@@ -131,12 +125,11 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
      * newTree} that don't exist in {@code existingTree}.
      *
      * @param existingTree the existing data tree (takes precedence)
-     * @param newTree      the new data tree with default values
+     * @param newTree the new data tree with default values
      * @return the merged data tree
      */
     private DataTree mergeDataTrees(DataTree existingTree, DataTree newTree) {
-        if (!(existingTree instanceof DataTree.DataTreeMap)
-                || !(newTree instanceof DataTree.DataTreeMap)) {
+        if (!(existingTree instanceof DataTree.DataTreeMap) || !(newTree instanceof DataTree.DataTreeMap)) {
             return existingTree;
         }
 
@@ -155,9 +148,9 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
                 DataTree existingValue = mergedValues.get(key);
                 DataTree mergedValue = mergeDataTrees(existingValue, newValue);
                 mergedValues.put(key, mergedValue);
-      }
-    }
+            }
+        }
 
-    return new DataTree.DataTreeMap(mergedValues);
-  }
+        return new DataTree.DataTreeMap(mergedValues);
+    }
 }

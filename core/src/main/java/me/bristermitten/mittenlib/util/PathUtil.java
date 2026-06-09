@@ -15,12 +15,9 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
 import java.util.Objects;
 
-/**
- * Utility class for working with {@link Path}s
- */
+/** Utility class for working with {@link Path}s */
 public class PathUtil {
-    private PathUtil() {
-    }
+    private PathUtil() {}
 
     /**
      * Converts a {@link URL} to a {@link Path}. <a
@@ -29,8 +26,7 @@ public class PathUtil {
      * @deprecated Resource leak, use {@link #resourceToPath(URL, IOFunction)} instead
      */
     @Deprecated
-    public static @NotNull Path resourceToPath(@NotNull URL resource)
-            throws IOException, URISyntaxException {
+    public static @NotNull Path resourceToPath(@NotNull URL resource) throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");
         URI uri = resource.toURI();
@@ -87,5 +83,5 @@ public class PathUtil {
             }
         }
         throw new IllegalStateException("Could not find a FileSystemProvider for " + uri);
-  }
+    }
 }
