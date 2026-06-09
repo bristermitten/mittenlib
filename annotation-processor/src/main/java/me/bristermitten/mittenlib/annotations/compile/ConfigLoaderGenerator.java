@@ -2,12 +2,26 @@ package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -18,6 +32,7 @@ import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
+import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.DeserializationContext;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
@@ -32,17 +47,20 @@ public class ConfigLoaderGenerator {
     private final DeserializationCodeGenerator deserializationCodeGenerator;
     private final CustomDeserializers customDeserializers;
     private final TypesUtil typesUtil;
+    private final ConfigStructureAnalysis configStructureAnalysis;
 
     @Inject
     public ConfigLoaderGenerator(
             ConfigurationClassNameGenerator classNameGenerator,
             DeserializationCodeGenerator deserializationCodeGenerator,
             CustomDeserializers customDeserializers,
-            TypesUtil typesUtil) {
+            TypesUtil typesUtil,
+            ConfigStructureAnalysis configStructureAnalysis) {
         this.classNameGenerator = classNameGenerator;
         this.deserializationCodeGenerator = deserializationCodeGenerator;
         this.customDeserializers = customDeserializers;
         this.typesUtil = typesUtil;
+        this.configStructureAnalysis = configStructureAnalysis;
     }
 
     /**
@@ -147,7 +165,7 @@ public class ConfigLoaderGenerator {
                 MethodSpec.constructorBuilder().addAnnotation(Inject.class).addModifiers(Modifier.PUBLIC);
 
         // Injected Validator if validation is needed
-        if (ast.needsValidation()) {
+        if (configStructureAnalysis.needsValidation(ast)) {
             ClassName validatorClassName = classNameGenerator.getValidatorClassName(ast);
             String validatorFieldName = "validator";
             builder.addField(FieldSpec.builder(validatorClassName, validatorFieldName, Modifier.PRIVATE, Modifier.FINAL)
@@ -343,7 +361,7 @@ public class ConfigLoaderGenerator {
             TypeName returnType = deserializeMethod.returnType;
             TypeName innerType = TypeName.get(property.propertyType());
             if (returnType instanceof ParameterizedTypeName pt) {
-                innerType = pt.typeArguments.get(0);
+                innerType = pt.typeArguments.getFirst();
             }
 
             var deserializeMethodArguments =
@@ -367,7 +385,7 @@ public class ConfigLoaderGenerator {
         }
         constructorCall.add(")");
 
-        if (ast.needsValidation()) {
+        if (configStructureAnalysis.needsValidation(ast)) {
             applyMethod.addStatement(
                     "return $T.ok(($T) $L).flatMap(this.validator::validate)",
                     Result.class,

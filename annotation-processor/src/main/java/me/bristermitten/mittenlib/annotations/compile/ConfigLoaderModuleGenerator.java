@@ -1,8 +1,19 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.ProvidesIntoSet;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -11,7 +22,12 @@ import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.config.*;
+import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis;
+import me.bristermitten.mittenlib.config.BindProperty;
+import me.bristermitten.mittenlib.config.Configuration;
+import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.MittenLibConfigLoader;
+import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
@@ -20,11 +36,16 @@ import org.jspecify.annotations.Nullable;
 public class ConfigLoaderModuleGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;
     private final MethodNames methodNames;
+    private final ConfigStructureAnalysis configStructureAnalysis;
 
     @Inject
-    public ConfigLoaderModuleGenerator(ConfigurationClassNameGenerator classNameGenerator, MethodNames methodNames) {
+    public ConfigLoaderModuleGenerator(
+            ConfigurationClassNameGenerator classNameGenerator,
+            MethodNames methodNames,
+            ConfigStructureAnalysis configStructureAnalysis) {
         this.classNameGenerator = classNameGenerator;
         this.methodNames = methodNames;
+        this.configStructureAnalysis = configStructureAnalysis;
     }
 
     public JavaFile emit(List<AbstractConfigStructure> asts, String rootPackage) {
@@ -112,7 +133,7 @@ public class ConfigLoaderModuleGenerator {
                 publicClassName,
                 saverClassName);
 
-        if (ast.needsValidation()) {
+        if (configStructureAnalysis.needsValidation(ast)) {
             ClassName validatorClassName = classNameGenerator.getValidatorClassName(ast);
             configureMethod.addStatement("binder.bind($T.class)", validatorClassName);
         }

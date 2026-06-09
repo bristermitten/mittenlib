@@ -6,7 +6,11 @@ import io.toolisticon.aptk.tools.MessagerUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -16,6 +20,7 @@ import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource.ClassConfigTy
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.compile.SerializationCodeGenerator;
+import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis;
 import me.bristermitten.mittenlib.config.validation.Validator;
 
 /** Inspects the AST and sends errors/warnings for invalid setups */
@@ -23,12 +28,18 @@ public class ASTVerifier {
     private final Types types;
     private final Elements elements;
     private final SerializationCodeGenerator serializationCodeGenerator;
+    private final ConfigStructureAnalysis configStructureAnalysis;
 
     @Inject
-    public ASTVerifier(Types types, Elements elements, SerializationCodeGenerator serializationCodeGenerator) {
+    public ASTVerifier(
+            Types types,
+            Elements elements,
+            SerializationCodeGenerator serializationCodeGenerator,
+            ConfigStructureAnalysis configStructureAnalysis) {
         this.types = types;
         this.elements = elements;
         this.serializationCodeGenerator = serializationCodeGenerator;
+        this.configStructureAnalysis = configStructureAnalysis;
     }
 
     public boolean verify(AbstractConfigStructure structure) {
@@ -87,10 +98,11 @@ public class ASTVerifier {
         }
 
         // Error/warn if a config with a @Source is not dynamically initializable
-        if (structure.settings().source() != null && !structure.isDynamicallyInitializable()) {
+        if (structure.settings().source() != null && !configStructureAnalysis.isDynamicallyInitializable(structure)) {
             var missingDefaults = structure.properties().stream()
-                    .filter(p ->
-                            !p.settings().hasDefaultValue() && !p.settings().isNullable())
+                    .filter(p -> !p.settings().hasDefaultValue()
+                            && !p.settings().isNullable()
+                            && !configStructureAnalysis.isTypeInitializable(p.propertyType()))
                     .map(Property::name)
                     .toList();
             if (!missingDefaults.isEmpty()) {

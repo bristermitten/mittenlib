@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 import java.util.List;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
@@ -32,18 +31,6 @@ public sealed interface AbstractConfigStructure {
 
     @Contract(pure = true)
     ASTSettings.ConfigASTSettings settings();
-
-    default boolean needsValidation() {
-        return properties().stream()
-                .anyMatch(p -> !p.settings().constraints().isEmpty()
-                        || !TypeName.get(p.propertyType()).isPrimitive()
-                                && !p.settings().isNullable());
-    }
-
-    default boolean isDynamicallyInitializable() {
-        return properties().stream()
-                .allMatch(p -> p.settings().hasDefaultValue() || p.settings().isNullable());
-    }
 
     /**
      * An atomic config structure, i.e. a type with no parents or interfaces

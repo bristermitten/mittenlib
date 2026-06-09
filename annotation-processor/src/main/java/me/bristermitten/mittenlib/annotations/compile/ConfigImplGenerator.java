@@ -1,7 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +23,7 @@ import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
+import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis;
 import me.bristermitten.mittenlib.annotations.util.Nullity;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.GeneratedConfig;
@@ -30,6 +38,7 @@ public class ConfigImplGenerator {
     private final ConfigurationClassNameGenerator configurationClassNameGenerator;
     private final ConfigNameCache configNameCache;
     private final MethodNames methodNames;
+    private final ConfigStructureAnalysis configStructureAnalysis;
 
     @Inject
     public ConfigImplGenerator(
@@ -38,13 +47,15 @@ public class ConfigImplGenerator {
             EqualsHashCodeGenerator equalsHashCodeGenerator,
             ConfigurationClassNameGenerator configurationClassNameGenerator,
             ConfigNameCache configNameCache,
-            MethodNames methodNames) {
+            MethodNames methodNames,
+            ConfigStructureAnalysis configStructureAnalysis) {
         this.accessorGenerator = accessorGenerator;
         this.toStringGenerator = toStringGenerator;
         this.equalsHashCodeGenerator = equalsHashCodeGenerator;
         this.configurationClassNameGenerator = configurationClassNameGenerator;
         this.configNameCache = configNameCache;
         this.methodNames = methodNames;
+        this.configStructureAnalysis = configStructureAnalysis;
     }
 
     private static void makeAbstractIfUnion(AbstractConfigStructure ast, TypeSpec.Builder source) {
@@ -161,16 +172,18 @@ public class ConfigImplGenerator {
      * @param source the class builder
      */
     private void addGeneratedConfigAnnotations(AbstractConfigStructure ast, TypeSpec.Builder source) {
-        final List<String> unserializableProperties = ast.properties().stream()
-                .filter(p -> !p.settings().hasDefaultValue() && !p.settings().isNullable())
+        final List<String> uninitializableProperties = ast.properties().stream()
+                .filter(p -> !p.settings().hasDefaultValue()
+                        && !p.settings().isNullable()
+                        && !configStructureAnalysis.isTypeInitializable(p.propertyType()))
                 .map(Property::name)
                 .toList();
 
         AnnotationSpec.Builder generatedConfigBuilder = AnnotationSpec.builder(GeneratedConfig.class)
                 .addMember("source", "$T.class", ast.name())
-                .addMember("isDynamicallyInitializable", "$L", ast.isDynamicallyInitializable());
+                .addMember("isDynamicallyInitializable", "$L", configStructureAnalysis.isDynamicallyInitializable(ast));
 
-        for (String property : unserializableProperties) {
+        for (String property : uninitializableProperties) {
             generatedConfigBuilder.addMember("uninitializableProperties", "$S", property);
         }
 
