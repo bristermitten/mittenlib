@@ -5,8 +5,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.MultipleFailuresException;
@@ -57,14 +59,32 @@ public class CollectionsUtils {
 
         for (DataTree map : rawList) {
             Result<T> deserialized = deserializationFunction.apply(baseContext.withData(map));
-            deserialized.error().ifPresent(errors::add);
-            deserialized.value().ifPresent(res::add);
+            if (deserialized.isFailure()) {
+                deserialized.error().ifPresent(errors::add);
+            } else {
+                res.add(deserialized.getOrThrow());
+            }
         }
         if (!errors.isEmpty()) {
             return Result.fail(new MultipleFailuresException("Failed to deserialize list", errors));
         }
 
         return Result.ok(res);
+    }
+
+    /**
+     * Attempt to deserialize a set using the MittenLib config system.
+     *
+     * @param rawData                 the raw data to deserialize
+     * @param baseContext             the base context to use for deserialization
+     * @param deserializationFunction the function to use for turning a {@link Map} into an {@link T}
+     * @param <T>                     the type to deserialize to
+     * @return a {@link Result} containing the deserialized set, or a {@link Result#fail(Exception)}
+     * if deserialization failed
+     */
+    public static <T> Result<Set<T>> deserializeSet(
+            Object rawData, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
+        return deserializeList(rawData, baseContext, deserializationFunction).map(LinkedHashSet::new);
     }
 
     /**
