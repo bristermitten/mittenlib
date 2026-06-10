@@ -53,6 +53,8 @@ public class ConfigStructureAnalysis {
     public boolean needsValidation(AbstractConfigStructure structure) {
         return structure.properties().stream()
                 .anyMatch(p -> !p.settings().constraints().isEmpty()
+                        || !p.settings().elementConstraints().isEmpty()
+                        || !p.settings().keyConstraints().isEmpty()
                         || (!TypeName.get(p.propertyType()).isPrimitive()
                                 && !p.settings().isNullable()));
     }

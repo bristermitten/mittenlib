@@ -269,8 +269,24 @@ public class ConfigurationClassNameGenerator {
         return property.name() + VALIDATOR_SUFFIX;
     }
 
+    public String getValidatorElementFieldName(Property property) {
+        return property.name() + "Element" + VALIDATOR_SUFFIX;
+    }
+
+    public String getValidatorKeyFieldName(Property property) {
+        return property.name() + "Key" + VALIDATOR_SUFFIX;
+    }
+
     public String getValidatorErrorFieldName(Property property) {
         return property.name() + "ValidationError";
+    }
+
+    public String getValidatorElementErrorFieldName(Property property) {
+        return property.name() + "ElementValidationError";
+    }
+
+    public String getValidatorKeyErrorFieldName(Property property) {
+        return property.name() + "KeyValidationError";
     }
 
     public ClassName getDefaultMethodAccessClassName(AbstractConfigStructure ast) {

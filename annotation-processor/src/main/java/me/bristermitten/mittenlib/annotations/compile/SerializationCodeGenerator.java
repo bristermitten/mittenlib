@@ -92,7 +92,7 @@ public class SerializationCodeGenerator {
         if (wrappedType.hasTypeArguments()) {
             String canonicalName = wrappedType.erasure().getQualifiedName();
 
-            if (canonicalName.equals(List.class.getName()) || canonicalName.equals(Map.class.getName())) {
+            if (typesUtil.isCollection(propertyTypeMirror) || canonicalName.equals(Map.class.getName())) {
                 var typeArguments = wrappedType.getTypeArguments();
                 for (TypeMirror typeArgument : typeArguments) {
                     if (propertyIsUnserializable(
@@ -146,7 +146,9 @@ public class SerializationCodeGenerator {
         TypeName typeName = configurationClassNameGenerator.publicPropertyClassName(property);
         if (typeName instanceof ParameterizedTypeName parameterizedTypeName) {
             ClassName rawType = parameterizedTypeName.rawType;
-            if (rawType.equals(ClassName.get(List.class)) || rawType.equals(ClassName.get(Map.class))) {
+            if (rawType.equals(ClassName.get(List.class))
+                    || rawType.equals(ClassName.get(Set.class))
+                    || rawType.equals(ClassName.get(Map.class))) {
                 List<TypeName> typeArguments = parameterizedTypeName.typeArguments.stream()
                         .map(arg -> (TypeName) WildcardTypeName.subtypeOf(arg))
                         .toList();
@@ -317,7 +319,7 @@ public class SerializationCodeGenerator {
         // Generic collections (List, Map)
         if (wrappedType.hasTypeArguments()) {
             String canonicalName = wrappedType.erasure().getQualifiedName();
-            if (canonicalName.equals(List.class.getName())) {
+            if (canonicalName.equals(List.class.getName()) || canonicalName.equals(Set.class.getName())) {
                 TypeMirror elementType = wrappedType.getTypeArguments().getFirst();
                 TypeName elementTypeName = configurationClassNameGenerator.publicPropertyClassName(elementType);
                 String arrayVar = "arr" + depth;
@@ -326,11 +328,10 @@ public class SerializationCodeGenerator {
                 String elementTarget = arrayVar + "[" + indexVar + "]";
 
                 builder.addStatement("$T[] $L = new $T[$L.size()]", DataTree.class, arrayVar, DataTree.class, inputVar);
-                builder.beginControlFlow(
-                        "for (int $L = 0; $L < $L.size(); $L++)", indexVar, indexVar, inputVar, indexVar);
-                builder.addStatement(
-                        "$T $L = ($T) $L.get($L)", elementTypeName, elementVar, elementTypeName, inputVar, indexVar);
+                builder.addStatement("int $L = 0", indexVar);
+                builder.beginControlFlow("for ($T $L : $L)", elementTypeName, elementVar, inputVar);
                 builder.add(generateSerialization(elementType, elementVar, elementTarget, depth + 1));
+                builder.addStatement("$L++", indexVar);
                 builder.endControlFlow();
                 builder.addStatement("$L = $T.array($L)", targetExpression, DataTree.class, arrayVar);
                 return builder.build();

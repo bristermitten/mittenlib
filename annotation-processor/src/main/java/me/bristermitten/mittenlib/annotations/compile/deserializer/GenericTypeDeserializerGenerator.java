@@ -12,6 +12,7 @@ import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
@@ -104,13 +105,15 @@ public class GenericTypeDeserializerGenerator {
                 .asError()
                 .check($ -> AptkCoreMatchers.BY_RAW_TYPE
                         .getValidator()
-                        .hasOneOf(elementType.unwrap(), List.class, Map.class))
+                        .hasOneOf(elementType.unwrap(), List.class, Set.class, Map.class))
                 .validateAndIssueMessages();
 
         final String fromMapName = property.name() + "FromMap";
 
         if (canonicalName.equals(List.class.getName())) {
             return handleListType(builder, dtoType, property, wrappedElementType, fromMapName);
+        } else if (canonicalName.equals(Set.class.getName())) {
+            return handleSetType(builder, dtoType, property, wrappedElementType, fromMapName);
         } else if (canonicalName.equals(Map.class.getName())) {
             return handleMapType(builder, dtoType, property, wrappedElementType, fromMapName);
         } else {
@@ -158,6 +161,16 @@ public class GenericTypeDeserializerGenerator {
                 CodeBlock innerFunction = getDeserializationFunction(dtoType, property, elementType, depth + 1);
                 return CodeBlock.of(
                         "$L -> $T.deserializeList($L.getData(), $L, $L)",
+                        ctxVar,
+                        CollectionsUtils.class,
+                        ctxVar,
+                        ctxVar,
+                        innerFunction);
+            } else if (canonicalName.equals(Set.class.getName())) {
+                TypeMirror elementType = wrapped.getTypeArguments().getFirst();
+                CodeBlock innerFunction = getDeserializationFunction(dtoType, property, elementType, depth + 1);
+                return CodeBlock.of(
+                        "$L -> $T.deserializeSet($L.getData(), $L, $L)",
                         ctxVar,
                         CollectionsUtils.class,
                         ctxVar,
@@ -263,6 +276,22 @@ public class GenericTypeDeserializerGenerator {
                 "return $T.deserializeMap($T.class, $L, context, $L);\n",
                 CollectionsUtils.class,
                 typesUtil.getSafeType(keyType),
+                fromMapName,
+                deserializationFunction);
+        return Optional.of(builder.build());
+    }
+
+    private Optional<MethodSpec> handleSetType(
+            MethodSpec.Builder builder,
+            TypeElement dtoType,
+            Property property,
+            TypeMirrorWrapper wrappedElementType,
+            String fromMapName) {
+        var setType = wrappedElementType.getTypeArguments().getFirst();
+        CodeBlock deserializationFunction = getDeserializationFunction(dtoType, property, setType, 0);
+        builder.addCode(
+                "return $T.deserializeSet($L, context, $L);\n",
+                CollectionsUtils.class,
                 fromMapName,
                 deserializationFunction);
         return Optional.of(builder.build());

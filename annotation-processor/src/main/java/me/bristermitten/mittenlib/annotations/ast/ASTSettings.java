@@ -43,6 +43,8 @@ public sealed interface ASTSettings {
             EnumParsingSchemes enumParsingScheme,
             boolean isNullable,
             boolean hasDefaultValue,
-            List<ValidationConstraint> constraints)
+            List<ValidationConstraint> constraints,
+            List<ValidationConstraint> elementConstraints,
+            List<ValidationConstraint> keyConstraints)
             implements ASTSettings {}
 }

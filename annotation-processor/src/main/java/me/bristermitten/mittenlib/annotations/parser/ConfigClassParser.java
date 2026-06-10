@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -134,6 +135,24 @@ public class ConfigClassParser {
                                 }
                             };
 
+                    List<ValidationConstraint> constraints = parseConstraints(propertyElement);
+                    List<ValidationConstraint> elementConstraints = List.of();
+                    List<ValidationConstraint> keyConstraints = List.of();
+
+                    if (propertyType instanceof DeclaredType declaredType) {
+                        List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+                        if (typesUtil.isCollection(propertyType)) {
+                            if (!typeArguments.isEmpty()) {
+                                elementConstraints = parseConstraints(typeArguments.get(0));
+                            }
+                        } else if (typesUtil.isMap(propertyType)) {
+                            if (typeArguments.size() >= 2) {
+                                keyConstraints = parseConstraints(typeArguments.get(0));
+                                elementConstraints = parseConstraints(typeArguments.get(1));
+                            }
+                        }
+                    }
+
                     return new Property(
                             propertyElement.getSimpleName().toString(),
                             propertyType,
@@ -146,7 +165,9 @@ public class ConfigClassParser {
                                             : enumParsingScheme.value(),
                                     isNullable,
                                     hasDefault,
-                                    parseConstraints(propertyElement)));
+                                    constraints,
+                                    elementConstraints,
+                                    keyConstraints));
                 })
                 .toList();
     }
@@ -254,7 +275,7 @@ public class ConfigClassParser {
         return ast;
     }
 
-    private List<ValidationConstraint> parseConstraints(Element element) {
+    private List<ValidationConstraint> parseConstraints(AnnotatedConstruct element) {
         List<ValidationConstraint> constraints = new ArrayList<>();
         for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
             String qName = ((TypeElement) mirror.getAnnotationType().asElement())
