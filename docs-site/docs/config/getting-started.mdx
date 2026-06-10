@@ -3,7 +3,7 @@
 MittenLib's **Config Annotation Processor** transforms simple Java interfaces or classes into high-performance, immutable configuration objects with built-in validation and Guice integration.
 
 :::tip[New to MittenLib?]
-Follow the **[Config System Tutorial](../tutorial/config-system/01-first-config)** for a step-by-step guide on building your first configuration.
+Follow the **[Config System Tutorial](../tutorial/config-system/01-first-config.mdx)** for a step-by-step guide on building your first configuration.
 :::
 
 ## Core Concept
@@ -47,12 +47,12 @@ You can also use classes, which is useful if you are porting existing code.
 
 For every `@Config` type, MittenLib generates several companion classes in the same package:
 
-| Generated Class | Purpose |
-|-----------------|---------|
-| `...Impl` | The concrete, immutable implementation of your config structure. |
+| Generated Class   | Purpose                                                                                                                                                     |
+|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `...Impl`         | The concrete, immutable implementation of your config structure.                                                                                            |
 | `...Deserializer` | Handles converting raw data (via <Javadoc type="DataTree [me.bristermitten.mittenlib.config.tree.DataTree]">`DataTree`</Javadoc>) into your config objects. |
-| `...Serializer` | Handles converting your config objects back into <Javadoc type="DataTree [me.bristermitten.mittenlib.config.tree.DataTree]">`DataTree`</Javadoc> format. |
-| `...Validator` | Ensures all `@Min`, `@NotBlank`, etc., constraints are met. |
+| `...Serializer`   | Handles converting your config objects back into <Javadoc type="DataTree [me.bristermitten.mittenlib.config.tree.DataTree]">`DataTree`</Javadoc> format.    |
+| `...Validator`    | Ensures all `@Min`, `@NotBlank`, etc., constraints are met.                                                                                                 |
 
 ## Integrating with Guice
 
