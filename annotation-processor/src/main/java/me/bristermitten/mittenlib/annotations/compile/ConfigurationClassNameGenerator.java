@@ -35,7 +35,7 @@ public class ConfigurationClassNameGenerator {
     private final ConfigNameCache configNameCache;
 
     @Inject
-    ConfigurationClassNameGenerator(ConfigNameCache configNameCache) {
+    public ConfigurationClassNameGenerator(ConfigNameCache configNameCache) {
         this.configNameCache = configNameCache;
     }
 

@@ -183,4 +183,29 @@ class VerifierTest {
                 .hadWarningContaining(
                         "has a @Source but is not dynamically initializable because the following required properties lack default values");
     }
+
+    @Test
+    void testUnionAlternativeExtendingOtherClassNotUnion() {
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.UnionConfigDTO", """
+                        package me.bristermitten.mittenlib.tests;
+                        import me.bristermitten.mittenlib.config.*;
+
+                        @Config
+                        @ConfigUnion
+                        public class UnionConfigDTO {
+                            public int sharedProperty;
+
+                            public static class SomeOtherClass {}
+
+                            @Config
+                            public static class AlternativeOneDTO extends SomeOtherClass {
+                                public String altProperty;
+                            }
+                        }
+                        """));
+
+        assertThat(compilation).failed();
+        assertThat(compilation).hadErrorContaining("UnionConfigDTO MUST extend the union type");
+    }
 }

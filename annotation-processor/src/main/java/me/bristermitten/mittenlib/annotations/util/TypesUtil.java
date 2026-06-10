@@ -34,7 +34,7 @@ public class TypesUtil {
     private final GeneratedTypeCache generatedTypeCache;
 
     @Inject
-    TypesUtil(Types types, Elements elements, GeneratedTypeCache generatedTypeCache) {
+    public TypesUtil(Types types, Elements elements, GeneratedTypeCache generatedTypeCache) {
         this.types = types;
         this.elements = elements;
         this.generatedTypeCache = generatedTypeCache;
