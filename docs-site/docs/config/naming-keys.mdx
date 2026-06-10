@@ -1,0 +1,185 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Naming & Keys
+
+By default, MittenLib uses your Java method names directly as config keys. However, you can customize this mapping to match different naming conventions or specific config file requirements.
+
+## Default Behavior
+
+If no naming pattern or override is specified, the Java method name is used exactly as defined.
+
+<Tabs>
+<TabItem value="java" label="Java" default>
+
+```java
+@Config
+public interface ServerConfig {
+    String serverName();
+    int maxPlayers();
+}
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML">
+
+```yaml
+serverName: "My Minecraft Server"
+maxPlayers: 100
+```
+
+</TabItem>
+</Tabs>
+
+## Naming Patterns
+
+Apply consistent naming conventions across your entire config interface using `@NamingPattern`. This is the recommended way to match standard YAML conventions like `kebab-case`.
+
+<Tabs>
+<TabItem value="java" label="Java" default>
+
+```java
+import me.bristermitten.mittenlib.config.names.NamingPattern;
+import me.bristermitten.mittenlib.config.names.NamingPatterns;
+
+@Config
+@NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+public interface PluginConfig {
+    String pluginName();
+    int maxPlayers();
+    boolean enablePvp();
+}
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML">
+
+```yaml
+plugin-name: "MyPlugin"
+max-players: 100
+enable-pvp: true
+```
+
+</TabItem>
+</Tabs>
+
+### Available Patterns
+
+| Pattern | Java Method | Config Key |
+|---------|-----------|------------|
+| `LOWER_SNAKE_CASE` | `hostName()` | `host_name` |
+| `LOWER_KEBAB_CASE` | `hostName()` | `host-name` |
+| `UPPER_SNAKE_CASE` | `hostName()` | `HOST_NAME` |
+| `UPPER_KEBAB_CASE` | `hostName()` | `HOST-NAME` |
+| `LOWER_CAMEL_CASE` | `hostName()` | `hostName` |
+| `UPPER_CAMEL_CASE` | `hostName()` | `HostName` |
+| `DEFAULT` | `hostName()` | `hostName` |
+
+## Custom Field Names
+
+For one-off overrides that don't fit a pattern, use `@ConfigName` on individual methods. This is useful for short aliases or matching legacy configuration files.
+
+<Tabs>
+<TabItem value="java" label="Java" default>
+
+```java
+import me.bristermitten.mittenlib.config.names.ConfigName;
+
+@Config
+public interface DatabaseConfig {
+    @ConfigName("db-host")
+    String host();
+    
+    @ConfigName("db-port")
+    int port();
+}
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML">
+
+```yaml
+db-host: "localhost"
+db-port: 3306
+```
+
+</TabItem>
+</Tabs>
+
+## Priority Hierarchy
+
+When multiple naming strategies apply, the most specific one wins:
+
+1. **`@ConfigName` on method** (highest priority)
+2. **`@NamingPattern` on method**
+3. **`@NamingPattern` on interface**
+4. **Method name as-is** (lowest priority)
+
+<Tabs>
+<TabItem value="java" label="Java" default>
+
+```java
+@Config
+@NamingPattern(NamingPatterns.LOWER_SNAKE_CASE)
+public interface MixedConfig {
+    String userName();                      // user_name (interface pattern)
+    
+    @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+    String displayName();                   // display-name (method pattern)
+    
+    @ConfigName("usr_email")
+    String userEmail();                     // usr_email (explicit override)
+}
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML">
+
+```yaml
+user_name: "jeb_"
+display-name: "Jeb"
+usr_email: "jeb@mojang.com"
+```
+
+</TabItem>
+</Tabs>
+
+## Nested Configs
+
+Naming patterns are **inherited** by nested configurations (<Javadoc type="CascadeToInnerClasses [me.bristermitten.mittenlib.config.generate.CascadeToInnerClasses]"/>),
+but can be overridden by adding the annotation again.
+
+<Tabs>
+<TabItem value="java" label="Java" default>
+
+```java
+@Config
+@NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+public interface RootConfig {
+    String serverName();
+    DatabaseConfig database();
+
+    @Config // inherits the NamingPattern
+    interface DatabaseConfig {
+        String dbHost();
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML">
+
+```yaml
+server-name: "My Server"
+database:
+  db-host: "localhost"
+```
+
+</TabItem>
+</Tabs>
+
+## Next Steps
+
+- **[Validation](./validation)** - Add constraints to ensure your configuration data is valid
+- **[Guice Integration](./guice-integration)** - Automatically load and inject your configs

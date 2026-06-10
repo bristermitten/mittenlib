@@ -1,15 +1,16 @@
 package me.bristermitten.mittenlib.files;
 
-import me.bristermitten.mittenlib.files.json.JSONFileType;
-import me.bristermitten.mittenlib.files.yaml.YamlFileType;
-
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import me.bristermitten.mittenlib.files.json.JSONFileType;
+import me.bristermitten.mittenlib.files.yaml.YamlFileType;
+import org.jetbrains.annotations.Unmodifiable;
 
 /**
- * Stores all the known {@link FileType} classes,
- * used for registration in the {@link FileTypeModule}
+ * Stores all the known {@link FileType} classes, used for registration in the {@link
+ * FileTypeModule}
  */
 public class FileTypes {
     private final Set<Class<? extends FileType>> types;
@@ -20,22 +21,19 @@ public class FileTypes {
      * @param types the types to register
      */
     public FileTypes(Set<Class<? extends FileType>> types) {
-        this.types = types;
+        this.types = new HashSet<>(types);
     }
 
     /**
-     * Return a {@link FileTypes} containing the default {@link FileType}s.
-     * These are currently {@link JSONFileType} and {@link YamlFileType}
+     * Return a {@link FileTypes} containing the default {@link FileType}s. These are currently {@link
+     * JSONFileType} and {@link YamlFileType}
      *
      * @return a {@link FileTypes} instance with the default types registered
      * @see JSONFileType
      * @see YamlFileType
      */
     public static FileTypes defaultTypes() {
-        return new FileTypes(new HashSet<>(Arrays.asList(
-                JSONFileType.class,
-                YamlFileType.class
-        )));
+        return new FileTypes(new HashSet<>(Arrays.asList(JSONFileType.class, YamlFileType.class)));
     }
 
     /**
@@ -54,7 +52,7 @@ public class FileTypes {
      *
      * @return the set of {@link FileType} classes registered
      */
-    public Set<Class<? extends FileType>> getTypes() {
-        return types;
+    public @Unmodifiable Set<Class<? extends FileType>> getTypes() {
+        return Collections.unmodifiableSet(types);
     }
 }

@@ -1,29 +1,29 @@
 plugins {
-	`java-library`
+    id("mittenlib.java-conventions")
+    id("mittenlib.publishing-conventions")
 }
 
 dependencies {
-	api(libs.guice)
-	api(libs.adventure.api)
-	api(libs.adventure.platform.bukkit)
-	api(libs.jspecify)
+    api(libs.guice)
+    api(libs.adventure.api)
+    api(libs.adventure.platform.bukkit)
+    api(libs.jspecify)
 
+    testImplementation(libs.jimfs)
+    testImplementation(libs.mockbukkit)
 
-	testImplementation(libs.jimfs)
-	testImplementation(libs.mockbukkit)
-
-	// Property-based testing with jqwik
-	testImplementation("net.jqwik:jqwik:1.9.3")
-	testRuntimeOnly("net.jqwik:jqwik-engine:1.9.3")
+    // Property-based testing with jqwik
+    testImplementation("net.jqwik:jqwik:1.9.3")
+    testRuntimeOnly("net.jqwik:jqwik-engine:1.9.3")
 }
 
 tasks.compileTestJava {
-	sourceCompatibility = JavaVersion.VERSION_21.toString()
-	targetCompatibility = JavaVersion.VERSION_21.toString()
+    sourceCompatibility = JavaVersion.VERSION_21.toString()
+    targetCompatibility = JavaVersion.VERSION_21.toString()
 }
 
 tasks.test {
-	useJUnitPlatform {
-		includeEngines("jqwik", "junit-jupiter")
-	}
+    useJUnitPlatform {
+        includeEngines("jqwik", "junit-jupiter")
+    }
 }

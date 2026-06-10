@@ -1,18 +1,18 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import static me.bristermitten.mittenlib.util.Result.fail;
+
+import com.google.inject.Inject;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.logging.Logger;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileType;
 import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
-import java.io.Reader;
-import java.nio.file.Path;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import static me.bristermitten.mittenlib.util.Result.fail;
-
+/** An {@link ObjectLoader} which tries each known {@link FileType} in order, until one succeeds. */
 public class SearchingObjectLoader implements ObjectLoader {
     private final Set<FileType> loaders;
 
@@ -37,12 +37,14 @@ public class SearchingObjectLoader implements ObjectLoader {
 
     @Override
     public @NotNull Result<DataTree> load(@NotNull Reader source) {
-        logger.warning(() -> "SearchingObjectLoader used with load(Reader). " +
-                "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them." +
-                "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
+        logger.warning(
+                () -> "SearchingObjectLoader used with load(Reader). "
+                        + "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them."
+                        + "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
 
         for (FileType fileType : loaders) {
-            Result<DataTree> res = fileType.loader().load(source); // TODO this won't actually work as the reader is already consumed
+            Result<DataTree> res =
+                    fileType.loader().load(source); // TODO this won't actually work as the reader is already consumed
             if (res.isSuccess()) {
                 return res;
             }
@@ -52,10 +54,10 @@ public class SearchingObjectLoader implements ObjectLoader {
 
     @Override
     public @NotNull Result<DataTree> load(@NotNull String source) {
-        logger.warning(() -> "SearchingObjectLoader used with load(String). " +
-                "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them." +
-                "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
-
+        logger.warning(
+                () -> "SearchingObjectLoader used with load(String). "
+                        + "This is not recommended as we can't efficiently determine which Loader to use, and so must try all of them."
+                        + "Consider using ConfigProviderFactory#createStringReaderProvider(FileType, String, Configuration<T>) to manually specify the file type.");
 
         for (FileType fileType : loaders) {
             Result<DataTree> res = fileType.loader().load(source);

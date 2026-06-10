@@ -1,0 +1,141 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Guice Integration
+
+MittenLib's Guice integration transforms configuration from a manual chore into an automatic, dependency-injected service. By annotating your configuration interfaces, MittenLib handles loading, validation, and even hot-reloading.
+
+## Automatic Loading with `@Source`
+
+To link a configuration interface to a specific file on disk, use the `@Source` annotation.
+
+<Tabs>
+<TabItem value="java" label="Java" default>
+
+```java
+import me.bristermitten.mittenlib.config.*;
+
+@Config
+@Source("anti-grief.yml")
+public interface AntiGriefConfig {
+    boolean enableExplosions();
+    int maxEntityCramming();
+    
+    default double fireSpreadRate() {
+        return 0.1;
+    }
+}
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML (anti-grief.yml)">
+
+```yaml
+enableExplosions: false
+maxEntityCramming: 24
+# fireSpreadRate will use its default (0.1)
+```
+
+</TabItem>
+</Tabs>
+
+### Registering with Guice
+
+The annotation processor generates a class named `ConfigLoaderModule` in your root package. This module automatically handles the registration of all your `@Config` interfaces that have a `@Source`.
+
+This module should be registered using <Javadoc type="MittenLib#config(me.bristermitten.mittenlib.config.MittenLibConfigLoader) [me.bristermitten.mittenlib.MittenLib#config(me.bristermitten.mittenlib.config.MittenLibConfigLoader)]"/> when you initially setup MittenLib. 
+
+### Injecting Configurations
+
+Once registered, you can inject your configuration directly into your services. MittenLib will ensure the config is loaded and validated before it is injected.
+
+```java
+public class ExplosionListener implements Listener {
+    private final AntiGriefConfig config;
+    
+    @Inject
+    public ExplosionListener(AntiGriefConfig config) {
+        this.config = config;
+    }
+    
+    @EventHandler
+    public void onExplode(EntityExplodeEvent event) {
+        if (!config.enableExplosions()) {
+            event.setCancelled(true);
+        }
+    }
+}
+```
+
+## Advanced Injection: `ConfigProvider`
+
+For features like lazy loading and hot-reloading, you can inject a `ConfigProvider<T>` instead of the configuration interface directly. `ConfigProvider` extends Guice's `Provider<T>` and provides additional file-related metadata. 
+
+This approach will ensure that the config file isn't read until required, the result is cached, and the contents _automatically reload_ if the file changes!. This helps to reduce the need for `/reload` commands, which makes the experience much smoother for admins.
+
+```java
+public class AntiGriefService {
+    private final ConfigProvider<AntiGriefConfig> provider;
+    
+    @Inject
+    public AntiGriefService(ConfigProvider<AntiGriefConfig> provider) {
+        this.provider = provider;
+    }
+    
+    public void checkConfig() {
+        // Access the current config instance, which should always match the current file contents
+        AntiGriefConfig config = provider.get();
+        
+        // Get the path to the config file (e.g. plugins/MyPlugin/anti-grief.yml)
+        Path path = provider.path();
+        
+        // Manually clear the cache to force a reload from disk on next get()
+        provider.clearCache();
+    }
+}
+```
+
+### Direct vs. Provider Injection
+
+:::info
+Unless you specifically want eager initialisation because laziness and hot reloading wouldn't make sense (e.g. to initialise a database connection on startup), we recommend always using the Provider injection approach!
+:::
+
+| Feature | Direct Injection (`T`) | Provider Injection (`ConfigProvider<T>`) |
+|---------|-----------------|-------------------|
+| **Ease of Use** | High (just use methods) | Moderate (must call `.get()`) |
+| **Hot Reloading** | No (instance is fixed) | **Yes** (always yields latest) |
+| **Lazy Loading** | No (loaded on startup) | **Yes** (loaded on first `.get()`) |
+| **Metadata** | No | **Yes** (file path access) |
+
+## File Watching & Hot Reloading
+
+This feature is handled by <Javadoc type="FileWatcherModule [me.bristermitten.mittenlib.watcher.FileWatcherModule]"/>, which is enabled by default with <Javadoc type='MittenLib#addDefaultModules() [me.bristermitten.mittenlib.MittenLib#addDefaultModules()]'/>.
+
+If this functionality is not desired for some reason, you can disable it by using <Javadoc type="'MittenLib#removeModule(Class) [me.bristermitten.mittenlib.MittenLib#removeModule(java.lang.Class)]'"/>
+
+
+With `FileWatcherModule` active:
+- MittenLib starts a background thread to watch for file system changes.
+- When any config sourced file is updated by an admin, the internal cache is invalidated.
+- The next time your code calls `provider.get()`, the new configuration is re-loaded and re-validated automatically.
+
+## Multiple Configurations
+
+The `ConfigLoaderModule` automatically finds and registers every `@Config` interface in your project that has a `@Source`. One line of setup works no matter how large your plugin gets!
+
+```java
+public class MyPluginModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        // Registers AntiGriefConfig, DatabaseConfig, and any others automatically
+        install(new ConfigLoaderModule());
+    }
+}
+```
+
+## Next Steps
+
+- **[Persistence](./persistence)** - Save configuration changes back to disk
+- **[Validation](./validation)** - Add constraints to ensure data integrity
+- **[Naming & Keys](./naming-keys)** - Customize YAML key formats

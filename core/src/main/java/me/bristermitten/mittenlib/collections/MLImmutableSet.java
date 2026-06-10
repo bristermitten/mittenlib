@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.collections;
 
-import org.jspecify.annotations.NonNull;
-
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.function.Predicate;
+import org.jspecify.annotations.NonNull;
 
 public abstract class MLImmutableSet<E> extends AbstractSet<@NonNull E> {
     @Override
@@ -41,7 +40,6 @@ public abstract class MLImmutableSet<E> extends AbstractSet<@NonNull E> {
     public boolean removeIf(@NonNull Predicate<? super E> filter) {
         throw new UnsupportedOperationException("Immutable set");
     }
-
 
     public abstract @NonNull MLImmutableSet<E> plus(@NonNull E e);
 }

@@ -2,18 +2,14 @@ package me.bristermitten.mittenlib.util.lambda;
 
 import java.util.function.Function;
 
-/**
- * Utility class for dealing with {@link Function}s
- */
+/** Utility class for dealing with {@link Function}s */
 public class Functions {
-    private Functions() {
-
-    }
+    private Functions() {}
 
     /**
      * A function that always returns the same value, ignoring the input
      *
-     * @param r   the value to return
+     * @param r the value to return
      * @param <A> the input type
      * @param <R> the return type
      * @return a function that always returns the input value

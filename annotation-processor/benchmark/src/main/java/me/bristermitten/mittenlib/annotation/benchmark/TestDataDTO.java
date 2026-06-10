@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.annotation.benchmark;
 
+import java.util.Map;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.names.NamingPattern;
 import me.bristermitten.mittenlib.config.names.NamingPatterns;
 import org.bukkit.Material;
-
-import java.util.Map;
 
 @Config
 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
@@ -33,23 +32,38 @@ public class TestDataDTO {
 
     @Override
     public String toString() {
-        return "TestDataGson{" +
-                "a=" + a +
-                ", b=" + b +
-                ", c=" + c +
-                ", d=" + d +
-                ", e=" + e +
-                ", f=" + f +
-                ", g=" + g +
-                ", h=" + h +
-                ", i=" + i +
-                ", j=" + j +
-                ", k=" + k +
-                ", l=" + l +
-                ", m=" + m +
-                ", n=" + n +
-                ", o=" + o +
-                '}';
+        return "TestDataGson{"
+                + "a="
+                + a
+                + ", b="
+                + b
+                + ", c="
+                + c
+                + ", d="
+                + d
+                + ", e="
+                + e
+                + ", f="
+                + f
+                + ", g="
+                + g
+                + ", h="
+                + h
+                + ", i="
+                + i
+                + ", j="
+                + j
+                + ", k="
+                + k
+                + ", l="
+                + l
+                + ", m="
+                + m
+                + ", n="
+                + n
+                + ", o="
+                + o
+                + '}';
     }
 
     @Config

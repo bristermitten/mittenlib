@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.annotation.benchmark;
 
-import org.bukkit.Material;
-
 import java.util.Map;
+import org.bukkit.Material;
 
 public class TestDataGson {
     private boolean a;
@@ -26,26 +25,40 @@ public class TestDataGson {
     private Material n;
     private Material o;
 
-
     @Override
     public String toString() {
-        return "TestDataGson{" +
-                "a=" + a +
-                ", b=" + b +
-                ", c=" + c +
-                ", d=" + d +
-                ", e=" + e +
-                ", f=" + f +
-                ", g=" + g +
-                ", h=" + h +
-                ", i=" + i +
-                ", j=" + j +
-                ", k=" + k +
-                ", l=" + l +
-                ", m=" + m +
-                ", n=" + n +
-                ", o=" + o +
-                '}';
+        return "TestDataGson{"
+                + "a="
+                + a
+                + ", b="
+                + b
+                + ", c="
+                + c
+                + ", d="
+                + d
+                + ", e="
+                + e
+                + ", f="
+                + f
+                + ", g="
+                + g
+                + ", h="
+                + h
+                + ", i="
+                + i
+                + ", j="
+                + j
+                + ", k="
+                + k
+                + ", l="
+                + l
+                + ", m="
+                + m
+                + ", n="
+                + n
+                + ", o="
+                + o
+                + '}';
     }
 
     public boolean isA() {

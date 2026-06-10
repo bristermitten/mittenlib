@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
  * Base interface for GUI applications, based on the Elm Architecture (Model-View-Update / TEA).
  *
  * @param <Model> the type of the model that holds the state of the application
- * @param <Msg>   the type of messages that can be executed to update the model
- * @param <View>  the type of view that renders the model and waits for commands
- * @param <Cmd>   the type of commands that can be sent to perform side effects
+ * @param <Msg> the type of messages that can be executed to update the model
+ * @param <View> the type of view that renders the model and waits for commands
+ * @param <Cmd> the type of commands that can be sent to perform side effects
  */
 public interface GUIBase<Model, Msg, View, Ctx extends CommandContext, Cmd extends Command<Ctx, Msg>> {
 

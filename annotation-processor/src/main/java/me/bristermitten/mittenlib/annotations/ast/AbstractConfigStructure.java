@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
 import com.squareup.javapoet.ClassName;
+import java.util.List;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * The abstract shape of a config, before proper resolution
@@ -19,12 +18,10 @@ public sealed interface AbstractConfigStructure {
      * @return The name of the class this config is enclosed in, if present
      */
     @Contract(pure = true)
-    @Nullable
-    ASTParentReference enclosedIn();
+    @Nullable ASTParentReference enclosedIn();
 
     @Contract(pure = true)
     List<AbstractConfigStructure> enclosed();
-
 
     @Contract(pure = true)
     List<Property> properties();
@@ -35,15 +32,40 @@ public sealed interface AbstractConfigStructure {
     @Contract(pure = true)
     ASTSettings.ConfigASTSettings settings();
 
-    record Intersection(ClassName name,
-                        ConfigTypeSource source,
-                        ASTSettings.ConfigASTSettings settings,
-                        @Nullable ASTParentReference enclosedIn,
-                        List<AbstractConfigStructure> enclosed,
-                        List<ClassName> roots,
-                        List<Property> properties) implements AbstractConfigStructure {
-    }
+    /**
+     * An atomic config structure, i.e. a type with no parents or interfaces
+     */
+    record Atomic(
+            ClassName name,
+            ConfigTypeSource source,
+            ASTSettings.ConfigASTSettings settings,
+            List<AbstractConfigStructure> enclosed,
+            @Nullable ASTParentReference enclosedIn,
+            List<Property> properties)
+            implements AbstractConfigStructure {}
 
+    /**
+     * An intersection config structure, i.e. a type with some super classes/interfaces that it
+     * extends from
+     *
+     * @param roots the names of the "parents" of this config
+     */
+    record Intersection(
+            ClassName name,
+            ConfigTypeSource source,
+            ASTSettings.ConfigASTSettings settings,
+            @Nullable ASTParentReference enclosedIn,
+            List<AbstractConfigStructure> enclosed,
+            List<ClassName> roots,
+            List<Property> properties)
+            implements AbstractConfigStructure {}
+
+    /**
+     * A union config structure, i.e. a type that can be any of the given alternatives
+     *
+     * @param alternatives the alternatives of this union
+     * @param properties   any properties that are defined as present in any of the alternatives
+     */
     record Union(
             ClassName name,
             ConfigTypeSource source,
@@ -51,22 +73,11 @@ public sealed interface AbstractConfigStructure {
             @Nullable ASTParentReference enclosedIn,
             List<ClassName> parents,
             List<AbstractConfigStructure> alternatives,
-            List<Property> properties
-    ) implements AbstractConfigStructure {
+            List<Property> properties)
+            implements AbstractConfigStructure {
         @Override
         public List<AbstractConfigStructure> enclosed() {
             return alternatives;
         }
     }
-
-    record Atomic(
-            ClassName name,
-            ConfigTypeSource source,
-            ASTSettings.ConfigASTSettings settings,
-            List<AbstractConfigStructure> enclosed,
-            @Nullable ASTParentReference enclosedIn,
-            List<Property> properties
-    ) implements AbstractConfigStructure {
-    }
-
 }

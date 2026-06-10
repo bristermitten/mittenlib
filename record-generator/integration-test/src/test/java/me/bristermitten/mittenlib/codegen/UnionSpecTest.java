@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.codegen;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 public class UnionSpecTest {
 
@@ -11,9 +11,11 @@ public class UnionSpecTest {
         TestStructuralUnion record = new TestStructuralUnion.Child2(1);
         assertEquals(TestStructuralUnion.Child2(1), record);
 
-        record.match(() -> {
-            throw new AssertionError("Should not match Child1");
-        }, i -> assertEquals(1, i));
+        record.match(
+                () -> {
+                    throw new AssertionError("Should not match Child1");
+                },
+                i -> assertEquals(1, i));
 
         assertEquals(1, record.matchTo(() -> -1, i -> i));
 
@@ -26,15 +28,16 @@ public class UnionSpecTest {
         TestNominalUnion record = new TestNominalUnion.Child2(1);
         assertEquals(new TestNominalUnion.Child2(1), record);
 
-        record.match(child1 -> {
-            throw new AssertionError("Should not match Child1");
-        }, child2 -> assertEquals(1, child2.value()));
+        record.match(
+                child1 -> {
+                    throw new AssertionError("Should not match Child1");
+                },
+                child2 -> assertEquals(1, child2.value()));
 
         assertEquals(1, (int) record.matchTo(child1 -> -1, TestNominalUnion.Child2::value));
 
         assertTrue(record.asChild2().isPresent());
         assertFalse(record.asChild1().isPresent());
-
     }
 
     @SuppressWarnings("unused")

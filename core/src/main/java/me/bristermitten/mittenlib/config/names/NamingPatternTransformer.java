@@ -1,27 +1,23 @@
 package me.bristermitten.mittenlib.config.names;
 
+import java.util.Arrays;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 import me.bristermitten.mittenlib.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
-
-/**
- * Transforms strings into different formats based on a {@link NamingPatterns}
- */
+/** Transforms strings into different formats based on a {@link NamingPatterns} */
 public class NamingPatternTransformer {
     // https://stackoverflow.com/questions/1097901/regular-expression-split-string-by-capital-letter-but-ignore-tla
     private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(?=(?<=[a-z])[A-Z]|[A-Z](?=[a-z]))");
 
-    private NamingPatternTransformer() {
-    }
+    private NamingPatternTransformer() {}
 
     /**
      * Format a given input string into a different format based on a {@link NamingPatterns}
      *
-     * @param input   the input string
+     * @param input the input string
      * @param pattern the pattern to format to
      * @return the formatted string
      */
@@ -48,15 +44,10 @@ public class NamingPatternTransformer {
             throw new IllegalStateException("what");
         }
 
-
-        return Strings.joinWith(
-                Arrays.asList(parts),
-                transformer::apply,
-                separator);
+        return Strings.joinWith(Arrays.asList(parts), transformer, separator);
     }
 
-    @Nullable
-    private static String camelCaseFormat(@NotNull NamingPatterns pattern, String[] parts) {
+    @Nullable private static String camelCaseFormat(@NotNull NamingPatterns pattern, String[] parts) {
         if (pattern != NamingPatterns.LOWER_CAMEL_CASE && pattern != NamingPatterns.UPPER_CAMEL_CASE) {
             return null;
         }

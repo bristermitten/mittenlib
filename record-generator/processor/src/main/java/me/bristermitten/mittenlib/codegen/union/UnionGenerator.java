@@ -1,55 +1,46 @@
 package me.bristermitten.mittenlib.codegen.union;
 
+import static javax.lang.model.element.Modifier.*;
+
 import com.squareup.javapoet.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+import javax.annotation.processing.Generated;
 import me.bristermitten.mittenlib.codegen.BoilerplateGenerator;
 import me.bristermitten.mittenlib.codegen.GeneratedUnion;
 import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 import me.bristermitten.mittenlib.codegen.record.RecordGenerator;
 
-import javax.annotation.processing.Generated;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-
-import static javax.lang.model.element.Modifier.*;
-
 public class UnionGenerator {
 
     private static void addSealingConstructor(TypeSpec.Builder typeSpecBuilder) {
-        typeSpecBuilder.addMethod(
-                MethodSpec.constructorBuilder()
-                        .addModifiers(PRIVATE)
-                        .addCode(
-                                typeSpecBuilder.typeSpecs.stream().map(
-                                                m -> CodeBlock.of("this instanceof $L", m.name)
-                                        )
-                                        .collect(CodeBlock.joining(" || ", "if (!(", """
+        typeSpecBuilder.addMethod(MethodSpec.constructorBuilder()
+                .addModifiers(PRIVATE)
+                .addCode(typeSpecBuilder.typeSpecs.stream()
+                        .map(m -> CodeBlock.of("this instanceof $L", m.name))
+                        .collect(CodeBlock.joining(" || ", "if (!(", """
                                                 )) {
                                                     throw new UnsupportedOperationException("Union type is sealed!: " + this.getClass().getName());
                                                 }
-                                                """
-                                        ))).build()
-        );
+                                                                """)))
+                .build());
     }
 
-
-    private static void generateAsMethod(ClassName constructorClassName, RecordConstructorSpec constructor, TypeSpec.Builder typeSpecBuilder) {
-        typeSpecBuilder.addMethod(
-                MethodSpec.methodBuilder("as" + constructor.name())
-                        .addModifiers(PUBLIC)
-                        .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), constructorClassName))
-                        .addCode(CodeBlock.builder()
-                                .beginControlFlow("if (this instanceof $L)", constructorClassName)
-                                .addStatement("return $T.of(($T) this)", Optional.class, constructorClassName)
-                                .endControlFlow()
-                                .addStatement("return $T.empty()", Optional.class)
-                                .build()
-                        )
-                        .build()
-        );
+    private static void generateAsMethod(
+            ClassName constructorClassName, RecordConstructorSpec constructor, TypeSpec.Builder typeSpecBuilder) {
+        typeSpecBuilder.addMethod(MethodSpec.methodBuilder("as" + constructor.name())
+                .addModifiers(PUBLIC)
+                .returns(ParameterizedTypeName.get(ClassName.get(Optional.class), constructorClassName))
+                .addCode(CodeBlock.builder()
+                        .beginControlFlow("if (this instanceof $L)", constructorClassName)
+                        .addStatement("return $T.of(($T) this)", Optional.class, constructorClassName)
+                        .endControlFlow()
+                        .addStatement("return $T.empty()", Optional.class)
+                        .build())
+                .build());
     }
-
 
     private static ResolvedUnionSpec resolve(UnionSpec unionSpec) {
         return new ResolvedUnionSpec(
@@ -58,12 +49,8 @@ public class UnionGenerator {
                 unionSpec.strategy(),
                 unionSpec.constructors().stream()
                         .map(constructor -> new ResolvedUnionConstructor(
-                                unionSpec.source(),
-                                unionSpec.name().nestedClass(constructor.name()),
-                                constructor
-                        ))
-                        .toList()
-        );
+                                unionSpec.source(), unionSpec.name().nestedClass(constructor.name()), constructor))
+                        .toList());
     }
 
     public JavaFile generate(UnionSpec unionSpec) {
@@ -76,22 +63,19 @@ public class UnionGenerator {
         typeSpecBuilder.addAnnotation(AnnotationSpec.builder(Generated.class)
                 .addMember("value", "$S", BoilerplateGenerator.class.getName())
                 .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
-                .addMember("date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
-                .build()
-        );
+                .addMember(
+                        "date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
+                .build());
 
         var resolved = resolve(unionSpec);
 
         typeSpecBuilder.addMethod(MatchGenerator.makeVoidMatchMethodSpec(resolved));
         typeSpecBuilder.addMethod(MatchGenerator.makeMatchMethodSpec(resolved));
 
-
         for (var toGenerate : resolved.constructors()) {
             var generatedRecord = RecordGenerator.generateBasicRecordTypeSpec(toGenerate, false);
 
-            var constructorTypeSpecBuilder =
-                    generatedRecord.typeSpecBuilder()
-                            .addModifiers(PUBLIC, STATIC, FINAL);
+            var constructorTypeSpecBuilder = generatedRecord.typeSpecBuilder().addModifiers(PUBLIC, STATIC, FINAL);
 
             constructorTypeSpecBuilder.superclass(recordImplName);
 
@@ -101,7 +85,6 @@ public class UnionGenerator {
             constructorTypeSpecBuilder.addMethod(MatchGenerator.implementVoidMatchMethod(resolved, toGenerate));
             constructorTypeSpecBuilder.addMethod(MatchGenerator.implementReturningMatchMethod(resolved, toGenerate));
 
-
             typeSpecBuilder.addType(constructorTypeSpecBuilder.build());
         }
 
@@ -110,6 +93,4 @@ public class UnionGenerator {
         return JavaFile.builder(recordImplName.packageName(), typeSpecBuilder.build())
                 .build();
     }
-
-
 }

@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.gui.session;
 
+import java.util.UUID;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
-
-import java.util.UUID;
 
 public class SessionID<Model, Msg, V extends View<Msg, V, Viewer>, Viewer extends InventoryViewer<Msg, V>> {
     private final UUID id;
@@ -29,8 +28,6 @@ public class SessionID<Model, Msg, V extends View<Msg, V, Viewer>, Viewer extend
 
     @Override
     public String toString() {
-        return "SessionID{" +
-                "id=" + id +
-                '}';
+        return "SessionID{" + "id=" + id + '}';
     }
 }

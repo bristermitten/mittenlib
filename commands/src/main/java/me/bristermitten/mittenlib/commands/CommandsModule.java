@@ -9,9 +9,7 @@ import me.bristermitten.mittenlib.commands.handlers.ArgumentContext;
 import me.bristermitten.mittenlib.commands.handlers.NamedCondition;
 import me.bristermitten.mittenlib.commands.handlers.TabCompleter;
 
-/**
- * A Guice module for registering commands.
- */
+/** A Guice module for registering commands. */
 public class CommandsModule extends AbstractModule {
     @Override
     protected void configure() {
@@ -19,12 +17,11 @@ public class CommandsModule extends AbstractModule {
         Multibinder.newSetBinder(binder(), Command.class);
         Multibinder.newSetBinder(binder(), NamedCondition.class);
         Multibinder.newSetBinder(binder(), TabCompleter.class);
-        Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentContext<?>>() {
-        });
-        Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentCondition<?>>() {
-        });
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentContext<?>>() {});
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ArgumentCondition<?>>() {});
 
-
-        bind(BukkitCommandManager.class).toProvider(CommandManagerProvider.class).asEagerSingleton();
+        bind(BukkitCommandManager.class)
+                .toProvider(CommandManagerProvider.class)
+                .asEagerSingleton();
     }
 }

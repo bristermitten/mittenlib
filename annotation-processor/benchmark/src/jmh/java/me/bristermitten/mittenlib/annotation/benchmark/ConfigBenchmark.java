@@ -1,93 +1,106 @@
 package me.bristermitten.mittenlib.annotation.benchmark;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-import me.bristermitten.mittenlib.config.ConfigModule;
-import me.bristermitten.mittenlib.config.Configuration;
-import me.bristermitten.mittenlib.config.provider.ConfigProvider;
-import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import me.bristermitten.mittenlib.config.DeserializationContext;
+import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.reader.ObjectLoader;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.json.JSONFileType;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import org.openjdk.jmh.annotations.*;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class ConfigBenchmark {
 
     @Benchmark
-    public TestData benchmarkMittenLibJson(BenchState state) {
-        return state.configProviderJson.get();
+    public TestData benchmarkMittenLibFullJson(BenchState state) {
+        return state.jsonLoader
+                .load(state.jsonData)
+                .map(tree -> new DeserializationContext(state.mittenMapper, tree))
+                .flatMap(state.deserializer::apply)
+                .getOrThrow();
     }
 
     @Benchmark
-    public TestDataGson benchmarkGsonJson(BenchState state) {
+    public TestDataGson benchmarkGsonFullJson(BenchState state) {
         return state.gson.fromJson(state.jsonData, TestDataGson.class);
     }
 
     @Benchmark
-    public TestDataGson benchmarkJacksonJson(BenchState state) throws JsonProcessingException {
+    public TestDataGson benchmarkJacksonFullJson(BenchState state) throws JsonProcessingException {
         return state.jackson.readValue(state.jsonData, TestDataGson.class);
-
     }
 
     @Benchmark
-    public TestData benchmarkMittenLibYaml(BenchState state) {
-        return state.configProviderYaml.get();
+    public TestData benchmarkMittenLibMappingJson(BenchState state) {
+        return state.deserializer
+                .apply(new DeserializationContext(state.mittenMapper, state.jsonTree))
+                .getOrThrow();
     }
 
     @Benchmark
-    public TestDataGson benchmarkGsonYaml(BenchState state) {
-        var yaml = state.yaml.load(state.yamlData);
-        var tree = state.gson.toJsonTree(yaml);
-        return state.gson.fromJson(tree, TestDataGson.class);
+    public TestDataGson benchmarkGsonMappingJson(BenchState state) {
+        return state.gson.fromJson(state.gsonTree, TestDataGson.class);
     }
 
     @Benchmark
-    public TestDataGson benchmarkSnakeYaml(BenchState state) {
-        return state.yaml.loadAs(state.yamlData, TestDataGson.class);
+    public TestDataGson benchmarkJacksonMappingJson(BenchState state) throws JsonProcessingException {
+        return state.jackson.treeToValue(state.jacksonTree, TestDataGson.class);
     }
-
 
     @State(Scope.Benchmark)
     public static class BenchState {
         public final Gson gson = new Gson();
         public final Yaml yaml = new Yaml();
         public final ObjectMapper jackson = new ObjectMapper();
-        public ConfigProvider<TestData> configProviderJson;
-        public ConfigProvider<TestData> configProviderYaml;
-        private String yamlData;
-        private String jsonData;
+
+        public me.bristermitten.mittenlib.config.reader.ObjectMapper mittenMapper;
+        public ObjectLoader jsonLoader;
+        public ObjectLoader yamlLoader;
+        public DeserializationFunction<TestData> deserializer;
+
+        public String yamlData;
+        public String jsonData;
+
+        public DataTree jsonTree;
+        public JsonElement gsonTree;
+        public JsonNode jacksonTree;
 
         @Setup
-        public void setup() {
+        public void setup() throws JsonProcessingException {
             this.yamlData = getYamlFile();
             this.jsonData = getJSONFile();
 
             Injector injector = Guice.createInjector(
-                    Modules.override(new ConfigModule(Set.of()))
-                            .with(new BenchmarkingModule()),
-                    new FileTypeModule()
-            );
-            ConfigProviderFactory configProviderFactory = injector.getInstance(ConfigProviderFactory.class);
+                    new ConfigLoaderModule().asModuleWithInfrastructure(),
+                    new BenchmarkingModule(),
+                    new FileTypeModule());
 
-            var config = new Configuration<>("data.json", TestData.class, TestData::deserializeTestData);
-            var jsonType = injector.getInstance(JSONFileType.class);
-            this.configProviderJson = configProviderFactory.createStringReaderProvider(jsonType, jsonData, config).getOrThrow();
+            this.mittenMapper = injector.getInstance(me.bristermitten.mittenlib.config.reader.ObjectMapper.class);
+            this.deserializer = injector.getInstance(Key.get(new TypeLiteral<>() {}));
 
-            var config2 = new Configuration<>("data.yaml", TestData.class, TestData::deserializeTestData);
-            var yamlType = injector.getInstance(YamlFileType.class);
-            this.configProviderYaml = configProviderFactory.createStringReaderProvider(yamlType, yamlData, config2).getOrThrow();
+            this.jsonLoader = injector.getInstance(JSONFileType.class).loader();
+            this.yamlLoader = injector.getInstance(YamlFileType.class).loader();
+
+            // Pre-parsed trees for mapping benchmarks
+            this.jsonTree = jsonLoader.load(jsonData).getOrThrow();
+            this.gsonTree = gson.toJsonTree(gson.fromJson(jsonData, Object.class));
+            this.jacksonTree = jackson.valueToTree(jackson.readValue(jsonData, Object.class));
         }
 
         public String getJSONFile() {
@@ -99,10 +112,8 @@ public class ConfigBenchmark {
         }
 
         private String load(String fileName) {
-            try (var is = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream(fileName)) {
-                return new String(Objects.requireNonNull(is).readAllBytes());
+            try (var is = getClass().getClassLoader().getResourceAsStream(fileName)) {
+                return new String(Objects.requireNonNull(is).readAllBytes(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

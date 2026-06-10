@@ -1,5 +1,12 @@
 package me.bristermitten.mittenlib.lang;
 
+import static me.bristermitten.mittenlib.util.Cast.safeCast;
+
+import com.google.inject.Inject;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
 import me.bristermitten.mittenlib.lang.format.MessageFormatter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -10,23 +17,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.UnaryOperator;
-
-import static me.bristermitten.mittenlib.util.Cast.safeCast;
-
-/**
- * A basic service for sending language messages to command senders.
- */
+/** A basic service for sending language messages to command senders. */
 public class LangService {
 
     private final MessageFormatter formatter;
     private final BukkitAudiences audiences;
     private final UnaryOperator<Component> componentPostProcessor;
-
 
     @Inject
     public LangService(MessageFormatter formatter, BukkitAudiences audiences) {
@@ -35,7 +31,8 @@ public class LangService {
         this.componentPostProcessor = UnaryOperator.identity();
     }
 
-    public LangService(MessageFormatter formatter, BukkitAudiences audiences, UnaryOperator<Component> componentPostProcessor) {
+    public LangService(
+            MessageFormatter formatter, BukkitAudiences audiences, UnaryOperator<Component> componentPostProcessor) {
         this.formatter = formatter;
         this.audiences = audiences;
         this.componentPostProcessor = componentPostProcessor;
@@ -49,15 +46,23 @@ public class LangService {
         send(receiver, langMessage, Collections.emptyMap(), null);
     }
 
-    public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @NotNull Map<String, Object> placeholders) {
+    public void send(
+            @NotNull CommandSender receiver,
+            @NotNull LangMessage langMessage,
+            @NotNull Map<String, Object> placeholders) {
         send(receiver, langMessage, placeholders, null);
     }
 
-    public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @Nullable String messagePrefix) {
+    public void send(
+            @NotNull CommandSender receiver, @NotNull LangMessage langMessage, @Nullable String messagePrefix) {
         send(receiver, langMessage, Collections.emptyMap(), messagePrefix);
     }
 
-    public void send(@NotNull CommandSender receiver, @NotNull LangMessage langMessage, @NotNull Map<String, Object> placeholders, @Nullable String messagePrefix) {
+    public void send(
+            @NotNull CommandSender receiver,
+            @NotNull LangMessage langMessage,
+            @NotNull Map<String, Object> placeholders,
+            @Nullable String messagePrefix) {
         if (langMessage instanceof CompoundLangMessage) {
             CompoundLangMessage compound = (CompoundLangMessage) langMessage;
             for (LangMessage message : compound.getComponents()) {
@@ -112,10 +117,9 @@ public class LangService {
     }
 
     public void sendTitle(CommandSender receiver, String title, String subtitle) {
-        audiences.sender(receiver).showTitle(Title.title(
-                getFormattedComponent(receiver, title),
-                getFormattedComponent(receiver, subtitle)
-        ));
+        audiences
+                .sender(receiver)
+                .showTitle(
+                        Title.title(getFormattedComponent(receiver, title), getFormattedComponent(receiver, subtitle)));
     }
-
 }

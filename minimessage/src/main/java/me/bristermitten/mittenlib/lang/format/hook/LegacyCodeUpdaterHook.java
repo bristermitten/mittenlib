@@ -1,18 +1,17 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-
 /**
- * A {@link FormattingHook} that replaces legacy color codes with their MiniMessage equivalent.
- * This insures that formatting still works when other hooks might return a legacy code (for example from PlaceholderAPI)
+ * A {@link FormattingHook} that replaces legacy color codes with their MiniMessage equivalent. This
+ * insures that formatting still works when other hooks might return a legacy code (for example from
+ * PlaceholderAPI)
  */
 public class LegacyCodeUpdaterHook implements FormattingHook {
     private static final Pattern LEGACY_CODE_PATTERN = Pattern.compile("[&§][\\da-fk-or]");

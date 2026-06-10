@@ -10,9 +10,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> The type of the argument.
  */
-public interface ArgumentCondition<T> extends CommandConditions.ParameterCondition<T, BukkitCommandExecutionContext, BukkitCommandIssuer> {
+public interface ArgumentCondition<T>
+        extends CommandConditions.ParameterCondition<T, BukkitCommandExecutionContext, BukkitCommandIssuer> {
     /**
-     * The id of this condition. This should be unique and be used in {@link co.aikar.commands.annotation.Conditions} annotations.
+     * The id of this condition. This should be unique and be used in {@link
+     * co.aikar.commands.annotation.Conditions} annotations.
      *
      * @return The id of this condition.
      */
@@ -23,6 +25,5 @@ public interface ArgumentCondition<T> extends CommandConditions.ParameterConditi
      *
      * @return The type of the argument that this condition applies to.
      */
-
     @NotNull Class<T> type();
 }

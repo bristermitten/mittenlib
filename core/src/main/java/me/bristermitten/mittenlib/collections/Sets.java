@@ -2,20 +2,16 @@ package me.bristermitten.mittenlib.collections;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.InlineMe;
+import java.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.*;
-
-/**
- * Utility functions for creating immutable sets.
- */
+/** Utility functions for creating immutable sets. */
 @NullMarked
 public class Sets {
-    private Sets() {
-    }
+    private Sets() {}
 
     public static <E> @NonNull @Unmodifiable MLImmutableSet<E> of() {
         return new SetImpls.Set0<>();
@@ -76,11 +72,12 @@ public class Sets {
     }
 
     /**
-     * Create an immutable set from a collection of elements.
-     * This method is not guaranteed to copy the collection, but is guaranteed to be immutable and unmodifiable, including if the provided collection changes.
+     * Create an immutable set from a collection of elements. This method is not guaranteed to copy
+     * the collection, but is guaranteed to be immutable and unmodifiable, including if the provided
+     * collection changes.
      *
      * @param collection the collection to create the set from
-     * @param <E>        the type of the elements in the collection
+     * @param <E> the type of the elements in the collection
      * @return a new immutable set containing the elements of the collection
      */
     public static <E> @Unmodifiable MLImmutableSet<E> ofAll(Collection<E> collection) {
@@ -106,12 +103,12 @@ public class Sets {
     }
 
     /**
-     * Returns a new set containing the elements of 2 given sets
-     * The returned set is immutable. The passed sets should be also be immutable.
-     * <b>Changes to the underlying sets are not guaranteed to be reflected!</b>
+     * Returns a new set containing the elements of 2 given sets The returned set is immutable. The
+     * passed sets should be also be immutable. <b>Changes to the underlying sets are not guaranteed
+     * to be reflected!</b>
      *
-     * @param a   the first set
-     * @param b   the other set
+     * @param a the first set
+     * @param b the other set
      * @param <E> the type of the elements
      * @return a new set containing the elements of the given sets
      */
@@ -126,19 +123,20 @@ public class Sets {
             return a;
         }
 
-
         return new SetImpls.UnionOf<>(a, difference(b, a)); // TODO: make more efficient wrt nested unions
     }
 
     /**
-     * Return a new set containing the difference of 2 sets, i.e. all the elements in {@code a} that are not in {@code b}
+     * Return a new set containing the difference of 2 sets, i.e. all the elements in {@code a} that
+     * are not in {@code b}
      *
-     * @param a   the main set
-     * @param b   the other set
+     * @param a the main set
+     * @param b the other set
      * @param <E> the type of the elements
      * @return the difference of {@code a} and {@code b}
      */
-    public static <E> @Unmodifiable Set<E> difference(@NotNull @Unmodifiable Set<E> a, @NotNull @Unmodifiable Set<E> b) {
+    public static <E> @Unmodifiable Set<E> difference(
+            @NotNull @Unmodifiable Set<E> a, @NotNull @Unmodifiable Set<E> b) {
         if (a.isEmpty() && b.isEmpty()) {
             return of(); // {} \\ {} = {}
         }
@@ -159,21 +157,21 @@ public class Sets {
         return objectBuilder.build();
     }
 
-
     /**
-     * Returns a new set containing the elements of 2 given sets
-     * The returned set is immutable. The passed sets should be also be immutable.
-     * <b>Changes to the underlying sets are not guaranteed to be reflected!</b>
+     * Returns a new set containing the elements of 2 given sets The returned set is immutable. The
+     * passed sets should be also be immutable. <b>Changes to the underlying sets are not guaranteed
+     * to be reflected!</b>
      *
-     * @param start  the first set
+     * @param start the first set
      * @param others the other set
-     * @param <E>    the type of the elements
+     * @param <E> the type of the elements
      * @return a new set containing the elements of the given sets
      * @deprecated Use {@link Sets#union(Set, Set)}
      */
     @Deprecated
     @InlineMe(replacement = "Sets.union(start, others)", imports = "me.bristermitten.mittenlib.collections.Sets")
-    public static <E> @Unmodifiable Set<E> concat(@NotNull @Unmodifiable Set<E> start, @NotNull @Unmodifiable Set<E> others) {
+    public static <E> @Unmodifiable Set<E> concat(
+            @NotNull @Unmodifiable Set<E> start, @NotNull @Unmodifiable Set<E> others) {
         return union(start, others);
     }
 }

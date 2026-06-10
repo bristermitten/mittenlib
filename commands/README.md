@@ -7,5 +7,3 @@ It provides nice integration with MittenLib, allowing
 easy registration of commands and other elements such as context resolvers.
 
 Everything can be registered by simply binding it with a Multibinder.
-
-

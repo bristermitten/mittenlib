@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.config.tree;
 
-import net.jqwik.api.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import net.jqwik.api.*;
 
 class DataTreeTransformsTest {
 
@@ -12,8 +12,7 @@ class DataTreeTransformsTest {
                 Arbitraries.strings().map(DataTree.DataTreeLiteral.DataTreeLiteralString::new),
                 Arbitraries.doubles().map(DataTree.DataTreeLiteral.DataTreeLiteralFloat::new),
                 Arbitraries.of(true, false).map(DataTree.DataTreeLiteral.DataTreeLiteralBoolean::new),
-                Arbitraries.of(DataTree.DataTreeNull.INSTANCE)
-        );
+                Arbitraries.of(DataTree.DataTreeNull.INSTANCE));
     }
 
     @Provide
@@ -21,14 +20,9 @@ class DataTreeTransformsTest {
         return Arbitraries.recursive(
                 DataTreeTransformsTest::atomicDataTreeArbitrary,
                 arb -> Arbitraries.oneOf(
-                        arb.list().ofMaxSize(5).map(
-                                list -> new DataTree.DataTreeArray(list.toArray(new DataTree[0]))
-                        ),
-                        Arbitraries.maps(arb, arb)
-                                .ofMaxSize(5)
-                                .map(DataTree.DataTreeMap::new)
-                ), 4
-        );
+                        arb.list().ofMaxSize(5).map(list -> new DataTree.DataTreeArray(list.toArray(new DataTree[0]))),
+                        Arbitraries.maps(arb, arb).ofMaxSize(5).map(DataTree.DataTreeMap::new)),
+                4);
     }
 
     @Property

@@ -1,0 +1,33 @@
+# Configuration System Reference
+
+MittenLib's configuration system is designed to be both powerful and developer-friendly. It leverages an annotation processor to eliminate boilerplate while providing a robust, Guice-integrated runtime for managing your plugin's data.
+
+This section provides detailed reference documentation for every aspect of the configuration system.
+
+## Reference Guides
+
+### [Getting Started](./getting-started)
+A high-level overview of the core concepts, the annotation processor's behaviour, and how to integrate generated configs into your application.
+
+### [Data Types & Collections](./data-types)
+Learn about the range of supported Java types, and how to define complex configuration types.
+
+### [Naming & Keys](./naming-keys)
+Customize how your Java method and field names are transformed into configuration file keys using naming patterns (like `kebab-case` or `snake_case`) or explicit overrides.
+
+### [Validation](./validation)
+Ensure your configuration data is safe and correct before it ever reaches your business logic using built-in constraints like `@Min`, `@NotBlank`, or custom validators.
+
+### [Guice Integration](./guice-integration)
+Information about the automatic loading, dependency injection, and powerful hot-reloading capabilities provided by `ConfigProvider`.
+
+### [Persistence & Saving](./persistence)
+We can serialize too!
+
+---
+
+## Advanced Topics
+
+For those looking to understand the internals or extend the system further:
+
+*   **[Core System Internals](./core-system)**: Understand the lifecycle of a `ConfigProvider` and how the caching and file-watching layers work.

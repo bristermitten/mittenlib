@@ -1,9 +1,9 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class StringReplacingHookTest {
 
@@ -19,8 +19,7 @@ class StringReplacingHookTest {
         var hook = new StringReplacingHook(
                 "{name}", "Test",
                 "{abcde}", "test2",
-                "{abc}", null
-        );
+                "{abc}", null);
 
         var result = hook.format(message, null);
         assertEquals("Hello Test test2 null", result);

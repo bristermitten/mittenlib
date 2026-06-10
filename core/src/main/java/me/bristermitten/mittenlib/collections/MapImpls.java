@@ -1,15 +1,11 @@
 package me.bristermitten.mittenlib.collections;
 
+import java.util.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-
-/**
- * Implementations for immutable Maps used in {@link Maps}
- */
+/** Implementations for immutable Maps used in {@link Maps} */
 public class MapImpls {
-    private MapImpls() {
-    }
+    private MapImpls() {}
 
     static class MLEntry<K, V> implements Map.Entry<K, V> {
         private final K key;
@@ -49,7 +45,7 @@ public class MapImpls {
         }
     }
 
-    static class Map0<K, V> extends MLImmutableMap<K, V> { //NOSONAR
+    static class Map0<K, V> extends MLImmutableMap<K, V> { // NOSONAR
         @Override
         public boolean containsKey(Object key) {
             return false;
@@ -60,8 +56,7 @@ public class MapImpls {
             return false;
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return Collections.emptySet();
         }
@@ -93,8 +88,7 @@ public class MapImpls {
             return v.equals(value);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -127,7 +121,6 @@ public class MapImpls {
             this.entrySet = Sets.of(new MLEntry<>(k1, v1), new MLEntry<>(k2, v2));
         }
 
-
         @Override
         public boolean containsKey(Object key) {
             return k1.equals(key) || k2.equals(key);
@@ -138,8 +131,7 @@ public class MapImpls {
             return v1.equals(value) || v2.equals(value);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -150,7 +142,6 @@ public class MapImpls {
             if (!(o instanceof Map)) return false;
             return this.entrySet().equals(((Map<?, ?>) o).entrySet());
         }
-
 
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {
@@ -174,9 +165,7 @@ public class MapImpls {
             this.v1 = v1;
             this.v2 = v2;
             this.v3 = v3;
-            this.entrySet = Sets.of(new MLEntry<>(k1, v1),
-                    new MLEntry<>(k2, v2),
-                    new MLEntry<>(k3, v3));
+            this.entrySet = Sets.of(new MLEntry<>(k1, v1), new MLEntry<>(k2, v2), new MLEntry<>(k3, v3));
         }
 
         @Override
@@ -189,8 +178,7 @@ public class MapImpls {
             return v1.equals(value) || v2.equals(value) || v3.equals(value);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
@@ -202,17 +190,10 @@ public class MapImpls {
             return this.entrySet().equals(((Map<?, ?>) o).entrySet());
         }
 
-
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {
-            return new MapN<>(
-                    Sets.of(
-                            new MLEntry<>(k1, v1),
-                            new MLEntry<>(k2, v2),
-                            new MLEntry<>(k3, v3),
-                            new MLEntry<>(key, value)
-                    )
-            );
+            return new MapN<>(Sets.of(
+                    new MLEntry<>(k1, v1), new MLEntry<>(k2, v2), new MLEntry<>(k3, v3), new MLEntry<>(key, value)));
         }
     }
 
@@ -223,13 +204,10 @@ public class MapImpls {
             this.entrySet = entrySet;
         }
 
-
-        @NotNull
-        @Override
+        @NotNull @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return entrySet;
         }
-
 
         @Override
         public MLImmutableMap<K, V> plus(@NotNull K key, @NotNull V value) {

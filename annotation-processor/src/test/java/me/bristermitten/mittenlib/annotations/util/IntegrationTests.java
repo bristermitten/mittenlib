@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.annotations.util;
 
-import me.bristermitten.mittenlib.annotations.integration.IntegrationTest;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import me.bristermitten.mittenlib.annotations.integration.IntegrationTest;
 
 public class IntegrationTests {
     public static String loadResourceString(String resource) throws IOException {

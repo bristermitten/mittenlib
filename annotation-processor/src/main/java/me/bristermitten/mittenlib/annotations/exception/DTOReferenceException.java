@@ -1,34 +1,35 @@
 package me.bristermitten.mittenlib.annotations.exception;
 
+import java.util.Optional;
+import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.util.Stringify;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.type.TypeMirror;
-import java.util.Optional;
-
-/**
- * Thrown when a DTO class references an invalid type
- */
+/** Thrown when a DTO class references an invalid type */
 public class DTOReferenceException extends RuntimeException {
     private final transient TypeMirror typeUsed;
     private final transient GeneratedTypeCache typeCache;
 
     private final @Nullable Class<?> replaceWith;
-    @Nullable
-    private final transient Element source;
+
+    @Nullable private final transient Element source;
 
     /**
      * Create a new DTOReferenceException
      *
-     * @param typeUsed    The invalid type that was uses
-     * @param typeCache   The type cache, used for generating the error message
+     * @param typeUsed The invalid type that was used
+     * @param typeCache The type cache, used for generating the error message
      * @param replaceWith The type to replace the invalid type with, if known
-     * @param source      The source element (i.e. the element referencing the invalid type), if known
+     * @param source The source element (i.e., the element referencing the invalid type), if known
      */
-    public DTOReferenceException(TypeMirror typeUsed, GeneratedTypeCache typeCache, @Nullable Class<?> replaceWith, @Nullable Element source) {
+    public DTOReferenceException(
+            TypeMirror typeUsed,
+            GeneratedTypeCache typeCache,
+            @Nullable Class<?> replaceWith,
+            @Nullable Element source) {
         this.typeUsed = typeUsed;
         this.typeCache = typeCache;
         this.replaceWith = replaceWith;
@@ -51,14 +52,14 @@ public class DTOReferenceException extends RuntimeException {
                     : "any of " + types.stream().map(Stringify::prettyStringify).toList();
         }
 
-
         return """
                 You seem to be using a generated type in a DTO.
                 This results in weird behaviour and so is not allowed.
                 You should replace %s with %s.
                 This issue occurred in %s.
-                """
-                .formatted(typeUsed, typesReplaceWith, Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
+            """.formatted(
+                typeUsed,
+                typesReplaceWith,
+                Optional.ofNullable(source).map(Stringify::prettyStringify).orElse("Unknown Location"));
     }
-
 }

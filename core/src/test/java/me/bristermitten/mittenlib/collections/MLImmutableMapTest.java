@@ -1,21 +1,19 @@
 package me.bristermitten.mittenlib.collections;
 
-import net.jqwik.api.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import java.util.Map.Entry;
-
-import static org.junit.jupiter.api.Assertions.*;
+import net.jqwik.api.*;
+import org.junit.jupiter.api.Test;
 
 /**
- * Comprehensive tests for the MLImmutableMap interface using both unit tests and property-based testing
+ * Comprehensive tests for the MLImmutableMap interface using both unit tests and property-based
+ * testing
  */
 class MLImmutableMapTest {
 
-    /**
-     * Create a concrete MLImmutableMap for testing purposes
-     */
+    /** Create a concrete MLImmutableMap for testing purposes */
     private static <K, V> MLImmutableMap<K, V> createTestMap(Map<K, V> source) {
         // Use existing Maps implementation which should return MLImmutableMap instances
         if (source.isEmpty()) {

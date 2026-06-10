@@ -1,16 +1,16 @@
 package me.bristermitten.mittenlib.commands;
 
 import co.aikar.commands.PaperCommandManager;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import java.util.Set;
 import me.bristermitten.mittenlib.commands.handlers.*;
 import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.Set;
-
 /**
- * A provider for {@link PaperCommandManager}.
- * This handles registration of {@link Command}, {@link TabCompleter}, {@link NamedCondition}, {@link ArgumentContext} and {@link ArgumentCondition} instances.
+ * A provider for {@link PaperCommandManager}. This handles registration of {@link Command}, {@link
+ * TabCompleter}, {@link NamedCondition}, {@link ArgumentContext} and {@link ArgumentCondition}
+ * instances.
  */
 public class CommandManagerProvider implements Provider<PaperCommandManager> {
     private final Plugin plugin;
@@ -20,9 +20,14 @@ public class CommandManagerProvider implements Provider<PaperCommandManager> {
     private final Set<ArgumentCondition<?>> argumentConditions;
     private final Set<ArgumentContext<?>> argumentContexts;
 
-
     @Inject
-    CommandManagerProvider(Plugin plugin, Set<Command> commands, Set<TabCompleter> tabCompleters, Set<ArgumentCondition<?>> argumentConditions, Set<NamedCondition> namedConditions, Set<ArgumentContext<?>> argumentContexts) {
+    CommandManagerProvider(
+            Plugin plugin,
+            Set<Command> commands,
+            Set<TabCompleter> tabCompleters,
+            Set<ArgumentCondition<?>> argumentConditions,
+            Set<NamedCondition> namedConditions,
+            Set<ArgumentContext<?>> argumentContexts) {
         this.plugin = plugin;
         this.commands = commands;
         this.tabCompleters = tabCompleters;
@@ -42,9 +47,11 @@ public class CommandManagerProvider implements Provider<PaperCommandManager> {
             manager.getCommandCompletions().setDefaultCompletion(completer.id(), context.type());
         }
         if (context instanceof IssuerAwareArgumentContext) {
-            manager.getCommandContexts().registerIssuerAwareContext(context.type(), (IssuerAwareArgumentContext<T>) context);
+            manager.getCommandContexts()
+                    .registerIssuerAwareContext(context.type(), (IssuerAwareArgumentContext<T>) context);
         } else if (context instanceof IssuerOnlyArgumentContext) {
-            manager.getCommandContexts().registerIssuerOnlyContext(context.type(), (IssuerOnlyArgumentContext<T>) context);
+            manager.getCommandContexts()
+                    .registerIssuerOnlyContext(context.type(), (IssuerOnlyArgumentContext<T>) context);
         } else {
             manager.getCommandContexts().registerContext(context.type(), context);
         }

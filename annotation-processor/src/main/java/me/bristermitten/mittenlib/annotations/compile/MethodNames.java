@@ -1,24 +1,21 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
-
-import javax.inject.Inject;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import me.bristermitten.mittenlib.annotations.ast.Property;
+import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
+import me.bristermitten.mittenlib.util.Strings;
 
 /**
- * Manages method names for configuration classes to ensure they don't conflict with existing methods.
- * This class caches method names to improve performance and provides utilities to generate
+ * Manages method names for configuration classes to ensure they don't conflict with existing
+ * methods. This class caches method names to improve performance and provides utilities to generate
  * safe method names that won't cause conflicts in the generated code.
  */
 @Singleton
@@ -26,12 +23,22 @@ public class MethodNames {
     private final ElementsFinder elementsFinder;
     private final Map<VariableElement, String> safeNameCache = new HashMap<>();
     private final Map<VariableElement, Set<String>> methodNamesCache = new HashMap<>();
-    private final ConfigurationClassNameGenerator configurationClassNameGenerator;
+
+    /**
+     * The prefix for all generated serialization methods. For example, a method to serialize a field
+     * called "test" would be called {@code serializeTest}
+     */
+    private static final String SERIALIZE_METHOD_PREFIX = "serialize";
+
+    /**
+     * The prefix for all generated deserialization methods. For example, a method to deserialize a
+     * field called "test" would be called {@code deserializeTest}
+     */
+    private static final String DESERIALIZE_METHOD_PREFIX = "deserialize";
 
     @Inject
-    MethodNames(ElementsFinder elementsFinder, ConfigurationClassNameGenerator configurationClassNameGenerator) {
+    MethodNames(ElementsFinder elementsFinder) {
         this.elementsFinder = elementsFinder;
-        this.configurationClassNameGenerator = configurationClassNameGenerator;
     }
 
     /**
@@ -39,19 +46,18 @@ public class MethodNames {
      * This method uses caching to improve performance for repeated calls with the same element.
      *
      * @param variableElement The variable element to generate a method name for
-     * @param enclosingClass  The class that encloses the variable element
+     * @param enclosingClass The class that encloses the variable element
      * @return A safe method name that doesn't conflict with existing methods
      */
     public String safeMethodName(VariableElement variableElement, TypeElement enclosingClass) {
-        return safeNameCache.computeIfAbsent(variableElement,
-                elem -> safeMethodName0(elem, enclosingClass));
+        return safeNameCache.computeIfAbsent(variableElement, elem -> safeMethodName0(elem, enclosingClass));
     }
 
     /**
-     * Gets a safe method name for a property that doesn't conflict with existing methods.
-     * This method handles both field-based and method-based properties differently:
-     * - For field-based properties, it delegates to {@link #safeMethodName(VariableElement, TypeElement)}
-     * - For method-based properties, it uses the method's simple name directly
+     * Gets a safe method name for a property that doesn't conflict with existing methods. This method
+     * handles both field-based and method-based properties differently: - For field-based properties,
+     * it delegates to {@link #safeMethodName(VariableElement, TypeElement)} - For method-based
+     * properties, it uses the method's simple name directly
      *
      * @param property The property to generate a method name for
      * @return A safe method name that doesn't conflict with existing methods
@@ -59,8 +65,9 @@ public class MethodNames {
     public String safeMethodName(Property property) {
         return switch (property.source()) {
             case Property.PropertySource.FieldSource(var field) ->
-                    safeMethodName(field, (TypeElement) field.getEnclosingElement());
-            case Property.PropertySource.MethodSource(var method) -> method.getSimpleName().toString();
+                safeMethodName(field, (TypeElement) field.getEnclosingElement());
+            case Property.PropertySource.MethodSource(var method) ->
+                method.getSimpleName().toString();
         };
     }
 
@@ -86,52 +93,26 @@ public class MethodNames {
     }
 
     /**
-     * Gets the name of the deserialization method for a type.
-     * This should only be used when the type is known to be a configuration implementation class.
+     * Gets the name of the deserialization method for a property. This should only be used when the
+     * type is known to be a configuration implementation class.
      *
-     * @param name The type name
+     * @param property the property
      * @return The deserialization method name
      */
-    public String getDeserializeMethodName(TypeName name) {
-        if (name instanceof ClassName cn) {
-            return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + cn.simpleName();
-        }
-        return DeserializationCodeGenerator.DESERIALIZE_METHOD_PREFIX + name;
+    public String getDeserializeMethodName(Property property) {
+        var name = Strings.capitalize(property.name());
+        return DESERIALIZE_METHOD_PREFIX + name;
     }
 
     /**
-     * Gets the name of the deserialization method for a configuration structure.
-     * This method uses the implementation class name derived from the structure.
+     * Gets the name of the serialization method for a property. This should only be used when the
+     * type is known to be a configuration implementation class.
      *
-     * @param ast The abstract configuration structure
-     * @return The deserialization method name for the structure
-     */
-    public String getDeserializeMethodName(AbstractConfigStructure ast) {
-        return getDeserializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
-    }
-
-    /**
-     * Gets the name of the serialization method for a type.
-     * This should only be used when the type is known to be a configuration implementation class.
-     *
-     * @param name The type name
+     * @param property the property
      * @return The serialization method name
      */
-    public String getSerializeMethodName(TypeName name) {
-        if (name instanceof ClassName cn) {
-            return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + cn.simpleName();
-        }
-        return SerializationCodeGenerator.SERIALIZE_METHOD_PREFIX + name;
-    }
-
-    /**
-     * Gets the name of the serialization method for a configuration structure.
-     * This method uses the implementation class name derived from the structure.
-     *
-     * @param ast The abstract configuration structure
-     * @return The serialization method name for the structure
-     */
-    public String getSerializeMethodName(AbstractConfigStructure ast) {
-        return getSerializeMethodName(configurationClassNameGenerator.translateConfigClassName(ast));
+    public String getSerializeMethodName(Property property) {
+        var name = Strings.capitalize(property.name());
+        return SERIALIZE_METHOD_PREFIX + name;
     }
 }

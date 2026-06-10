@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.watcher;
 
-import javax.inject.Provider;
+import com.google.inject.Provider;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.WatchService;

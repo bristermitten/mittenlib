@@ -1,8 +1,7 @@
 package me.bristermitten.mittenlib.util.lambda;
 
-import me.bristermitten.mittenlib.util.Errors;
-
 import java.util.function.Consumer;
+import me.bristermitten.mittenlib.util.Errors;
 
 /**
  * A {@link Consumer} that can throw a checked exception.

@@ -1,25 +1,25 @@
 package me.bristermitten.mittenlib.config.tree;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Utility class for transforming between DataTree and POJO representations.
- * This class provides methods to load a DataTree from various object types
- * and to convert a DataTree back to a POJO.
+ * Utility class for transforming between {@link DataTree} and POJO representations. This class
+ * provides methods to load a {@link DataTree} from various object types and to convert a {@link
+ * DataTree} back to a POJO.
  */
 public class DataTreeTransforms {
+
     /**
-     * Load a DataTree from an object.
-     * This method can handle various types of objects including
-     * {@code null}, {@link DataTree}, {@link Double}, {@link Number}, {@link String}, {@link Boolean}, {@link Map}, and {@link List}.
-     * Any other type of object will throw an {@link IllegalArgumentException}.
-     * The method will return a {@link DataTree.DataTreeNull} instance if the input is {@code null}.
+     * Load a DataTree from an object. This method can handle various types of objects including
+     * {@code null}, {@link DataTree}, {@link Double}, {@link Number}, {@link String}, {@link
+     * Boolean}, {@link Map}, and {@link List}. Any other type of object will throw an {@link
+     * IllegalArgumentException}. The method will return a {@link DataTree.DataTreeNull} instance if
+     * the input is {@code null}.
      *
      * @param node the object to load the DataTree from, can be {@code null}
      * @return a DataTree representation of the input object
@@ -65,7 +65,8 @@ public class DataTreeTransforms {
      * Convert a DataTree to a POJO representation, as an inverse of {@link #loadFrom(Object)}.
      *
      * @param tree the DataTree to convert, must not be {@code null}
-     * @return the POJO representation of the DataTree, or {@code null} if the DataTree is an instance of {@link DataTree.DataTreeNull}
+     * @return the POJO representation of the DataTree, or {@code null} if the DataTree is an instance
+     *     of {@link DataTree.DataTreeNull}
      */
     public static @Nullable Object toPOJO(@NotNull DataTree tree) {
         if (tree instanceof DataTree.DataTreeNull) {

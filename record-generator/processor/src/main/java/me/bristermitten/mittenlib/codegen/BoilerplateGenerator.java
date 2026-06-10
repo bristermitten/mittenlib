@@ -4,11 +4,10 @@ import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
-
-import javax.lang.model.element.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
+import javax.lang.model.element.Modifier;
+import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 
 public class BoilerplateGenerator {
     public static MethodSpec genEquals(RecordConstructorSpec recordConstructorSpec, ClassName name) {
@@ -18,16 +17,17 @@ public class BoilerplateGenerator {
                 .addParameter(Object.class, "o")
                 .addAnnotation(Override.class);
 
-        equalsBuilder.beginControlFlow("if (this == o)")
+        equalsBuilder
+                .beginControlFlow("if (this == o)")
                 .addStatement("return true")
                 .endControlFlow();
 
-        equalsBuilder.beginControlFlow("if (!(o instanceof $T))", name)
+        equalsBuilder
+                .beginControlFlow("if (!(o instanceof $T))", name)
                 .addStatement("return false")
                 .endControlFlow();
 
         equalsBuilder.addStatement("$T that = ($T) o", name, name);
-
 
         if (recordConstructorSpec.fields().isEmpty()) {
             // If there are no fields, we can return true immediately
@@ -97,7 +97,7 @@ public class BoilerplateGenerator {
 
         code.add(properties.stream()
                 .map(property -> CodeBlock.of("""
-                        + "$L=" + $L\s""", property.name(), toStringCall(property)))
+                                                        + "$L=" + $L\s""", property.name(), toStringCall(property)))
                 .collect(CodeBlock.joining("""
                         + ", \"""")));
 

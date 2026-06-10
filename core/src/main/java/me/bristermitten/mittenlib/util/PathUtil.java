@@ -1,8 +1,5 @@
 package me.bristermitten.mittenlib.util;
 
-import me.bristermitten.mittenlib.util.lambda.IOFunction;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,23 +11,21 @@ import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
 import java.util.Objects;
+import me.bristermitten.mittenlib.util.lambda.IOFunction;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Utility class for working with {@link Path}s
- */
+/** Utility class for working with {@link Path}s */
 public class PathUtil {
-    private PathUtil() {
-    }
+    private PathUtil() {}
 
     /**
-     * Converts a {@link URL} to a {@link Path}.
-     * <a href="https://stackoverflow.com/questions/15713119/java-nio-file-path-for-a-classpath-resource">Credit</a>
+     * Converts a {@link URL} to a {@link Path}. <a
+     * href="https://stackoverflow.com/questions/15713119/java-nio-file-path-for-a-classpath-resource">Credit</a>
      *
      * @deprecated Resource leak, use {@link #resourceToPath(URL, IOFunction)} instead
      */
     @Deprecated
-    public static @NotNull Path resourceToPath(@NotNull URL resource) throws IOException,
-            URISyntaxException {
+    public static @NotNull Path resourceToPath(@NotNull URL resource) throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");
         URI uri = resource.toURI();
@@ -59,10 +54,8 @@ public class PathUtil {
         return path;
     }
 
-
     public static @NotNull <T> T resourceToPath(@NotNull URL resource, IOFunction<Path, T> function)
-            throws IOException,
-            URISyntaxException {
+            throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");
         URI uri = resource.toURI();

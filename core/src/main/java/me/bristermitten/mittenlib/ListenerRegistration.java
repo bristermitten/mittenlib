@@ -1,12 +1,12 @@
 package me.bristermitten.mittenlib;
 
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 @Singleton
 public class ListenerRegistration {
@@ -17,7 +17,7 @@ public class ListenerRegistration {
     @Inject
     public ListenerRegistration(Plugin plugin, Set<Listener> listeners, Logger logger) {
         this.plugin = plugin;
-        this.listeners = listeners;
+        this.listeners = ImmutableSet.copyOf(listeners);
         this.logger = logger;
         init();
     }
@@ -30,5 +30,4 @@ public class ListenerRegistration {
             }
         }
     }
-
 }

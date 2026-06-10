@@ -4,16 +4,14 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.toolisticon.cute.Cute;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import me.bristermitten.mittenlib.config.Config;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 class BigBenchmarkGeneratorTest {
-    private static final String ALPHABET =
-            "abcdefghijklmnopqrstuvwxyz";
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
     private Stream<String> alphabetNames;
 
@@ -21,9 +19,7 @@ class BigBenchmarkGeneratorTest {
     void init() {
         alphabetNames = IntStream.rangeClosed(0, Integer.MAX_VALUE)
                 .boxed()
-                .flatMap(i -> ALPHABET.chars()
-                        .mapToObj(x -> (char) x)
-                        .map(x -> x + "" + i));
+                .flatMap(i -> ALPHABET.chars().mapToObj(x -> (char) x).map(x -> x + "" + i));
     }
 
     @Test

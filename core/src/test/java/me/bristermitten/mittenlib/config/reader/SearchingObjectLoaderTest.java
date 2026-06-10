@@ -1,6 +1,10 @@
 package me.bristermitten.mittenlib.config.reader;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.gson.Gson;
+import java.util.Set;
+import java.util.logging.Logger;
 import me.bristermitten.mittenlib.collections.Maps;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.json.GsonObjectLoader;
@@ -14,11 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.Set;
-import java.util.logging.Logger;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class SearchingObjectLoaderTest {
     private SearchingObjectLoader searchingObjectLoader;
 
@@ -28,9 +27,10 @@ public class SearchingObjectLoaderTest {
         var yaml = new Yaml();
 
         searchingObjectLoader = new SearchingObjectLoader(
-                Set.of(new JSONFileType(new GsonObjectLoader(gson), new GsonObjectWriter(gson)),
-                        new YamlFileType(new YamlObjectLoader(yaml), new YamlObjectWriter(yaml))), Logger.getLogger("SearchingObjectLoader")
-        );
+                Set.of(
+                        new JSONFileType(new GsonObjectLoader(gson), new GsonObjectWriter(gson)),
+                        new YamlFileType(new YamlObjectLoader(yaml), new YamlObjectWriter(yaml))),
+                Logger.getLogger("SearchingObjectLoader"));
     }
 
     @Test
@@ -39,17 +39,12 @@ public class SearchingObjectLoaderTest {
                 {"hello": "world"}
                 """);
 
-        assertThat(load)
-                .isNotNull()
-                .extracting(Result::isSuccess)
-                .isEqualTo(true);
+        assertThat(load).isNotNull().extracting(Result::isSuccess).isEqualTo(true);
 
         assertThat(load.getOrThrow())
-                .isEqualTo(new DataTree.DataTreeMap(
-                        Maps.of(new DataTree.DataTreeLiteral.DataTreeLiteralString("hello"),
-                                new DataTree.DataTreeLiteral.DataTreeLiteralString("world")
-                        )
-                ));
+                .isEqualTo(new DataTree.DataTreeMap(Maps.of(
+                        new DataTree.DataTreeLiteral.DataTreeLiteralString("hello"),
+                        new DataTree.DataTreeLiteral.DataTreeLiteralString("world"))));
     }
 
     @Test
@@ -58,16 +53,9 @@ public class SearchingObjectLoaderTest {
                 hello: world
                 """);
 
-        assertThat(load)
-                .isNotNull()
-                .extracting(Result::isSuccess)
-                .isEqualTo(true);
+        assertThat(load).isNotNull().extracting(Result::isSuccess).isEqualTo(true);
 
         assertThat(load.getOrThrow())
-                .isEqualTo(DataTree.map(
-                        Maps.of(DataTree.string("hello"),
-                                DataTree.string("world")
-                        )
-                ));
+                .isEqualTo(DataTree.map(Maps.of(DataTree.string("hello"), DataTree.string("world"))));
     }
 }

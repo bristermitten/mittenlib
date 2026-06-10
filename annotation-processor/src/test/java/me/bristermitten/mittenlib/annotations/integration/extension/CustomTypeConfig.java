@@ -1,10 +1,9 @@
 package me.bristermitten.mittenlib.annotations.integration.extension;
 
+import java.util.List;
 import me.bristermitten.mittenlib.config.Config;
 
-import java.util.List;
-
-@Config
+@Config(requireSerialization = false)
 public interface CustomTypeConfig {
     CustomType customType();
 

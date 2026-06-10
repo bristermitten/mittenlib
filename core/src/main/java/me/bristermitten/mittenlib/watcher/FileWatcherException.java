@@ -2,9 +2,7 @@ package me.bristermitten.mittenlib.watcher;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Exception thrown when there is an error with file watching operations.
- */
+/** Exception thrown when there is an error with file watching operations. */
 public class FileWatcherException extends RuntimeException {
     /**
      * Creates a new FileWatcherException with the specified message and cause.

@@ -13,7 +13,8 @@ public class LangModule extends AbstractModule {
     @Override
     protected void configure() {
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class)
-                .addBinding().to(LangMessageTypeAdapterFactory.class);
+                .addBinding()
+                .to(LangMessageTypeAdapterFactory.class);
 
         bind(BukkitAudiences.class).toProvider(AdventureAudienceProvider.class).in(Scopes.SINGLETON);
         bind(MessageFormatter.class).to(SimpleMessageFormatter.class);

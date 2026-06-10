@@ -21,26 +21,21 @@ public class InventoryButton<Msg> {
 
     /**
      * @param itemStack The {@link ItemStack} to render the button as.
-     * @param message   The pure function producing a {@link Msg} from a {@link ClickInput}.
-     *                  This function is expected to be pure, and undefined behaviour may occur if it is not.
-     *                  The function may return null, which is treated as no message, i.e. "do nothing".
+     * @param message The pure function producing a {@link Msg} from a {@link ClickInput}. This
+     *     function is expected to be pure, and undefined behaviour may occur if it is not. The
+     *     function may return null, which is treated as no message, i.e. "do nothing".
      */
     public InventoryButton(ItemStack itemStack, @Nullable Msg message) {
         this.itemStack = itemStack;
         this.messageFunction = clickInput -> message;
     }
 
-
-    /**
-     * @return The pure function producing a {@link Msg} from a {@link ClickInput}
-     */
+    /** Returns the pure function producing a {@link Msg} from a {@link ClickInput} */
     public PureFunction<ClickInput, @Nullable Msg> getMessageFunction() {
         return messageFunction;
     }
 
-    /**
-     * @return The {@link ItemStack} to render the button as.
-     */
+    /** Returns the {@link ItemStack} to render the button as. */
     public ItemStack getItemStack() {
         return itemStack;
     }

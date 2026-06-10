@@ -7,14 +7,13 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates a {@link TypeAdapter} that can serialize elements with just a message to plain
- * Strings (i.e not complex objects), and vice versa
+ * Creates a {@link TypeAdapter} that can serialize elements with just a message to plain Strings
+ * (i.e not complex objects), and vice versa
  */
 public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
 
@@ -30,7 +29,10 @@ public class LangMessageTypeAdapterFactory implements TypeAdapterFactory {
         return (TypeAdapter<T>) new TypeAdapter<LangMessage>() {
             @Override
             public void write(JsonWriter out, LangMessage value) throws IOException {
-                if (value.getTitle() == null && value.getSubtitle() == null && value.getActionBar() == null && value.getSound() == null) {
+                if (value.getTitle() == null
+                        && value.getSubtitle() == null
+                        && value.getActionBar() == null
+                        && value.getSound() == null) {
                     if (value.getMessage() == null) {
                         throw new IllegalArgumentException("Empty LangElement!");
                     }

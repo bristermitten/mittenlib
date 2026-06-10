@@ -1,27 +1,26 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatCollection;
+
 import com.google.inject.Guice;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
 import io.toolisticon.cute.PassIn;
+import javax.lang.model.element.TypeElement;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
 import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
-import me.bristermitten.mittenlib.annotations.integration.InterfaceConfig;
-import me.bristermitten.mittenlib.annotations.integration.UnionConfig;
 import me.bristermitten.mittenlib.annotations.integration.AtomicConfig;
+import me.bristermitten.mittenlib.annotations.integration.InterfaceConfig;
 import me.bristermitten.mittenlib.annotations.integration.IntersectionConfig;
+import me.bristermitten.mittenlib.annotations.integration.UnionConfig;
 import me.bristermitten.mittenlib.config.Config;
 import me.bristermitten.mittenlib.config.names.ConfigName;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
-
-import javax.lang.model.element.TypeElement;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatCollection;
 
 class ConfigClassParserTest {
 
@@ -32,18 +31,16 @@ class ConfigClassParserTest {
                 .passInElement()
                 .<TypeElement>fromClass(AtomicConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
 
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
-                    assertThat(ast)
-                            .isNotNull()
-                            .isInstanceOf(AbstractConfigStructure.Atomic.class);
+                    assertThat(ast).isNotNull().isInstanceOf(AbstractConfigStructure.Atomic.class);
                 })
-                .thenExpectThat().compilationSucceeds().executeTest();
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 
     @Test
@@ -53,25 +50,23 @@ class ConfigClassParserTest {
                 .passInElement()
                 .<TypeElement>fromClass(IntersectionConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
                     assertThat(ast).isNotNull();
-                    assertThat(ast)
-                            .isNotNull()
-                            .isInstanceOf(AbstractConfigStructure.Atomic.class);
+                    assertThat(ast).isNotNull().isInstanceOf(AbstractConfigStructure.Atomic.class);
 
                     assertThatCollection(ast.enclosed())
                             .singleElement()
-//                            .extracting(ConfigTypeAST::structure)
+                            //                            .extracting(ConfigTypeAST::structure)
                             .isInstanceOf(AbstractConfigStructure.Intersection.class)
                             .extracting(AbstractConfigStructure::name)
                             .isEqualTo(ClassName.get(IntersectionConfig.ChildIntersectionConfig.class));
                 })
-                .thenExpectThat().compilationSucceeds().executeTest();
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 
     @Test
@@ -81,21 +76,17 @@ class ConfigClassParserTest {
                 .passInElement()
                 .<TypeElement>fromClass(InterfaceConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
-                    assertThat(ast)
-                            .isNotNull()
-                            .isInstanceOf(AbstractConfigStructure.Atomic.class);
+                    assertThat(ast).isNotNull().isInstanceOf(AbstractConfigStructure.Atomic.class);
 
-                    assertThatCollection(ast.enclosed())
-                            .first()
-                            .isInstanceOf(AbstractConfigStructure.Atomic.class);
+                    assertThatCollection(ast.enclosed()).first().isInstanceOf(AbstractConfigStructure.Atomic.class);
                 })
-                .thenExpectThat().compilationSucceeds().executeTest();
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 
     @Test
@@ -105,11 +96,9 @@ class ConfigClassParserTest {
                 .passInElement()
                 .<TypeElement>fromClass(UnionConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
                     assertThat(ast).isNotNull();
                     assertThat(ast)
@@ -119,12 +108,13 @@ class ConfigClassParserTest {
                             .asInstanceOf(InstanceOfAssertFactories.list(AbstractConfigStructure.class))
                             .hasSize(2)
                             .first()
-                            .isInstanceOf(AbstractConfigStructure.Intersection.class) // since it extends the parent type
+                            .isInstanceOf(
+                                    AbstractConfigStructure.Intersection.class) // since it extends the parent type
                             .isNotNull();
-
-
                 })
-                .thenExpectThat().compilationSucceeds().executeTest();
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 
     @Test
@@ -135,41 +125,37 @@ class ConfigClassParserTest {
                 .<TypeElement>fromClass(TestInterfaceConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
                     ToolingProvider.setTooling(processingEnvironment);
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
 
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
-//                    assertThat(ast)
-//                            .extracting(ConfigTypeAST::structure)
-//                            .extracting(ConfigTypeAST.ConfigStructure::name)
-//                            .extracting(ClassName::simpleName)
-//                            .isEqualTo(TestInterfaceConfig.class.getSimpleName());
-//
-//                    assertThatList(ast.structure().properties())
-//                            .hasSize(2);
-//
-//                    assertThatList(ast.structure().properties())
-//                            .first()
-//                            .extracting(Property::name)
-//                            .isEqualTo("name");
-//
-//                    assertThatList(ast.structure().properties())
-//                            .first()
-//                            .extracting(Property::settings)
-//                            .extracting(ASTSettings.PropertyASTSettings::configName)
-//                            .extracting(ConfigName::value)
-//                            .isEqualTo("thing-name");
-
+                    //                    assertThat(ast)
+                    //                            .extracting(ConfigTypeAST::structure)
+                    //                            .extracting(ConfigTypeAST.ConfigStructure::name)
+                    //                            .extracting(ClassName::simpleName)
+                    //                            .isEqualTo(TestInterfaceConfig.class.getSimpleName());
+                    //
+                    //                    assertThatList(ast.structure().properties())
+                    //                            .hasSize(2);
+                    //
+                    //                    assertThatList(ast.structure().properties())
+                    //                            .first()
+                    //                            .extracting(Property::name)
+                    //                            .isEqualTo("name");
+                    //
+                    //                    assertThatList(ast.structure().properties())
+                    //                            .first()
+                    //                            .extracting(Property::settings)
+                    //                            .extracting(ASTSettings.PropertyASTSettings::configName)
+                    //                            .extracting(ConfigName::value)
+                    //                            .isEqualTo("thing-name");
 
                     var generator = injector.getInstance(ConfigImplGenerator.class);
                     JavaFile emit = generator.emit(ast);
 
                     assertThat(emit).isNotNull();
-                    assertThat(emit.typeSpec.name)
-                            .isEqualTo("TestInterfaceConfigImpl");
+                    assertThat(emit.typeSpec.name).isEqualTo("TestInterfaceConfigImpl");
                 })
                 .thenExpectThat()
                 .compilationSucceeds()

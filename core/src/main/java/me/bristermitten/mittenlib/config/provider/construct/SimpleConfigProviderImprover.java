@@ -1,11 +1,10 @@
 package me.bristermitten.mittenlib.config.provider.construct;
 
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.provider.CachingConfigProvider;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.FileWatchingConfigProvider;
 import me.bristermitten.mittenlib.watcher.FileWatcherService;
-
-import javax.inject.Inject;
 
 public class SimpleConfigProviderImprover implements ConfigProviderImprover {
     private final FileWatcherService watcherService;
@@ -17,8 +16,8 @@ public class SimpleConfigProviderImprover implements ConfigProviderImprover {
 
     @Override
     public <T> ConfigProvider<T> improve(ConfigProvider<T> provider) {
-        final CachingConfigProvider<T> cachingConfigProvider = new CachingConfigProvider<>(provider);
         // Always apply caching
+        final CachingConfigProvider<T> cachingConfigProvider = new CachingConfigProvider<>(provider);
 
         if (cachingConfigProvider.path().isPresent()) {
             return new FileWatchingConfigProvider<>(cachingConfigProvider, watcherService);

@@ -1,9 +1,8 @@
 package me.bristermitten.mittenlib.util;
 
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 /**
  * A {@link Supplier} which caches the value it supplies.
@@ -27,7 +26,8 @@ public class Cached<T> implements Supplier<T> {
      * Create a new Cached with the given supplier.
      *
      * @param computeWith The supplier to compute the value with.
-     * @param eager       Whether to eagerly compute the value. If true, the supplier will be called immediately.
+     * @param eager Whether to eagerly compute the value. If true, the supplier will be called
+     *     immediately.
      */
     public Cached(Supplier<@NotNull T> computeWith, boolean eager) {
         this.computeWith = computeWith;
@@ -38,15 +38,15 @@ public class Cached<T> implements Supplier<T> {
 
     /**
      * Invalidate the cached value, causing it to be recomputed on the next call to {@link #get()}.
-     * Note that this does not respect {@link Cached#Cached(Supplier, boolean)}'s {@code eager} parameter,
-     * and will always lazily compute the value.
+     * Note that this does not respect {@link Cached#Cached(Supplier, boolean)}'s {@code eager}
+     * parameter, and will always lazily compute the value.
      */
     public void invalidate() {
         t = null;
     }
 
-    private void update() {
-        t = computeWith.get();
+    private @NotNull T update() {
+        return t = computeWith.get();
     }
 
     /**
@@ -55,12 +55,10 @@ public class Cached<T> implements Supplier<T> {
      * @return The cached value.
      */
     @Override
-    @NotNull
-    public T get() {
+    @NotNull public T get() {
         if (t == null) {
-            update();
+            return update();
         }
         return t;
     }
-
 }

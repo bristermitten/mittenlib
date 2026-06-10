@@ -9,21 +9,21 @@ import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 import me.bristermitten.mittenlib.files.json.GsonObjectMapper;
 import me.bristermitten.mittenlib.files.json.GsonProvider;
+import me.bristermitten.mittenlib.files.yaml.YamlModule;
 
 /**
- * Module handling registration of an {@link me.bristermitten.mittenlib.config.reader.ObjectMapper}, {@link me.bristermitten.mittenlib.files.FileType}s,
- * and a {@link com.google.gson.Gson} instance.
+ * Module handling registration of an {@link me.bristermitten.mittenlib.config.reader.ObjectMapper},
+ * {@link me.bristermitten.mittenlib.files.FileType}s, and a {@link com.google.gson.Gson} instance.
  * TODO move the Gson instance to a separate module
  */
-
 public class FileTypeModule extends AbstractModule {
     private final FileTypes types;
     private final Class<? extends ObjectMapper> objectMapper;
 
     /**
-     * Create a new FileTypeModule, using {@link FileTypes#defaultTypes()} and {@link GsonObjectMapper}
-     **/
-
+     * Create a new FileTypeModule, using {@link FileTypes#defaultTypes()} and {@link
+     * GsonObjectMapper}
+     */
     public FileTypeModule() {
         this(FileTypes.defaultTypes(), GsonObjectMapper.class);
     }
@@ -31,7 +31,7 @@ public class FileTypeModule extends AbstractModule {
     /**
      * Create a new FileTypeModule, using a provided {@link FileTypes} and {@link ObjectMapper} class
      *
-     * @param types        the {@link FileTypes} to register
+     * @param types the {@link FileTypes} to register
      * @param objectMapper the {@link ObjectMapper} class to register
      */
     public FileTypeModule(FileTypes types, Class<? extends ObjectMapper> objectMapper) {
@@ -49,8 +49,9 @@ public class FileTypeModule extends AbstractModule {
         bind(ObjectMapper.class).to(objectMapper);
         bind(Gson.class).toProvider(GsonProvider.class);
         // This means Guice won't complain even if there aren't any custom type adapters
-        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {
-        });
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ExtraTypeAdapter<?>>() {});
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class);
+
+        install(new YamlModule());
     }
 }

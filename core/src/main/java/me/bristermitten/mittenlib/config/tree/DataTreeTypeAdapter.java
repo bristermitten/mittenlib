@@ -1,19 +1,17 @@
 package me.bristermitten.mittenlib.config.tree;
 
-
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import me.bristermitten.mittenlib.files.json.ExtraTypeAdapter;
 
 public class DataTreeTypeAdapter extends ExtraTypeAdapter<DataTree> {
     private final Provider<Gson> gson;
@@ -78,7 +76,6 @@ public class DataTreeTypeAdapter extends ExtraTypeAdapter<DataTree> {
 
             default:
                 throw new IllegalStateException("Invalid DataTree type: " + in.peek());
-
         }
     }
 }

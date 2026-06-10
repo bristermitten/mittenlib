@@ -1,15 +1,12 @@
 package me.bristermitten.mittenlib.lang.format.hook;
 
+import java.util.*;
+import java.util.function.Supplier;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Supplier;
-
-/**
- * A formatting hook that applies string replacements
- */
+/** A formatting hook that applies string replacements */
 public class StringReplacingHook implements FormattingHook {
 
     private final Set<Map.Entry<String, Object>> replacements;
@@ -17,9 +14,9 @@ public class StringReplacingHook implements FormattingHook {
     /**
      * Create a new StringReplacingHook
      *
-     * @param replacements The replacements to apply
-     *                     These should be in the format {@code key, value}, so the length should always be a multiple of 2
-     *                     If a {@link Supplier} is used as a value, it will be called each time the hook is applied, but only if the key is found in the message
+     * @param replacements The replacements to apply These should be in the format {@code key, value},
+     *     so the length should always be a multiple of 2 If a {@link Supplier} is used as a value, it
+     *     will be called each time the hook is applied, but only if the key is found in the message
      */
     public StringReplacingHook(Object... replacements) {
         if (replacements.length % 2 != 0) {

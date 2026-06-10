@@ -15,11 +15,19 @@ public class PropertyNotFoundException extends ConfigDeserialisationException {
 
     @Override
     public String getMessage() {
-        return "\n====================================================\n" +
-               "Property not found in config: " + configClass.getName() + "\n" +
-               "Property name: " + propertyName + "\n" +
-               "Property type: " + propertyType + "\n\n" +
-               "We expected to see a key named " + keyName + ", but there was nothing present under this key\n" +
-               "====================================================\n";
+        return "\n====================================================\n"
+                + "Property not found in config: "
+                + configClass.getName()
+                + "\n"
+                + "Property name: "
+                + propertyName
+                + "\n"
+                + "Property type: "
+                + propertyType
+                + "\n\n"
+                + "We expected to see a key named "
+                + keyName
+                + ", but there was nothing present under this key\n"
+                + "====================================================\n";
     }
 }

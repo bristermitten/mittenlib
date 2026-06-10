@@ -1,4 +1,1 @@
-// don't publish this root module as it'll be empty anyway
-tasks.withType<AbstractPublishToMaven>().configureEach {
-	enabled = false
-}
+// Parent project for record generator modules. No build logic needed here.

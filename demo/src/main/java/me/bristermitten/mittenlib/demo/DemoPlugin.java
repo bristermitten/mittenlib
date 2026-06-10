@@ -22,27 +22,35 @@ public class DemoPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
         injector = MittenLib.withDefaults(this)
-                .addModule(new GUIModule())
-                .build();
-
+                .addModule(new GUIModule()) // setup the GUI features
+                .config(new ConfigLoaderModule()) // setup the config module
+                .setup();
 
         counterGUI = injector.getInstance(DemoCounterGUI.class);
 
+        DemoConfig config = injector.getInstance(DemoConfig.class);
+
+        System.out.println(config);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            SpigotInventoryViewer<CounterMessage> viewer = new SpigotInventoryViewer<>(event.getPlayer());
-            SpigotGUIManager guiManager = injector.getInstance(SpigotGUIManager.class);
-            SessionID<Counter, CounterMessage, SpigotGUIView<CounterMessage>, SpigotInventoryViewer<CounterMessage>> sessionID = guiManager
-                    .startSession(counterGUI, viewer);
+        Bukkit.getScheduler()
+                .runTaskLater(
+                        this,
+                        () -> {
+                            SpigotInventoryViewer<CounterMessage> viewer =
+                                    new SpigotInventoryViewer<>(event.getPlayer());
+                            SpigotGUIManager guiManager = injector.getInstance(SpigotGUIManager.class);
+                            SessionID<
+                                            Counter,
+                                            CounterMessage,
+                                            SpigotGUIView<CounterMessage>,
+                                            SpigotInventoryViewer<CounterMessage>>
+                                    sessionID = guiManager.startSession(counterGUI, viewer);
 
-            guiManager.getSession(sessionID)
-                    .get()
-                    .start();
-
-
-        }, 3 * 20L);
+                            guiManager.getSession(sessionID).get().start();
+                        },
+                        3 * 20L);
     }
 }

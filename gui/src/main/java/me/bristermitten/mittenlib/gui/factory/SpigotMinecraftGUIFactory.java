@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * Spigot implementation of GUIFactory for creating GUI components.
- * Replaces static factory methods with dependency-injected instances.
+ * Spigot implementation of GUIFactory for creating GUI components. Replaces static factory methods
+ * with dependency-injected instances.
  */
 public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
 
@@ -23,7 +23,6 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
     @Inject
     public SpigotMinecraftGUIFactory(MessageFormatter messageFormatter) {
         this.messageFormatter = messageFormatter;
-
     }
 
     @Override
@@ -36,7 +35,8 @@ public class SpigotMinecraftGUIFactory implements MinecraftGUIFactory {
         }
         Component formattedTitle = messageFormatter.format(title, null);
 
-        return new SpigotGUIView<>(size, LegacyComponentSerializer.legacySection().serialize(formattedTitle), Maps.of(), null);
+        return new SpigotGUIView<>(
+                size, LegacyComponentSerializer.legacySection().serialize(formattedTitle), Maps.of(), null);
     }
 
     @Override

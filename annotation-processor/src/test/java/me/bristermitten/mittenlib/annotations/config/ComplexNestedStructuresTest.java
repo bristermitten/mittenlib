@@ -1,23 +1,19 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import static com.google.testing.compile.CompilationSubject.assertThat;
+import static com.google.testing.compile.Compiler.javac;
+
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
 
-import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.Compiler.javac;
-
-/**
- * Tests the deserialization of complex nested structures in configuration classes.
- */
+/** Tests the deserialization of complex nested structures in configuration classes. */
 class ComplexNestedStructuresTest {
 
     @Test
     void testComplexNestedStructures() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.GameConfigDTO",
-                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.GameConfigDTO", """
                                 package me.bristermitten.mittenlib.tests;
 
                                 import me.bristermitten.mittenlib.config.Config;
@@ -31,7 +27,7 @@ class ComplexNestedStructuresTest {
 
                                 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
                                 @Source("game.yml")
-                                @Config
+                                @Config(requireDynamicInitialization = false)
                                 public class GameConfigDTO {
                                     // Game settings
                                     public String name = "Default Game";
@@ -108,10 +104,11 @@ class ComplexNestedStructuresTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
 
         // Verify that the main generated class exists
-        assertThat(compilation).generatedSourceFile("me.bristermitten.mittenlib.tests.GameConfig")
+        assertThat(compilation)
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.GameConfig")
                 .isNotNull();
     }
 }

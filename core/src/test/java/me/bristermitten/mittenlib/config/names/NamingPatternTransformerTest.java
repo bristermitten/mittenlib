@@ -1,10 +1,10 @@
 package me.bristermitten.mittenlib.config.names;
 
-import org.junit.jupiter.api.Test;
-
 import static me.bristermitten.mittenlib.config.names.NamingPatternTransformer.format;
 import static me.bristermitten.mittenlib.config.names.NamingPatterns.*;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 class NamingPatternTransformerTest {
 

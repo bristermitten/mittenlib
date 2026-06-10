@@ -6,6 +6,10 @@ import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
 
+/**
+ * Overrides some elements of {@link ConfigInfrastructureModule} to provide more plugin-specific
+ * implementations.
+ */
 public class PluginConfigModule extends AbstractModule {
 
     @Override

@@ -11,8 +11,8 @@ import me.bristermitten.mittenlib.gui.spigot.SpigotEventHandler;
 import org.bukkit.event.Listener;
 
 /**
- * Guice module for the GUI framework.
- * Provides dependency injection configuration for all GUI components.
+ * Guice module for the GUI framework. Provides dependency injection configuration for all GUI
+ * components.
  */
 public class GUIModule extends AbstractModule {
 
@@ -24,7 +24,6 @@ public class GUIModule extends AbstractModule {
 
         // Spigot-specific components
         bind(SpigotEventHandler.class);
-        Multibinder.newSetBinder(binder(), Listener.class)
-                .addBinding().to(SpigotEventHandler.class);
+        Multibinder.newSetBinder(binder(), Listener.class).addBinding().to(SpigotEventHandler.class);
     }
 }

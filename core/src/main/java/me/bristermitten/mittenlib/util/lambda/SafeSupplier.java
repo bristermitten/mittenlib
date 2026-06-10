@@ -1,14 +1,13 @@
 package me.bristermitten.mittenlib.util.lambda;
 
+import static me.bristermitten.mittenlib.util.Result.runCatching;
+
+import java.util.function.Supplier;
 import me.bristermitten.mittenlib.util.Errors;
 import me.bristermitten.mittenlib.util.Result;
 
-import java.util.function.Supplier;
-
-import static me.bristermitten.mittenlib.util.Result.runCatching;
-
 /**
- * A {@link Supplier} that can throw a checked  exception.
+ * A {@link Supplier} that can throw a checked exception.
  *
  * @param <T> the type of the value supplied
  */
@@ -26,7 +25,6 @@ public interface SafeSupplier<T> {
      *
      * @return the result
      */
-
     default Result<T> getCatching() {
         return runCatching(this);
     }

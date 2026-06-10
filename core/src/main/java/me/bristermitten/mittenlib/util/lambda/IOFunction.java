@@ -1,12 +1,11 @@
 package me.bristermitten.mittenlib.util.lambda;
 
-import me.bristermitten.mittenlib.util.Errors;
-import me.bristermitten.mittenlib.util.Result;
+import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 import java.io.IOException;
 import java.util.function.Function;
-
-import static me.bristermitten.mittenlib.util.Result.runCatching;
+import me.bristermitten.mittenlib.util.Errors;
+import me.bristermitten.mittenlib.util.Result;
 
 /**
  * Like {@link SafeFunction} but only for {@link IOException}
@@ -19,7 +18,7 @@ public interface IOFunction<T, R> {
     /**
      * A {@link IOFunction} that always returns the same value, ignoring the input.
      *
-     * @param r   the value to return
+     * @param r the value to return
      * @param <T> the type of the input
      * @param <R> the type of the result
      * @return a {@link IOFunction} that always returns the given value
@@ -32,8 +31,8 @@ public interface IOFunction<T, R> {
      * Wrap a {@link Function} in a {@link IOFunction}
      *
      * @param function the function to wrap
-     * @param <T>      the type of the input
-     * @param <R>      the type of the result
+     * @param <T> the type of the input
+     * @param <R> the type of the result
      * @return a {@link IOFunction} that delegates to the given function
      */
     static <T, R> IOFunction<T, R> of(Function<T, R> function) {
@@ -55,7 +54,6 @@ public interface IOFunction<T, R> {
      * @param t the input
      * @return the result
      */
-
     default Result<R> applyCatching(T t) {
         return runCatching(() -> apply(t));
     }

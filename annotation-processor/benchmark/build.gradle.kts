@@ -1,38 +1,44 @@
 plugins {
-	id("me.champeau.jmh") version "0.7.3"
+    id("mittenlib.java-conventions")
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = sourceCompatibility
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = sourceCompatibility
 }
 
 jmh {
-	warmupIterations.set(2)
-	iterations.set(3)
-	failOnError.set(true)
-	fork.set(2)
+    warmupIterations.set(5)
+    iterations.set(5)
+
+    timeOnIteration.set("2s")
+
+    failOnError.set(true)
+    fork.set(1)
+    resultFormat.set("JSON")
+
+    // enable profiling (uncomment for debugging slow performance)
+//    profilers.add("jfr")
+
+    // only run the mapping json benchmarks if the deserialization timings arent important
+    includes.set(listOf(".*MappingJson.*"))
 }
 
 tasks.javadoc {
-	// This module doesn't need to be documented so disable the annoying warnings
-	(options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
+    // This module doesn't need to be documented, so disable the annoying warnings
+    (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
 }
 
 tasks.processJmhResources {
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
-
 
 dependencies {
-	annotationProcessor(project(":annotation-processor"))
-	implementation(project(":core"))
+    annotationProcessor(project(":annotation-processor"))
+    implementation(project(":core"))
 
-	implementation("com.fasterxml.jackson.core:jackson-core:2.19.0")
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.19.0")
-}
-
-// don't publish as not public api
-tasks.withType<AbstractPublishToMaven>().configureEach {
-	enabled = false
+    implementation(libs.jackson.databind)
+    implementation(libs.gson)
+    implementation(libs.snakeyaml)
 }

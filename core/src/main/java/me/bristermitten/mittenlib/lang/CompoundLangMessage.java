@@ -1,18 +1,16 @@
 package me.bristermitten.mittenlib.lang;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.List;
-
 /**
- * A message that is composed of multiple {@link LangMessage}s
- * This allows {@link LangMessage}s to be easily "concatenated", allowing for more complex messages to be created
+ * A message that is composed of multiple {@link LangMessage}s This allows {@link LangMessage}s to
+ * be easily "concatenated", allowing for more complex messages to be created
  */
 public class CompoundLangMessage extends LangMessage {
     private final List<LangMessage> components;
-
 
     /**
      * Create a new CompoundLangMessage
@@ -34,11 +32,11 @@ public class CompoundLangMessage extends LangMessage {
     }
 
     /**
-     * Create a new CompoundLangMessage, concatenating the 2 inputs.
-     * This is used to provide slightly more efficient concatenation in ({@link LangMessage#add(LangMessage)})
+     * Create a new CompoundLangMessage, concatenating the 2 inputs. This is used to provide slightly
+     * more efficient concatenation in ({@link LangMessage#add(LangMessage)})
      *
      * @param components the components of this message
-     * @param others     extra components to add
+     * @param others extra components to add
      */
     public CompoundLangMessage(@NotNull List<LangMessage> components, @NotNull LangMessage... others) {
         //noinspection UnstableApiUsage
@@ -50,6 +48,7 @@ public class CompoundLangMessage extends LangMessage {
 
     /**
      * Get the components of this message
+     *
      * @return the components of this message
      */
     public @Unmodifiable List<LangMessage> getComponents() {

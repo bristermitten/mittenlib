@@ -19,4 +19,3 @@ public class DefaultSpigotCommandContext implements SpigotCommandContext {
         player.closeInventory();
     }
 }
-

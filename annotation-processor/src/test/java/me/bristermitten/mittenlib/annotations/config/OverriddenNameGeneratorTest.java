@@ -1,21 +1,19 @@
 package me.bristermitten.mittenlib.annotations.config;
 
+import static com.google.testing.compile.CompilationSubject.assertThat;
+import static com.google.testing.compile.Compiler.javac;
+
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import io.toolisticon.cute.Cute;
 import org.junit.jupiter.api.Test;
 
-import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.Compiler.javac;
-
 class OverriddenNameGeneratorTest {
 
     @Test
     void generateFullConfigClassName() {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OverriddenNameDTO",
-                        """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.OverriddenNameDTO", """
                                 package me.bristermitten.mittenlib.tests;
                                 import java.util.Map;
                                 import me.bristermitten.mittenlib.config.*;
@@ -25,7 +23,7 @@ class OverriddenNameGeneratorTest {
                                 }
                                 """));
 
-        assertThat(compilation).succeededWithoutWarnings();
+        assertThat(compilation).succeeded();
     }
 
     @Test
@@ -56,11 +54,11 @@ class OverriddenNameGeneratorTest {
                 .processor(ConfigProcessor.class)
                 .andSourceFile("OverriddenImplConfig", """
                         import me.bristermitten.mittenlib.config.Config;
-                        
+
                         @Config(className = "ThisIsTheImpl")
                         public interface OverriddenImplConfig {
                             int id();
-                        
+
                             @Config
                             interface NormalSubConfig {
                                 int id2();

@@ -1,78 +1,61 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.inject.Inject;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-import io.toolisticon.aptk.tools.MessagerUtils;
-import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
+import java.util.List;
+import java.util.function.Function;
+import javax.lang.model.element.NestingKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.ASTParentReference;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
-import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
 import me.bristermitten.mittenlib.config.Config;
-import me.bristermitten.mittenlib.config.GeneratedConfig;
-import me.bristermitten.mittenlib.util.Null;
-import org.jspecify.annotations.NonNull;
+import me.bristermitten.mittenlib.util.Strings;
 import org.jspecify.annotations.Nullable;
 
-import javax.inject.Inject;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.NestingKind;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 /**
- * Responsible for generating proper class names for configuration classes.
- * This class handles the conversion between DTO class names and their corresponding
- * implementation class names, taking into account nesting, package names, and
- * custom naming specified in annotations.
+ * Responsible for generating proper class names for configuration classes. This class handles the
+ * conversion between DTO class names and their corresponding implementation class names, taking
+ * into account nesting, package names, and custom naming specified in annotations.
  */
 public class ConfigurationClassNameGenerator {
 
+    public static final String DESERIALIZER_SUFFIX = "Deserializer";
+    public static final String SERIALIZER_SUFFIX = "Serializer";
+    public static final String VALIDATOR_SUFFIX = "Validator";
+    public static final String PROVIDER_SUFFIX = "Provider";
+    public static final String DEFAULT_METHOD_ACCESS_SUFFIX = "DefaultMethodAccess";
+    public static final String CONFIG_LOADER_MODULE_NAME = "ConfigLoaderModule";
     private final ConfigNameCache configNameCache;
-    private final GeneratedTypeCache generatedTypeCache;
-    private final Elements elements;
 
     @Inject
-    ConfigurationClassNameGenerator(ConfigNameCache configNameCache, GeneratedTypeCache generatedTypeCache, Elements elements) {
+    ConfigurationClassNameGenerator(ConfigNameCache configNameCache) {
         this.configNameCache = configNameCache;
-        this.generatedTypeCache = generatedTypeCache;
-        this.elements = elements;
     }
 
-
     /**
-     * Creates a class name for the implementation of a DTO class.
-     * If the class name ends with "DTO", it removes that suffix.
-     * Otherwise, it appends "Impl" to the class name.
+     * Creates a class name for the implementation of a DTO class. If the class name ends with "DTO",
+     * it removes that suffix. Otherwise, it appends "Impl" to the class name.
      *
      * @param dtoClassName The original DTO class name
      * @return The implementation class name
      */
-    public static @NonNull ClassName translateConfigClassName(@NonNull ClassName dtoClassName) {
-        var implName = dtoClassName.simpleName().endsWith("DTO") ?
-                dtoClassName.simpleName().substring(0, dtoClassName.simpleName().length() - 3) :
-                dtoClassName.simpleName() + "Impl";
+    public static ClassName translateConfigClassName(ClassName dtoClassName) {
+        var implName = dtoClassName.simpleName().endsWith("DTO")
+                ? dtoClassName
+                        .simpleName()
+                        .substring(0, dtoClassName.simpleName().length() - 3)
+                : dtoClassName.simpleName() + "Impl";
         return dtoClassName.peerClass(implName);
     }
 
-    /**
-     * Translates a {@link TypeElement} into its non-DTO name by
-     * reading a {@link Config#className()} or removing the suffix.
-     *
-     * @param dtoType the DTO type
-     * @return the non-DTO name, if possible, or the unchanged name
-     */
-    private static String findConfigClassName(@NonNull TypeElement dtoType) {
+    private static String findConfigClassName(TypeElement dtoType) {
 
         final Config annotation = dtoType.getAnnotation(Config.class);
         if (annotation == null) {
@@ -85,35 +68,74 @@ public class ConfigurationClassNameGenerator {
         return translateConfigClassName(ClassName.get(dtoType)).simpleName();
     }
 
+    private static NamingNode node(AbstractConfigStructure ast) {
+        return new NamingNode(
+                ast.name(),
+                ast.settings().config().className(),
+                ast.enclosedIn() == null ? null : node(ast.enclosedIn()),
+                ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource);
+    }
+
+    private static NamingNode node(ASTParentReference parent) {
+        return new NamingNode(
+                parent.parentClassName(),
+                parent.manualClassName(),
+                parent.parent() == null ? null : node(parent.parent()),
+                parent.isInterface());
+    }
+
+    private static String getCleanSimpleName(ClassName name) {
+        String simpleName = name.simpleName();
+        if (simpleName.endsWith("DTO")) {
+            return simpleName.substring(0, simpleName.length() - 3);
+        }
+        return simpleName;
+    }
+
+    private ClassName getRecursiveName(NamingNode node, Function<NamingNode, String> simpleNameSelector) {
+        if (node.parent() != null) {
+            return getRecursiveName(node.parent(), simpleNameSelector).nestedClass(simpleNameSelector.apply(node));
+        }
+        return node.name().peerClass(simpleNameSelector.apply(node));
+    }
+
+    private String getCleanSimpleName(NamingNode node) {
+        return getCleanSimpleName(node.name());
+    }
+
+    private ClassName getImplClassName(NamingNode node) {
+        ClassName baseName =
+                node.manualClassName() == null || node.manualClassName().isBlank()
+                        ? translateConfigClassName(node.name())
+                        : ClassName.bestGuess(node.manualClassName());
+
+        if (node.parent() != null) {
+            return getImplClassName(node.parent()).nestedClass(baseName.simpleName());
+        }
+        return baseName;
+    }
+
     /**
-     * Creates a class name for the implementation of a configuration structure.
-     * This method handles nested classes by checking if the structure is enclosed in another structure.
+     * Creates a class name for the implementation of a configuration structure. This method handles
+     * nested classes by checking if the structure is enclosed in another structure.
      *
      * @param ast The abstract configuration structure
      * @return The implementation class name, properly nested if necessary
      */
-    public @NonNull ClassName translateConfigClassName(@NonNull AbstractConfigStructure ast) {
-
-        ClassName implName = ast.settings().config().className().isBlank() ?
-                translateConfigClassName(ast.name())
-                : ClassName.bestGuess(ast.settings().config().className());
-        if (ast.enclosedIn() != null) {
-            return translateConfigClassName(ast.enclosedIn())
-                    .nestedClass(implName.simpleName());
-        }
-        return implName;
+    public ClassName translateConfigClassName(AbstractConfigStructure ast) {
+        return getImplClassName(node(ast));
     }
 
     /**
-     * Get the <i>public</i> class name for a config structure.
-     * "Public" is defined as the type that the user should primarily interact with.
-     * For interfaces, this is the interface itself, and for classes, this is the generated implementation class
-     * (as the DTO class becomes mostly useless after code generation).
+     * Get the <i>public</i> class name for a config structure. "Public" is defined as the type that
+     * the user should primarily interact with. For interfaces, this is the interface itself, and for
+     * classes, this is the generated implementation class (as the DTO class becomes mostly useless
+     * after code generation).
      *
      * @param ast The abstract configuration structure
      * @return The public class name that should be used for interaction with this configuration
      */
-    public ClassName getPublicClassName(@NonNull AbstractConfigStructure ast) {
+    public ClassName getPublicClassName(AbstractConfigStructure ast) {
         return switch (ast.source()) {
             case ConfigTypeSource.InterfaceConfigTypeSource ignored -> ast.name();
             case ConfigTypeSource.ClassConfigTypeSource ignored -> translateConfigClassName(ast);
@@ -121,14 +143,14 @@ public class ConfigurationClassNameGenerator {
     }
 
     /**
-     * Get the concrete class name for a config structure.
-     * This is the actual implementation class that will be instantiated.
-     * For classes, this is the original DTO class, and for interfaces, this is the generated implementation class.
+     * Get the concrete class name for a config structure. This is the actual implementation class
+     * that will be instantiated. For classes, this is the original DTO class, and for interfaces,
+     * this is the generated implementation class.
      *
      * @param ast The abstract configuration structure
      * @return The concrete class name that will be instantiated
      */
-    public ClassName getConcreteConfigClassName(@NonNull AbstractConfigStructure ast) {
+    public ClassName getConcreteConfigClassName(AbstractConfigStructure ast) {
         return switch (ast.source()) {
             case ConfigTypeSource.ClassConfigTypeSource ignored -> ast.name();
             case ConfigTypeSource.InterfaceConfigTypeSource ignored -> translateConfigClassName(ast);
@@ -136,32 +158,13 @@ public class ConfigurationClassNameGenerator {
     }
 
     /**
-     * Creates a class name for the implementation of a DTO class, taking into account parent references.
-     * This method handles nested classes by recursively processing parent references.
-     *
-     * @param parentReference The parent reference containing information about the class hierarchy
-     * @return The implementation class name, properly nested if necessary
-     */
-    private @NonNull ClassName translateConfigClassName(@NonNull ASTParentReference parentReference) {
-        Optional<AbstractConfigStructure> abstractConfigStructure = configNameCache.lookupAST(parentReference.parentClassName());
-        ClassName implName =
-                abstractConfigStructure.map(this::translateConfigClassName)
-                        .orElseGet(() -> translateConfigClassName(parentReference.parentClassName()));
-
-        if (parentReference.parent() != null) {
-            var parentName = translateConfigClassName(parentReference.parent());
-            return parentName.nestedClass(implName.simpleName());
-        }
-        return implName;
-    }
-
-    /**
      * Recursively transforms DTO type parameters into their corresponding configuration class names.
      * For example, converts {@code List<UserDTO>} to {@code List<User>}.
      *
-     * @param mirror             The type mirror to transform
+     * @param mirror The type mirror to transform
      * @param getConfigClassName A function that maps a type mirror to its configuration class name
-     * @return The transformed type name with DTO parameters replaced by their configuration counterparts
+     * @return The transformed type name with DTO parameters replaced by their configuration
+     *     counterparts
      */
     private TypeName translateDTOParameters(TypeMirror mirror, Function<TypeMirror, TypeName> getConfigClassName) {
         if (!(mirror instanceof DeclaredType declaredType)) {
@@ -172,13 +175,11 @@ public class ConfigurationClassNameGenerator {
         if (typeArguments.isEmpty()) {
             return TypeName.get(mirror);
         }
-        List<TypeName> properArguments = typeArguments.stream()
-                .map(getConfigClassName)
-                .toList();
+        List<TypeName> properArguments =
+                typeArguments.stream().map(getConfigClassName).toList();
 
         return ParameterizedTypeName.get(ClassName.get(element), properArguments.toArray(new TypeName[0]));
     }
-
 
     /**
      * Get the config property class name for a type mirror.
@@ -186,7 +187,7 @@ public class ConfigurationClassNameGenerator {
      * @param mirror The type mirror
      * @return The config property class name
      */
-    public TypeName getConfigPropertyClassName(@NonNull TypeMirror mirror) {
+    public TypeName getConfigPropertyClassName(TypeMirror mirror) {
         return getPropertyClassName(mirror, this::translateConfigClassName, this::getConfigPropertyClassName);
     }
 
@@ -196,7 +197,7 @@ public class ConfigurationClassNameGenerator {
      * @param p The property
      * @return The public property class name
      */
-    public TypeName publicPropertyClassName(@NonNull Property p) {
+    public TypeName publicPropertyClassName(Property p) {
         return publicPropertyClassName(p.propertyType());
     }
 
@@ -206,104 +207,41 @@ public class ConfigurationClassNameGenerator {
      * @param mirror The type mirror
      * @return The public property class name
      */
-    public TypeName publicPropertyClassName(@NonNull TypeMirror mirror) {
+    public TypeName publicPropertyClassName(TypeMirror mirror) {
         return getPropertyClassName(mirror, this::getPublicClassName, this::publicPropertyClassName);
-    }
-
-    /**
-     * Get the concrete property class name for a type mirror.
-     *
-     * @param mirror The type mirror
-     * @return The concrete property class name
-     */
-    public TypeName concretePropertyClassName(@NonNull TypeMirror mirror) {
-        return getPropertyClassName(mirror, this::getConcreteConfigClassName, this::concretePropertyClassName);
-    }
-
-    /**
-     * Get the concrete property class name for a property.
-     *
-     * @param p The property
-     * @return The concrete property class name
-     */
-    public TypeName concretePropertyClassName(@NonNull Property p) {
-        return concretePropertyClassName(p.propertyType());
     }
 
     /**
      * Helper method to get a property class name based on a type mirror and a mapping function.
      *
-     * @param mirror          The type mirror
-     * @param astMapper       The function to map an AbstractConfigStructure to a ClassName
-     * @param recursiveMapper The function to map a TypeMirror to a TypeName (used for recursive calls)
+     * @param mirror The type mirror
+     * @param astMapper The function to map an AbstractConfigStructure to a ClassName
+     * @param recursiveMapper The function to map a TypeMirror to a TypeName (used for recursive
+     *     calls)
      * @return The property class name
      */
-    private TypeName getPropertyClassName(TypeMirror mirror,
-                                          Function<AbstractConfigStructure, ClassName> astMapper,
-                                          Function<TypeMirror, TypeName> recursiveMapper) {
-        return configNameCache.lookupAST(mirror)
+    private TypeName getPropertyClassName(
+            TypeMirror mirror,
+            Function<AbstractConfigStructure, ClassName> astMapper,
+            Function<TypeMirror, TypeName> recursiveMapper) {
+        return configNameCache
+                .lookupAST(mirror)
                 .map(astMapper)
                 .map(TypeName.class::cast)
                 .orElse(translateDTOParameters(mirror, recursiveMapper));
     }
 
     /**
-     * Get a suitable configuration class name for the given type mirror.
-     * This is a convenience method that calls {@link #getConfigClassName(TypeMirror, Element)}
-     * with a null source element.
-     *
-     * @param mirror The type mirror to get the configuration class name for
-     * @return The configuration class name for the given type mirror
-     * @see #getConfigClassName(TypeMirror, Element)
-     */
-    public TypeName getConfigClassName(TypeMirror mirror) {
-        return getConfigClassName(mirror, null);
-    }
-
-    /**
-     * Get a suitable configuration class name for the given type mirror,
-     * performing edge case checks for primitives, unnamed packages, and generated config references.
-     * This method throws exceptions for error types, already generated configs, and types in unnamed packages.
-     *
-     * @param typeMirror The type mirror to get the configuration class name for
-     * @param source     The source element that references the typeMirror (used exclusively for error messages)
-     * @return The configuration class name for the given type mirror
-     * @throws RuntimeException         if the type is an error type or already generated
-     * @throws IllegalArgumentException if the type is not a declared type or is in an unnamed package
-     */
-    public TypeName getConfigClassName(TypeMirror typeMirror, @Nullable Element source) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return TypeName.get(typeMirror);
-        }
-        GeneratedConfig annotation = typeMirror.getAnnotation(GeneratedConfig.class); // if the type is already generated by us
-        if (typeMirror.getKind() == TypeKind.ERROR || annotation != null) {
-            MessagerUtils.error(source,
-                    new DTOReferenceException(typeMirror, generatedTypeCache,
-                            Null.map(annotation, GeneratedConfig::source), source).getMessage());
-            throw new RuntimeException();
-        }
-
-        final TypeElement element = TypeMirrorWrapper.wrap(typeMirror).getTypeElement()
-                .map(TypeElementWrapper::unwrap)
-                .orElseThrow(() -> new IllegalArgumentException(typeMirror + " must be a declared type"));
-
-        final PackageElement packageElement = elements.getPackageOf(element);
-        if (packageElement.isUnnamed()) {
-            throw new IllegalArgumentException("Unnamed packages are not supported");
-        }
-        return generateConfigurationClassName(element);
-    }
-
-    /**
-     * Generates a ClassName for the actual generated configuration class from a given DTO, using the package
-     * of the given {@link TypeElement}. If the given type is not a config, its unchanged name is returned.
-     * The returned class name will be the same as the given type, but with the suffix removed.
-     * It can also be manually specified in the Config annotation with {@link Config#className()}
+     * Generates a ClassName for the actual generated configuration class from a given DTO, using the
+     * package of the given {@link TypeElement}. If the given type is not a config, its unchanged name
+     * is returned. The returned class name will be the same as the given type, but with the suffix
+     * removed. It can also be manually specified in the Config annotation with {@link
+     * Config#className()}
      *
      * @param configDTOType The DTO type
      * @return The generated ClassName
      */
-    public ClassName generateConfigurationClassName(@NonNull TypeElement configDTOType) {
+    public ClassName generateConfigurationClassName(TypeElement configDTOType) {
         if (configDTOType.getNestingKind() == NestingKind.MEMBER) {
             /*
             If the type is a nested class, then we first translate the enclosedConfigs class name (which may do nothing),
@@ -313,11 +251,125 @@ public class ConfigurationClassNameGenerator {
             final var enclosingElement = configDTOType.getEnclosingElement();
             return generateConfigurationClassName((TypeElement) enclosingElement)
                     .nestedClass(findConfigClassName(configDTOType));
-
         }
-
 
         final String packageName = TypeElementWrapper.wrap(configDTOType).getPackageName();
         return ClassName.get(packageName, findConfigClassName(configDTOType));
     }
+
+    public String getDeserializerProviderFieldName(TypeMirror type) {
+        return getDeserializerFieldName(type) + PROVIDER_SUFFIX;
+    }
+
+    public String getSerializerProviderFieldName(TypeMirror type) {
+        return getSerializerFieldName(type) + PROVIDER_SUFFIX;
+    }
+
+    public String getValidatorFieldName(Property property) {
+        return property.name() + VALIDATOR_SUFFIX;
+    }
+
+    public String getValidatorErrorFieldName(Property property) {
+        return property.name() + "ValidationError";
+    }
+
+    public ClassName getDefaultMethodAccessClassName(AbstractConfigStructure ast) {
+        ClassName concreteConfigClassName = getConcreteConfigClassName(ast);
+        return concreteConfigClassName.nestedClass(getCleanSimpleName(ast.name()) + DEFAULT_METHOD_ACCESS_SUFFIX);
+    }
+
+    public ClassName getLoaderModuleClassName(String packageName) {
+        return ClassName.get(packageName, CONFIG_LOADER_MODULE_NAME);
+    }
+
+    public String getProvidesProviderMethodName(String simpleName) {
+        return "provide" + simpleName + PROVIDER_SUFFIX;
+    }
+
+    public String getProvidesMethodName(String simpleName) {
+        return "provide" + simpleName;
+    }
+
+    public String getProvidesToConfigSetMethodName(String simpleName) {
+        return "provide" + simpleName + "ToConfigSet";
+    }
+
+    public String getProvidesToProviderSetMethodName(String simpleName) {
+        return "provide" + simpleName + "ToProviderSet";
+    }
+
+    /**
+     * Gets the ClassName of the deserializer for a given configuration structure. For {@code
+     * MyConfig}, the deserializer is {@code MyConfigImpl}. For nested class OuterConfig.InnerConfig,
+     * the loader is OuterConfigDeserializer.InnerConfigDeserializer.
+     */
+    public ClassName getDeserializerClassName(AbstractConfigStructure ast) {
+        return getRecursiveName(node(ast), n -> getCleanSimpleName(n) + DESERIALIZER_SUFFIX);
+    }
+
+    /** Gets the ClassName of the loader for a given TypeMirror. */
+    public ClassName getDeserializerClassName(TypeMirror type) {
+        AbstractConfigStructure ast = configNameCache
+                .lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        return getDeserializerClassName(ast);
+    }
+
+    private String getFieldName(TypeMirror type, String suffix) {
+        AbstractConfigStructure ast = configNameCache
+                .lookupAST(type)
+                .orElseThrow(() -> new IllegalStateException("Not a config type: " + type));
+        ClassName publicName = getPublicClassName(ast);
+        String safePkg = publicName.packageName().replace('.', '_');
+        String prefix = safePkg.isEmpty() ? "" : safePkg + "_";
+        return Strings.uncapitalize(prefix + getCleanSimpleName(publicName)) + suffix;
+    }
+
+    /**
+     * Gets the field name for a deserializer field based on the public config type. E.g., for {@code
+     * InterfaceConfig}, it returns {@code interfaceConfigDeserializer}.
+     */
+    public String getDeserializerFieldName(TypeMirror type) {
+        return getFieldName(type, DESERIALIZER_SUFFIX);
+    }
+
+    /**
+     * Gets the {@link ClassName} of the serializer for a given configuration structure. For {@code
+     * MyConfigImpl}, the saver is {@code MyConfigImplSerializer}. For nested class {@code
+     * OuterConfigImpl.InnerConfigImpl}, the saver is {@code
+     * OuterConfigImplSerializer.InnerConfigImplSerializer}.
+     */
+    public ClassName getSerializerClassName(AbstractConfigStructure ast) {
+        return getRecursiveName(node(ast), n -> getCleanSimpleName(n) + SERIALIZER_SUFFIX);
+    }
+
+    /**
+     * Gets the field name for a serializer instance based on the public config type. E.g., for {@code
+     * InterfaceConfig}, it returns {@code "interfaceConfigSerializer"}.
+     */
+    public String getSerializerFieldName(TypeMirror type) {
+        return getFieldName(type, SERIALIZER_SUFFIX);
+    }
+
+    public ClassName getValidatorClassName(AbstractConfigStructure ast) {
+        return getRecursiveName(node(ast), n -> getCleanSimpleName(n) + VALIDATOR_SUFFIX);
+    }
+
+    public @Nullable ClassName getInnerDaoName(AbstractConfigStructure ast) {
+        if (!(ast.source() instanceof ConfigTypeSource.InterfaceConfigTypeSource)) {
+            return null;
+        }
+        boolean hasAnyDefaultValue = ast.properties().stream()
+                .anyMatch(property -> property.settings().hasDefaultValue());
+        if (!hasAnyDefaultValue) {
+            return null;
+        }
+        return getDefaultMethodAccessClassName(ast);
+    }
+
+    private record NamingNode(
+            ClassName name,
+            @Nullable String manualClassName,
+            @Nullable NamingNode parent,
+            boolean isInterface) {}
 }

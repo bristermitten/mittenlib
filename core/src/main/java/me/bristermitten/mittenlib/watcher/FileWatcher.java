@@ -5,9 +5,8 @@ import java.nio.file.WatchEvent;
 import java.util.function.Consumer;
 
 /**
- * A watcher for a file. This contains a {@link Path} to watch,
- * and a {@link Consumer} to call when the file changes.
- * This will generally be processed by {@link FileWatcherService}
+ * A watcher for a file. This contains a {@link Path} to watch, and a {@link Consumer} to call when
+ * the file changes. This will generally be processed by {@link FileWatcherService}
  */
 public class FileWatcher {
     private final Path watching;

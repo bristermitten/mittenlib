@@ -1,9 +1,13 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.inject.Guice;
 import com.squareup.javapoet.ClassName;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
+import java.util.List;
+import javax.lang.model.element.TypeElement;
 import me.bristermitten.mittenlib.annotations.ast.ASTParentReference;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
@@ -12,11 +16,6 @@ import me.bristermitten.mittenlib.annotations.integration.InterfaceConfig;
 import me.bristermitten.mittenlib.annotations.integration.UnionConfig;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
-
-import javax.lang.model.element.TypeElement;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractParsingTest {
 
@@ -27,12 +26,10 @@ public class AbstractParsingTest {
                 .passInElement()
                 .<TypeElement>fromClass(InterfaceConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
 
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
                     assertThat(ast)
                             .isNotNull()
@@ -40,8 +37,7 @@ public class AbstractParsingTest {
                             .extracting(AbstractConfigStructure::name)
                             .isEqualTo(ClassName.get(InterfaceConfig.class));
 
-                    assertThat(ast.enclosedIn())
-                            .isNull();
+                    assertThat(ast.enclosedIn()).isNull();
 
                     assertThat(ast.enclosed())
                             .singleElement()
@@ -49,13 +45,14 @@ public class AbstractParsingTest {
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Atomic.class))
                             .hasFieldOrPropertyWithValue("name", ClassName.get(InterfaceConfig.ChildConfig.class))
                             .hasFieldOrPropertyWithValue("enclosed", List.of())
-                            .hasFieldOrPropertyWithValue("enclosedIn", new ASTParentReference(ClassName.get(InterfaceConfig.class), null))
-                            .extracting(AbstractConfigStructure.Atomic::properties,
+                            .hasFieldOrPropertyWithValue(
+                                    "enclosedIn",
+                                    new ASTParentReference(ClassName.get(InterfaceConfig.class), true, "", null))
+                            .extracting(
+                                    AbstractConfigStructure.Atomic::properties,
                                     InstanceOfAssertFactories.list(Property.class))
                             .singleElement()
-                            .hasFieldOrPropertyWithValue("name", "id")
-                    ;
-
+                            .hasFieldOrPropertyWithValue("name", "id");
                 })
                 .thenExpectThat()
                 .compilationSucceeds()
@@ -70,16 +67,13 @@ public class AbstractParsingTest {
                 .<TypeElement>fromClass(UnionConfig.class)
                 .intoUnitTest((processingEnvironment, element) -> {
                     ToolingProvider.setTooling(processingEnvironment);
-                    var injector = Guice.createInjector(
-                            new ConfigProcessorModule(processingEnvironment)
-                    );
+                    var injector = Guice.createInjector(new ConfigProcessorModule(processingEnvironment));
 
-                    AbstractConfigStructure ast = injector.getInstance(ConfigClassParser.class)
-                            .parseAbstract(element);
+                    AbstractConfigStructure ast =
+                            injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
                     assertThat(ast).isNotNull();
-                    assertThat(ast.name())
-                            .isEqualTo(ClassName.get(UnionConfig.class));
+                    assertThat(ast.name()).isEqualTo(ClassName.get(UnionConfig.class));
 
                     assertThat(ast)
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
@@ -91,7 +85,6 @@ public class AbstractParsingTest {
                             .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
                             .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("hello"));
 
-
                     assertThat(ast)
                             .asInstanceOf(InstanceOfAssertFactories.type(AbstractConfigStructure.Union.class))
                             .extracting(AbstractConfigStructure.Union::alternatives)
@@ -102,13 +95,12 @@ public class AbstractParsingTest {
                             .asInstanceOf(InstanceOfAssertFactories.list(Property.class))
                             .satisfiesOnlyOnce(c -> assertThat(c.name()).isEqualTo("world"));
 
-
                     assertThat(ast.enclosedIn()).isNull();
 
                     assertThat(ast.enclosed()).hasSize(2);
-
                 })
-                .thenExpectThat().compilationSucceeds().executeTest();
-
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
     }
 }

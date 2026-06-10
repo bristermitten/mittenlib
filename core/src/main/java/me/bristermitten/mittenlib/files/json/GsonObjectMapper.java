@@ -3,14 +3,11 @@ package me.bristermitten.mittenlib.files.json;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
 import me.bristermitten.mittenlib.util.Result;
 
-import javax.inject.Inject;
-
-/**
- * An {@link ObjectMapper} implementation using {@link Gson}.
- */
+/** An {@link ObjectMapper} implementation using {@link Gson}. */
 public class GsonObjectMapper implements ObjectMapper {
     private final Gson gson;
 

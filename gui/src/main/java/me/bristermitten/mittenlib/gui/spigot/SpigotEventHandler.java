@@ -2,6 +2,8 @@ package me.bristermitten.mittenlib.gui.spigot;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import java.util.Optional;
+import java.util.OptionalInt;
 import me.bristermitten.mittenlib.gui.manager.SpigotGUIManager;
 import me.bristermitten.mittenlib.gui.session.GUISession;
 import me.bristermitten.mittenlib.gui.session.SessionID;
@@ -15,12 +17,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Optional;
-import java.util.OptionalInt;
-
 /**
- * Handles Spigot inventory events and connects them to the GUI framework.
- * Replaces the empty InventoryClickListener with proper event handling.
+ * Handles Spigot inventory events and connects them to the GUI framework. Replaces the empty
+ * InventoryClickListener with proper event handling.
  */
 @Singleton
 public class SpigotEventHandler implements Listener {
@@ -46,9 +45,8 @@ public class SpigotEventHandler implements Listener {
         }
 
         // Check if this is a GUI inventory
-        Optional<GUISession<?, ?, ?, ?, SpigotCommandContext>> sessionByViewer = guiManager.getSessionByViewer(
-                new SpigotInventoryViewer<>(player)
-        );
+        Optional<GUISession<?, ?, ?, ?, SpigotCommandContext>> sessionByViewer =
+                guiManager.getSessionByViewer(new SpigotInventoryViewer<>(player));
         if (!sessionByViewer.isPresent()) {
             return;
         }
@@ -68,9 +66,7 @@ public class SpigotEventHandler implements Listener {
             return;
         }
 
-
         Object layoutObj = session.getCurrentView();
-
 
         if (layoutObj instanceof SpigotGUIView) { // should we error if this is not the case?
             SpigotGUIView<?> layout = (SpigotGUIView<?>) layoutObj;
@@ -80,18 +76,15 @@ public class SpigotEventHandler implements Listener {
                         event.getClick(),
                         event.getAction(),
                         event.getHotbarButton() == -1 ? OptionalInt.empty() : OptionalInt.of(event.getHotbarButton()),
-                        event.getCursor()
-                );
+                        event.getCursor());
                 PureFunction<ClickInput, ?> messageFunction = button.getMessageFunction();
                 Object message = messageFunction.apply(clickInput);
                 if (message != null) {
                     guiManager.sendMessage((SessionID) session.getSessionId(), message);
                 }
-
             });
         }
     }
-
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
@@ -101,11 +94,10 @@ public class SpigotEventHandler implements Listener {
 
         Player player = (Player) event.getPlayer();
 
-        guiManager.getSessionByViewer(new SpigotInventoryViewer<>(player))
-                .ifPresent(session -> {
-                    if (!session.isTransitioning()) {
-                        guiManager.closeSession(session.getSessionId());
-                    }
-                });
+        guiManager.getSessionByViewer(new SpigotInventoryViewer<>(player)).ifPresent(session -> {
+            if (!session.isTransitioning()) {
+                guiManager.closeSession(session.getSessionId());
+            }
+        });
     }
 }

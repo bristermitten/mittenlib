@@ -1,16 +1,15 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.google.testing.compile.Compilation;
-import com.google.testing.compile.JavaFileObjects;
-import me.bristermitten.mittenlib.config.names.NamingPatterns;
-import org.junit.jupiter.api.Test;
-
-import javax.annotation.Nullable;
-import javax.tools.JavaFileObject;
-import java.util.regex.Pattern;
-
 import static com.google.testing.compile.Compiler.javac;
 import static com.google.testing.compile.JavaFileObjectSubject.assertThat;
+
+import com.google.testing.compile.Compilation;
+import com.google.testing.compile.JavaFileObjects;
+import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import javax.tools.JavaFileObject;
+import me.bristermitten.mittenlib.config.names.NamingPatterns;
+import org.junit.jupiter.api.Test;
 
 class FieldNameGeneratorTest {
 
@@ -19,9 +18,9 @@ class FieldNameGeneratorTest {
     }
 
     private JavaFileObject compileField(String source, @Nullable NamingPatterns pattern) {
-        Compilation compilation = javac()
-                .withProcessors(new ConfigProcessor())
-                .compile(JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO", """
+        Compilation compilation = javac().withProcessors(new ConfigProcessor())
+                .compile(JavaFileObjects.forSourceString(
+                        "me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDTO", """
                         package me.bristermitten.mittenlib.tests;
                         import java.util.Map;
 
@@ -32,11 +31,12 @@ class FieldNameGeneratorTest {
                         public class FieldClassNameGeneratorTestDTO {
                         %s
                         }
-                        """.formatted(
-                        pattern == null ? "" : "@NamingPattern(NamingPatterns." + pattern.name() + ")",
-                        source)));
+                                                """.formatted(
+                                        pattern == null ? "" : "@NamingPattern(NamingPatterns." + pattern.name() + ")",
+                                        source)));
 
-        return compilation.generatedSourceFile("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTest")
+        return compilation
+                .generatedSourceFile("me.bristermitten.mittenlib.tests.FieldClassNameGeneratorTestDeserializer")
                 .orElseThrow();
     }
 
@@ -52,7 +52,6 @@ class FieldNameGeneratorTest {
         assertConfigKeyUsed(source, "hello");
     }
 
-
     @Test
     void assertThat_annotatedFieldName_hasHigherPriority_withConfigName() {
         var source = compileField("""
@@ -67,7 +66,7 @@ class FieldNameGeneratorTest {
         var source = compileField("""
                 @ConfigName("field-name")
                 int hello;
-                """, NamingPatterns.LOWER_SNAKE_CASE);
+                                """, NamingPatterns.LOWER_SNAKE_CASE);
         assertConfigKeyUsed(source, "field-name");
     }
 
@@ -76,7 +75,7 @@ class FieldNameGeneratorTest {
         var source = compileField("""
                 @NamingPattern(NamingPatterns.UPPER_CAMEL_CASE)
                 int fieldName;
-                """, NamingPatterns.LOWER_SNAKE_CASE);
+                                """, NamingPatterns.LOWER_SNAKE_CASE);
         assertConfigKeyUsed(source, "FieldName");
     }
 
@@ -84,8 +83,7 @@ class FieldNameGeneratorTest {
     void assertThat_unannotatedFieldName_usesClass_withNamingPattern() {
         var source = compileField("""
                 int fieldName;
-                """, NamingPatterns.LOWER_KEBAB_CASE);
+                                """, NamingPatterns.LOWER_KEBAB_CASE);
         assertConfigKeyUsed(source, "field-name");
     }
-
 }

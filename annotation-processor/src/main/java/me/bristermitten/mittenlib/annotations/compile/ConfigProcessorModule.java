@@ -1,15 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.AbstractModule;
-
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 /**
- * Guice module for the configuration annotation processor.
- * This module binds the necessary components for the annotation processor,
- * including the ProcessingEnvironment and its utility classes.
+ * Guice module for the configuration annotation processor. This module binds the necessary
+ * components for the annotation processor, including the ProcessingEnvironment and its utility
+ * classes.
  */
 public class ConfigProcessorModule extends AbstractModule {
     private final ProcessingEnvironment processingEnvironment;
@@ -24,9 +23,8 @@ public class ConfigProcessorModule extends AbstractModule {
     }
 
     /**
-     * Configures the Guice bindings for this module.
-     * Binds the ProcessingEnvironment and its utility classes (Elements and Types)
-     * for use by other components in the annotation processor.
+     * Configures the Guice bindings for this module. Binds the ProcessingEnvironment and its utility
+     * classes (Elements and Types) for use by other components in the annotation processor.
      */
     @Override
     protected void configure() {

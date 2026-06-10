@@ -1,13 +1,12 @@
 package me.bristermitten.mittenlib.util;
 
-import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-
-import static org.junit.jupiter.api.Assertions.*;
+import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
+import org.junit.jupiter.api.Test;
 
 class ResultTest {
 
@@ -43,14 +42,15 @@ class ResultTest {
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
-        assertEquals(IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+        assertEquals(
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
     void execCatching() {
-        Result<Unit> result = Result.execCatching(() -> {
+        Result<Unit> result = Result.execCatching(() -> {});
 
-        });
         assertTrue(result.isSuccess());
         assertFalse(result.isFailure());
         assertEquals(Unit.UNIT, result.getOrThrow());
@@ -64,7 +64,9 @@ class ResultTest {
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
-        assertEquals(IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+        assertEquals(
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
@@ -77,14 +79,15 @@ class ResultTest {
 
     @Test
     void computeCatchingWithFail() {
-        Result<String> result = Result.computeCatching(() ->
-                Result.runCatching(() -> {
-                    throw new IllegalArgumentException();
-                }));
+        Result<String> result = Result.computeCatching(() -> Result.runCatching(() -> {
+            throw new IllegalArgumentException();
+        }));
         assertFalse(result.isSuccess());
         assertTrue(result.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
-        assertEquals(IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+        assertEquals(
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
@@ -145,12 +148,7 @@ class ResultTest {
 
     @Test
     void sequence() {
-        var results = Result.sequence(
-                List.of(
-                        Result.ok("Hello"),
-                        Result.ok("World")
-                )
-        );
+        var results = Result.sequence(List.of(Result.ok("Hello"), Result.ok("World")));
         assertTrue(results.isSuccess());
         assertFalse(results.isFailure());
         assertEquals(List.of("Hello", "World"), results.getOrThrow());
@@ -192,7 +190,9 @@ class ResultTest {
         assertFalse(result2.isSuccess());
         assertTrue(result2.isFailure());
         assertThrows(IllegalArgumentException.class, result::getOrThrow);
-        assertEquals(IllegalArgumentException.class, result.error().map(Exception::getClass).orElse(null));
+        assertEquals(
+                IllegalArgumentException.class,
+                result.error().map(Exception::getClass).orElse(null));
     }
 
     @Test
@@ -328,5 +328,4 @@ class ResultTest {
         assertFalse(result2.isFailure());
         assertEquals("Recovered", result2.getOrThrow());
     }
-
 }

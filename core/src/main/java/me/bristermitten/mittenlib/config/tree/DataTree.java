@@ -1,23 +1,16 @@
 package me.bristermitten.mittenlib.config.tree;
 
+import java.util.*;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-/**
- * Like {@link com.google.gson.JsonElement} but without a strict dependency on json
- */
+/** Like {@link com.google.gson.JsonElement} but without a strict dependency on json */
 @NullMarked
 public abstract class DataTree {
 
-    private DataTree() {
-
-    }
+    private DataTree() {}
 
     // static factories
 
@@ -40,7 +33,6 @@ public abstract class DataTree {
     public static DataTreeNull null_() {
         return DataTreeNull.INSTANCE;
     }
-
 
     public static DataTree.DataTreeArray array(DataTree... values) {
         return new DataTree.DataTreeArray(values);
@@ -68,8 +60,7 @@ public abstract class DataTree {
     public static class DataTreeNull extends DataTree {
         public static final DataTreeNull INSTANCE = new DataTreeNull();
 
-        private DataTreeNull() {
-        }
+        private DataTreeNull() {}
 
         @Override
         public @Nullable Object value() {
@@ -92,7 +83,7 @@ public abstract class DataTree {
         }
     }
 
-    public static abstract class DataTreeLiteral extends DataTree {
+    public abstract static class DataTreeLiteral extends DataTree {
 
         @Override
         public abstract Object value();
@@ -202,11 +193,11 @@ public abstract class DataTree {
         public final DataTree[] values;
 
         public DataTreeArray(DataTree[] values) {
-            this.values = values;
+            this.values = values.clone();
         }
 
         public DataTree[] getValues() {
-            return values;
+            return values.clone();
         }
 
         @Override
@@ -222,8 +213,8 @@ public abstract class DataTree {
         }
 
         @Override
-        public List<DataTree> value() {
-            return Arrays.asList(values);
+        public @Unmodifiable List<DataTree> value() {
+            return Collections.unmodifiableList(Arrays.asList(values));
         }
     }
 
@@ -231,15 +222,15 @@ public abstract class DataTree {
         private final Map<DataTree, DataTree> values;
 
         public DataTreeMap(Map<DataTree, DataTree> values) {
-            this.values = values;
+            this.values = Collections.unmodifiableMap(new HashMap<>(values));
         }
 
-        public Map<DataTree, DataTree> values() {
+        public @Unmodifiable Map<DataTree, DataTree> values() {
             return values;
         }
 
         @Override
-        public Map<DataTree, DataTree> value() {
+        public @Unmodifiable Map<DataTree, DataTree> value() {
             return values;
         }
 

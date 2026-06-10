@@ -1,10 +1,10 @@
 package me.bristermitten.mittenlib.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.bukkit.Bukkit;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VersionTest {
 

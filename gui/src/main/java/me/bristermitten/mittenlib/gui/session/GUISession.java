@@ -1,5 +1,8 @@
 package me.bristermitten.mittenlib.gui.session;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import me.bristermitten.mittenlib.gui.GUIBase;
 import me.bristermitten.mittenlib.gui.UpdateResult;
 import me.bristermitten.mittenlib.gui.command.Command;
@@ -7,38 +10,27 @@ import me.bristermitten.mittenlib.gui.command.CommandContext;
 import me.bristermitten.mittenlib.gui.view.InventoryViewer;
 import me.bristermitten.mittenlib.gui.view.View;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-
 /**
- * Represents an active GUI session with state management and event handling.
- * Follows the Elm architecture pattern with immutable state updates.
+ * Represents an active GUI session with state management and event handling. Follows the Elm
+ * architecture pattern with immutable state updates.
  */
-public class GUISession<Model,
+public class GUISession<
+        Model,
         Msg,
         V extends View<Msg, V, Viewer>,
         Viewer extends InventoryViewer<Msg, V>,
         Ctx extends CommandContext> {
 
-    /**
-     * The unique session ID.
-     */
+    /** The unique session ID. */
     private final SessionID<Model, Msg, V, Viewer> sessionId;
 
-    /**
-     * The viewer (e.g. player) interacting with the GUI.
-     */
+    /** The viewer (e.g. player) interacting with the GUI. */
     private final Viewer viewer;
 
-    /**
-     * The GUI itself
-     */
+    /** The GUI itself */
     private final GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui;
 
-    /**
-     * Renderer for a view
-     */
+    /** Renderer for a view */
     private final Consumer<V> renderer;
 
     private final CommandRunner<Ctx, Msg> commandRunner;
@@ -51,12 +43,13 @@ public class GUISession<Model,
     private volatile boolean active = true;
     private volatile boolean transitioning = false;
 
-    public GUISession(SessionID<Model, Msg, V, Viewer> sessionId,
-                      GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
-                      Viewer viewer,
-                      Model initialModel,
-                      Consumer<V> renderer,
-                      CommandRunner<Ctx, Msg> commandRunner) {
+    public GUISession(
+            SessionID<Model, Msg, V, Viewer> sessionId,
+            GUIBase<Model, Msg, V, Ctx, ? extends Command<Ctx, Msg>> gui,
+            Viewer viewer,
+            Model initialModel,
+            Consumer<V> renderer,
+            CommandRunner<Ctx, Msg> commandRunner) {
         this.sessionId = sessionId;
         this.gui = gui;
         this.viewer = viewer;
@@ -67,7 +60,6 @@ public class GUISession<Model,
         this.currentView = new AtomicReference<>();
         this.completionFuture = new CompletableFuture<>();
     }
-
 
     /**
      * Starts the GUI session by rendering the initial view.
@@ -85,10 +77,9 @@ public class GUISession<Model,
         }
     }
 
-
     /**
-     * The core message processing loop.
-     * Processes a message, updates the model, renders the view, and runs commands.
+     * The core message processing loop. Processes a message, updates the model, renders the view, and
+     * runs commands.
      *
      * @param msg the message to process
      * @return true if processed, false if session is inactive
@@ -131,7 +122,6 @@ public class GUISession<Model,
     private void renderAndFlush(Model model) {
         V layout = gui.render(model);
         currentView.set(layout);
-
 
         renderer.accept(layout);
     }

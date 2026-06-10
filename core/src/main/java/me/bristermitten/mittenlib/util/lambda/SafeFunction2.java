@@ -1,16 +1,15 @@
 package me.bristermitten.mittenlib.util.lambda;
 
-import me.bristermitten.mittenlib.util.Errors;
-import me.bristermitten.mittenlib.util.Result;
+import static me.bristermitten.mittenlib.util.Result.runCatching;
 
 import java.util.function.BiFunction;
-
-import static me.bristermitten.mittenlib.util.Result.runCatching;
+import me.bristermitten.mittenlib.util.Errors;
+import me.bristermitten.mittenlib.util.Result;
 
 /**
  * A {@link BiFunction} that can throw a checked exception.
  *
- * @param <T>  the type of the first argument
+ * @param <T> the type of the first argument
  * @param <R1> the type of the second argument
  * @param <R2> the type of the result
  */
@@ -19,14 +18,15 @@ public interface SafeFunction2<T, R1, R2> {
     /**
      * Apply the function, possibly throwing an exception.
      *
-     * @param t  the first argument
+     * @param t the first argument
      * @param r1 the second argument
      * @return the result
      */
     R2 apply(T t, R1 r1) throws Exception;
 
     /**
-     * Curry the first argument of this function, returning a {@link SafeFunction} that takes only the second argument.
+     * Curry the first argument of this function, returning a {@link SafeFunction} that takes only the
+     * second argument.
      *
      * @param t the first argument
      * @return a curried {@link SafeFunction}
@@ -38,7 +38,7 @@ public interface SafeFunction2<T, R1, R2> {
     /**
      * Apply the function, catching any exceptions and wrapping them in a {@link Result}
      *
-     * @param t  the first argument
+     * @param t the first argument
      * @param r1 the second argument
      * @return the result
      */
