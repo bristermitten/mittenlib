@@ -1,25 +1,20 @@
 # GUI Module
 
-This module provides a GUI library based on the Elm architecture
+This module provides a GUI library based on the Elm architecture for Bukkit/Spigot plugins.
 
-Example Usage:
+## Features
 
-```java
+- **Declarative**: Define your UI state and updates using a Model-Update-View pattern.
+- **Predictable**: State-driven UI ensures consistent behavior and easy debugging.
 
-public class CounterGUI extends GUIBase<Counter, CounterCommand, CounterGUI>{
+## Documentation
 
-    @Record
-    interface CounterCommandRecord {
-        CounterCommandRecord increment();
-        CounterCommandRecord decrement();
-        CounterCommandRecord set(int value);
-    }
+For full details and examples, please refer to the **[GUI Documentation](https://bristermitten.github.io/mittenlib/docs/modules/gui)**.
 
-    @Record
-    interface CounterRecord {
-        int value();
-    }
+## Installation
 
+```kotlin
+dependencies {
+    implementation("me.bristermitten:mittenlib-gui:VERSION")
 }
-
 ```

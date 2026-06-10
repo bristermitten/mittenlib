@@ -1,5 +1,41 @@
 # Persistence & Saving
 
-TODO: persistence/serialization is supported, but not thoroughly tested and evaluated yet, and unfortunately a bit of a "second-class citizen" right now.
+MittenLib's configuration system supports both deserialization (reading from a file) and serialization (saving back to a file). This is particularly useful for creating default configuration files or programmatically updating settings.
 
-This will be filled in once we've fleshed it out a bit more 😃
+## Saving Default Values
+
+When a configuration file is loaded, fields that are not present in the file will use their default values (if specified in your DTO or Interface). You can save these default values back to the config file using the `save()` method on a `ReadingConfigProvider`.
+
+By default, `save()` merges missing fields into the configuration file without overriding existing values. This ensures that user modifications are preserved while "upgrading" the file with new settings.
+
+```java
+// Inject a ConfigProvider (specifically a ReadingConfigProvider)
+@Inject
+private ReadingConfigProvider<SQLConfig> configProvider;
+
+public void saveDefaults() {
+        SQLConfig config = configProvider.get();
+        
+        // Save only missing default values to the file (preserves existing values)
+        configProvider.save(config).getOrThrow();
+
+        // Or, to override the entire file with the in-memory config:
+        configProvider.save(config, true).getOrThrow();
+}
+```
+
+:::tip
+Remember that generated config implementations are _immutable_!
+To update a config programatically, you should use the `#withX()` methods.
+
+We generally recommend using this sparingly, the config system is mostly designed for immutable data rather than proper persistence.
+:::
+
+### Save Behaviours
+
+*   **`save(config)` or `save(config, false)`**: Merges the serialized configuration with the existing file. It only adds fields that don't already exist. This is the recommended way to upgrade configuration files when adding new fields with defaults in newer versions of your plugin.
+*   **`save(config, true)`**: Overwrites the entire file with the current in-memory configuration, replacing all existing values and comments.
+
+## Serialization Logic
+
+The generated configuration implementation (e.g., `MyConfigImpl`) includes a companion `...Serializer` class. When you call `save()`, MittenLib uses this serializer to convert your immutable configuration object back into a <Javadoc type="DataTree [me.bristermitten.mittenlib.config.tree.DataTree]">`DataTree`</Javadoc>, which is then written to the disk using the appropriate format (YAML by default).

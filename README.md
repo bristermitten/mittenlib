@@ -49,7 +49,7 @@ It provides a range of general purpose utilities such as:
 
 ### `annotation-processor`
 
-[Full documentation](./annotation-processor/README.md)
+[Full documentation](https://bristermitten.github.io/mittenlib/docs/config/)
 
 #### Runtime Dependencies:
 
@@ -76,19 +76,19 @@ For example, this code:
 @Config
 @Source("database.yml")
 @NamingPattern(NamingPattern.LOWER_KEBAB_CASE)
-public class DatabaseConfigDTO {
-    String hostname;
-    String database;
-    String username;
-    String password;
-    int port;
+public interface DatabaseConfig {
+    String hostname();
+    String database();
+    String username();
+    String password();
+    int port();
 
     @Nullable
-    String tablePrefix;
+    String tablePrefix();
 }
 ```
 
-will generate a new class `DatabaseConfig` that handles
+will generate a new class `DatabaseConfigImpl` that handles
 deserialization, reloading, loading from the file `database.yml`, copying, and
 error handling. `DatabaseConfig`'s can be injected anywhere in your application using Guice.
 
@@ -124,7 +124,7 @@ This module adds automatic support for placeholder application with PlaceholderA
 
 ### `record-generator`
 
-[Full documentation](./record-generator/README.md)
+[Full documentation](https://bristermitten.github.io/mittenlib/docs/modules/record-generator)
 
 An annotation processor that emulates the behaviour of Java 16 Records and Sealed Classes on older Java versions
 
