@@ -55,4 +55,18 @@
             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
         </Or>
     </Match>
+
+    <!-- Exclude test classes and generated test classes from static analysis -->
+    <Match>
+        <Class name="~.*Test" />
+    </Match>
+    <Match>
+        <Package name="~me\.bristermitten\.mittenlib\.annotations\.integration(\..*)?" />
+    </Match>
+    <Match>
+        <Package name="~me\.bristermitten\.mittenlib\.codegen(\..*)?" />
+    </Match>
+    <Match>
+        <Package name="~me\.bristermitten\.mittenlib\.annotation\.benchmark(\..*)?" />
+    </Match>
 </FindBugsFilter>
