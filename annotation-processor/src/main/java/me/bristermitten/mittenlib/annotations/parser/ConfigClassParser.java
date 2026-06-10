@@ -23,6 +23,8 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.*;
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
+import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
+import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
@@ -37,6 +39,8 @@ public class ConfigClassParser {
     private final TypesUtil typesUtil;
     private final ElementsFinder elementsFinder;
     private final ConfigNameCache configNameCache;
+    private final GeneratedTypeCache generatedTypeCache;
+    private final ConfigurationClassNameGenerator classNameGenerator;
     private final @Nullable Trees trees;
 
     @Inject
@@ -44,10 +48,14 @@ public class ConfigClassParser {
             TypesUtil typesUtil,
             ElementsFinder elementsFinder,
             ConfigNameCache configNameCache,
+            GeneratedTypeCache generatedTypeCache,
+            ConfigurationClassNameGenerator classNameGenerator,
             ProcessingEnvironment processingEnv) {
         this.typesUtil = typesUtil;
         this.elementsFinder = elementsFinder;
         this.configNameCache = configNameCache;
+        this.generatedTypeCache = generatedTypeCache;
+        this.classNameGenerator = classNameGenerator;
         Trees t;
         try {
             t = Trees.instance(processingEnv);
@@ -266,6 +274,11 @@ public class ConfigClassParser {
 
     private AbstractConfigStructure putInCache(AbstractConfigStructure configStructure) {
         configNameCache.put(configStructure);
+        generatedTypeCache.put(
+                configStructure.source().element(),
+                classNameGenerator
+                        .generateConfigurationClassName(configStructure.source().element())
+                        .reflectionName());
         return configStructure;
     }
 
