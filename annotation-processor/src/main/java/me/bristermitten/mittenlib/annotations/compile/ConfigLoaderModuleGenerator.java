@@ -15,8 +15,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
@@ -62,10 +60,6 @@ public class ConfigLoaderModuleGenerator {
                 .superclass(MittenLibConfigLoader.class)
                 .addAnnotation(AnnotationSpec.builder(Generated.class)
                         .addMember("value", "$S", "me.bristermitten.mittenlib.annotations.config.ConfigProcessor")
-                        .addMember(
-                                "date",
-                                "$S",
-                                ZonedDateTime.now(ZoneId.of("UTC")).toString())
                         .build());
 
         MethodSpec.Builder configureMethod = MethodSpec.methodBuilder("configure")
