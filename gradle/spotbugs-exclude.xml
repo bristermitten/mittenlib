@@ -13,6 +13,7 @@
             <Class name="~me\.bristermitten\.mittenlib\.ListenerRegistration" />
             <Class name="~me\.bristermitten\.mittenlib\.MittenLibCoreModule" />
             <Class name="~me\.bristermitten\.mittenlib\.config\.ConfigModule" />
+            <Class name="~me\.bristermitten\.mittenlib\.config\.ConfigDataModule" />
             <Class name="~me\.bristermitten\.mittenlib\.config\.paths\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.config\.provider\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.config\.reader\..*" />
@@ -22,6 +23,8 @@
             <Class name="~me\.bristermitten\.mittenlib\.files\.json\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.annotations\.compile\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.annotations\.parser\..*" />
+            <Class name="~me\.bristermitten\.mittenlib\.annotations\.exception\..*" />
+            <Class name="~me\.bristermitten\.mittenlib\.annotations\.util\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.lang\.format\.hook\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.watcher\..*" />
             <Class name="~me\.bristermitten\.mittenlib\.gui\..*" />

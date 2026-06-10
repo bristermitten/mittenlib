@@ -190,7 +190,7 @@ public class ConfigClassParser {
         Config config = typesUtil.getAnnotation(element, Config.class);
         if (config == null) {
             MessagerUtils.error(element, ConfigClassParserCompilerMessages.NO_CONFIG_ANNOTATION, element);
-            throw new IllegalStateException();
+            throw new IllegalStateException("Config " + element.getSimpleName() + " is missing @Config annotation");
         }
 
         return new ASTSettings.ConfigASTSettings(namingPattern, source, config, generateToString != null);
@@ -235,6 +235,7 @@ public class ConfigClassParser {
                 .filterByOneOf(ElementKind.CLASS, ElementKind.INTERFACE)
                 .getResult()
                 .stream()
+                .filter(e -> typesUtil.getAnnotation(e, Config.class) != null)
                 .map((e) -> parseAbstract(e, thisParentReference))
                 .toList();
 

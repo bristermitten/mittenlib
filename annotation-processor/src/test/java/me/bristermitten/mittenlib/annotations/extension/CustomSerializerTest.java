@@ -1,7 +1,5 @@
 package me.bristermitten.mittenlib.annotations.extension;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
 import javax.lang.model.element.TypeElement;
@@ -90,12 +88,14 @@ class CustomSerializerTest {
                 .intoUnitTest((processingEnvironment, element) -> {
                     ToolingProvider.setTooling(processingEnvironment);
                     CustomSerializers customSerializers = new CustomSerializers();
-                    assertThatThrownBy(() -> customSerializers.registerCustomSerializer(element))
-                            .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessageContaining("CustomSerializer must be annotated with @CustomSerializerFor");
+                    customSerializers.registerCustomSerializer(element);
                 })
                 .thenExpectThat()
-                .compilationSucceeds()
+                .compilationFails()
+                .andThat()
+                .compilerMessage()
+                .ofKindError()
+                .contains("CustomSerializer must be annotated with @CustomSerializerFor")
                 .executeTest();
     }
 
@@ -117,13 +117,15 @@ class CustomSerializerTest {
                 .intoUnitTest((processingEnvironment, element) -> {
                     ToolingProvider.setTooling(processingEnvironment);
                     CustomSerializers customSerializers = new CustomSerializers();
-                    assertThatThrownBy(() -> customSerializers.registerCustomSerializer(element))
-                            .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessageContaining(
-                                    "CustomSerializer must implement CustomSerializer or have a static method DataTree serialize(T, SerializationContext)");
+                    customSerializers.registerCustomSerializer(element);
                 })
                 .thenExpectThat()
-                .compilationSucceeds()
+                .compilationFails()
+                .andThat()
+                .compilerMessage()
+                .ofKindError()
+                .contains(
+                        "CustomSerializer must implement CustomSerializer or have a static method DataTree serialize(T, SerializationContext)")
                 .executeTest();
     }
 

@@ -36,7 +36,9 @@ public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerIn
         CustomDeserializerForWrapper deserializerTypeAnnotation =
                 CustomDeserializerForWrapper.wrap(customDeserializerType);
         if (deserializerTypeAnnotation == null) {
-            throw new IllegalArgumentException("CustomDeserializer must be annotated with @CustomDeserializerFor");
+            MessagerUtils.error(
+                    customDeserializerType, "CustomDeserializer must be annotated with @CustomDeserializerFor");
+            return;
         }
 
         var implementsCustomDeserializer = TypeElementWrapper.wrap(customDeserializerType).getAllInterfaces().stream()
@@ -46,8 +48,10 @@ public class CustomDeserializers extends CustomInfoRegistry<CustomDeserializerIn
                 TypeElementWrapper.wrap(customDeserializerType).getMethod("deserialize", DeserializationContext.class);
 
         if (!implementsCustomDeserializer && deserializeMethodOpt.isEmpty()) {
-            throw new IllegalArgumentException(
+            MessagerUtils.error(
+                    customDeserializerType,
                     "CustomDeserializer must implement CustomDeserializer or have a static method Result<T> deserialize(DeserializationContext)");
+            return;
         }
 
         TypeMirror deserializerFor = deserializerTypeAnnotation.valueAsTypeMirror();

@@ -23,7 +23,8 @@ public class CustomSerializers extends CustomInfoRegistry<CustomSerializerInfo> 
     public void registerCustomSerializer(TypeElement customSerializerType) {
         CustomSerializerFor annotation = customSerializerType.getAnnotation(CustomSerializerFor.class);
         if (annotation == null) {
-            throw new IllegalArgumentException("CustomSerializer must be annotated with @CustomSerializerFor");
+            MessagerUtils.error(customSerializerType, "CustomSerializer must be annotated with @CustomSerializerFor");
+            return;
         }
 
         TypeMirror serializerFor;
@@ -59,8 +60,10 @@ public class CustomSerializers extends CustomInfoRegistry<CustomSerializerInfo> 
         }
 
         if (!implementsCustomSerializer && serializeMethodOpt.isEmpty()) {
-            throw new IllegalArgumentException(
+            MessagerUtils.error(
+                    customSerializerType,
                     "CustomSerializer must implement CustomSerializer or have a static method DataTree serialize(T, SerializationContext)");
+            return;
         }
 
         boolean isStatic = !implementsCustomSerializer
