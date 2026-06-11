@@ -6,13 +6,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
@@ -79,7 +84,7 @@ public class SaveDefaultsIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
+                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl.class),
                         loader,
                         saverFunc)
                 .getOrThrow();
@@ -348,5 +353,33 @@ public class SaveDefaultsIntegrationTest {
                 .contains("is not dynamically initializable")
                 .contains("following required properties lack default values: name, age, children")
                 .contains("Either provide a default config file in your jar's resources");
+    }
+
+    @Test
+    void testFeaturesConfigDefaultValueSerialization() {
+        SerializationFunction<FeaturesConfig> saver =
+                (SerializationFunction<FeaturesConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                        Types.newParameterizedType(SerializationFunction.class, FeaturesConfig.class))));
+
+        DataTree defaultValue =
+                saver.generateDefault(new SerializationContext(injector.getInstance(ObjectMapper.class)));
+
+        assertThat(defaultValue).isNotNull();
+        assertThat(defaultValue).isInstanceOf(DataTree.DataTreeMap.class);
+        DataTree.DataTreeMap map = (DataTree.DataTreeMap) defaultValue;
+
+        DataTree flagsTree = map.get("flags");
+        assertThat(flagsTree).isNotNull();
+        assertThat(flagsTree).isInstanceOf(DataTree.DataTreeMap.class);
+        assertThat(((DataTree.DataTreeMap) flagsTree).values()).isEmpty();
+
+        DataTree flagsWithDefaultsTree = map.get("flagsWithDefaults");
+        assertThat(flagsWithDefaultsTree).isNotNull();
+        assertThat(flagsWithDefaultsTree).isInstanceOf(DataTree.DataTreeMap.class);
+
+        Map<DataTree, DataTree> innerMap = ((DataTree.DataTreeMap) flagsWithDefaultsTree).values();
+        assertThat(innerMap).hasSize(2);
+        assertThat(innerMap.get(DataTree.string("a"))).isEqualTo(DataTree.bool(true));
+        assertThat(innerMap.get(DataTree.string("b"))).isEqualTo(DataTree.bool(false));
     }
 }

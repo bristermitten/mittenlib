@@ -1,5 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.squareup.javapoet.*;
@@ -20,7 +21,6 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
 
 public class ConfigSaverGenerator {
@@ -193,21 +193,17 @@ public class ConfigSaverGenerator {
             String key = fieldNameGenerator.getConfigFieldName(property);
             if (property.settings().hasDefaultValue()) {
                 TypeMirror propertyType = property.propertyType();
-                if (typesUtil.isConfigType(propertyType)
-                        || TypeMirrorWrapper.wrap(propertyType).hasTypeArguments()) {
-                    // For nested configs or generic collections with defaults, use the mapper
-                    CodeBlock propertyAccess =
-                            GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
+                CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
+                if (hasConfigType(propertyType)) {
                     method.addStatement(
-                            "map.put($T.string($S), $T.loadFrom(context.getMapper().map($L)))",
+                            "map.put($T.string($S), context.getMapper().map($L, new $T<$T>() {}).getOrThrow())",
                             DataTree.class,
                             key,
-                            DataTreeTransforms.class,
-                            propertyAccess);
+                            propertyAccess,
+                            TypeToken.class,
+                            DataTree.class);
                 } else {
                     String serializeMethodName = methodNames.getSerializeMethodName(property);
-                    CodeBlock propertyAccess =
-                            GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
                     method.addStatement(
                             "map.put($T.string($S), this.$L($L, context))",
                             DataTree.class,
@@ -366,5 +362,20 @@ public class ConfigSaverGenerator {
                 collectCustomSerializers(arg, injectedTypes, injectedFieldNames);
             }
         }
+    }
+
+    private boolean hasConfigType(TypeMirror type) {
+        if (typesUtil.isConfigType(type)) {
+            return true;
+        }
+        TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
+        if (wrapped.hasTypeArguments()) {
+            for (TypeMirror arg : wrapped.getTypeArguments()) {
+                if (hasConfigType(arg)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

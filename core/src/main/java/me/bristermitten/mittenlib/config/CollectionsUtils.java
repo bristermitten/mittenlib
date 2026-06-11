@@ -4,11 +4,14 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.MultipleFailuresException;
@@ -193,6 +196,70 @@ public class CollectionsUtils {
         }
 
         return baseContext.getMapper().map(keyTree, TypeToken.get(keyType));
+    }
+
+    /**
+     * Serialize a list using the MittenLib config system.
+     *
+     * @param collection        the collection to serialize
+     * @param context           the serialization context
+     * @param elementSerializer the function to serialize each element
+     * @param <T>               the element type
+     * @return a {@link DataTree} array representation of the list
+     */
+    public static <T> DataTree serializeList(
+            @Nullable Collection<? extends T> collection,
+            SerializationContext context,
+            BiFunction<T, SerializationContext, DataTree> elementSerializer) {
+        if (collection == null) {
+            return DataTree.DataTreeNull.INSTANCE;
+        }
+        DataTree[] arr = new DataTree[collection.size()];
+        int i = 0;
+        for (T element : collection) {
+            arr[i++] = elementSerializer.apply(element, context);
+        }
+        return new DataTree.DataTreeArray(arr);
+    }
+
+    /**
+     * Serialize a set using the MittenLib config system.
+     *
+     * @param collection        the collection to serialize
+     * @param context           the serialization context
+     * @param elementSerializer the function to serialize each element
+     * @param <T>               the element type
+     * @return a {@link DataTree} array representation of the set
+     */
+    public static <T> DataTree serializeSet(
+            @Nullable Collection<? extends T> collection,
+            SerializationContext context,
+            BiFunction<T, SerializationContext, DataTree> elementSerializer) {
+        return serializeList(collection, context, elementSerializer);
+    }
+
+    /**
+     * Serialize a map using the MittenLib config system.
+     *
+     * @param map             the map to serialize
+     * @param context         the serialization context
+     * @param valueSerializer the function to serialize each value
+     * @param <K>             the key type
+     * @param <V>             the value type
+     * @return a {@link DataTree} map representation of the map
+     */
+    public static <K, V> DataTree serializeMap(
+            @Nullable Map<? extends K, ? extends V> map,
+            SerializationContext context,
+            BiFunction<V, SerializationContext, DataTree> valueSerializer) {
+        if (map == null) {
+            return DataTree.DataTreeNull.INSTANCE;
+        }
+        Map<DataTree, DataTree> result = new LinkedHashMap<>();
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            result.put(DataTreeTransforms.loadFrom(entry.getKey()), valueSerializer.apply(entry.getValue(), context));
+        }
+        return new DataTree.DataTreeMap(result);
     }
 
     /**

@@ -63,6 +63,22 @@ class DeserializerGeneratorTest {
                             }
                         }
                         """),
+                        JavaFileObjects.forSourceString("me.bristermitten.mittenlib.tests.CustomType2Serializer", """
+                        package me.bristermitten.mittenlib.tests;
+
+                        import me.bristermitten.mittenlib.config.SerializationContext;
+                        import me.bristermitten.mittenlib.config.extension.CustomSerializerFor;
+                        import me.bristermitten.mittenlib.config.extension.CustomSerializer;
+                        import me.bristermitten.mittenlib.config.tree.DataTree;
+
+                        @CustomSerializerFor(CustomType2.class)
+                        public class CustomType2Serializer implements CustomSerializer<CustomType2> {
+                            @Override
+                            public DataTree apply(CustomType2 value, SerializationContext context) {
+                                return DataTree.string("custom2");
+                            }
+                        }
+                        """),
                         JavaFileObjects.forSourceString(
                                 "me.bristermitten.mittenlib.tests.DeserializerTestConfigDTO", """
                         package me.bristermitten.mittenlib.tests;

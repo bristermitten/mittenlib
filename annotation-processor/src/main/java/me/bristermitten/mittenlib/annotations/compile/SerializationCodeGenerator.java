@@ -1,9 +1,20 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
@@ -11,6 +22,7 @@ import me.bristermitten.mittenlib.annotations.ast.CustomSerializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
+import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization;
 import me.bristermitten.mittenlib.config.tree.DataTree;
@@ -102,8 +114,7 @@ public class SerializationCodeGenerator {
                 }
                 return false;
             }
-            // Unknown generic type: treat as unserializable unless explicitly opted in via
-            // UseObjectMapperSerialization
+            // Unknown generic type: treat as unserializable unless explicitly opted in via UseObjectMapperSerialization
             return true;
         }
 
@@ -276,6 +287,12 @@ public class SerializationCodeGenerator {
      */
     private CodeBlock generateSerialization(TypeMirror type, String inputVar, String targetExpression, int depth) {
         CodeBlock.Builder builder = CodeBlock.builder();
+        generateSerialization(type, inputVar, targetExpression, depth, builder);
+        return builder.build();
+    }
+
+    private void generateSerialization(
+            TypeMirror type, String inputVar, String targetExpression, int depth, CodeBlock.Builder builder) {
         TypeMirrorWrapper wrappedType = TypeMirrorWrapper.wrap(type);
 
         // Custom Serializer
@@ -301,7 +318,7 @@ public class SerializationCodeGenerator {
                         publicTypeName,
                         inputVar);
             }
-            return builder.build();
+            return;
         }
 
         // Config type
@@ -313,7 +330,7 @@ public class SerializationCodeGenerator {
                     saverFieldName,
                     configurationClassNameGenerator.publicPropertyClassName(type),
                     inputVar);
-            return builder.build();
+            return;
         }
 
         // Generic collections (List, Map)
@@ -321,50 +338,60 @@ public class SerializationCodeGenerator {
             String canonicalName = wrappedType.erasure().getQualifiedName();
             if (canonicalName.equals(List.class.getName()) || canonicalName.equals(Set.class.getName())) {
                 TypeMirror elementType = wrappedType.getTypeArguments().getFirst();
-                TypeName elementTypeName = configurationClassNameGenerator.publicPropertyClassName(elementType);
-                String arrayVar = "arr" + depth;
-                String indexVar = "i" + depth;
-                String elementVar = "el" + depth;
-                String elementTarget = arrayVar + "[" + indexVar + "]";
+                String serializeHelper = canonicalName.equals(List.class.getName()) ? "serializeList" : "serializeSet";
+                String elVar = "el" + depth;
+                String ctxVar = "ctx" + depth;
+                String elementTarget = "res" + depth;
 
-                builder.addStatement("$T[] $L = new $T[$L.size()]", DataTree.class, arrayVar, DataTree.class, inputVar);
-                builder.addStatement("int $L = 0", indexVar);
-                builder.beginControlFlow("for ($T $L : $L)", elementTypeName, elementVar, inputVar);
-                builder.add(generateSerialization(elementType, elementVar, elementTarget, depth + 1));
-                builder.addStatement("$L++", indexVar);
+                builder.beginControlFlow(
+                        "$L = $T.$L($L, context, ($L, $L) ->",
+                        targetExpression,
+                        CollectionsUtils.class,
+                        serializeHelper,
+                        inputVar,
+                        elVar,
+                        ctxVar);
+                builder.addStatement("$T $L", DataTree.class, elementTarget);
+                generateSerialization(elementType, elVar, elementTarget, depth + 1, builder);
+                builder.addStatement("return $L", elementTarget);
                 builder.endControlFlow();
-                builder.addStatement("$L = $T.array($L)", targetExpression, DataTree.class, arrayVar);
-                return builder.build();
+                builder.addStatement(")");
+                return;
             } else if (canonicalName.equals(Map.class.getName())) {
                 var typeArguments = wrappedType.getTypeArguments();
                 TypeMirror valueType = typeArguments.get(1);
-                TypeName valueTypeName = configurationClassNameGenerator.publicPropertyClassName(valueType);
-                String mapVar = "map" + depth;
-                String entryVar = "entry" + depth;
-                String valueVar = "val" + depth;
+                String valVar = "val" + depth;
+                String ctxVar = "ctx" + depth;
                 String valTarget = "mapVal" + depth;
 
-                builder.addStatement(
-                        "$T<$T, $T> $L = new $T<>()",
-                        Map.class,
-                        DataTree.class,
-                        DataTree.class,
-                        mapVar,
-                        LinkedHashMap.class);
-                builder.beginControlFlow("for ($T<?, ?> $L : $L.entrySet())", Map.Entry.class, entryVar, inputVar);
-                builder.addStatement("$T $L = ($T) $L.getValue()", valueTypeName, valueVar, valueTypeName, entryVar);
+                builder.beginControlFlow(
+                        "$L = $T.serializeMap($L, context, ($L, $L) ->",
+                        targetExpression,
+                        CollectionsUtils.class,
+                        inputVar,
+                        valVar,
+                        ctxVar);
                 builder.addStatement("$T $L", DataTree.class, valTarget);
-                builder.add(generateSerialization(valueType, valueVar, valTarget, depth + 1));
-                builder.addStatement(
-                        "$L.put($T.loadFrom($L.getKey()), $L)", mapVar, DataTreeTransforms.class, entryVar, valTarget);
+                generateSerialization(valueType, valVar, valTarget, depth + 1, builder);
+                builder.addStatement("return $L", valTarget);
                 builder.endControlFlow();
-                builder.addStatement("$L = $T.map($L)", targetExpression, DataTree.class, mapVar);
-                return builder.build();
+                builder.addStatement(")");
+                return;
             }
+        }
+
+        // Enum type
+        if (wrappedType.isEnum()) {
+            builder.addStatement(
+                    "$L = $T.loadFrom($L == null ? null : $L.name())",
+                    targetExpression,
+                    DataTreeTransforms.class,
+                    inputVar,
+                    inputVar);
+            return;
         }
 
         // Basic known serializable types or fallback
         builder.addStatement("$L = $T.loadFrom($L)", targetExpression, DataTreeTransforms.class, inputVar);
-        return builder.build();
     }
 }
