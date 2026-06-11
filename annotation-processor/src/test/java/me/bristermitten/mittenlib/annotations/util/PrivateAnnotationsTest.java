@@ -12,9 +12,4 @@ class PrivateAnnotationsTest {
         assertTrue(PrivateAnnotations.isPrivate(ConfigName.class.getName()));
         assertFalse(PrivateAnnotations.isPrivate("some.other.Annotation"));
     }
-
-    @Test
-    void testConstructor() {
-        assertNotNull(new PrivateAnnotations());
-    }
 }

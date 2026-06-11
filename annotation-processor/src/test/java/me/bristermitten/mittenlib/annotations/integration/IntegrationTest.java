@@ -24,6 +24,7 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unchecked")
 public class IntegrationTest {
 
     private Injector injector;
@@ -58,7 +59,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, InterfaceConfig.class),
+                        new Configuration<>(null, InterfaceConfig.class, InterfaceConfigImpl.class),
                         (DeserializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, InterfaceConfig.class)))),
                         (SerializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -74,6 +75,7 @@ public class IntegrationTest {
                 .isEqualTo(new InterfaceConfigImpl(
                         "b", 4, List.of(new InterfaceConfigImpl("c", 5, List.of(), null)), null));
 
+        //noinspection DataFlowIssue intellij doesnt understand isNotNull()
         assertThat(interfaceConfig.child())
                 .isNotNull()
                 .extracting(InterfaceConfig.ChildConfig::id)
@@ -88,7 +90,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
+                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl.class),
                         (DeserializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))),
                         (SerializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -104,6 +106,7 @@ public class IntegrationTest {
                 .isEqualTo(new InterfaceConfigImpl(
                         "b", 4, List.of(new InterfaceConfigImpl("c", 5, List.of(), null)), null));
 
+        //noinspection DataFlowIssue
         assertThat(classConfig.child())
                 .isNotNull()
                 .extracting(ClassConfig.ChildConfig::id)
@@ -120,7 +123,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
+                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl.class),
                         (DeserializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))),
                         (SerializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -131,7 +134,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, InterfaceConfig.class),
+                        new Configuration<>(null, InterfaceConfig.class, InterfaceConfigImpl.class),
                         (DeserializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, InterfaceConfig.class)))),
                         (SerializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -164,7 +167,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, IntersectionConfig.class),
+                        new Configuration<>(null, IntersectionConfig.class, IntersectionConfigImpl.class),
                         (DeserializationFunction<IntersectionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, IntersectionConfig.class)))),
                         (SerializationFunction<IntersectionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -184,7 +187,10 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, IntersectionConfig.ChildIntersectionConfig.class),
+                        new Configuration<>(
+                                null,
+                                IntersectionConfig.ChildIntersectionConfig.class,
+                                IntersectionConfigImpl.ChildIntersectionConfigImpl.class),
                         (DeserializationFunction<IntersectionConfig.ChildIntersectionConfig>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class,
@@ -213,7 +219,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, UnionConfig.class),
+                        new Configuration<>(null, UnionConfig.class, UnionConfigImpl.class),
                         (DeserializationFunction<UnionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, UnionConfig.class)))),
                         (SerializationFunction<UnionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -238,7 +244,8 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, NoNoArgConstructorConfigImpl.class),
+                        new Configuration<>(
+                                null, NoNoArgConstructorConfigImpl.class, NoNoArgConstructorConfigImpl.class),
                         (DeserializationFunction<NoNoArgConstructorConfigImpl>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class, NoNoArgConstructorConfigImpl.class)))),
@@ -262,7 +269,10 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ConstructorAndDefaultValueConfigImpl.class),
+                        new Configuration<>(
+                                null,
+                                ConstructorAndDefaultValueConfigImpl.class,
+                                ConstructorAndDefaultValueConfigImpl.class),
                         (DeserializationFunction<ConstructorAndDefaultValueConfigImpl>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class, ConstructorAndDefaultValueConfigImpl.class)))),

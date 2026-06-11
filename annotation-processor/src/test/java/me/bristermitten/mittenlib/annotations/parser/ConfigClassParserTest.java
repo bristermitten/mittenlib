@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.parser;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatCollection;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatList;
 
 import com.google.inject.Guice;
 import com.palantir.javapoet.ClassName;
@@ -10,7 +11,9 @@ import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
 import io.toolisticon.cute.PassIn;
 import javax.lang.model.element.TypeElement;
+import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
+import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
 import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
 import me.bristermitten.mittenlib.annotations.integration.AtomicConfig;
@@ -131,26 +134,26 @@ class ConfigClassParserTest {
                     AbstractConfigStructure ast =
                             injector.getInstance(ConfigClassParser.class).parseAbstract(element);
 
-                    //                    assertThat(ast)
-                    //                            .extracting(ConfigTypeAST::structure)
-                    //                            .extracting(ConfigTypeAST.ConfigStructure::name)
-                    //                            .extracting(ClassName::simpleName)
-                    //                            .isEqualTo(TestInterfaceConfig.class.getSimpleName());
-                    //
-                    //                    assertThatList(ast.structure().properties())
-                    //                            .hasSize(2);
-                    //
-                    //                    assertThatList(ast.structure().properties())
-                    //                            .first()
-                    //                            .extracting(Property::name)
-                    //                            .isEqualTo("name");
-                    //
-                    //                    assertThatList(ast.structure().properties())
-                    //                            .first()
-                    //                            .extracting(Property::settings)
-                    //                            .extracting(ASTSettings.PropertyASTSettings::configName)
-                    //                            .extracting(ConfigName::value)
-                    //                            .isEqualTo("thing-name");
+                    assertThat(ast)
+                            .extracting(AbstractConfigStructure::name)
+                            .extracting(ClassName::simpleName)
+                            .isEqualTo(TestInterfaceConfig.class.getSimpleName());
+
+                    assertThatList(ast.properties()).hasSize(2);
+
+                    assertThatList(ast.properties())
+                            .first()
+                            .extracting(Property::name)
+                            .isEqualTo("name");
+
+                    //noinspection DataFlowIssue
+                    assertThatList(ast.properties())
+                            .first()
+                            .extracting(Property::settings)
+                            .extracting(ASTSettings.PropertyASTSettings::configName)
+                            .isNotNull()
+                            .extracting(ConfigName::value)
+                            .isEqualTo("thing-name");
 
                     var generator = injector.getInstance(ConfigImplGenerator.class);
                     JavaFile emit = generator.emit(ast);

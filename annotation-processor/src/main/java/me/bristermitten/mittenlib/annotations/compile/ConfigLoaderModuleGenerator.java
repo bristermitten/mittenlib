@@ -63,6 +63,11 @@ public class ConfigLoaderModuleGenerator {
                         .build());
 
         MethodSpec.Builder configureMethod = MethodSpec.methodBuilder("configure")
+                .addJavadoc("""
+                        Configures Guice bindings for serializer and deserializer functions.
+
+                        @param binder the Guice binder
+                        """)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(Binder.class, "binder");
@@ -92,6 +97,11 @@ public class ConfigLoaderModuleGenerator {
         builder.addType(internalModuleBuilder.build());
 
         MethodSpec asModuleMethod = MethodSpec.methodBuilder("asModule")
+                .addJavadoc("""
+                        Returns the Guice module containing all provides methods and configuration bindings.
+
+                        @return the Guice module instance
+                        """)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(com.google.inject.Module.class)

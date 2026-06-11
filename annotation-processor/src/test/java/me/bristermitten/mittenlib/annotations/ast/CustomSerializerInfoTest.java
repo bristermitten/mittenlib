@@ -2,6 +2,7 @@ package me.bristermitten.mittenlib.annotations.ast;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import javax.lang.model.element.TypeElement;
@@ -19,7 +20,7 @@ class CustomSerializerInfoTest {
         CustomSerializerInfo info3 = new CustomSerializerInfo(element2, false);
 
         assertEquals(element1, info1.serializerClass());
-        assertEquals(true, info1.isStatic());
+        assertTrue(info1.isStatic());
 
         assertEquals(info1, info2);
         assertNotEquals(info1, info3);

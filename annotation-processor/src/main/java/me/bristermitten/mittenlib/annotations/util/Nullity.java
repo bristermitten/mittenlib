@@ -7,6 +7,8 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class Nullity {
+    private Nullity() {}
+
     public static Class<? extends Annotation> getNullityAnnotation(Property property) {
         return property.settings().isNullable() ? Nullable.class : NonNull.class;
     }

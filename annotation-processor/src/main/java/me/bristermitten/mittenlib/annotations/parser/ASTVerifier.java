@@ -147,7 +147,7 @@ public class ASTVerifier {
                     && !declaredType.getTypeArguments().isEmpty()) {
                 List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
                 if (typesUtil.isCollection(type)) {
-                    TypeMirror elementType = typeArguments.get(0);
+                    TypeMirror elementType = typeArguments.getFirst();
                     boolean isElementNumeric = isNumericType(elementType);
                     boolean isElementString = isStringType(elementType);
                     for (ValidationConstraint constraint : property.settings().elementConstraints()) {
@@ -156,7 +156,7 @@ public class ASTVerifier {
                         }
                     }
                 } else if (typesUtil.isMap(type) && typeArguments.size() >= 2) {
-                    TypeMirror keyType = typeArguments.get(0);
+                    TypeMirror keyType = typeArguments.getFirst();
                     boolean isKeyNumeric = isNumericType(keyType);
                     boolean isKeyString = isStringType(keyType);
                     for (ValidationConstraint constraint : property.settings().keyConstraints()) {

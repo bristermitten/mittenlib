@@ -196,6 +196,13 @@ public class SerializationCodeGenerator {
                 typesUtil.getAnnotation(property.source().element(), UseObjectMapperSerialization.class) != null;
 
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
+                .addJavadoc("""
+                        Serializes the {@code $L} property into a {@link $T}.
+
+                        @param value the value to serialize
+                        @param context the serialization context
+                        @return the serialized DataTree representation
+                        """, property.name(), DataTree.class)
                 .addModifiers(Modifier.PRIVATE)
                 .returns(DataTree.class)
                 .addParameter(ParameterSpec.builder(propertyType, "value").build())

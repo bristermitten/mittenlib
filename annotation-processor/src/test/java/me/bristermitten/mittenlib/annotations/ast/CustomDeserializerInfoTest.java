@@ -1,7 +1,9 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import javax.lang.model.element.TypeElement;
@@ -19,9 +21,9 @@ class CustomDeserializerInfoTest {
         CustomDeserializerInfo info3 = new CustomDeserializerInfo(element2, false, true, false);
 
         assertEquals(element1, info1.deserializerClass());
-        assertEquals(true, info1.isStatic());
-        assertEquals(false, info1.isFallback());
-        assertEquals(true, info1.isGlobal());
+        assertTrue(info1.isStatic());
+        assertFalse(info1.isFallback());
+        assertTrue(info1.isGlobal());
 
         assertEquals(info1, info2);
         assertNotEquals(info1, info3);

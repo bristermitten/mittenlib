@@ -151,11 +151,11 @@ public class ConfigClassParser {
                         List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
                         if (typesUtil.isCollection(propertyType)) {
                             if (!typeArguments.isEmpty()) {
-                                elementConstraints = parseConstraints(typeArguments.get(0));
+                                elementConstraints = parseConstraints(typeArguments.getFirst());
                             }
                         } else if (typesUtil.isMap(propertyType)) {
                             if (typeArguments.size() >= 2) {
-                                keyConstraints = parseConstraints(typeArguments.get(0));
+                                keyConstraints = parseConstraints(typeArguments.getFirst());
                                 elementConstraints = parseConstraints(typeArguments.get(1));
                             }
                         }

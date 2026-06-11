@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.annotations.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,12 +12,6 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 class NullityTest {
-
-    @Test
-    void testConstructor() {
-        Nullity nullity = new Nullity();
-        assertNotNull(nullity);
-    }
 
     @Test
     void testGetNullityAnnotationNullable() {

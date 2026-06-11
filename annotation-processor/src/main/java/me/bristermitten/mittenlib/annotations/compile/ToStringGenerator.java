@@ -22,7 +22,7 @@ public class ToStringGenerator {
      * representation of the class in the format: "ClassName{property1=value1, property2=value2, ...}"
      *
      * @param properties The list of properties to include in the toString method
-     * @param className The name of the class for which the toString method is being generated
+     * @param className  The name of the class for which the toString method is being generated
      * @return A MethodSpec representing the generated toString method
      */
     public MethodSpec generateToString(List<Property> properties, ClassName className) {

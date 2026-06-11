@@ -4,7 +4,11 @@ import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadR
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import java.io.IOException;
 import me.bristermitten.mittenlib.MittenLibConsumer;
@@ -71,7 +75,7 @@ public class EnumIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, TestEnumCascadeConfig.class),
+                        new Configuration<>(null, TestEnumCascadeConfig.class, TestEnumCascadeConfigImpl.class),
                         (DeserializationFunction<TestEnumCascadeConfig>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class, TestEnumCascadeConfig.class)))),
@@ -96,7 +100,7 @@ public class EnumIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, TestEnumConfig.class),
+                        new Configuration<>(null, TestEnumConfig.class, TestEnumConfigImpl.class),
                         (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
                         (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -114,7 +118,7 @@ public class EnumIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, TestEnumConfig.class),
+                        new Configuration<>(null, TestEnumConfig.class, TestEnumConfigImpl.class),
                         (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
                         (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
