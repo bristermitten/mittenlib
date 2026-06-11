@@ -1,7 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Singleton;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.util.HashMap;
 import java.util.Map;

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.squareup.javapoet.AnnotationSpec;
+import com.palantir.javapoet.AnnotationSpec;
 import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import org.jspecify.annotations.NonNull;
@@ -31,7 +31,7 @@ class NullityTest {
         assertEquals(Nullable.class, Nullity.getNullityAnnotation(property));
 
         AnnotationSpec spec = Nullity.getNullityAnnotationSpec(property);
-        assertEquals(Nullable.class.getName(), spec.type.toString());
+        assertEquals(Nullable.class.getName(), spec.type().toString());
     }
 
     @Test
@@ -45,6 +45,6 @@ class NullityTest {
         assertEquals(NonNull.class, Nullity.getNullityAnnotation(property));
 
         AnnotationSpec spec = Nullity.getNullityAnnotationSpec(property);
-        assertEquals(NonNull.class.getName(), spec.type.toString());
+        assertEquals(NonNull.class.getName(), spec.type().toString());
     }
 }

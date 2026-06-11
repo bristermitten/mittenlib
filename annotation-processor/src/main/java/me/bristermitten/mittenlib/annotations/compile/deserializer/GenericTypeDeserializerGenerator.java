@@ -2,9 +2,9 @@ package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
@@ -200,7 +200,7 @@ public class GenericTypeDeserializerGenerator {
                 innerMethod, property, dtoType, type, wrapped, ctxVar + ".getData()", safeType);
 
         if (handled) {
-            CodeBlock code = innerMethod.build().code;
+            CodeBlock code = innerMethod.build().code();
             return CodeBlock.builder()
                     .add("$L -> {\n", ctxVar)
                     .add(code)

@@ -1,7 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.google.inject.Singleton;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.TypeUtils;
 import io.toolisticon.aptk.tools.wrapper.ExecutableElementWrapper;

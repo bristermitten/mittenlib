@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 
 /** Information about a constraint placed upon a config property. */
 public sealed interface ValidationConstraint {

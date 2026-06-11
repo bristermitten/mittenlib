@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;

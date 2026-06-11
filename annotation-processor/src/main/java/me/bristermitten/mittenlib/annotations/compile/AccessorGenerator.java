@@ -1,7 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.*;
 import io.toolisticon.aptk.tools.wrapper.AnnotationMirrorWrapper;
 import java.util.StringJoiner;
 import javax.lang.model.element.*;
@@ -41,9 +41,12 @@ public class AccessorGenerator {
         var safeName = getFieldAccessorName(element);
 
         var builder = MethodSpec.methodBuilder(safeName)
+                .addJavadoc(
+                        "Gets the value of the {@code $L} property.\n" + "\n" + "@return the value of the property\n",
+                        field.name())
                 .addModifiers(Modifier.PUBLIC)
-                .returns(field.type)
-                .addStatement("return " + field.name);
+                .returns(field.type())
+                .addStatement("return " + field.name());
 
         builder.addAnnotation(AnnotationSpec.builder(Contract.class)
                 .addMember("pure", CodeBlock.of("true"))
@@ -63,9 +66,14 @@ public class AccessorGenerator {
     public void createGetterMethodOverriding(
             TypeSpec.Builder typeSpecBuilder, ExecutableElement overriding, FieldSpec fromField) {
         var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
+                .addJavadoc(
+                        "Gets the value of the {@code $L} property, overriding the original config method.\n"
+                                + "\n"
+                                + "@return the value of the property\n",
+                        fromField.name())
                 .addModifiers(Modifier.PUBLIC)
-                .returns(fromField.type)
-                .addStatement("return " + fromField.name)
+                .returns(fromField.type())
+                .addStatement("return " + fromField.name())
                 .addAnnotation(Override.class);
 
         for (AnnotationMirror annotationMirror : overriding.getAnnotationMirrors()) {
@@ -93,6 +101,13 @@ public class AccessorGenerator {
             ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(
                     ast.source().element());
             MethodSpec.Builder withMethodBuilder = MethodSpec.methodBuilder("with" + Strings.capitalize(field.name()))
+                    .addJavadoc(
+                            "Returns a new instance of this configuration with the {@code $L} property updated.\n"
+                                    + "\n"
+                                    + "@param $L the new value for the property\n"
+                                    + "@return a new configuration instance with the updated value\n",
+                            field.name(),
+                            field.name())
                     .addModifiers(Modifier.PUBLIC)
                     .returns(configImplClassName)
                     .addParameter(ParameterSpec.builder(

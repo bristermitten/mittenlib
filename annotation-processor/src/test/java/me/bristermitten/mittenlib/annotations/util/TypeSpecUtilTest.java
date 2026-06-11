@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.annotations.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.squareup.javapoet.MethodSpec;
+import com.palantir.javapoet.MethodSpec;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,24 +26,19 @@ class TypeSpecUtilTest {
     void testMethodAddAnnotationAddsNonRepeatableOnce() {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("test");
         TypeSpecUtil.methodAddAnnotation(builder, NonRepeatableAnnotation.class);
-        assertEquals(1, builder.annotations.size());
+        assertEquals(1, builder.build().annotations().size());
 
         TypeSpecUtil.methodAddAnnotation(builder, NonRepeatableAnnotation.class);
-        assertEquals(1, builder.annotations.size()); // Should not add again
+        assertEquals(1, builder.build().annotations().size()); // Should not add again
     }
 
     @Test
     void testMethodAddAnnotationAddsRepeatableMultipleTimes() {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("test");
         TypeSpecUtil.methodAddAnnotation(builder, RepeatableAnnotation.class);
-        assertEquals(1, builder.annotations.size());
+        assertEquals(1, builder.build().annotations().size());
 
         TypeSpecUtil.methodAddAnnotation(builder, RepeatableAnnotation.class);
-        assertEquals(2, builder.annotations.size()); // Should add again
-    }
-
-    @Test
-    void testConstructor() {
-        assertNotNull(new TypeSpecUtil());
+        assertEquals(2, builder.build().annotations().size()); // Should add again
     }
 }

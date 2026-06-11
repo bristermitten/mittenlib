@@ -1,9 +1,9 @@
 package me.bristermitten.mittenlib.codegen;
 
-import com.squareup.javapoet.ArrayTypeName;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.MethodSpec;
+import com.palantir.javapoet.ArrayTypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.MethodSpec;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.lang.model.element.Modifier;

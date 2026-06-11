@@ -1,9 +1,9 @@
 package me.bristermitten.mittenlib.annotations.util;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeName;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
@@ -171,10 +171,10 @@ public class TypesUtil {
             return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralString.class));
         }
         if (type instanceof ParameterizedTypeName p) {
-            if (p.rawType.equals(ClassName.get(Map.class))) {
+            if (p.rawType().equals(ClassName.get(Map.class))) {
                 return Optional.of(ClassName.get(DataTree.DataTreeMap.class));
             }
-            if (p.rawType.equals(ClassName.get(List.class))) {
+            if (p.rawType().equals(ClassName.get(List.class))) {
                 return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
             }
         }

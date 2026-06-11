@@ -3,19 +3,24 @@ package me.bristermitten.mittenlib.annotations.compile.deserializer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.javapoet.MethodSpec;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import io.toolisticon.cute.Cute;
 import java.util.List;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
+import me.bristermitten.mittenlib.config.EnumParsingSchemes;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 class GenericTypeDeserializerGeneratorTest {
@@ -39,19 +44,7 @@ class GenericTypeDeserializerGeneratorTest {
                         """)
                 .intoUnitTest((processingEnvironment, element) -> {
                     ToolingProvider.setTooling(processingEnvironment);
-                    TypesUtil typesUtil = new TypesUtil(
-                            processingEnvironment.getTypeUtils(),
-                            processingEnvironment.getElementUtils(),
-                            new GeneratedTypeCache());
-                    ConfigurationClassNameGenerator classNameGenerator =
-                            new ConfigurationClassNameGenerator(new ConfigNameCache());
-
-                    GenericTypeDeserializerGenerator generator = new GenericTypeDeserializerGenerator(
-                            typesUtil,
-                            classNameGenerator,
-                            new CustomDeserializers(),
-                            new NonGenericTypeDeserializerGenerator(
-                                    typesUtil, classNameGenerator, new CustomDeserializers()));
+                    GenericTypeDeserializerGenerator generator = getDeserializerGenerator(processingEnvironment);
 
                     VariableElement field = (VariableElement) element.getEnclosedElements().stream()
                             .filter(e -> e.getSimpleName().toString().equals("optionalField"))
@@ -63,10 +56,10 @@ class GenericTypeDeserializerGeneratorTest {
                             "optionalField",
                             field.asType(),
                             new Property.PropertySource.FieldSource(field),
-                            new me.bristermitten.mittenlib.annotations.ast.ASTSettings.PropertyASTSettings(
+                            new ASTSettings.PropertyASTSettings(
                                     null,
                                     null,
-                                    me.bristermitten.mittenlib.config.EnumParsingSchemes.EXACT_MATCH,
+                                    EnumParsingSchemes.EXACT_MATCH,
                                     false,
                                     false,
                                     List.of(),
@@ -83,6 +76,22 @@ class GenericTypeDeserializerGeneratorTest {
                 .thenExpectThat()
                 .compilationFails()
                 .executeTest();
+    }
+
+    private static @NonNull GenericTypeDeserializerGenerator getDeserializerGenerator(
+            ProcessingEnvironment processingEnvironment) {
+        TypesUtil typesUtil = new TypesUtil(
+                processingEnvironment.getTypeUtils(),
+                processingEnvironment.getElementUtils(),
+                new GeneratedTypeCache());
+        ConfigurationClassNameGenerator classNameGenerator = new ConfigurationClassNameGenerator(new ConfigNameCache());
+
+        GenericTypeDeserializerGenerator generator = new GenericTypeDeserializerGenerator(
+                typesUtil,
+                classNameGenerator,
+                new CustomDeserializers(),
+                new NonGenericTypeDeserializerGenerator(typesUtil, classNameGenerator, new CustomDeserializers()));
+        return generator;
     }
 
     @Test
@@ -141,18 +150,19 @@ class GenericTypeDeserializerGeneratorTest {
                             new NonGenericTypeDeserializerGenerator(
                                     typesUtil, classNameGenerator, customDeserializers));
 
-                    for (VariableElement field : (List<VariableElement>) element.getEnclosedElements().stream()
+                    for (VariableElement field : element.getEnclosedElements().stream()
                             .filter(e -> e.getKind().isField())
+                            .map(VariableElement.class::cast)
                             .toList()) {
                         TypeMirrorWrapper wrapper = TypeMirrorWrapper.wrap(field.asType());
                         Property property = new Property(
                                 field.getSimpleName().toString(),
                                 field.asType(),
                                 new Property.PropertySource.FieldSource(field),
-                                new me.bristermitten.mittenlib.annotations.ast.ASTSettings.PropertyASTSettings(
+                                new ASTSettings.PropertyASTSettings(
                                         null,
                                         null,
-                                        me.bristermitten.mittenlib.config.EnumParsingSchemes.EXACT_MATCH,
+                                        EnumParsingSchemes.EXACT_MATCH,
                                         false,
                                         false,
                                         List.of(),
@@ -165,11 +175,11 @@ class GenericTypeDeserializerGeneratorTest {
                                                 .getTypeUtils()
                                                 .erasure(field.asType())));
 
-                        var builder = com.squareup.javapoet.MethodSpec.methodBuilder("temp");
+                        var builder = MethodSpec.methodBuilder("temp");
                         var result =
                                 generator.handleGenericType(builder, element, property, wrapper, typeElementWrapper);
                         assertThat(result).isPresent();
-                        assertThat(builder.build().code.toString()).isNotBlank();
+                        assertThat(builder.build().code().toString()).isNotBlank();
                     }
                 })
                 .thenExpectThat()

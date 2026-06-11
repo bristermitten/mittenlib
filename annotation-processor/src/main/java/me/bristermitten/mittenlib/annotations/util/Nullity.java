@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.annotations.util;
 
-import com.squareup.javapoet.AnnotationSpec;
+import com.palantir.javapoet.AnnotationSpec;
 import java.lang.annotation.Annotation;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import org.jspecify.annotations.NonNull;

@@ -4,8 +4,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThatCollection;
 
 import com.google.inject.Guice;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
 import io.toolisticon.cute.PassIn;
@@ -156,7 +156,7 @@ class ConfigClassParserTest {
                     JavaFile emit = generator.emit(ast);
 
                     assertThat(emit).isNotNull();
-                    assertThat(emit.typeSpec.name).isEqualTo("TestInterfaceConfigImpl");
+                    assertThat(emit.typeSpec().name()).isEqualTo("TestInterfaceConfigImpl");
                 })
                 .thenExpectThat()
                 .compilationSucceeds()

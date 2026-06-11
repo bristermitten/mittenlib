@@ -1,14 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.WildcardTypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeName;
+import com.palantir.javapoet.TypeSpec;
+import com.palantir.javapoet.WildcardTypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,11 +156,11 @@ public class SerializationCodeGenerator {
     private TypeName getSerializeParameterType(Property property) {
         TypeName typeName = configurationClassNameGenerator.publicPropertyClassName(property);
         if (typeName instanceof ParameterizedTypeName parameterizedTypeName) {
-            ClassName rawType = parameterizedTypeName.rawType;
+            ClassName rawType = parameterizedTypeName.rawType();
             if (rawType.equals(ClassName.get(List.class))
                     || rawType.equals(ClassName.get(Set.class))
                     || rawType.equals(ClassName.get(Map.class))) {
-                List<TypeName> typeArguments = parameterizedTypeName.typeArguments.stream()
+                List<TypeName> typeArguments = parameterizedTypeName.typeArguments().stream()
                         .map(arg -> (TypeName) WildcardTypeName.subtypeOf(arg))
                         .toList();
                 return ParameterizedTypeName.get(rawType, typeArguments.toArray(new TypeName[0]));

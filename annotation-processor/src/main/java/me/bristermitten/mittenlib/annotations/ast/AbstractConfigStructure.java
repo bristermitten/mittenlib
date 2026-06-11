@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.annotations.ast;
 
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import java.util.List;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;

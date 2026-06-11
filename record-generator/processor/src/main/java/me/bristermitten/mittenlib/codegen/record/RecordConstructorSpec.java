@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.codegen.record;
 
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.TypeName;
 import java.util.List;
 
 /**

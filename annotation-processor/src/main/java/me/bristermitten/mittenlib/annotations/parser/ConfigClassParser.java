@@ -1,7 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.Trees;
 import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage;

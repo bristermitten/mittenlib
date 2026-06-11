@@ -7,13 +7,13 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.ProvidesIntoSet;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.WildcardTypeName;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.JavaFile;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeSpec;
+import com.palantir.javapoet.WildcardTypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import java.util.List;
 import javax.annotation.processing.Generated;
@@ -100,7 +100,9 @@ public class ConfigLoaderModuleGenerator {
 
         builder.addMethod(asModuleMethod);
 
-        return JavaFile.builder(moduleClassName.packageName(), builder.build()).build();
+        return JavaFile.builder(moduleClassName.packageName(), builder.build())
+                .skipJavaLangImports(true)
+                .build();
     }
 
     private void addFunctionBindings(MethodSpec.Builder configureMethod, AbstractConfigStructure ast) {
