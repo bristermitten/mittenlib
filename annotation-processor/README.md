@@ -122,7 +122,7 @@ For example,
 
 ```java
 @NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
-String someFieldName
+String someFieldName;
 ```
 
 will use the key `some-field-name`
@@ -132,24 +132,24 @@ For further customization, you can manually set the key with `@ConfigName("key-n
 ### Saving Default Values
 
 When a config file is loaded, fields that are not present in the file will use their default values (if specified in the DTO class).
-To save these default values back to the config file, you can use the `save()` method on the `ReadingConfigProvider`.
+To save these default values back to the config file, you can use the `save()` method on the `SavableConfigProvider`.
 
 By default, `save()` only adds missing fields to the config file without overriding existing values. This ensures that user modifications are preserved.
 
 ```java
-// Inject a ConfigProvider (or ReadingConfigProvider specifically)
+// Inject a ConfigProvider (or SavableConfigProvider specifically)
 @Inject
 private Provider<ConfigProvider<SQLConfig>> configProvider;
 
 public void saveDefaults() {
     ConfigProvider<SQLConfig> provider = configProvider.get();
-    if (provider instanceof ReadingConfigProvider<SQLConfig> readingProvider) {
+    if (provider instanceof SavableConfigProvider<SQLConfig> savingProvider) {
         SQLConfig config = provider.get();
         // Save only missing default values to the file (preserves existing values)
-        readingProvider.save(config).getOrThrow();
+        savingProvider.save(config).getOrThrow();
 
         // Or, to override the entire file with the in-memory config:
-        readingProvider.save(config, true).getOrThrow();
+        savingProvider.save(config, true).getOrThrow();
     }
 }
 ```

@@ -125,7 +125,7 @@ public class SaveDefaultsIntegrationTest {
         Path configFile = tempDir.resolve("test-config.yml");
         Files.writeString(configFile, originalContent);
 
-        // Create a ReadingConfigProvider
+        // Create a SaveableConfigProvider
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
@@ -145,7 +145,7 @@ public class SaveDefaultsIntegrationTest {
         assertThat(classConfig.age()).isEqualTo(3);
         assertThat(classConfig.name()).isEqualTo("a");
 
-        // Save with default behavior (only add missing fields)
+        // Save with default behaviour (only add missing fields)
         provider.save(classConfig).getOrThrow();
 
         // Read the file back

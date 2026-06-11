@@ -20,7 +20,7 @@ import me.bristermitten.mittenlib.util.Result;
  *
  * @param <T> the type of the config
  */
-public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
+public class FileBasedConfigProvider<T> implements SaveableConfigProvider<T> {
     private final ConfigReader reader;
     private final DeserializationFunction<T> deserializer;
     private final ConfigWriter saver;
@@ -29,14 +29,14 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
     private final ObjectWriter writer; // TODO: merge into ConfigReader?
 
     /**
-     * Create a new ReadingConfigProvider
+     * Create a new FileBasedConfigProvider
      *
-     * @param path the path to read from
-     * @param reader the reader to use
+     * @param path         the path to read from
+     * @param reader       the reader to use
      * @param deserializer the deserialization function to use
-     * @param saver the saver to use
-     * @param serializer the serialization function to use
-     * @param writer the writer to use for saving
+     * @param saver        the saver to use
+     * @param serializer   the serialization function to use
+     * @param writer       the writer to use for saving
      */
     public FileBasedConfigProvider(
             Path path,
@@ -84,37 +84,24 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
         // no-op
     }
 
-    /**
-     * Saves the given config instance back to the file. This can be used to save default values for
-     * missing fields. By default, this only adds missing fields and does not override existing ones.
-     *
-     * @param instance the config instance to save
-     * @return a Result indicating success or failure
-     */
-    public Result<Void> save(T instance) {
+    @Override
+    public Result<DataTree> save(T instance) {
         return save(instance, false);
     }
 
-    /**
-     * Saves the given config instance back to the file. This can be used to save default values for
-     * missing fields.
-     *
-     * @param instance the config instance to save
-     * @param overrideExisting if true, overwrites the entire file; if false, only adds missing fields
-     * @return a Result indicating success or failure
-     */
-    public Result<Void> save(T instance, boolean overrideExisting) {
+    @Override
+    public Result<DataTree> save(T instance, boolean overrideExisting) {
         return saver.serialize(instance, serializer).flatMap(serializedTree -> {
             if (overrideExisting) {
-                return writer.write(serializedTree, path);
+                return writer.write(serializedTree, path).replace(serializedTree);
             }
             // Read existing file and merge with new values
             return reader.load(ctx -> Result.ok(ctx.getData()), path)
                     .map(existingTree -> mergeDataTrees(existingTree, serializedTree))
-                    .flatMap(mergedTree -> writer.write(mergedTree, path))
+                    .flatMap(mergedTree -> writer.write(mergedTree, path).replace(mergedTree))
                     .flatMapException(error -> {
                         // If file doesn't exist or can't be read, just write the new config
-                        return writer.write(serializedTree, path);
+                        return writer.write(serializedTree, path).replace(serializedTree);
                     });
         });
     }
@@ -124,7 +111,7 @@ public class FileBasedConfigProvider<T> implements ConfigProvider<T> {
      * newTree} that don't exist in {@code existingTree}.
      *
      * @param existingTree the existing data tree (takes precedence)
-     * @param newTree the new data tree with default values
+     * @param newTree      the new data tree with default values
      * @return the merged data tree
      */
     private DataTree mergeDataTrees(DataTree existingTree, DataTree newTree) {
