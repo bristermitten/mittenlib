@@ -3,7 +3,11 @@ package me.bristermitten.mittenlib.annotations.util;
 import com.google.inject.Inject;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.util.List;
-import javax.lang.model.element.*;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 
 /** Helper class for working with {@link Elements} */
@@ -12,7 +16,7 @@ public class ElementsFinder {
     private final Elements elements;
 
     @Inject
-    ElementsFinder(Elements elements) {
+    public ElementsFinder(Elements elements) {
         this.elements = elements;
     }
 

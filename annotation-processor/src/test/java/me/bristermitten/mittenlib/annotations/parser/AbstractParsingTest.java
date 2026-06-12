@@ -3,7 +3,7 @@ package me.bristermitten.mittenlib.annotations.parser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.inject.Guice;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.cute.Cute;
 import java.util.List;

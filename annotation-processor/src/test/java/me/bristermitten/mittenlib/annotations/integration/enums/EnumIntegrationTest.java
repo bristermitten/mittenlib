@@ -4,22 +4,30 @@ import static me.bristermitten.mittenlib.annotations.util.IntegrationTests.loadR
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import java.io.IOException;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.annotations.integration.ConfigLoaderModule;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.exception.InvalidEnumValueException;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
+import me.bristermitten.mittenlib.config.reader.ObjectMapper;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.files.FileTypeModule;
 import me.bristermitten.mittenlib.files.yaml.YamlFileType;
 import me.bristermitten.mittenlib.watcher.FileWatcherModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unchecked")
 public class EnumIntegrationTest {
 
     private Injector injector;
@@ -46,7 +54,7 @@ public class EnumIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, TestEnumConfig.class),
+                        new Configuration<>(null, TestEnumConfig.class, TestEnumConfigImpl.class),
                         (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
                         (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -67,7 +75,7 @@ public class EnumIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, TestEnumCascadeConfig.class),
+                        new Configuration<>(null, TestEnumCascadeConfig.class, TestEnumCascadeConfigImpl.class),
                         (DeserializationFunction<TestEnumCascadeConfig>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class, TestEnumCascadeConfig.class)))),
@@ -92,7 +100,7 @@ public class EnumIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, TestEnumConfig.class),
+                        new Configuration<>(null, TestEnumConfig.class, TestEnumConfigImpl.class),
                         (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
                         (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -100,5 +108,35 @@ public class EnumIntegrationTest {
                 .getOrThrow();
 
         assertThatThrownBy(provider::get).isInstanceOf(InvalidEnumValueException.class);
+    }
+
+    @Test
+    void testEnumSerialization() throws IOException {
+        var fileContents = loadResourceString("integration/enums/TestEnumConfig_1.yml");
+
+        var provider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, TestEnumConfig.class, TestEnumConfigImpl.class),
+                        (DeserializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(DeserializationFunction.class, TestEnumConfig.class)))),
+                        (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(SerializationFunction.class, TestEnumConfig.class)))))
+                .getOrThrow();
+
+        TestEnumConfig config = provider.get();
+
+        SerializationFunction<TestEnumConfig> saver =
+                (SerializationFunction<TestEnumConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                        Types.newParameterizedType(SerializationFunction.class, TestEnumConfig.class))));
+
+        DataTree serialized = saver.apply(config, new SerializationContext(injector.getInstance(ObjectMapper.class)));
+
+        assertThat(serialized).isInstanceOf(DataTree.DataTreeMap.class);
+        var map = (DataTree.DataTreeMap) serialized;
+
+        assertThat(map.get("testEnum")).isEqualTo(DataTree.string("HELLO"));
+        assertThat(map.get("testEnumInexact")).isEqualTo(DataTree.string("WORLD"));
     }
 }

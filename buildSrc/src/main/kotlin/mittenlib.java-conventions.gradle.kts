@@ -7,6 +7,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     java
     `java-library`
+    jacoco
     id("net.ltgt.errorprone")
     id("com.github.spotbugs")
     id("com.diffplug.spotless")
@@ -123,5 +124,13 @@ tasks.withType<SpotBugsTask>().configureEach {
             required.set(true)
             outputLocation.set(layout.buildDirectory.file("reports/spotbugs/spotbugs.html"))
         }
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }

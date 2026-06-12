@@ -44,4 +44,14 @@ public class GeneratedTypeCache {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
     }
+
+    /**
+     * Registers a mapping from a source DTO type to the generated configuration class name.
+     *
+     * @param source the source DTO class element
+     * @param name the generated configuration class name
+     */
+    public void put(TypeElement source, String name) {
+        generatedSpecs.put(source, name);
+    }
 }

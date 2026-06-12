@@ -1,7 +1,7 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.Trees;
 import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage;
@@ -16,12 +16,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.*;
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache;
+import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
+import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.*;
@@ -36,6 +39,8 @@ public class ConfigClassParser {
     private final TypesUtil typesUtil;
     private final ElementsFinder elementsFinder;
     private final ConfigNameCache configNameCache;
+    private final GeneratedTypeCache generatedTypeCache;
+    private final ConfigurationClassNameGenerator classNameGenerator;
     private final @Nullable Trees trees;
 
     @Inject
@@ -43,10 +48,14 @@ public class ConfigClassParser {
             TypesUtil typesUtil,
             ElementsFinder elementsFinder,
             ConfigNameCache configNameCache,
+            GeneratedTypeCache generatedTypeCache,
+            ConfigurationClassNameGenerator classNameGenerator,
             ProcessingEnvironment processingEnv) {
         this.typesUtil = typesUtil;
         this.elementsFinder = elementsFinder;
         this.configNameCache = configNameCache;
+        this.generatedTypeCache = generatedTypeCache;
+        this.classNameGenerator = classNameGenerator;
         Trees t;
         try {
             t = Trees.instance(processingEnv);
@@ -134,6 +143,24 @@ public class ConfigClassParser {
                                 }
                             };
 
+                    List<ValidationConstraint> constraints = parseConstraints(propertyElement);
+                    List<ValidationConstraint> elementConstraints = List.of();
+                    List<ValidationConstraint> keyConstraints = List.of();
+
+                    if (propertyType instanceof DeclaredType declaredType) {
+                        List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+                        if (typesUtil.isCollection(propertyType)) {
+                            if (!typeArguments.isEmpty()) {
+                                elementConstraints = parseConstraints(typeArguments.getFirst());
+                            }
+                        } else if (typesUtil.isMap(propertyType)) {
+                            if (typeArguments.size() >= 2) {
+                                keyConstraints = parseConstraints(typeArguments.getFirst());
+                                elementConstraints = parseConstraints(typeArguments.get(1));
+                            }
+                        }
+                    }
+
                     return new Property(
                             propertyElement.getSimpleName().toString(),
                             propertyType,
@@ -146,7 +173,9 @@ public class ConfigClassParser {
                                             : enumParsingScheme.value(),
                                     isNullable,
                                     hasDefault,
-                                    parseConstraints(propertyElement)));
+                                    constraints,
+                                    elementConstraints,
+                                    keyConstraints));
                 })
                 .toList();
     }
@@ -161,7 +190,7 @@ public class ConfigClassParser {
         Config config = typesUtil.getAnnotation(element, Config.class);
         if (config == null) {
             MessagerUtils.error(element, ConfigClassParserCompilerMessages.NO_CONFIG_ANNOTATION, element);
-            throw new IllegalStateException();
+            throw new IllegalStateException("Config " + element.getSimpleName() + " is missing @Config annotation");
         }
 
         return new ASTSettings.ConfigASTSettings(namingPattern, source, config, generateToString != null);
@@ -206,6 +235,7 @@ public class ConfigClassParser {
                 .filterByOneOf(ElementKind.CLASS, ElementKind.INTERFACE)
                 .getResult()
                 .stream()
+                .filter(e -> typesUtil.getAnnotation(e, Config.class) != null)
                 .map((e) -> parseAbstract(e, thisParentReference))
                 .toList();
 
@@ -245,6 +275,11 @@ public class ConfigClassParser {
 
     private AbstractConfigStructure putInCache(AbstractConfigStructure configStructure) {
         configNameCache.put(configStructure);
+        generatedTypeCache.put(
+                configStructure.source().element(),
+                classNameGenerator
+                        .generateConfigurationClassName(configStructure.source().element())
+                        .reflectionName());
         return configStructure;
     }
 
@@ -254,7 +289,7 @@ public class ConfigClassParser {
         return ast;
     }
 
-    private List<ValidationConstraint> parseConstraints(Element element) {
+    private List<ValidationConstraint> parseConstraints(AnnotatedConstruct element) {
         List<ValidationConstraint> constraints = new ArrayList<>();
         for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
             String qName = ((TypeElement) mirror.getAnnotationType().asElement())

@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.codegen.union;
 
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec;
 import me.bristermitten.mittenlib.codegen.record.RecordSpecLike;
 

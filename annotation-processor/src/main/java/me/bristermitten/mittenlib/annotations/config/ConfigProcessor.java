@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.annotations.config;
 
 import com.google.auto.service.AutoService;
 import com.google.inject.Guice;
-import com.squareup.javapoet.JavaFile;
+import com.palantir.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
 import java.util.*;

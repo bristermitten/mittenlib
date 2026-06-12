@@ -1,14 +1,14 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.FieldSpec;
+import com.palantir.javapoet.JavaFile;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeSpec;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -73,11 +73,15 @@ public class ConfigImplGenerator {
     public JavaFile emit(AbstractConfigStructure ast) {
         ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(
                 ast.source().element());
-        TypeSpec.Builder source = TypeSpec.classBuilder(configImplClassName);
+        TypeSpec.Builder source = TypeSpec.classBuilder(configImplClassName)
+                .addJavadoc("""
+                                Generated data implementation of {@link $T}.
+                                """, ast.source().element());
 
         emitInto(ast, source);
 
         return JavaFile.builder(configImplClassName.packageName(), source.build())
+                .skipJavaLangImports(true)
                 .build();
     }
 
@@ -323,7 +327,9 @@ public class ConfigImplGenerator {
      *     name}, {@code age})
      */
     private void addAllArgsConstructor(TypeSpec.Builder source, AbstractConfigStructure ast) {
-        MethodSpec.Builder constructor = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
+        MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
+                .addJavadoc("Constructs a new implementation instance with all properties populated.\n")
+                .addModifiers(Modifier.PUBLIC);
 
         addSuperClassParameter(ast, constructor);
         addPropertyParameters(ast, constructor);

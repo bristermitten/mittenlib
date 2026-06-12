@@ -2,10 +2,10 @@ package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.util.Optional;
 import javax.lang.model.element.TypeElement;

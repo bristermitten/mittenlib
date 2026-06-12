@@ -2,8 +2,8 @@ package me.bristermitten.mittenlib.annotations.util;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.TypeName;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.type.TypeMirror;
@@ -53,6 +53,8 @@ public class ConfigStructureAnalysis {
     public boolean needsValidation(AbstractConfigStructure structure) {
         return structure.properties().stream()
                 .anyMatch(p -> !p.settings().constraints().isEmpty()
+                        || !p.settings().elementConstraints().isEmpty()
+                        || !p.settings().keyConstraints().isEmpty()
                         || (!TypeName.get(p.propertyType()).isPrimitive()
                                 && !p.settings().isNullable()));
     }

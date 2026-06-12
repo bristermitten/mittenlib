@@ -1,16 +1,27 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.FieldSpec;
+import com.palantir.javapoet.JavaFile;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeName;
+import com.palantir.javapoet.TypeSpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor;
+import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.exception.ConfigValidationException;
 import me.bristermitten.mittenlib.util.Result;
 
@@ -18,15 +29,18 @@ public class ConfigValidatorGenerator {
     private final ConfigurationClassNameGenerator classNameGenerator;
     private final FieldNameGenerator fieldNameGenerator;
     private final MethodNames methodNames;
+    private final TypesUtil typesUtil;
 
     @Inject
     public ConfigValidatorGenerator(
             ConfigurationClassNameGenerator classNameGenerator,
             FieldNameGenerator fieldNameGenerator,
-            MethodNames methodNames) {
+            MethodNames methodNames,
+            TypesUtil typesUtil) {
         this.classNameGenerator = classNameGenerator;
         this.fieldNameGenerator = fieldNameGenerator;
         this.methodNames = methodNames;
+        this.typesUtil = typesUtil;
     }
 
     public JavaFile emit(AbstractConfigStructure ast) {
@@ -35,6 +49,7 @@ public class ConfigValidatorGenerator {
         addChildValidatorClasses(ast, builder);
 
         return JavaFile.builder(validatorClassName.packageName(), builder.build())
+                .skipJavaLangImports(true)
                 .build();
     }
 
@@ -50,8 +65,11 @@ public class ConfigValidatorGenerator {
         ClassName validatorClassName = classNameGenerator.getValidatorClassName(ast);
         ClassName publicClassName = classNameGenerator.getPublicClassName(ast);
 
-        TypeSpec.Builder builder =
-                TypeSpec.classBuilder(validatorClassName.simpleName()).addModifiers(Modifier.PUBLIC);
+        TypeSpec.Builder builder = TypeSpec.classBuilder(validatorClassName.simpleName())
+                .addJavadoc("""
+                                Validator implementation for {@link $T}.
+                                """, publicClassName)
+                .addModifiers(Modifier.PUBLIC);
 
         if (ast.enclosedIn() != null) {
             builder.addModifiers(Modifier.STATIC);
@@ -88,18 +106,58 @@ public class ConfigValidatorGenerator {
                     builder.addField(validatorField);
                 }
             }
+            for (ValidationConstraint constraint : property.settings().keyConstraints()) {
+                if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
+                    FieldSpec validatorField = FieldSpec.builder(
+                                    validatorClassName,
+                                    classNameGenerator.getValidatorKeyFieldName(property),
+                                    Modifier.PRIVATE,
+                                    Modifier.FINAL)
+                            .build();
+                    builder.addField(validatorField);
+                }
+            }
+            for (ValidationConstraint constraint : property.settings().elementConstraints()) {
+                if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
+                    FieldSpec validatorField = FieldSpec.builder(
+                                    validatorClassName,
+                                    classNameGenerator.getValidatorElementFieldName(property),
+                                    Modifier.PRIVATE,
+                                    Modifier.FINAL)
+                            .build();
+                    builder.addField(validatorField);
+                }
+            }
         }
     }
 
     private void addGuiceConstructor(AbstractConfigStructure ast, TypeSpec.Builder builder) {
-        MethodSpec.Builder constructor =
-                MethodSpec.constructorBuilder().addAnnotation(Inject.class).addModifiers(Modifier.PUBLIC);
+        MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
+                .addJavadoc("Constructs a new validator instance with its custom field/element/key validators.\n")
+                .addAnnotation(Inject.class)
+                .addModifiers(Modifier.PUBLIC);
 
         boolean hasCustom = false;
         for (Property property : ast.properties()) {
             for (ValidationConstraint constraint : property.settings().constraints()) {
                 if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
                     String fieldName = classNameGenerator.getValidatorFieldName(property);
+                    constructor.addParameter(validatorClassName, fieldName);
+                    constructor.addStatement("this.$L = $L", fieldName, fieldName);
+                    hasCustom = true;
+                }
+            }
+            for (ValidationConstraint constraint : property.settings().keyConstraints()) {
+                if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
+                    String fieldName = classNameGenerator.getValidatorKeyFieldName(property);
+                    constructor.addParameter(validatorClassName, fieldName);
+                    constructor.addStatement("this.$L = $L", fieldName, fieldName);
+                    hasCustom = true;
+                }
+            }
+            for (ValidationConstraint constraint : property.settings().elementConstraints()) {
+                if (constraint instanceof ValidationConstraint.Custom(ClassName validatorClassName)) {
+                    String fieldName = classNameGenerator.getValidatorElementFieldName(property);
                     constructor.addParameter(validatorClassName, fieldName);
                     constructor.addStatement("this.$L = $L", fieldName, fieldName);
                     hasCustom = true;
@@ -114,6 +172,13 @@ public class ConfigValidatorGenerator {
 
     private void addValidateMethod(AbstractConfigStructure ast, TypeSpec.Builder builder, ClassName publicClassName) {
         MethodSpec.Builder validateMethod = MethodSpec.methodBuilder("validate")
+                .addJavadoc("""
+                                Validates the given {@link $T} instance and returns a {@link $T} containing
+                                either the validated config instance or a {@link $T}.
+
+                                @param config the configuration instance to validate, must not be null
+                                @return a Result containing the validated config if successful, or validation exceptions if failed
+                                """, publicClassName, Result.class, ConfigValidationException.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(Result.class), publicClassName))
                 .addParameter(publicClassName, "config", Modifier.FINAL);
@@ -126,12 +191,14 @@ public class ConfigValidatorGenerator {
 
         for (Property property : ast.properties()) {
             List<ValidationConstraint> constraints = property.settings().constraints();
+            List<ValidationConstraint> keyConstraints = property.settings().keyConstraints();
+            List<ValidationConstraint> elementConstraints = property.settings().elementConstraints();
             boolean isNullable = property.settings().isNullable();
             boolean isPrimitive = TypeName.get(property.propertyType()).isPrimitive();
             String accessorCall = "config." + methodNames.safeMethodName(property) + "()";
             String configKey = fieldNameGenerator.getConfigFieldName(property);
 
-            if (constraints.isEmpty() && isNullable) {
+            if (constraints.isEmpty() && keyConstraints.isEmpty() && elementConstraints.isEmpty() && isNullable) {
                 continue;
             }
 
@@ -144,7 +211,7 @@ public class ConfigValidatorGenerator {
                             ConfigValidationException.class,
                             configKey,
                             "Must not be null");
-                    if (!constraints.isEmpty()) {
+                    if (!constraints.isEmpty() || !keyConstraints.isEmpty() || !elementConstraints.isEmpty()) {
                         validateMethod.nextControlFlow("else");
                     } else {
                         validateMethod.endControlFlow();
@@ -157,98 +224,176 @@ public class ConfigValidatorGenerator {
 
             if (!constraints.isEmpty()) {
                 for (ValidationConstraint constraint : constraints) {
-                    switch (constraint) {
-                        case ValidationConstraint.Positive() -> {
-                            validateMethod.beginControlFlow("if ($L <= 0)", accessorCall);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $S))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    "Must be positive");
-                            validateMethod.endControlFlow();
-                        }
-                        case ValidationConstraint.Negative() -> {
-                            validateMethod.beginControlFlow("if ($L >= 0)", accessorCall);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $S))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    "Must be negative");
-                            validateMethod.endControlFlow();
-                        }
-                        case ValidationConstraint.Min(double val) -> {
-                            validateMethod.beginControlFlow("if ($L < $L)", accessorCall, val);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $S + $L))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    "Must be at least ",
-                                    val);
-                            validateMethod.endControlFlow();
-                        }
-                        case ValidationConstraint.Max(double val) -> {
-                            validateMethod.beginControlFlow("if ($L > $L)", accessorCall, val);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $S + $L))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    "Must be at most ",
-                                    val);
-                            validateMethod.endControlFlow();
-                        }
-                        case ValidationConstraint.Range(double min, double max) -> {
-                            validateMethod.beginControlFlow(
-                                    "if ($L < $L || $L > $L)", accessorCall, min, accessorCall, max);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $S + $L + $S + $L))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    "Must be between ",
-                                    min,
-                                    " and ",
-                                    max);
-                            validateMethod.endControlFlow();
-                        }
-                        case ValidationConstraint.NotBlank() -> {
-                            validateMethod.beginControlFlow("if ($L.trim().isEmpty())", accessorCall);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $S))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    "Must not be blank");
-                            validateMethod.endControlFlow();
-                        }
-                        case ValidationConstraint.Custom(ClassName ignored) -> {
-                            String validatorFieldName = "this." + classNameGenerator.getValidatorFieldName(property);
-                            String errorFieldName = classNameGenerator.getValidatorErrorFieldName(property);
-                            validateMethod.addStatement(
-                                    "$T<$T> $L = $L.validate($L)",
-                                    Optional.class,
-                                    String.class,
-                                    errorFieldName,
-                                    validatorFieldName,
-                                    accessorCall);
-                            validateMethod.beginControlFlow("if ($L.isPresent())", errorFieldName);
-                            validateMethod.addStatement(
-                                    "violations.add(new $T.Violation($S, $L, $L.get()))",
-                                    ConfigValidationException.class,
-                                    configKey,
-                                    accessorCall,
-                                    errorFieldName);
-                            validateMethod.endControlFlow();
-                        }
-                    }
+                    generateConstraintCheck(
+                            validateMethod,
+                            constraint,
+                            accessorCall,
+                            "$S",
+                            configKey,
+                            "this." + classNameGenerator.getValidatorFieldName(property),
+                            classNameGenerator.getValidatorErrorFieldName(property),
+                            "");
                 }
             }
 
-            if (!isPrimitive && (isNullable || !constraints.isEmpty())) {
-                // Close the outer if/else block
+            if (typesUtil.isCollection(property.propertyType()) && !elementConstraints.isEmpty()) {
+                TypeMirror elementType = ((DeclaredType) property.propertyType())
+                        .getTypeArguments()
+                        .getFirst();
+                TypeName elementTypeName = TypeName.get(elementType);
+                boolean isElementNullable = typesUtil.isNullable(elementType);
+                boolean isElementPrimitive = elementTypeName.isPrimitive();
+
+                if (typesUtil.isSet(property.propertyType())) {
+                    validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall);
+                    if (!isElementPrimitive) {
+                        if (!isElementNullable) {
+                            validateMethod.beginControlFlow("if (element == null)");
+                            validateMethod.addStatement(
+                                    "violations.add(new $T.Violation($S + \"[\" + element + \"]\", null, $S))",
+                                    ConfigValidationException.class,
+                                    configKey,
+                                    "Must not be null");
+                            validateMethod.nextControlFlow("else");
+                        } else {
+                            validateMethod.beginControlFlow("if (element != null)");
+                        }
+                    }
+                    for (ValidationConstraint constraint : elementConstraints) {
+                        generateConstraintCheck(
+                                validateMethod,
+                                constraint,
+                                "element",
+                                "$S + \"[\" + element + \"]\"",
+                                configKey,
+                                "this." + classNameGenerator.getValidatorElementFieldName(property),
+                                classNameGenerator.getValidatorElementErrorFieldName(property),
+                                "");
+                    }
+                    if (!isElementPrimitive) {
+                        validateMethod.endControlFlow();
+                    }
+                    validateMethod.endControlFlow();
+                } else {
+                    validateMethod.addStatement("int i = 0");
+                    validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall);
+                    if (!isElementPrimitive) {
+                        if (!isElementNullable) {
+                            validateMethod.beginControlFlow("if (element == null)");
+                            validateMethod.addStatement(
+                                    "violations.add(new $T.Violation($S + \"[\" + i + \"]\", null, $S))",
+                                    ConfigValidationException.class,
+                                    configKey,
+                                    "Must not be null");
+                            validateMethod.nextControlFlow("else");
+                        } else {
+                            validateMethod.beginControlFlow("if (element != null)");
+                        }
+                    }
+                    for (ValidationConstraint constraint : elementConstraints) {
+                        generateConstraintCheck(
+                                validateMethod,
+                                constraint,
+                                "element",
+                                "$S + \"[\" + i + \"]\"",
+                                configKey,
+                                "this." + classNameGenerator.getValidatorElementFieldName(property),
+                                classNameGenerator.getValidatorElementErrorFieldName(property),
+                                "");
+                    }
+                    if (!isElementPrimitive) {
+                        validateMethod.endControlFlow();
+                    }
+                    validateMethod.addStatement("i++");
+                    validateMethod.endControlFlow();
+                }
+            } else if (typesUtil.isMap(property.propertyType())
+                    && (!keyConstraints.isEmpty() || !elementConstraints.isEmpty())) {
+                List<? extends TypeMirror> typeArguments = ((DeclaredType) property.propertyType()).getTypeArguments();
+                TypeMirror keyType = typeArguments.get(0);
+                TypeMirror valType = typeArguments.get(1);
+                TypeName keyTypeName = TypeName.get(keyType);
+                TypeName valTypeName = TypeName.get(valType);
+
+                boolean isKeyNullable = typesUtil.isNullable(keyType);
+                boolean isKeyPrimitive = keyTypeName.isPrimitive();
+                boolean isValNullable = typesUtil.isNullable(valType);
+                boolean isValPrimitive = valTypeName.isPrimitive();
+
+                TypeName entryTypeName =
+                        ParameterizedTypeName.get(ClassName.get(Map.Entry.class), keyTypeName, valTypeName);
+                validateMethod.beginControlFlow("for ($T entry : $L.entrySet())", entryTypeName, accessorCall);
+                validateMethod.addStatement("$T key = entry.getKey()", keyTypeName);
+                validateMethod.addStatement("$T value = entry.getValue()", valTypeName);
+
+                if (!keyConstraints.isEmpty()) {
+                    if (!isKeyPrimitive) {
+                        if (!isKeyNullable) {
+                            validateMethod.beginControlFlow("if (key == null)");
+                            validateMethod.addStatement(
+                                    "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
+                                    ConfigValidationException.class,
+                                    configKey,
+                                    "Key must not be null");
+                            validateMethod.nextControlFlow("else");
+                        } else {
+                            validateMethod.beginControlFlow("if (key != null)");
+                        }
+                    }
+                    for (ValidationConstraint constraint : keyConstraints) {
+                        generateConstraintCheck(
+                                validateMethod,
+                                constraint,
+                                "key",
+                                "$S + \"[\" + key + \"]\"",
+                                configKey,
+                                "this." + classNameGenerator.getValidatorKeyFieldName(property),
+                                classNameGenerator.getValidatorKeyErrorFieldName(property),
+                                "Key ");
+                    }
+                    if (!isKeyPrimitive) {
+                        validateMethod.endControlFlow();
+                    }
+                }
+
+                if (!elementConstraints.isEmpty()) {
+                    if (!isValPrimitive) {
+                        if (!isValNullable) {
+                            validateMethod.beginControlFlow("if (value == null)");
+                            validateMethod.addStatement(
+                                    "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
+                                    ConfigValidationException.class,
+                                    configKey,
+                                    "Must not be null");
+                            validateMethod.nextControlFlow("else");
+                        } else {
+                            validateMethod.beginControlFlow("if (value != null)");
+                        }
+                    }
+                    for (ValidationConstraint constraint : elementConstraints) {
+                        generateConstraintCheck(
+                                validateMethod,
+                                constraint,
+                                "value",
+                                "$S + \"[\" + key + \"]\"",
+                                configKey,
+                                "this." + classNameGenerator.getValidatorElementFieldName(property),
+                                classNameGenerator.getValidatorElementErrorFieldName(property),
+                                "");
+                    }
+                    if (!isValPrimitive) {
+                        validateMethod.endControlFlow();
+                    }
+                }
+
+                validateMethod.endControlFlow();
+            }
+
+            if (!isPrimitive
+                    && (isNullable
+                            || !constraints.isEmpty()
+                            || !keyConstraints.isEmpty()
+                            || !elementConstraints.isEmpty())) {
                 validateMethod.endControlFlow();
             }
         }
@@ -260,5 +405,110 @@ public class ConfigValidatorGenerator {
 
         validateMethod.addStatement("return $T.ok(config)", Result.class);
         builder.addMethod(validateMethod.build());
+    }
+
+    private void generateConstraintCheck(
+            MethodSpec.Builder validateMethod,
+            ValidationConstraint constraint,
+            String valueExpr,
+            String keyFormat,
+            Object keyArg,
+            String validatorFieldName,
+            String errorFieldName,
+            String messagePrefix) {
+        switch (constraint) {
+            case ValidationConstraint.Positive() -> {
+                validateMethod.beginControlFlow("if ($L <= 0)", valueExpr);
+                validateMethod.addStatement(
+                        "violations.add(new $T.Violation(" + keyFormat + ", $L, $S))",
+                        ConfigValidationException.class,
+                        keyArg,
+                        valueExpr,
+                        messagePrefix + "Must be positive");
+                validateMethod.endControlFlow();
+            }
+            case ValidationConstraint.Negative() -> {
+                validateMethod.beginControlFlow("if ($L >= 0)", valueExpr);
+                validateMethod.addStatement(
+                        "violations.add(new $T.Violation(" + keyFormat + ", $L, $S))",
+                        ConfigValidationException.class,
+                        keyArg,
+                        valueExpr,
+                        messagePrefix + "Must be negative");
+                validateMethod.endControlFlow();
+            }
+            case ValidationConstraint.Min(double val) -> {
+                validateMethod.beginControlFlow("if ($L < $L)", valueExpr, val);
+                validateMethod.addStatement(
+                        "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L))",
+                        ConfigValidationException.class,
+                        keyArg,
+                        valueExpr,
+                        messagePrefix + "Must be at least ",
+                        val);
+                validateMethod.endControlFlow();
+            }
+            case ValidationConstraint.Max(double val) -> {
+                validateMethod.beginControlFlow("if ($L > $L)", valueExpr, val);
+                validateMethod.addStatement(
+                        "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L))",
+                        ConfigValidationException.class,
+                        keyArg,
+                        valueExpr,
+                        messagePrefix + "Must be at most ",
+                        val);
+                validateMethod.endControlFlow();
+            }
+            case ValidationConstraint.Range(double min, double max) -> {
+                validateMethod.beginControlFlow("if ($L < $L || $L > $L)", valueExpr, min, valueExpr, max);
+                validateMethod.addStatement(
+                        "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L + $S + $L))",
+                        ConfigValidationException.class,
+                        keyArg,
+                        valueExpr,
+                        messagePrefix + "Must be between ",
+                        min,
+                        " and ",
+                        max);
+                validateMethod.endControlFlow();
+            }
+            case ValidationConstraint.NotBlank() -> {
+                validateMethod.beginControlFlow("if ($L.trim().isEmpty())", valueExpr);
+                validateMethod.addStatement(
+                        "violations.add(new $T.Violation(" + keyFormat + ", $L, $S))",
+                        ConfigValidationException.class,
+                        keyArg,
+                        valueExpr,
+                        messagePrefix + "Must not be blank");
+                validateMethod.endControlFlow();
+            }
+            case ValidationConstraint.Custom(ClassName ignored) -> {
+                validateMethod.addStatement(
+                        "$T<$T> $L = $L.validate($L)",
+                        Optional.class,
+                        String.class,
+                        errorFieldName,
+                        validatorFieldName,
+                        valueExpr);
+                validateMethod.beginControlFlow("if ($L.isPresent())", errorFieldName);
+                if (messagePrefix.isEmpty()) {
+                    validateMethod.addStatement(
+                            "violations.add(new $T.Violation(" + keyFormat + ", $L, $L.get()))",
+                            ConfigValidationException.class,
+                            keyArg,
+                            valueExpr,
+                            errorFieldName);
+                } else {
+                    validateMethod.addStatement(
+                            "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L.get()))",
+                            ConfigValidationException.class,
+                            keyArg,
+                            valueExpr,
+                            messagePrefix,
+                            errorFieldName);
+                }
+                validateMethod.endControlFlow();
+            }
+        }
     }
 }

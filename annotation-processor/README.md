@@ -1,64 +1,165 @@
-# Annotation Processor
+# annotation-processor
 
-This module provides the annotation processor responsible for generating the high-performance configuration and data classes used throughout MittenLib.
+This module defines an Annotation Processor for easy generation of
+`Configuration` types.
 
-## Quick Start (Recommended approach)
+**No code in this module is public API!** Breaking changes may happen at any point without
+respecting the Semantic Versioning in other modules.
 
-The recommended way to define a configuration is using an **Interface**.
+## Quick Start
+
+Let's say we want to define a Configuration for loading SQL database settings.
+
+We can define a class like this:
+
+```java
+import me.bristermitten.mittenlib.config.*;
+
+@Config
+public class SQLConfigDTO {
+    String host;
+    String username;
+    String password;
+    String database;
+    int port = 3306;
+    @Nullable
+    String tablePrefix;
+}
+```
+
+Running the annotation processor produces a new type `SQLConfig`, which
+contains deserialization logic.
+
+The `SQLConfig` class will also contain getter methods
+and copy methods (`withX`) for each field.
+
+The deserialization will load a file with a structure like this:
+
+```yaml
+host: localhost
+username: root
+password: root
+database: database
+port: 3306
+tablePrefix: prefix_
+```
+
+If the `host`, `username`, `password`, or `database` fields are not present, an exception will be thrown.
+If the `port` field is not present, the default value of `3306` will be used
+If the `tablePrefix` field is not present, it will be `null`.
+
+### Naming
+
+Note the similarity between the `SQLConfigDTO` and `SQLConfig`. The API uses the suffix 'DTO' to determine the type of
+the generated configuration type.
+The suffixes `DAO` and `Template` are also supported.
+
+If you don't want to use the suffix method, you can manually specify the name of the generated class with
+`@Config("ClassNameHere")`
+
+Throughout the rest of this guide, and internally, a few names are used though:
+
+- DTO class: The descriptor class for the configuration, annotated with `@Config` that describes the structure of the
+  config
+- Configuration class: The generated class that contains the deserialization logic.
+
+### Deserialization
+
+You can either deserialize manually using `SQLConfig.deserializeSQLConfig(DeserializationContext)`,
+or register the configuration with Guice to have it bound automatically.
+Doing this requires another annotation, `@Source`, which defines which file the
+config should be read from. For example:
 
 ```java
 import me.bristermitten.mittenlib.config.*;
 
 @Config
 @Source("database.yml")
-public interface SQLConfig {
-    String host();
-    String username();
-    String password();
-    String database();
-
-    default int port() {
-        return 3306;
-    }
-
+public class SQLConfigDTO {
+    String host;
+    String username;
+    String password;
+    String database;
+    int port;
     @Nullable
-    String tablePrefix();
+    String tablePrefix;
 }
 ```
 
-The annotation processor will generate `SQLConfigImpl`, along with its Deserializer, Serializer, and Validator.
+From here we can register it into Guice using the `ConfigModule`:
+`new ConfigModule(SQLConfig.CONFIG)`.
 
-## Registration with Guice
+You can now inject `SQLConfig` instances anywhere throughout your program.
+Recommended usage is to inject a `Provider<SQLConfig>`, as this provides a few advantages:
 
-The simplest way to register your configurations is using the generated `ConfigLoaderModule`:
+- The configuration will be lazily loaded, potentially improving performance
+- The configuration will be automatically reloaded when the file changes (if using the `FileWatcherModule`)
+- The subtype `ConfigProvier` can also be used which gives a little more information, such as the Path to the file that
+  was
+  loaded.
+
+## Subclasses
+
+DTO Types may extend other DTO types, which is effectively equivalent to
+copying all the fields from the super class.
+The generated config class will extend from the generated super-config class, if possible.
+
+## Extra Configuration
+
+### Generating `toString` methods
+
+To generate a `toString()` for your Configuration class, add the annotation
+`@GenerateToString` to your DTO class. The generated method will use all fields in the config class with a standard
+template (`"ClassName{fieldName=fieldValue(,)}"`)
+
+### Different key names
+
+By default, the deserialization methods will use the field name as the key in the file.
+However, you may want to write your keys using a different naming convention, eg `lower_snake_case`.
+To do this, use the `@NamingPattern` annotation, which can either be applied to a whole class or a specific field.
+This takes a `NamingPatterns` enum as a parameter and translates the field name into the specified format.
+For example,
 
 ```java
-public class MyModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        install(new ConfigLoaderModule());
+@NamingPattern(NamingPatterns.LOWER_KEBAB_CASE)
+String someFieldName;
+```
+
+will use the key `some-field-name`
+
+For further customization, you can manually set the key with `@ConfigName("key-name")`
+
+### Saving Default Values
+
+When a config file is loaded, fields that are not present in the file will use their default values (if specified in the DTO class).
+To save these default values back to the config file, you can use the `save()` method on the `SavableConfigProvider`.
+
+By default, `save()` only adds missing fields to the config file without overriding existing values. This ensures that user modifications are preserved.
+
+```java
+// Inject a ConfigProvider (or SavableConfigProvider specifically)
+@Inject
+private Provider<ConfigProvider<SQLConfig>> configProvider;
+
+public void saveDefaults() {
+    ConfigProvider<SQLConfig> provider = configProvider.get();
+    if (provider instanceof SavableConfigProvider<SQLConfig> savingProvider) {
+        SQLConfig config = provider.get();
+        // Save only missing default values to the file (preserves existing values)
+        savingProvider.save(config).getOrThrow();
+
+        // Or, to override the entire file with the in-memory config:
+        savingProvider.save(config, true).getOrThrow();
     }
 }
 ```
 
-This will automatically find and register all `@Config` types that have a `@Source` annotation. You can then inject them anywhere:
+**Behavior:**
+- `save(config)` or `save(config, false)`: Merges the serialized config with the existing file, only adding fields that don't already exist. This is useful for upgrading config files when you add new fields with defaults.
+- `save(config, true)`: Overwrites the entire file with the serialized config, replacing all existing values.
 
-```java
-@Inject
-private ConfigProvider<SQLConfig> config;
-```
+This is particularly useful for "upgrading" config files when you add new fields with defaults to your DTO class.
+After loading an old config file, calling `save()` will write it back with the new fields included while preserving user customizations.
 
-## Documentation
-
-For full technical details, including naming patterns, validation constraints, and advanced Guice integration, please refer to the **[Configuration System Reference](https://bristermitten.github.io/mittenlib/docs/config/)**.
-
-## Installation
-
-```kotlin
-dependencies {
-    implementation("me.bristermitten:mittenlib-core:VERSION")
-    annotationProcessor("me.bristermitten:mittenlib-annotation-processor:VERSION")
-}
-```
-
-(Note: You only need the processor at compile-time. The generated code only depends on `mittenlib-core`).
+The generated config class includes both deserialization and serialization methods,
+making it easy to save configs back to files.

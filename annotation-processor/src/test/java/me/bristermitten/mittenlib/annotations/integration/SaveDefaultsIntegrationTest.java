@@ -6,20 +6,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
+import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.FileBasedConfigProvider;
+import me.bristermitten.mittenlib.config.provider.SaveableConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
@@ -79,7 +86,7 @@ public class SaveDefaultsIntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
+                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl.class),
                         loader,
                         saverFunc)
                 .getOrThrow();
@@ -120,7 +127,7 @@ public class SaveDefaultsIntegrationTest {
         Path configFile = tempDir.resolve("test-config.yml");
         Files.writeString(configFile, originalContent);
 
-        // Create a ReadingConfigProvider
+        // Create a SaveableConfigProvider
         ConfigReader reader = injector.getInstance(ConfigReader.class);
         YamlObjectWriter writer = injector.getInstance(YamlObjectWriter.class);
         ConfigWriter saver = injector.getInstance(ConfigWriter.class);
@@ -140,7 +147,7 @@ public class SaveDefaultsIntegrationTest {
         assertThat(classConfig.age()).isEqualTo(3);
         assertThat(classConfig.name()).isEqualTo("a");
 
-        // Save with default behavior (only add missing fields)
+        // Save with default behaviour (only add missing fields)
         provider.save(classConfig).getOrThrow();
 
         // Read the file back
@@ -348,5 +355,57 @@ public class SaveDefaultsIntegrationTest {
                 .contains("is not dynamically initializable")
                 .contains("following required properties lack default values: name, age, children")
                 .contains("Either provide a default config file in your jar's resources");
+    }
+
+    @Test
+    void testFeaturesConfigDefaultValueSerialization() {
+        SerializationFunction<FeaturesConfig> saver =
+                (SerializationFunction<FeaturesConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                        Types.newParameterizedType(SerializationFunction.class, FeaturesConfig.class))));
+
+        DataTree defaultValue =
+                saver.generateDefault(new SerializationContext(injector.getInstance(ObjectMapper.class)));
+
+        assertThat(defaultValue).isNotNull();
+        assertThat(defaultValue).isInstanceOf(DataTree.DataTreeMap.class);
+        DataTree.DataTreeMap map = (DataTree.DataTreeMap) defaultValue;
+
+        DataTree flagsTree = map.get("flags");
+        assertThat(flagsTree).isNotNull();
+        assertThat(flagsTree).isInstanceOf(DataTree.DataTreeMap.class);
+        assertThat(((DataTree.DataTreeMap) flagsTree).values()).isEmpty();
+
+        DataTree flagsWithDefaultsTree = map.get("flagsWithDefaults");
+        assertThat(flagsWithDefaultsTree).isNotNull();
+        assertThat(flagsWithDefaultsTree).isInstanceOf(DataTree.DataTreeMap.class);
+
+        Map<DataTree, DataTree> innerMap = ((DataTree.DataTreeMap) flagsWithDefaultsTree).values();
+        assertThat(innerMap).hasSize(2);
+        assertThat(innerMap.get(DataTree.string("a"))).isEqualTo(DataTree.bool(true));
+        assertThat(innerMap.get(DataTree.string("b"))).isEqualTo(DataTree.bool(false));
+    }
+
+    @Test
+    void testGuiceBindingsForSaveableConfigProvider() {
+        // Assert we can inject SaveableConfigProvider<UnionConfig>
+        var saveableProvider = injector.getInstance(Key.get(new TypeLiteral<SaveableConfigProvider<UnionConfig>>() {}));
+        assertThat(saveableProvider).isNotNull();
+
+        // Assert we can inject SaveableConfigProvider<UnionConfigImpl>
+        var saveableImplProvider =
+                injector.getInstance(Key.get(new TypeLiteral<SaveableConfigProvider<UnionConfigImpl>>() {}));
+        assertThat(saveableImplProvider).isNotNull();
+
+        // Assert we can inject ConfigProvider<UnionConfig>
+        var configProvider = injector.getInstance(Key.get(new TypeLiteral<ConfigProvider<UnionConfig>>() {}));
+        assertThat(configProvider).isNotNull();
+
+        // Assert we can inject ConfigProvider<UnionConfigImpl>
+        var configImplProvider = injector.getInstance(Key.get(new TypeLiteral<ConfigProvider<UnionConfigImpl>>() {}));
+        assertThat(configImplProvider).isNotNull();
+
+        // Assert that the bindings for UnionConfig and UnionConfigImpl exist in Guice
+        assertThat(injector.getProvider(UnionConfig.class)).isNotNull();
+        assertThat(injector.getProvider(UnionConfigImpl.class)).isNotNull();
     }
 }

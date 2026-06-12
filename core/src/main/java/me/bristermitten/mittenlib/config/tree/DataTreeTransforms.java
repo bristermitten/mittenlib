@@ -41,7 +41,6 @@ public class DataTreeTransforms {
         if (node instanceof Boolean) {
             return new DataTree.DataTreeLiteral.DataTreeLiteralBoolean((Boolean) node);
         }
-
         if (node instanceof Map) {
             LinkedHashMap<DataTree, DataTree> map = new LinkedHashMap<>();
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) node).entrySet()) {

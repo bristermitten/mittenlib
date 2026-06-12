@@ -1,16 +1,19 @@
 package me.bristermitten.mittenlib.annotations.parser;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Optional;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -21,6 +24,7 @@ import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.ast.ValidationConstraint;
 import me.bristermitten.mittenlib.annotations.compile.SerializationCodeGenerator;
 import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis;
+import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.validation.Validator;
 
 /** Inspects the AST and sends errors/warnings for invalid setups */
@@ -29,17 +33,20 @@ public class ASTVerifier {
     private final Elements elements;
     private final SerializationCodeGenerator serializationCodeGenerator;
     private final ConfigStructureAnalysis configStructureAnalysis;
+    private final TypesUtil typesUtil;
 
     @Inject
     public ASTVerifier(
             Types types,
             Elements elements,
             SerializationCodeGenerator serializationCodeGenerator,
-            ConfigStructureAnalysis configStructureAnalysis) {
+            ConfigStructureAnalysis configStructureAnalysis,
+            TypesUtil typesUtil) {
         this.types = types;
         this.elements = elements;
         this.serializationCodeGenerator = serializationCodeGenerator;
         this.configStructureAnalysis = configStructureAnalysis;
+        this.typesUtil = typesUtil;
     }
 
     public boolean verify(AbstractConfigStructure structure) {
@@ -131,103 +138,146 @@ public class ASTVerifier {
             boolean isString = isStringType(type);
 
             for (ValidationConstraint constraint : property.settings().constraints()) {
-                switch (constraint) {
-                    case ValidationConstraint.Positive() -> {
-                        if (!isNumeric) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Positive",
-                                    type.toString(),
-                                    "numeric type");
+                if (!verifyConstraint(property, constraint, type, isNumeric, isString)) {
+                    success = false;
+                }
+            }
+
+            if (type instanceof DeclaredType declaredType
+                    && !declaredType.getTypeArguments().isEmpty()) {
+                List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+                if (typesUtil.isCollection(type)) {
+                    TypeMirror elementType = typeArguments.getFirst();
+                    boolean isElementNumeric = isNumericType(elementType);
+                    boolean isElementString = isStringType(elementType);
+                    for (ValidationConstraint constraint : property.settings().elementConstraints()) {
+                        if (!verifyConstraint(property, constraint, elementType, isElementNumeric, isElementString)) {
                             success = false;
                         }
                     }
-                    case ValidationConstraint.Negative() -> {
-                        if (!isNumeric) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Negative",
-                                    type.toString(),
-                                    "numeric type");
+                } else if (typesUtil.isMap(type) && typeArguments.size() >= 2) {
+                    TypeMirror keyType = typeArguments.getFirst();
+                    boolean isKeyNumeric = isNumericType(keyType);
+                    boolean isKeyString = isStringType(keyType);
+                    for (ValidationConstraint constraint : property.settings().keyConstraints()) {
+                        if (!verifyConstraint(property, constraint, keyType, isKeyNumeric, isKeyString)) {
                             success = false;
                         }
                     }
-                    case ValidationConstraint.Min(double val) -> {
-                        if (!isNumeric) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Min",
-                                    type.toString(),
-                                    "numeric type");
+
+                    TypeMirror valType = typeArguments.get(1);
+                    boolean isValNumeric = isNumericType(valType);
+                    boolean isValString = isStringType(valType);
+                    for (ValidationConstraint constraint : property.settings().elementConstraints()) {
+                        if (!verifyConstraint(property, constraint, valType, isValNumeric, isValString)) {
                             success = false;
-                        }
-                    }
-                    case ValidationConstraint.Max(double val) -> {
-                        if (!isNumeric) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Max",
-                                    type.toString(),
-                                    "numeric type");
-                            success = false;
-                        }
-                    }
-                    case ValidationConstraint.Range(double min, double max) -> {
-                        if (!isNumeric) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@Range",
-                                    type.toString(),
-                                    "numeric type");
-                            success = false;
-                        }
-                    }
-                    case ValidationConstraint.NotBlank() -> {
-                        if (!isString) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                    "@NotBlank",
-                                    type.toString(),
-                                    "String or CharSequence");
-                            success = false;
-                        }
-                    }
-                    case ValidationConstraint.Custom(ClassName val) -> {
-                        TypeElement validatorElement = elements.getTypeElement(Validator.class.getName());
-                        TypeElement customElement = elements.getTypeElement(val.canonicalName());
-                        if (customElement == null) {
-                            MessagerUtils.error(
-                                    property.source().element(),
-                                    "Custom validator class " + val.canonicalName() + " not found");
-                            success = false;
-                        } else {
-                            TypeMirror boxedType = type.getKind().isPrimitive()
-                                    ? types.boxedClass((PrimitiveType) type).asType()
-                                    : type;
-                            TypeMirror wildcard = types.getWildcardType(null, boxedType); // <?>
-                            TypeMirror expectedValidatorType =
-                                    types.getDeclaredType(validatorElement, wildcard); // Validator<?>
-                            if (!types.isAssignable(customElement.asType(), expectedValidatorType)) {
-                                MessagerUtils.error(
-                                        property.source().element(),
-                                        ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
-                                        "@ValidateWith(" + val.simpleName() + ".class)",
-                                        type.toString(),
-                                        "Validator compatible with " + type);
-                                success = false;
-                            }
                         }
                     }
                 }
             }
         }
 
+        return success;
+    }
+
+    private boolean verifyConstraint(
+            Property property, ValidationConstraint constraint, TypeMirror type, boolean isNumeric, boolean isString) {
+        boolean success = true;
+        String typeNameStr = TypeName.get(type).toString();
+        switch (constraint) {
+            case ValidationConstraint.Positive() -> {
+                if (!isNumeric) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                            "@Positive",
+                            typeNameStr,
+                            "numeric type");
+                    success = false;
+                }
+            }
+            case ValidationConstraint.Negative() -> {
+                if (!isNumeric) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                            "@Negative",
+                            typeNameStr,
+                            "numeric type");
+                    success = false;
+                }
+            }
+            case ValidationConstraint.Min(double val) -> {
+                if (!isNumeric) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                            "@Min",
+                            typeNameStr,
+                            "numeric type");
+                    success = false;
+                }
+            }
+            case ValidationConstraint.Max(double val) -> {
+                if (!isNumeric) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                            "@Max",
+                            typeNameStr,
+                            "numeric type");
+                    success = false;
+                }
+            }
+            case ValidationConstraint.Range(double min, double max) -> {
+                if (!isNumeric) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                            "@Range",
+                            typeNameStr,
+                            "numeric type");
+                    success = false;
+                }
+            }
+            case ValidationConstraint.NotBlank() -> {
+                if (!isString) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                            "@NotBlank",
+                            typeNameStr,
+                            "String or CharSequence");
+                    success = false;
+                }
+            }
+            case ValidationConstraint.Custom(ClassName val) -> {
+                TypeElement validatorElement = elements.getTypeElement(Validator.class.getName());
+                TypeElement customElement = elements.getTypeElement(val.canonicalName());
+                if (customElement == null) {
+                    MessagerUtils.error(
+                            property.source().element(),
+                            "Custom validator class " + val.canonicalName() + " not found");
+                    success = false;
+                } else {
+                    TypeMirror boxedType = type.getKind().isPrimitive()
+                            ? types.boxedClass((PrimitiveType) type).asType()
+                            : type;
+                    TypeMirror wildcard = types.getWildcardType(null, boxedType); // <?>
+                    TypeMirror expectedValidatorType =
+                            types.getDeclaredType(validatorElement, wildcard); // Validator<?>
+                    if (!types.isAssignable(customElement.asType(), expectedValidatorType)) {
+                        MessagerUtils.error(
+                                property.source().element(),
+                                ConfigVerificationErrors.CONSTRAINT_TYPE_MISMATCH,
+                                "@ValidateWith(" + val.simpleName() + ".class)",
+                                typeNameStr,
+                                "Validator compatible with " + typeNameStr);
+                        success = false;
+                    }
+                }
+            }
+        }
         return success;
     }
 

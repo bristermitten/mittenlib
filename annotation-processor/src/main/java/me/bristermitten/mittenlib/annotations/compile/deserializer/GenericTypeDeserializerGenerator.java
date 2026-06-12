@@ -2,9 +2,9 @@ package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
@@ -12,6 +12,7 @@ import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
@@ -104,13 +105,15 @@ public class GenericTypeDeserializerGenerator {
                 .asError()
                 .check($ -> AptkCoreMatchers.BY_RAW_TYPE
                         .getValidator()
-                        .hasOneOf(elementType.unwrap(), List.class, Map.class))
+                        .hasOneOf(elementType.unwrap(), List.class, Set.class, Map.class))
                 .validateAndIssueMessages();
 
         final String fromMapName = property.name() + "FromMap";
 
         if (canonicalName.equals(List.class.getName())) {
             return handleListType(builder, dtoType, property, wrappedElementType, fromMapName);
+        } else if (canonicalName.equals(Set.class.getName())) {
+            return handleSetType(builder, dtoType, property, wrappedElementType, fromMapName);
         } else if (canonicalName.equals(Map.class.getName())) {
             return handleMapType(builder, dtoType, property, wrappedElementType, fromMapName);
         } else {
@@ -163,6 +166,16 @@ public class GenericTypeDeserializerGenerator {
                         ctxVar,
                         ctxVar,
                         innerFunction);
+            } else if (canonicalName.equals(Set.class.getName())) {
+                TypeMirror elementType = wrapped.getTypeArguments().getFirst();
+                CodeBlock innerFunction = getDeserializationFunction(dtoType, property, elementType, depth + 1);
+                return CodeBlock.of(
+                        "$L -> $T.deserializeSet($L.getData(), $L, $L)",
+                        ctxVar,
+                        CollectionsUtils.class,
+                        ctxVar,
+                        ctxVar,
+                        innerFunction);
             } else if (canonicalName.equals(Map.class.getName())) {
                 var arguments = wrapped.getTypeArguments();
                 TypeMirror keyType = arguments.get(0);
@@ -187,7 +200,7 @@ public class GenericTypeDeserializerGenerator {
                 innerMethod, property, dtoType, type, wrapped, ctxVar + ".getData()", safeType);
 
         if (handled) {
-            CodeBlock code = innerMethod.build().code;
+            CodeBlock code = innerMethod.build().code();
             return CodeBlock.builder()
                     .add("$L -> {\n", ctxVar)
                     .add(code)
@@ -263,6 +276,22 @@ public class GenericTypeDeserializerGenerator {
                 "return $T.deserializeMap($T.class, $L, context, $L);\n",
                 CollectionsUtils.class,
                 typesUtil.getSafeType(keyType),
+                fromMapName,
+                deserializationFunction);
+        return Optional.of(builder.build());
+    }
+
+    private Optional<MethodSpec> handleSetType(
+            MethodSpec.Builder builder,
+            TypeElement dtoType,
+            Property property,
+            TypeMirrorWrapper wrappedElementType,
+            String fromMapName) {
+        var setType = wrappedElementType.getTypeArguments().getFirst();
+        CodeBlock deserializationFunction = getDeserializationFunction(dtoType, property, setType, 0);
+        builder.addCode(
+                "return $T.deserializeSet($L, context, $L);\n",
+                CollectionsUtils.class,
                 fromMapName,
                 deserializationFunction);
         return Optional.of(builder.build());

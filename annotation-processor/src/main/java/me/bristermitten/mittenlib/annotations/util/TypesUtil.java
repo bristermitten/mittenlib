@@ -1,9 +1,9 @@
 package me.bristermitten.mittenlib.annotations.util;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeName;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +11,13 @@ import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache;
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException;
@@ -27,12 +29,14 @@ import org.jspecify.annotations.Nullable;
 /** Helper class for working with {@link TypeMirror}s */
 public class TypesUtil {
     private final Types types;
+    private final Elements elements;
 
     private final GeneratedTypeCache generatedTypeCache;
 
     @Inject
-    TypesUtil(Types types, GeneratedTypeCache generatedTypeCache) {
+    public TypesUtil(Types types, Elements elements, GeneratedTypeCache generatedTypeCache) {
         this.types = types;
+        this.elements = elements;
         this.generatedTypeCache = generatedTypeCache;
     }
 
@@ -167,13 +171,46 @@ public class TypesUtil {
             return Optional.of(ClassName.get(DataTree.DataTreeLiteral.DataTreeLiteralString.class));
         }
         if (type instanceof ParameterizedTypeName p) {
-            if (p.rawType.equals(ClassName.get(Map.class))) {
+            if (p.rawType().equals(ClassName.get(Map.class))) {
                 return Optional.of(ClassName.get(DataTree.DataTreeMap.class));
             }
-            if (p.rawType.equals(ClassName.get(List.class))) {
+            if (p.rawType().equals(ClassName.get(List.class))) {
                 return Optional.of(ClassName.get(DataTree.DataTreeArray.class));
             }
         }
         return Optional.empty();
+    }
+
+    public boolean isList(TypeMirror type) {
+        return isSubtypeOf(type, "java.util.List");
+    }
+
+    public boolean isSet(TypeMirror type) {
+        return isSubtypeOf(type, "java.util.Set");
+    }
+
+    public boolean isMap(TypeMirror type) {
+        return isSubtypeOf(type, "java.util.Map");
+    }
+
+    public boolean isCollection(TypeMirror type) {
+        return isSubtypeOf(type, "java.util.Collection");
+    }
+
+    private boolean isSubtypeOf(TypeMirror type, String qualifiedName) {
+        if (!(type instanceof DeclaredType declaredType)) {
+            return false;
+        }
+        Element element = declaredType.asElement();
+        if (!(element instanceof TypeElement)) {
+            return false;
+        }
+        TypeElement targetElement = elements.getTypeElement(qualifiedName);
+        if (targetElement == null) {
+            return false;
+        }
+        TypeMirror targetErasure = types.erasure(targetElement.asType());
+        TypeMirror typeErasure = types.erasure(type);
+        return types.isAssignable(typeErasure, targetErasure);
     }
 }

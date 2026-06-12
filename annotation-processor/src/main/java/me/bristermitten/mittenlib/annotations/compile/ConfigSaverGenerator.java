@@ -1,13 +1,27 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.FieldSpec;
+import com.palantir.javapoet.JavaFile;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeName;
+import com.palantir.javapoet.TypeSpec;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -20,7 +34,6 @@ import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
-import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
 import me.bristermitten.mittenlib.util.Strings;
 
 public class ConfigSaverGenerator {
@@ -60,7 +73,9 @@ public class ConfigSaverGenerator {
         ClassName saverClassName = classNameGenerator.getSerializerClassName(ast);
         TypeSpec.Builder builder = createSaverBuilder(ast);
 
-        return JavaFile.builder(saverClassName.packageName(), builder.build()).build();
+        return JavaFile.builder(saverClassName.packageName(), builder.build())
+                .skipJavaLangImports(true)
+                .build();
     }
 
     /**
@@ -75,6 +90,9 @@ public class ConfigSaverGenerator {
         ClassName saverClassName = classNameGenerator.getSerializerClassName(ast);
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(saverClassName)
+                .addJavadoc("""
+                                Serializer implementation for {@link $T}.
+                                """, publicClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(
                         ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicClassName));
@@ -87,8 +105,10 @@ public class ConfigSaverGenerator {
                         "date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT))
                 .build());
 
-        MethodSpec.Builder constructorBuilder =
-                MethodSpec.constructorBuilder().addAnnotation(Inject.class).addModifiers(Modifier.PUBLIC);
+        MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+                .addJavadoc("Constructs a new serializer instance.\n")
+                .addAnnotation(Inject.class)
+                .addModifiers(Modifier.PUBLIC);
 
         // Add child savers as dependencies recursively
         for (Property property : ast.properties()) {
@@ -115,6 +135,13 @@ public class ConfigSaverGenerator {
 
         // Implement apply method
         MethodSpec.Builder applyMethod = MethodSpec.methodBuilder("apply")
+                .addJavadoc("""
+                                Serializes the configuration instance into a {@link $T}.
+
+                                @param config the configuration instance to serialize
+                                @param context the serialization context
+                                @return the serialized DataTree representation
+                                """, DataTree.class)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(DataTree.class)
@@ -172,12 +199,19 @@ public class ConfigSaverGenerator {
      * }
      * }</pre>
      *
-     * @param ast the configuration structure, used to determine the properties to include in the
-     *     default tree
+     * @param ast     the configuration structure, used to determine the properties to include in the
+     *                default tree
      * @param builder the saver class builder
      */
     private void addGenerateDefaultMethod(AbstractConfigStructure ast, TypeSpec.Builder builder) {
         MethodSpec.Builder method = MethodSpec.methodBuilder("generateDefault")
+                .addJavadoc("""
+                                Generates a default {@link $T} representation of the configuration,
+                                populating default values using method defaults.
+
+                                @param context the serialization context
+                                @return the default DataTree representation
+                                """, DataTree.class)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(DataTree.class)
@@ -193,21 +227,17 @@ public class ConfigSaverGenerator {
             String key = fieldNameGenerator.getConfigFieldName(property);
             if (property.settings().hasDefaultValue()) {
                 TypeMirror propertyType = property.propertyType();
-                if (typesUtil.isConfigType(propertyType)
-                        || TypeMirrorWrapper.wrap(propertyType).hasTypeArguments()) {
-                    // For nested configs or generic collections with defaults, use the mapper
-                    CodeBlock propertyAccess =
-                            GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
+                CodeBlock propertyAccess = GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
+                if (hasConfigType(propertyType)) {
                     method.addStatement(
-                            "map.put($T.string($S), $T.loadFrom(context.getMapper().map($L)))",
+                            "map.put($T.string($S), context.getMapper().map($L, new $T<$T>() {}).getOrThrow())",
                             DataTree.class,
                             key,
-                            DataTreeTransforms.class,
-                            propertyAccess);
+                            propertyAccess,
+                            TypeToken.class,
+                            DataTree.class);
                 } else {
                     String serializeMethodName = methodNames.getSerializeMethodName(property);
-                    CodeBlock propertyAccess =
-                            GeneratorUtil.getPropertyAccess(ast, property, "dao", methodNames, false);
                     method.addStatement(
                             "map.put($T.string($S), this.$L($L, context))",
                             DataTree.class,
@@ -266,9 +296,9 @@ public class ConfigSaverGenerator {
      * }
      * }</pre>
      *
-     * @param builder the saver class builder
+     * @param builder            the saver class builder
      * @param constructorBuilder the constructor builder
-     * @param type the type of the configuration whose saver is needed (e.g. {@code OtherConfig})
+     * @param type               the type of the configuration whose saver is needed (e.g. {@code OtherConfig})
      */
     private void addSaverDependency(TypeSpec.Builder builder, MethodSpec.Builder constructorBuilder, TypeMirror type) {
         AbstractConfigStructure ast = configNameCache.lookupAST(type).orElse(null);
@@ -277,7 +307,7 @@ public class ConfigSaverGenerator {
         ClassName publicChildClassName = classNameGenerator.getPublicClassName(ast);
         String fieldName = classNameGenerator.getSerializerProviderFieldName(type);
 
-        if (builder.fieldSpecs.stream().anyMatch(f -> f.name.equals(fieldName))) {
+        if (builder.build().fieldSpecs().stream().anyMatch(f -> f.name().equals(fieldName))) {
             return;
         }
 
@@ -304,9 +334,9 @@ public class ConfigSaverGenerator {
      * <p>For a {@code List<OtherConfig>}, it will find and add a dependency for {@code
      * OtherConfigSaver}.
      *
-     * @param type the property type (or component/argument type) to inspect (e.g. {@code
-     *     List<OtherConfig>})
-     * @param builder the TypeSpec builder of the saver class
+     * @param type               the property type (or component/argument type) to inspect (e.g. {@code
+     *                           List<OtherConfig>})
+     * @param builder            the TypeSpec builder of the saver class
      * @param constructorBuilder the constructor builder of the saver class
      */
     private void collectSaverDependencies(
@@ -339,11 +369,11 @@ public class ConfigSaverGenerator {
      * }
      * }</pre>
      *
-     * @param type the property type (or component/argument type) to inspect (e.g. {@code Map<String,
-     *     CustomType>})
-     * @param injectedTypes the set of already registered injected Types to add to
+     * @param type               the property type (or component/argument type) to inspect (e.g. {@code Map<String,
+     *                           CustomType>})
+     * @param injectedTypes      the set of already registered injected Types to add to
      * @param injectedFieldNames the mapping of injected types to their corresponding field names
-     *     (e.g. {@code myCustomSerializerProvider})
+     *                           (e.g. {@code myCustomSerializerProvider})
      */
     private void collectCustomSerializers(
             TypeMirror type, Set<TypeName> injectedTypes, Map<TypeName, String> injectedFieldNames) {
@@ -366,5 +396,20 @@ public class ConfigSaverGenerator {
                 collectCustomSerializers(arg, injectedTypes, injectedFieldNames);
             }
         }
+    }
+
+    private boolean hasConfigType(TypeMirror type) {
+        if (typesUtil.isConfigType(type)) {
+            return true;
+        }
+        TypeMirrorWrapper wrapped = TypeMirrorWrapper.wrap(type);
+        if (wrapped.hasTypeArguments()) {
+            for (TypeMirror arg : wrapped.getTypeArguments()) {
+                if (hasConfigType(arg)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

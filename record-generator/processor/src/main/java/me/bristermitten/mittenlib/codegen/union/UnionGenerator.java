@@ -1,8 +1,18 @@
 package me.bristermitten.mittenlib.codegen.union;
 
-import static javax.lang.model.element.Modifier.*;
+import static javax.lang.model.element.Modifier.ABSTRACT;
+import static javax.lang.model.element.Modifier.FINAL;
+import static javax.lang.model.element.Modifier.PRIVATE;
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.Modifier.STATIC;
 
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.JavaFile;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeSpec;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,13 +28,13 @@ public class UnionGenerator {
     private static void addSealingConstructor(TypeSpec.Builder typeSpecBuilder) {
         typeSpecBuilder.addMethod(MethodSpec.constructorBuilder()
                 .addModifiers(PRIVATE)
-                .addCode(typeSpecBuilder.typeSpecs.stream()
-                        .map(m -> CodeBlock.of("this instanceof $L", m.name))
+                .addCode(typeSpecBuilder.build().typeSpecs().stream()
+                        .map(m -> CodeBlock.of("this instanceof $L", m.name()))
                         .collect(CodeBlock.joining(" || ", "if (!(", """
-                                                )) {
-                                                    throw new UnsupportedOperationException("Union type is sealed!: " + this.getClass().getName());
-                                                }
-                                                                """)))
+                                )) {
+                                    throw new UnsupportedOperationException("Union type is sealed!: " + this.getClass().getName());
+                                }
+                                """)))
                 .build());
     }
 
@@ -69,8 +79,8 @@ public class UnionGenerator {
 
         var resolved = resolve(unionSpec);
 
-        typeSpecBuilder.addMethod(MatchGenerator.makeVoidMatchMethodSpec(resolved));
-        typeSpecBuilder.addMethod(MatchGenerator.makeMatchMethodSpec(resolved));
+        typeSpecBuilder.addMethod(MatchGenerator.makeVoidMatchMethodSpec(resolved, true));
+        typeSpecBuilder.addMethod(MatchGenerator.makeMatchMethodSpec(resolved, true));
 
         for (var toGenerate : resolved.constructors()) {
             var generatedRecord = RecordGenerator.generateBasicRecordTypeSpec(toGenerate, false);

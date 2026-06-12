@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.MethodSpec;
 import java.util.List;
 import java.util.Objects;
 import javax.lang.model.element.Modifier;
