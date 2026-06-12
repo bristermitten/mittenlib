@@ -76,7 +76,11 @@ public class CachingConfigProvider<T>
     @Override
     public Result<DataTree> save(T instance, boolean overrideExisting) {
         if (delegate instanceof SaveableConfigProvider) {
-            return ((SaveableConfigProvider<T>) delegate).save(instance, overrideExisting);
+            Result<DataTree> result = ((SaveableConfigProvider<T>) delegate).save(instance, overrideExisting);
+            if (result.isSuccess()) {
+                clearCache();
+            }
+            return result;
         }
         return Result.fail(new UnsupportedOperationException(
                 "Wrapped provider " + delegate.getClass().getName() + " is not saveable"));
