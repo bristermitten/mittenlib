@@ -16,11 +16,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.CustomSerializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
+import me.bristermitten.mittenlib.annotations.util.NewtypeUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.SerializationContext;
@@ -121,6 +124,14 @@ public class SerializationCodeGenerator {
         // Config types are always serializable
         if (typesUtil.isConfigType(propertyTypeMirror)) {
             return false;
+        }
+
+        // Newtypes are serializable if their underlying type is serializable
+        if (typesUtil.isNewtype(propertyTypeMirror)) {
+            TypeElement typeElement = (TypeElement) ((DeclaredType) propertyTypeMirror).asElement();
+            TypeMirror underlyingType = NewtypeUtil.getUnderlyingType(typeElement);
+            return propertyIsUnserializable(
+                    new Property(property.name(), underlyingType, property.source(), property.settings()));
         }
 
         if (isKnownSerializableType(wrappedType)) {
@@ -325,6 +336,17 @@ public class SerializationCodeGenerator {
                         publicTypeName,
                         inputVar);
             }
+            return;
+        }
+
+        // Newtype
+        if (typesUtil.isNewtype(type)) {
+            TypeElement typeElement = (TypeElement) ((DeclaredType) type).asElement();
+            TypeMirror underlyingType = NewtypeUtil.getUnderlyingType(typeElement);
+            String accessor = NewtypeUtil.getAccessorName(typeElement);
+            String unwrappedVar = inputVar + "_" + depth + "_unwrapped";
+            builder.addStatement("$T $L = $L.$L", underlyingType, unwrappedVar, inputVar, accessor);
+            generateSerialization(underlyingType, unwrappedVar, targetExpression, depth + 1, builder);
             return;
         }
 

@@ -609,4 +609,49 @@ public class IntegrationTest {
                 .isInstanceOf(ConfigValidationException.class)
                 .hasMessageContaining("Property 'scores[null]' (invalid value: null): Key must not be null");
     }
+
+    @Test
+    void testNewtypeConfig() throws IOException {
+        var fileContents = "recordKey: \"hello\"\ninterfaceKey: 42\n";
+
+        var stringReaderProvider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, NewtypeConfig.class, NewtypeConfig.class),
+                        (DeserializationFunction<NewtypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(DeserializationFunction.class, NewtypeConfig.class)))),
+                        (SerializationFunction<NewtypeConfig>) injector.getInstance(Key.get(TypeLiteral.get(
+                                Types.newParameterizedType(SerializationFunction.class, NewtypeConfig.class)))))
+                .getOrThrow();
+
+        NewtypeConfig config = stringReaderProvider.get();
+
+        assertThat(config).isNotNull();
+        assertThat(config.recordKey()).isNotNull();
+        assertThat(config.recordKey().id()).isEqualTo("hello");
+        assertThat(config.interfaceKey()).isNotNull();
+        assertThat(config.interfaceKey().value()).isEqualTo(42);
+
+        // Test Serialization
+        var serializer = injector.getInstance(
+                Key.get(TypeLiteral.get(Types.newParameterizedType(SerializationFunction.class, NewtypeConfig.class))));
+        var dataTree = ((SerializationFunction<NewtypeConfig>) serializer)
+                .apply(
+                        config,
+                        new me.bristermitten.mittenlib.config.SerializationContext(
+                                injector.getInstance(me.bristermitten.mittenlib.config.reader.ObjectMapper.class)));
+        assertThat(dataTree).isNotNull();
+        assertThat(dataTree).isInstanceOf(me.bristermitten.mittenlib.config.tree.DataTree.DataTreeMap.class);
+
+        var map = (me.bristermitten.mittenlib.config.tree.DataTree.DataTreeMap) dataTree;
+        assertThat(map.get("recordKey"))
+                .isInstanceOf(
+                        me.bristermitten.mittenlib.config.tree.DataTree.DataTreeLiteral.DataTreeLiteralString.class);
+        assertThat(map.get("recordKey").value()).isEqualTo("hello");
+
+        assertThat(map.get("interfaceKey"))
+                .isInstanceOf(me.bristermitten.mittenlib.config.tree.DataTree.DataTreeLiteral.DataTreeLiteralInt.class);
+        assertThat(map.get("interfaceKey").value()).isEqualTo(42L);
+    }
 }

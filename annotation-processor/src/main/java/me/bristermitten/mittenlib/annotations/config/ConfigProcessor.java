@@ -5,22 +5,38 @@ import com.google.inject.Guice;
 import com.palantir.javapoet.JavaFile;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
-import java.util.*;
+import io.toolisticon.aptk.tools.MessagerUtils;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.ElementFilter;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
-import me.bristermitten.mittenlib.annotations.compile.*;
+import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderModuleGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule;
+import me.bristermitten.mittenlib.annotations.compile.ConfigSaverGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigValidatorGenerator;
+import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
+import me.bristermitten.mittenlib.annotations.compile.NewtypeImplGenerator;
 import me.bristermitten.mittenlib.annotations.exception.ConfigProcessingException;
 import me.bristermitten.mittenlib.annotations.parser.ASTVerifier;
 import me.bristermitten.mittenlib.annotations.parser.ConfigClassParser;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers;
 import me.bristermitten.mittenlib.config.Config;
+import me.bristermitten.mittenlib.config.Newtype;
 import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
 import me.bristermitten.mittenlib.config.extension.CustomSerializerFor;
 
@@ -31,7 +47,7 @@ import me.bristermitten.mittenlib.config.extension.CustomSerializerFor;
  * hashCode, and toString methods. The processor only processes top-level classes (not nested
  * classes).
  */
-@SupportedAnnotationTypes("me.bristermitten.mittenlib.config.Config")
+@SupportedAnnotationTypes({"me.bristermitten.mittenlib.config.Config", "me.bristermitten.mittenlib.config.Newtype"})
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 public class ConfigProcessor extends AbstractAnnotationProcessor {
@@ -58,13 +74,59 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         ToolingProvider.setTooling(processingEnv);
         var injector = Guice.createInjector(new ConfigProcessorModule(processingEnv));
 
-        final List<TypeElement> types = annotations.stream()
-                .map(roundEnv::getElementsAnnotatedWith)
-                .flatMap(Collection::stream)
+        final List<TypeElement> types = roundEnv.getElementsAnnotatedWith(Config.class).stream()
                 .filter(TypeElement.class::isInstance)
                 .map(TypeElement.class::cast)
                 .filter(element -> element.getNestingKind() == NestingKind.TOP_LEVEL)
                 .toList();
+
+        final List<TypeElement> newtypes = roundEnv.getElementsAnnotatedWith(Newtype.class).stream()
+                .filter(TypeElement.class::isInstance)
+                .map(TypeElement.class::cast)
+                .toList();
+
+        boolean anyErrors = false;
+
+        var newtypeGenerator = new NewtypeImplGenerator();
+        for (TypeElement newtype : newtypes) {
+            if (newtype.getKind() != ElementKind.RECORD && newtype.getKind() != ElementKind.INTERFACE) {
+                MessagerUtils.error(
+                        newtype,
+                        "Newtype annotation only supports records and interfaces: " + newtype.getQualifiedName());
+                anyErrors = true;
+                continue;
+            }
+
+            if (newtype.getKind() == ElementKind.RECORD) {
+                if (newtype.getRecordComponents().size() != 1) {
+                    MessagerUtils.error(
+                            newtype,
+                            "Newtype record " + newtype.getQualifiedName() + " must have exactly one component");
+                    anyErrors = true;
+                }
+            } else if (newtype.getKind() == ElementKind.INTERFACE) {
+                List<ExecutableElement> methods = ElementFilter.methodsIn(newtype.getEnclosedElements()).stream()
+                        .filter(m -> !m.isDefault() && !m.getModifiers().contains(Modifier.STATIC))
+                        .toList();
+                if (methods.size() != 1) {
+                    MessagerUtils.error(
+                            newtype,
+                            "Newtype interface " + newtype.getQualifiedName()
+                                    + " must have exactly one abstract method");
+                    anyErrors = true;
+                    continue;
+                }
+
+                if (!anyErrors) {
+                    JavaFile emit = newtypeGenerator.emit(newtype);
+                    try {
+                        emit.writeTo(processingEnv.getFiler());
+                    } catch (Exception e) {
+                        throw new ConfigProcessingException("Could not create newtype impl file", e);
+                    }
+                }
+            }
+        }
 
         CustomDeserializers customDeserializers = injector.getInstance(CustomDeserializers.class);
         roundEnv.getElementsAnnotatedWith(CustomDeserializerFor.class).stream()
@@ -84,7 +146,6 @@ public class ConfigProcessor extends AbstractAnnotationProcessor {
         }
 
         ASTVerifier verifier = injector.getInstance(ASTVerifier.class);
-        boolean anyErrors = false;
         for (AbstractConfigStructure ast : asts) {
             if (!verifier.verify(ast)) {
                 anyErrors = true;

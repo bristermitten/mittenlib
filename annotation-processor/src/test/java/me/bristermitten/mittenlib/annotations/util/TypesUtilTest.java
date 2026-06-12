@@ -50,9 +50,7 @@ class TypesUtilTest {
         }
 
         @Config
-        static class InnerClass {
-            int innerField;
-        }
+        static class InnerClass {}
     }
 
     static class NonConfigClass {}

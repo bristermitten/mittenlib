@@ -153,6 +153,16 @@ public class TypesUtil {
                 && getAnnotation(declaredType.asElement(), Config.class) != null;
     }
 
+    /**
+     * Checks if a type is a newtype (annotated with @Newtype).
+     *
+     * @param mirror The type to check
+     * @return true if the type is a newtype, false otherwise
+     */
+    public boolean isNewtype(TypeMirror mirror) {
+        return mirror instanceof DeclaredType declaredType && NewtypeUtil.isNewtype(declaredType.asElement());
+    }
+
     public Optional<TypeName> getDataTreeType(TypeName type) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
         if (type.equals(TypeName.INT)

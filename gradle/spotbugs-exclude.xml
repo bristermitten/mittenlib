@@ -61,7 +61,7 @@
 
     <!-- Exclude test classes and generated test classes from static analysis -->
     <Match>
-        <Class name="~.*Test" />
+        <Class name="~.*Test(\$.*)?" />
     </Match>
     <Match>
         <Package name="~me\.bristermitten\.mittenlib\.annotations\.integration(\..*)?" />

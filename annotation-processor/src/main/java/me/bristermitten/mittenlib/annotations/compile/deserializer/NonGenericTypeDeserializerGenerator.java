@@ -9,11 +9,13 @@ import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import java.util.Optional;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo;
 import me.bristermitten.mittenlib.annotations.ast.Property;
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator;
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
+import me.bristermitten.mittenlib.annotations.util.NewtypeUtil;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors;
 import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor;
@@ -154,6 +156,9 @@ public class NonGenericTypeDeserializerGenerator {
             handleEnumType(builder, property, fromMapName, safeType);
         } else if (typesUtil.isConfigType(elementType)) {
             handleConfigType(builder, elementType, fromMapName);
+        } else if (typesUtil.isNewtype(elementType)) {
+            handleNewtype(builder, elementType, fromMapName);
+            return true;
         }
 
         if (customDeserializerOptional.isPresent()) {
@@ -277,6 +282,20 @@ public class NonGenericTypeDeserializerGenerator {
         builder.addStatement("$1T mapData = ($1T) $2L", DataTree.DataTreeMap.class, fromMapName);
         builder.addStatement("return this.$L.get().apply(context.withData(mapData))", loaderFieldName);
         builder.endControlFlow();
+    }
+
+    private void handleNewtype(MethodSpec.Builder builder, TypeMirror elementType, String fromMapName) {
+        TypeElement element = (TypeElement) ((DeclaredType) elementType).asElement();
+        TypeMirror underlying = NewtypeUtil.getUnderlyingType(element);
+        TypeMirror boxedUnderlying = typesUtil.getBoxedType(underlying);
+        ClassName implClass = NewtypeUtil.getImplClassName(element);
+
+        builder.addStatement(
+                "return context.getMapper().map($L, new $T<$T>(){}).map(val -> new $T(val))",
+                fromMapName,
+                TypeToken.class,
+                boxedUnderlying,
+                implClass);
     }
 
     /**
