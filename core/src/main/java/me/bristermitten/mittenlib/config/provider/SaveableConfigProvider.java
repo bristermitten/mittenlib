@@ -5,8 +5,11 @@ import me.bristermitten.mittenlib.util.Result;
 
 /**
  * A {@link ConfigProvider} that supports saving to the same source it reads from.
- * This interface should <i>only</i> be implemented if there is a meaningful notion of "saving"
- * for the source.
+ * This interface may be implemented directly by providers that support saving,
+ * or by wrappers that delegate to a saveable provider.
+ * <p>
+ * If the underlying source does not support saving, the {@link #save} method
+ * should return a failed {@link Result} containing a {@link UnsupportedOperationException}.
  */
 public interface SaveableConfigProvider<T> extends ConfigProvider<T> {
 

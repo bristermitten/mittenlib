@@ -2,7 +2,9 @@ package me.bristermitten.mittenlib.config.provider;
 
 import java.nio.file.Path;
 import java.util.Optional;
+import me.bristermitten.mittenlib.config.tree.DataTree;
 import me.bristermitten.mittenlib.util.Cached;
+import me.bristermitten.mittenlib.util.Result;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> The type of the config
  */
-public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConfigProvider<T> {
+public class CachingConfigProvider<T>
+        implements ConfigProvider<T>, WrappingConfigProvider<T>, SaveableConfigProvider<T> {
     private final ConfigProvider<T> delegate;
     private final Cached<T> cached;
 
@@ -68,5 +71,14 @@ public class CachingConfigProvider<T> implements ConfigProvider<T>, WrappingConf
                 return delegate.get();
             }
         };
+    }
+
+    @Override
+    public Result<DataTree> save(T instance, boolean overrideExisting) {
+        if (delegate instanceof SaveableConfigProvider) {
+            return ((SaveableConfigProvider<T>) delegate).save(instance, overrideExisting);
+        }
+        return Result.fail(new UnsupportedOperationException(
+                "Wrapped provider " + delegate.getClass().getName() + " is not saveable"));
     }
 }

@@ -24,7 +24,9 @@ import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.SerializationContext;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
+import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.FileBasedConfigProvider;
+import me.bristermitten.mittenlib.config.provider.SaveableConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.reader.ConfigReader;
 import me.bristermitten.mittenlib.config.reader.ObjectMapper;
@@ -381,5 +383,29 @@ public class SaveDefaultsIntegrationTest {
         assertThat(innerMap).hasSize(2);
         assertThat(innerMap.get(DataTree.string("a"))).isEqualTo(DataTree.bool(true));
         assertThat(innerMap.get(DataTree.string("b"))).isEqualTo(DataTree.bool(false));
+    }
+
+    @Test
+    void testGuiceBindingsForSaveableConfigProvider() {
+        // Assert we can inject SaveableConfigProvider<UnionConfig>
+        var saveableProvider = injector.getInstance(Key.get(new TypeLiteral<SaveableConfigProvider<UnionConfig>>() {}));
+        assertThat(saveableProvider).isNotNull();
+
+        // Assert we can inject SaveableConfigProvider<UnionConfigImpl>
+        var saveableImplProvider =
+                injector.getInstance(Key.get(new TypeLiteral<SaveableConfigProvider<UnionConfigImpl>>() {}));
+        assertThat(saveableImplProvider).isNotNull();
+
+        // Assert we can inject ConfigProvider<UnionConfig>
+        var configProvider = injector.getInstance(Key.get(new TypeLiteral<ConfigProvider<UnionConfig>>() {}));
+        assertThat(configProvider).isNotNull();
+
+        // Assert we can inject ConfigProvider<UnionConfigImpl>
+        var configImplProvider = injector.getInstance(Key.get(new TypeLiteral<ConfigProvider<UnionConfigImpl>>() {}));
+        assertThat(configImplProvider).isNotNull();
+
+        // Assert that the bindings for UnionConfig and UnionConfigImpl exist in Guice
+        assertThat(injector.getProvider(UnionConfig.class)).isNotNull();
+        assertThat(injector.getProvider(UnionConfigImpl.class)).isNotNull();
     }
 }
