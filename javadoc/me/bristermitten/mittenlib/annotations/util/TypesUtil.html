@@ -69,6 +69,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#isNullable(javax.lang.model.type.TypeMirror)" tabindex="0">isNullable(TypeMirror)</a></li>
 <li><a href="#getAnnotation(javax.lang.model.element.Element,java.lang.Class)" tabindex="0">getAnnotation(Element, Class)</a></li>
 <li><a href="#isConfigType(javax.lang.model.type.TypeMirror)" tabindex="0">isConfigType(TypeMirror)</a></li>
+<li><a href="#isNewtype(javax.lang.model.type.TypeMirror)" tabindex="0">isNewtype(TypeMirror)</a></li>
 <li><a href="#getDataTreeType(com.palantir.javapoet.TypeName)" tabindex="0">getDataTreeType(TypeName)</a></li>
 <li><a href="#isList(javax.lang.model.type.TypeMirror)" tabindex="0">isList(TypeMirror)</a></li>
 <li><a href="#isSet(javax.lang.model.type.TypeMirror)" tabindex="0">isSet(TypeMirror)</a></li>
@@ -164,17 +165,22 @@ primitives, the erasure for parameterized types, otherwise simply the type itsel
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isMap(javax.lang.model.type.TypeMirror)" class="member-name-link">isMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.Element)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNewtype(javax.lang.model.type.TypeMirror)" class="member-name-link">isNewtype</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Checks if a type is a newtype (annotated with @Newtype).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.Element)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Return if a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>VariableElement</code></a> should be considered nullable or not Everything is
 considered non-nullable unless it is specifically annotated as nullable.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.type.TypeMirror)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isSet(javax.lang.model.type.TypeMirror)" class="member-name-link">isSet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.type.TypeMirror)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isSet(javax.lang.model.type.TypeMirror)" class="member-name-link">isSet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -295,6 +301,21 @@ in <a href="../../config/generate/CascadeToInnerClasses.html" title="annotation 
 <dd><code>mirror</code> - The type to check</dd>
 <dt>Returns:</dt>
 <dd>true if the type is a config type, false otherwise</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isNewtype(javax.lang.model.type.TypeMirror)">
+<h3>isNewtype</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isNewtype</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
+<div class="block">Checks if a type is a newtype (annotated with @Newtype).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>mirror</code> - The type to check</dd>
+<dt>Returns:</dt>
+<dd>true if the type is a newtype, false otherwise</dd>
 </dl>
 </div>
 </section>
