@@ -63,7 +63,7 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#generateEquals(com.squareup.javapoet.ClassName,java.util.List)" tabindex="0">generateEquals(ClassName, List)</a></li>
+<li><a href="#generateEquals(com.palantir.javapoet.ClassName,java.util.List)" tabindex="0">generateEquals(ClassName, List)</a></li>
 <li><a href="#generateHashCode(java.util.List)" tabindex="0">generateHashCode(List)</a></li>
 </ol>
 </li>
@@ -113,13 +113,13 @@ consistent hash codes.</div>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.MethodSpec</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generateEquals(com.squareup.javapoet.ClassName,java.util.List)" class="member-name-link">generateEquals</a><wbr>(com.squareup.javapoet.ClassName&nbsp;configClassName,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.MethodSpec</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generateEquals(com.palantir.javapoet.ClassName,java.util.List)" class="member-name-link">generateEquals</a><wbr>(com.palantir.javapoet.ClassName&nbsp;configClassName,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Generates an equals method for a configuration class.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.MethodSpec</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.MethodSpec</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generateHashCode(java.util.List)" class="member-name-link">generateHashCode</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Generates a hashCode method for a configuration class.</div>
@@ -159,10 +159,10 @@ consistent hash codes.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="generateEquals(com.squareup.javapoet.ClassName,java.util.List)">
+<section class="detail" id="generateEquals(com.palantir.javapoet.ClassName,java.util.List)">
 <h3>generateEquals</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">generateEquals</span><wbr><span class="parameters">(com.squareup.javapoet.ClassName&nbsp;configClassName,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.MethodSpec</span>&nbsp;<span class="element-name">generateEquals</span><wbr><span class="parameters">(com.palantir.javapoet.ClassName&nbsp;configClassName,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties)</span></div>
 <div class="block">Generates an equals method for a configuration class. The generated method follows the standard
 equals contract: - It's reflexive: an object is equal to itself - It handles null and different
@@ -181,7 +181,7 @@ class types - It compares all properties for equality using Objects.equals</div>
 <section class="detail" id="generateHashCode(java.util.List)">
 <h3>generateHashCode</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">generateHashCode</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.MethodSpec</span>&nbsp;<span class="element-name">generateHashCode</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&gt;&nbsp;properties)</span></div>
 <div class="block">Generates a hashCode method for a configuration class. The generated method uses Objects.hash
 to create a hash code based on all properties, ensuring that objects that are equal according
 to equals() will have the same hash code.</div>

@@ -58,7 +58,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#deserializeList(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" tabindex="0">deserializeList(Object, DeserializationContext, DeserializationFunction)</a></li>
+<li><a href="#deserializeSet(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" tabindex="0">deserializeSet(Object, DeserializationContext, DeserializationFunction)</a></li>
 <li><a href="#deserializeMap(java.lang.Class,java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" tabindex="0">deserializeMap(Class, Object, DeserializationContext, DeserializationFunction)</a></li>
+<li><a href="#serializeList(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)" tabindex="0">serializeList(Collection, SerializationContext, BiFunction)</a></li>
+<li><a href="#serializeSet(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)" tabindex="0">serializeSet(Collection, SerializationContext, BiFunction)</a></li>
+<li><a href="#serializeMap(java.util.Map,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)" tabindex="0">serializeMap(Map, SerializationContext, BiFunction)</a></li>
 </ol>
 </li>
 </ol>
@@ -108,6 +112,34 @@ generated config classes.</div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Attempt to deserialize a map using the MittenLib config system.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;T&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deserializeSet(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)" class="member-name-link">deserializeSet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;rawData,
+ <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a>&nbsp;baseContext,
+ <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializationFunction)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Attempt to deserialize a set using the MittenLib config system.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serializeList(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)" class="member-name-link">serializeList</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;collection,
+ <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>&nbsp;context,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;T, <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>, <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;&nbsp;elementSerializer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Serialize a list using the MittenLib config system.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;K,<wbr>V&gt;&nbsp;<a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serializeMap(java.util.Map,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)" class="member-name-link">serializeMap</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends K, ? extends V&gt;&nbsp;map,
+ <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>&nbsp;context,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;V, <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>, <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;&nbsp;valueSerializer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Serialize a map using the MittenLib config system.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serializeSet(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)" class="member-name-link">serializeSet</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;collection,
+ <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>&nbsp;context,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;T, <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>, <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;&nbsp;elementSerializer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Serialize a set using the MittenLib config system.</div>
+</div>
 </div>
 </div>
 </div>
@@ -149,6 +181,28 @@ if deserialization failed</dd>
 </section>
 </li>
 <li>
+<section class="detail" id="deserializeSet(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)">
+<h3>deserializeSet</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">deserializeSet</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;rawData,
+ <a href="DeserializationContext.html" title="class in me.bristermitten.mittenlib.config">DeserializationContext</a>&nbsp;baseContext,
+ <a href="DeserializationFunction.html" title="interface in me.bristermitten.mittenlib.config">DeserializationFunction</a>&lt;T&gt;&nbsp;deserializationFunction)</span></div>
+<div class="block">Attempt to deserialize a set using the MittenLib config system.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="deserializeSet(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)-type-param-T"><code>T</code> - the type to deserialize to</span></dd>
+<dt>Parameters:</dt>
+<dd><code>rawData</code> - the raw data to deserialize</dd>
+<dd><code>baseContext</code> - the base context to use for deserialization</dd>
+<dd><code>deserializationFunction</code> - the function to use for turning a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a> into an <a href="#deserializeSet(java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)-type-param-T"><code>T</code></a></dd>
+<dt>Returns:</dt>
+<dd>a <a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> containing the deserialized set, or a <a href="../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a>
+if deserialization failed</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="deserializeMap(java.lang.Class,java.lang.Object,me.bristermitten.mittenlib.config.DeserializationContext,me.bristermitten.mittenlib.config.DeserializationFunction)">
 <h3>deserializeMap</h3>
 <div class="horizontal-scroll">
@@ -170,6 +224,70 @@ if deserialization failed</dd>
 <dt>Returns:</dt>
 <dd>a <a href="../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> containing the deserialized map, or a <a href="../util/Result.html#fail(E)"><code>Result.fail(Exception)</code></a>
 if deserialization failed</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="serializeList(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)">
+<h3>serializeList</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></span>&nbsp;<span class="element-name">serializeList</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;collection,
+ <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>&nbsp;context,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;T, <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>, <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;&nbsp;elementSerializer)</span></div>
+<div class="block">Serialize a list using the MittenLib config system.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="serializeList(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)-type-param-T"><code>T</code> - the element type</span></dd>
+<dt>Parameters:</dt>
+<dd><code>collection</code> - the collection to serialize</dd>
+<dd><code>context</code> - the serialization context</dd>
+<dd><code>elementSerializer</code> - the function to serialize each element</dd>
+<dt>Returns:</dt>
+<dd>a <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> array representation of the list</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="serializeSet(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)">
+<h3>serializeSet</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></span>&nbsp;<span class="element-name">serializeSet</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends T&gt;&nbsp;collection,
+ <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>&nbsp;context,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;T, <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>, <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;&nbsp;elementSerializer)</span></div>
+<div class="block">Serialize a set using the MittenLib config system.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="serializeSet(java.util.Collection,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)-type-param-T"><code>T</code> - the element type</span></dd>
+<dt>Parameters:</dt>
+<dd><code>collection</code> - the collection to serialize</dd>
+<dd><code>context</code> - the serialization context</dd>
+<dd><code>elementSerializer</code> - the function to serialize each element</dd>
+<dt>Returns:</dt>
+<dd>a <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> array representation of the set</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="serializeMap(java.util.Map,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)">
+<h3>serializeMap</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;K,<wbr>V&gt;</span>&nbsp;<span class="return-type"><a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a></span>&nbsp;<span class="element-name">serializeMap</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends K, ? extends V&gt;&nbsp;map,
+ <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>&nbsp;context,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;V, <a href="SerializationContext.html" title="class in me.bristermitten.mittenlib.config">SerializationContext</a>, <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;&nbsp;valueSerializer)</span></div>
+<div class="block">Serialize a map using the MittenLib config system.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><span id="serializeMap(java.util.Map,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)-type-param-K"><code>K</code> - the key type</span></dd>
+<dd><span id="serializeMap(java.util.Map,me.bristermitten.mittenlib.config.SerializationContext,java.util.function.BiFunction)-type-param-V"><code>V</code> - the value type</span></dd>
+<dt>Parameters:</dt>
+<dd><code>map</code> - the map to serialize</dd>
+<dd><code>context</code> - the serialization context</dd>
+<dd><code>valueSerializer</code> - the function to serialize each value</dd>
+<dt>Returns:</dt>
+<dd>a <a href="tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> map representation of the map</dd>
 </dl>
 </div>
 </section>

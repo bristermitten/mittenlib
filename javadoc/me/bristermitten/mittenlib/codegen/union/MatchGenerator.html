@@ -63,12 +63,12 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#makeVoidMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec)" tabindex="0">makeVoidMatchMethodSpec(ResolvedUnionSpec)</a></li>
-<li><a href="#makeMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec)" tabindex="0">makeMatchMethodSpec(ResolvedUnionSpec)</a></li>
+<li><a href="#makeVoidMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,boolean)" tabindex="0">makeVoidMatchMethodSpec(ResolvedUnionSpec, boolean)</a></li>
+<li><a href="#makeMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,boolean)" tabindex="0">makeMatchMethodSpec(ResolvedUnionSpec, boolean)</a></li>
 <li><a href="#implementVoidMatchMethod(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor)" tabindex="0">implementVoidMatchMethod(ResolvedUnionSpec, ResolvedUnionConstructor)</a></li>
 <li><a href="#implementReturningMatchMethod(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor)" tabindex="0">implementReturningMatchMethod(ResolvedUnionSpec, ResolvedUnionConstructor)</a></li>
 <li><a href="#voidFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies)" tabindex="0">voidFunctionalInterfaceFor(ResolvedUnionConstructor, MatchStrategies)</a></li>
-<li><a href="#returningFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies,com.squareup.javapoet.TypeName)" tabindex="0">returningFunctionalInterfaceFor(ResolvedUnionConstructor, MatchStrategies, TypeName)</a></li>
+<li><a href="#returningFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies,com.palantir.javapoet.TypeName)" tabindex="0">returningFunctionalInterfaceFor(ResolvedUnionConstructor, MatchStrategies, TypeName)</a></li>
 </ol>
 </li>
 </ol>
@@ -114,26 +114,28 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.MethodSpec</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.MethodSpec</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#implementReturningMatchMethod(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor)" class="member-name-link">implementReturningMatchMethod</a><wbr>(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;record,
  <a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.MethodSpec</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.MethodSpec</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#implementVoidMatchMethod(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor)" class="member-name-link">implementVoidMatchMethod</a><wbr>(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;record,
  <a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.MethodSpec</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec)" class="member-name-link">makeMatchMethodSpec</a><wbr>(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.MethodSpec</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,boolean)" class="member-name-link">makeMatchMethodSpec</a><wbr>(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec,
+ boolean&nbsp;makeAbstract)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.MethodSpec</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeVoidMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec)" class="member-name-link">makeVoidMatchMethodSpec</a><wbr>(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.MethodSpec</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeVoidMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,boolean)" class="member-name-link">makeVoidMatchMethodSpec</a><wbr>(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec,
+ boolean&nbsp;makeAbstract)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.TypeName</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#returningFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies,com.squareup.javapoet.TypeName)" class="member-name-link">returningFunctionalInterfaceFor</a><wbr>(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.TypeName</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#returningFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies,com.palantir.javapoet.TypeName)" class="member-name-link">returningFunctionalInterfaceFor</a><wbr>(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec,
  <a href="../MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a>&nbsp;strategies,
- com.squareup.javapoet.TypeName&nbsp;returning)</code></div>
+ com.palantir.javapoet.TypeName&nbsp;returning)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.TypeName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.TypeName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#voidFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies)" class="member-name-link">voidFunctionalInterfaceFor</a><wbr>(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;constructor,
  <a href="../MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a>&nbsp;strategies)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
@@ -171,18 +173,20 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="makeVoidMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec)">
+<section class="detail" id="makeVoidMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,boolean)">
 <h3>makeVoidMatchMethodSpec</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">makeVoidMatchMethodSpec</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.MethodSpec</span>&nbsp;<span class="element-name">makeVoidMatchMethodSpec</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec,
+ boolean&nbsp;makeAbstract)</span></div>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="makeMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec)">
+<section class="detail" id="makeMatchMethodSpec(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,boolean)">
 <h3>makeMatchMethodSpec</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">makeMatchMethodSpec</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.MethodSpec</span>&nbsp;<span class="element-name">makeMatchMethodSpec</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;spec,
+ boolean&nbsp;makeAbstract)</span></div>
 </div>
 </section>
 </li>
@@ -190,7 +194,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="implementVoidMatchMethod(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor)">
 <h3>implementVoidMatchMethod</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">implementVoidMatchMethod</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;record,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.MethodSpec</span>&nbsp;<span class="element-name">implementVoidMatchMethod</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;record,
  <a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec)</span></div>
 </div>
 </section>
@@ -199,7 +203,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="implementReturningMatchMethod(me.bristermitten.mittenlib.codegen.union.ResolvedUnionSpec,me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor)">
 <h3>implementReturningMatchMethod</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.MethodSpec</span>&nbsp;<span class="element-name">implementReturningMatchMethod</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;record,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.MethodSpec</span>&nbsp;<span class="element-name">implementReturningMatchMethod</span><wbr><span class="parameters">(<a href="ResolvedUnionSpec.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionSpec</a>&nbsp;record,
  <a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec)</span></div>
 </div>
 </section>
@@ -208,18 +212,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="voidFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies)">
 <h3>voidFunctionalInterfaceFor</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">voidFunctionalInterfaceFor</span><wbr><span class="parameters">(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;constructor,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.TypeName</span>&nbsp;<span class="element-name">voidFunctionalInterfaceFor</span><wbr><span class="parameters">(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;constructor,
  <a href="../MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a>&nbsp;strategies)</span></div>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="returningFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies,com.squareup.javapoet.TypeName)">
+<section class="detail" id="returningFunctionalInterfaceFor(me.bristermitten.mittenlib.codegen.union.ResolvedUnionConstructor,me.bristermitten.mittenlib.codegen.MatchStrategies,com.palantir.javapoet.TypeName)">
 <h3>returningFunctionalInterfaceFor</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">returningFunctionalInterfaceFor</span><wbr><span class="parameters">(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.TypeName</span>&nbsp;<span class="element-name">returningFunctionalInterfaceFor</span><wbr><span class="parameters">(<a href="ResolvedUnionConstructor.html" title="class in me.bristermitten.mittenlib.codegen.union">ResolvedUnionConstructor</a>&nbsp;spec,
  <a href="../MatchStrategies.html" title="enum class in me.bristermitten.mittenlib.codegen">MatchStrategies</a>&nbsp;strategies,
- com.squareup.javapoet.TypeName&nbsp;returning)</span></div>
+ com.palantir.javapoet.TypeName&nbsp;returning)</span></div>
 </div>
 </section>
 </li>

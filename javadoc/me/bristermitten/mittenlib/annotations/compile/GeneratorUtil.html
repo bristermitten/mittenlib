@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#getDaoName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)" tabindex="0">getDaoName(AbstractConfigStructure, ConfigurationClassNameGenerator)</a></li>
-<li><a href="#addDaoInstantiationIfNecessary(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.squareup.javapoet.MethodSpec.Builder,com.squareup.javapoet.ClassName)" tabindex="0">addDaoInstantiationIfNecessary(AbstractConfigStructure, MethodSpec.Builder, ClassName)</a></li>
+<li><a href="#addDaoInstantiationIfNecessary(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.palantir.javapoet.MethodSpec.Builder,com.palantir.javapoet.ClassName)" tabindex="0">addDaoInstantiationIfNecessary(AbstractConfigStructure, MethodSpec.Builder, ClassName)</a></li>
 <li><a href="#getPropertyAccess(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property,java.lang.String,me.bristermitten.mittenlib.annotations.compile.MethodNames,boolean)" tabindex="0">getPropertyAccess(AbstractConfigStructure, Property, String, MethodNames, boolean)</a></li>
 </ol>
 </li>
@@ -94,20 +94,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addDaoInstantiationIfNecessary(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.squareup.javapoet.MethodSpec.Builder,com.squareup.javapoet.ClassName)" class="member-name-link">addDaoInstantiationIfNecessary</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
- com.squareup.javapoet.MethodSpec.Builder&nbsp;methodBuilder,
- @Nullable com.squareup.javapoet.ClassName&nbsp;daoName)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addDaoInstantiationIfNecessary(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.palantir.javapoet.MethodSpec.Builder,com.palantir.javapoet.ClassName)" class="member-name-link">addDaoInstantiationIfNecessary</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
+ com.palantir.javapoet.MethodSpec.Builder&nbsp;methodBuilder,
+ @Nullable com.palantir.javapoet.ClassName&nbsp;daoName)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Adds a DAO instantiation statement to a method builder if the configuration has any default
 values.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable com.palantir.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getDaoName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)" class="member-name-link">getDaoName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
  <a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolves the DAO name for a configuration structure.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.CodeBlock</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.CodeBlock</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getPropertyAccess(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property,java.lang.String,me.bristermitten.mittenlib.annotations.compile.MethodNames,boolean)" class="member-name-link">getPropertyAccess</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
  <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;variableName,
@@ -137,7 +137,7 @@ values.</div>
 <section class="detail" id="getDaoName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator)">
 <h3>getDaoName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getDaoName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getDaoName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
  <a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator)</span></div>
 <div class="block">Resolves the DAO name for a configuration structure. For interfaces, this is the generated
 DefaultMethodAccess class. For classes, this is the original class itself.</div>
@@ -152,12 +152,12 @@ DefaultMethodAccess class. For classes, this is the original class itself.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="addDaoInstantiationIfNecessary(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.squareup.javapoet.MethodSpec.Builder,com.squareup.javapoet.ClassName)">
+<section class="detail" id="addDaoInstantiationIfNecessary(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,com.palantir.javapoet.MethodSpec.Builder,com.palantir.javapoet.ClassName)">
 <h3>addDaoInstantiationIfNecessary</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addDaoInstantiationIfNecessary</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
- com.squareup.javapoet.MethodSpec.Builder&nbsp;methodBuilder,
- @Nullable com.squareup.javapoet.ClassName&nbsp;daoName)</span></div>
+ com.palantir.javapoet.MethodSpec.Builder&nbsp;methodBuilder,
+ @Nullable com.palantir.javapoet.ClassName&nbsp;daoName)</span></div>
 <div class="block">Adds a DAO instantiation statement to a method builder if the configuration has any default
 values.</div>
 <dl class="notes">
@@ -173,7 +173,7 @@ values.</div>
 <section class="detail" id="getPropertyAccess(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure,me.bristermitten.mittenlib.annotations.ast.Property,java.lang.String,me.bristermitten.mittenlib.annotations.compile.MethodNames,boolean)">
 <h3>getPropertyAccess</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.CodeBlock</span>&nbsp;<span class="element-name">getPropertyAccess</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.CodeBlock</span>&nbsp;<span class="element-name">getPropertyAccess</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast,
  <a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;variableName,
  <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,

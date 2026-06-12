@@ -62,9 +62,9 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" class="type-name-link external-link" title="class or interface in java.lang">Object</a>
 <ul>
-<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="CachingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">CachingConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, me.bristermitten.mittenlib.config.provider.<a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;)</li>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="CachingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">CachingConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, me.bristermitten.mittenlib.config.provider.<a href="SaveableConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;T&gt;, me.bristermitten.mittenlib.config.provider.<a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;)</li>
 <li class="circle">me.bristermitten.mittenlib.config.provider.<a href="DelegatingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">DelegatingConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, me.bristermitten.mittenlib.config.provider.<a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;)</li>
-<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="FileBasedConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">FileBasedConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;)</li>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="FileBasedConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">FileBasedConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="SaveableConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;T&gt;)</li>
 <li class="circle">me.bristermitten.mittenlib.config.provider.<a href="FileWatchingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">FileWatchingConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, me.bristermitten.mittenlib.config.provider.<a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;)</li>
 <li class="circle">me.bristermitten.mittenlib.config.provider.<a href="StringReadingConfigProvider.html" class="type-name-link" title="class in me.bristermitten.mittenlib.config.provider">StringReadingConfigProvider</a>&lt;T&gt; (implements me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;)</li>
 </ul>
@@ -78,7 +78,15 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">com.google.inject.<a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Provider.html" class="type-name-link external-link" title="class or interface in com.google.inject">Provider</a>&lt;T&gt; (also extends javax.inject.Provider&lt;T&gt;)
 <ul>
-<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</li>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;
+<ul>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="SaveableConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;T&gt;
+<ul>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="WrappingConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -87,12 +95,19 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">com.google.inject.<a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Provider.html" class="type-name-link external-link" title="class or interface in com.google.inject">Provider</a>&lt;T&gt; (also extends jakarta.inject.Provider&lt;T&gt;)
 <ul>
-<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;</li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="ConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;
+<ul>
+<li class="circle">me.bristermitten.mittenlib.config.provider.<a href="SaveableConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;T&gt;
+<ul>
 <li class="circle">me.bristermitten.mittenlib.config.provider.<a href="WrappingConfigProvider.html" class="type-name-link" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </section>
 </main>

@@ -68,6 +68,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#path()" tabindex="0">path()</a></li>
 <li><a href="#clearCache()" tabindex="0">clearCache()</a></li>
 <li><a href="#getWrapped()" tabindex="0">getWrapped()</a></li>
+<li><a href="#save(T,boolean)" tabindex="0">save(T, boolean)</a></li>
 </ol>
 </li>
 </ol>
@@ -87,13 +88,13 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Provider.html" title="class or interface in com.google.inject" class="external-link">Provider</a>&lt;T&gt;, jakarta.inject.Provider&lt;T&gt;, javax.inject.Provider&lt;T&gt;, <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, <a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</code></dd>
+<dd><code><a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Provider.html" title="class or interface in com.google.inject" class="external-link">Provider</a>&lt;T&gt;, jakarta.inject.Provider&lt;T&gt;, javax.inject.Provider&lt;T&gt;, <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, <a href="SaveableConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;T&gt;, <a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CachingConfigProvider&lt;T&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, <a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;</span></div>
+implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">ConfigProvider</a>&lt;T&gt;, <a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;T&gt;, <a href="SaveableConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;T&gt;</span></div>
 <div class="block">A ConfigProvider that caches the config to avoid repeated file reads.</div>
 </div>
 </section>
@@ -148,12 +149,21 @@ implements <a href="ConfigProvider.html" title="interface in me.bristermitten.mi
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The path of the source for the config, if available</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a><wbr>&lt;<a href="../tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#save(T,boolean)" class="member-name-link">save</a><wbr>(<a href="#type-param-T" title="type parameter in CachingConfigProvider">T</a>&nbsp;instance,
+ boolean&nbsp;overrideExisting)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Saves the given config instance back to the file.</div>
+</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#method-summary" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-me.bristermitten.mittenlib.config.provider.SaveableConfigProvider">Methods inherited from interface&nbsp;<a href="SaveableConfigProvider.html#method-summary" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a></h3>
+<code><a href="SaveableConfigProvider.html#save(T)" title="save(T)">save</a></code></div>
 </section>
 </li>
 </ul>
@@ -272,6 +282,29 @@ then this method should also be called on the result of <a href="WrappingConfigP
 <dd><code><a href="WrappingConfigProvider.html#getWrapped()">getWrapped</a></code>&nbsp;in interface&nbsp;<code><a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;<a href="#type-param-T" title="type parameter in CachingConfigProvider">T</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the wrapped <a href="ConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider"><code>ConfigProvider</code></a></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="save(T,boolean)">
+<h3 id="save(java.lang.Object,boolean)">save</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util">Result</a>&lt;<a href="../tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree">DataTree</a>&gt;</span>&nbsp;<span class="element-name">save</span><wbr><span class="parameters">(<a href="#type-param-T" title="type parameter in CachingConfigProvider">T</a>&nbsp;instance,
+ boolean&nbsp;overrideExisting)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="SaveableConfigProvider.html#save(T,boolean)">SaveableConfigProvider</a></code></span></div>
+<div class="block">Saves the given config instance back to the file. This can be used to save default values for
+missing fields.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="SaveableConfigProvider.html#save(T,boolean)">save</a></code>&nbsp;in interface&nbsp;<code><a href="SaveableConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">SaveableConfigProvider</a>&lt;<a href="#type-param-T" title="type parameter in CachingConfigProvider">T</a>&gt;</code></dd>
+<dt>Specified by:</dt>
+<dd><code><a href="WrappingConfigProvider.html#save(T,boolean)">save</a></code>&nbsp;in interface&nbsp;<code><a href="WrappingConfigProvider.html" title="interface in me.bristermitten.mittenlib.config.provider">WrappingConfigProvider</a>&lt;<a href="#type-param-T" title="type parameter in CachingConfigProvider">T</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>instance</code> - the config instance to save</dd>
+<dd><code>overrideExisting</code> - if true, overwrites the entire file; if false, only adds missing fields</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../../util/Result.html" title="interface in me.bristermitten.mittenlib.util"><code>Result</code></a> indicating success or failure, containing the exact <a href="../tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> that was written</dd>
 </dl>
 </div>
 </section>

@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
-<li><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames)" tabindex="0">ConfigValidatorGenerator(ConfigurationClassNameGenerator, FieldNameGenerator, MethodNames)</a></li>
+<li><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.util.TypesUtil)" tabindex="0">ConfigValidatorGenerator(ConfigurationClassNameGenerator, FieldNameGenerator, MethodNames, TypesUtil)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
@@ -93,9 +93,10 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames)" class="member-name-link">ConfigValidatorGenerator</a><wbr>(<a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.util.TypesUtil)" class="member-name-link">ConfigValidatorGenerator</a><wbr>(<a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator,
  <a href="FieldNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">FieldNameGenerator</a>&nbsp;fieldNameGenerator,
- <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames)</code></div>
+ <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,
+ <a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -111,7 +112,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.JavaFile</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.JavaFile</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#emit(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">emit</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
@@ -132,13 +133,14 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator,me.bristermitten.mittenlib.annotations.compile.MethodNames,me.bristermitten.mittenlib.annotations.util.TypesUtil)">
 <h3>ConfigValidatorGenerator</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations"><a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Inject.html" title="class or interface in com.google.inject" class="external-link">@Inject</a>
 </span><span class="modifiers">public</span>&nbsp;<span class="element-name">ConfigValidatorGenerator</span><wbr><span class="parameters">(<a href="ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator,
  <a href="FieldNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">FieldNameGenerator</a>&nbsp;fieldNameGenerator,
- <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames)</span></div>
+ <a href="MethodNames.html" title="class in me.bristermitten.mittenlib.annotations.compile">MethodNames</a>&nbsp;methodNames,
+ <a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil)</span></div>
 </div>
 </section>
 </li>
@@ -154,7 +156,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="emit(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>emit</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.JavaFile</span>&nbsp;<span class="element-name">emit</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.JavaFile</span>&nbsp;<span class="element-name">emit</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 </div>
 </section>
 </li>

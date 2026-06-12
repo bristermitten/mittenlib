@@ -63,9 +63,9 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#createGetterMethod(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.squareup.javapoet.FieldSpec)" tabindex="0">createGetterMethod(TypeSpec.Builder, VariableElement, FieldSpec)</a></li>
-<li><a href="#createGetterMethodOverriding(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.squareup.javapoet.FieldSpec)" tabindex="0">createGetterMethodOverriding(TypeSpec.Builder, ExecutableElement, FieldSpec)</a></li>
-<li><a href="#createWithMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" tabindex="0">createWithMethods(TypeSpec.Builder, AbstractConfigStructure)</a></li>
+<li><a href="#createGetterMethod(com.palantir.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.palantir.javapoet.FieldSpec)" tabindex="0">createGetterMethod(TypeSpec.Builder, VariableElement, FieldSpec)</a></li>
+<li><a href="#createGetterMethodOverriding(com.palantir.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.palantir.javapoet.FieldSpec)" tabindex="0">createGetterMethodOverriding(TypeSpec.Builder, ExecutableElement, FieldSpec)</a></li>
+<li><a href="#createWithMethods(com.palantir.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" tabindex="0">createWithMethods(TypeSpec.Builder, AbstractConfigStructure)</a></li>
 </ol>
 </li>
 </ol>
@@ -117,21 +117,21 @@ methods.</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethod(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.squareup.javapoet.FieldSpec)" class="member-name-link">createGetterMethod</a><wbr>(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethod(com.palantir.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.palantir.javapoet.FieldSpec)" class="member-name-link">createGetterMethod</a><wbr>(com.palantir.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element,
- com.squareup.javapoet.FieldSpec&nbsp;field)</code></div>
+ com.palantir.javapoet.FieldSpec&nbsp;field)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a getter method for a field.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethodOverriding(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.squareup.javapoet.FieldSpec)" class="member-name-link">createGetterMethodOverriding</a><wbr>(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createGetterMethodOverriding(com.palantir.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.palantir.javapoet.FieldSpec)" class="member-name-link">createGetterMethodOverriding</a><wbr>(com.palantir.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;overriding,
- com.squareup.javapoet.FieldSpec&nbsp;fromField)</code></div>
+ com.palantir.javapoet.FieldSpec&nbsp;fromField)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a getter method that overrides an existing method.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createWithMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">createWithMethods</a><wbr>(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createWithMethods(com.palantir.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">createWithMethods</a><wbr>(com.palantir.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates "with" methods (immutable setters) for each field.</div>
@@ -172,12 +172,12 @@ methods.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createGetterMethod(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.squareup.javapoet.FieldSpec)">
+<section class="detail" id="createGetterMethod(com.palantir.javapoet.TypeSpec.Builder,javax.lang.model.element.VariableElement,com.palantir.javapoet.FieldSpec)">
 <h3>createGetterMethod</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethod</span><wbr><span class="parameters">(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethod</span><wbr><span class="parameters">(com.palantir.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link">VariableElement</a>&nbsp;element,
- com.squareup.javapoet.FieldSpec&nbsp;field)</span></div>
+ com.palantir.javapoet.FieldSpec&nbsp;field)</span></div>
 <div class="block">Creates a getter method for a field.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -189,12 +189,12 @@ methods.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="createGetterMethodOverriding(com.squareup.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.squareup.javapoet.FieldSpec)">
+<section class="detail" id="createGetterMethodOverriding(com.palantir.javapoet.TypeSpec.Builder,javax.lang.model.element.ExecutableElement,com.palantir.javapoet.FieldSpec)">
 <h3>createGetterMethodOverriding</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethodOverriding</span><wbr><span class="parameters">(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createGetterMethodOverriding</span><wbr><span class="parameters">(com.palantir.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/ExecutableElement.html" title="class or interface in javax.lang.model.element" class="external-link">ExecutableElement</a>&nbsp;overriding,
- com.squareup.javapoet.FieldSpec&nbsp;fromField)</span></div>
+ com.palantir.javapoet.FieldSpec&nbsp;fromField)</span></div>
 <div class="block">Creates a getter method that overrides an existing method. This method preserves annotations
 from the original method (except for private annotations) and adds appropriate nullability and
 contract annotations.</div>
@@ -208,10 +208,10 @@ contract annotations.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="createWithMethods(com.squareup.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
+<section class="detail" id="createWithMethods(com.palantir.javapoet.TypeSpec.Builder,me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>createWithMethods</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createWithMethods</span><wbr><span class="parameters">(com.squareup.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">createWithMethods</span><wbr><span class="parameters">(com.palantir.javapoet.TypeSpec.Builder&nbsp;typeSpecBuilder,
  <a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Creates "with" methods (immutable setters) for each field.</div>
 <dl class="notes">

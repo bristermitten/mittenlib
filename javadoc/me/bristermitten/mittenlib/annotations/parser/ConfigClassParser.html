@@ -58,7 +58,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
-<li><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.util.ElementsFinder,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,javax.annotation.processing.ProcessingEnvironment)" tabindex="0">ConfigClassParser(TypesUtil, ElementsFinder, ConfigNameCache, ProcessingEnvironment)</a></li>
+<li><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.util.ElementsFinder,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,javax.annotation.processing.ProcessingEnvironment)" tabindex="0">ConfigClassParser(TypesUtil, ElementsFinder, ConfigNameCache, GeneratedTypeCache, ConfigurationClassNameGenerator, ProcessingEnvironment)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
@@ -93,9 +93,11 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.util.ElementsFinder,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,javax.annotation.processing.ProcessingEnvironment)" class="member-name-link">ConfigClassParser</a><wbr>(<a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.util.ElementsFinder,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,javax.annotation.processing.ProcessingEnvironment)" class="member-name-link">ConfigClassParser</a><wbr>(<a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil,
  <a href="../util/ElementsFinder.html" title="class in me.bristermitten.mittenlib.annotations.util">ElementsFinder</a>&nbsp;elementsFinder,
  <a href="../compile/ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a>&nbsp;configNameCache,
+ <a href="../compile/GeneratedTypeCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">GeneratedTypeCache</a>&nbsp;generatedTypeCache,
+ <a href="../compile/ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/ProcessingEnvironment.html" title="class or interface in javax.annotation.processing" class="external-link">ProcessingEnvironment</a>&nbsp;processingEnv)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -133,13 +135,15 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.util.ElementsFinder,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,javax.annotation.processing.ProcessingEnvironment)">
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.util.TypesUtil,me.bristermitten.mittenlib.annotations.util.ElementsFinder,me.bristermitten.mittenlib.annotations.compile.ConfigNameCache,me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache,me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator,javax.annotation.processing.ProcessingEnvironment)">
 <h3>ConfigClassParser</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations"><a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Inject.html" title="class or interface in com.google.inject" class="external-link">@Inject</a>
 </span><span class="modifiers">public</span>&nbsp;<span class="element-name">ConfigClassParser</span><wbr><span class="parameters">(<a href="../util/TypesUtil.html" title="class in me.bristermitten.mittenlib.annotations.util">TypesUtil</a>&nbsp;typesUtil,
  <a href="../util/ElementsFinder.html" title="class in me.bristermitten.mittenlib.annotations.util">ElementsFinder</a>&nbsp;elementsFinder,
  <a href="../compile/ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a>&nbsp;configNameCache,
+ <a href="../compile/GeneratedTypeCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">GeneratedTypeCache</a>&nbsp;generatedTypeCache,
+ <a href="../compile/ConfigurationClassNameGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigurationClassNameGenerator</a>&nbsp;classNameGenerator,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/ProcessingEnvironment.html" title="class or interface in javax.annotation.processing" class="external-link">ProcessingEnvironment</a>&nbsp;processingEnv)</span></div>
 </div>
 </section>

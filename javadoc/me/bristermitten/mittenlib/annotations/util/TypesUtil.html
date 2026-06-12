@@ -54,7 +54,13 @@ loadScripts(document, 'script');</script>
 <div class="toc-header">Contents&nbsp;<input type="text" class="filter-input" disabled placeholder="Filter contents (type .)" aria-label="Filter table of contents" autocomplete="off" spellcheck="false"><input type="reset" class="reset-filter" disabled tabindex="-1" value="Reset"></div>
 <ol class="toc-list" tabindex="-1">
 <li><a href="#" tabindex="0">Description</a></li>
+<li><a href="#constructor-summary" tabindex="0">Constructor Summary</a></li>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
+<li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
+<ol class="toc-list">
+<li><a href="#%3Cinit%3E(javax.lang.model.util.Types,javax.lang.model.util.Elements,me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache)" tabindex="0">TypesUtil(Types, Elements, GeneratedTypeCache)</a></li>
+</ol>
+</li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#getSafeType(javax.lang.model.type.TypeMirror)" tabindex="0">getSafeType(TypeMirror)</a></li>
@@ -63,7 +69,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#isNullable(javax.lang.model.type.TypeMirror)" tabindex="0">isNullable(TypeMirror)</a></li>
 <li><a href="#getAnnotation(javax.lang.model.element.Element,java.lang.Class)" tabindex="0">getAnnotation(Element, Class)</a></li>
 <li><a href="#isConfigType(javax.lang.model.type.TypeMirror)" tabindex="0">isConfigType(TypeMirror)</a></li>
-<li><a href="#getDataTreeType(com.squareup.javapoet.TypeName)" tabindex="0">getDataTreeType(TypeName)</a></li>
+<li><a href="#getDataTreeType(com.palantir.javapoet.TypeName)" tabindex="0">getDataTreeType(TypeName)</a></li>
+<li><a href="#isList(javax.lang.model.type.TypeMirror)" tabindex="0">isList(TypeMirror)</a></li>
+<li><a href="#isSet(javax.lang.model.type.TypeMirror)" tabindex="0">isSet(TypeMirror)</a></li>
+<li><a href="#isMap(javax.lang.model.type.TypeMirror)" tabindex="0">isMap(TypeMirror)</a></li>
+<li><a href="#isCollection(javax.lang.model.type.TypeMirror)" tabindex="0">isCollection(TypeMirror)</a></li>
 </ol>
 </li>
 </ol>
@@ -86,6 +96,21 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<li>
+<section class="constructor-summary" id="constructor-summary">
+<h2>Constructor Summary</h2>
+<div class="caption"><span>Constructors</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Constructor</div>
+<div class="table-header col-last">Description</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(javax.lang.model.util.Types,javax.lang.model.util.Elements,me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache)" class="member-name-link">TypesUtil</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/util/Types.html" title="class or interface in javax.lang.model.util" class="external-link">Types</a>&nbsp;types,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/util/Elements.html" title="class or interface in javax.lang.model.util" class="external-link">Elements</a>&nbsp;elements,
+ <a href="../compile/GeneratedTypeCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">GeneratedTypeCache</a>&nbsp;generatedTypeCache)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -108,8 +133,8 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get a boxed version of a given type, if it is a primitive.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;com.squareup.javapoet.TypeName&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDataTreeType(com.squareup.javapoet.TypeName)" class="member-name-link">getDataTreeType</a><wbr>(com.squareup.javapoet.TypeName&nbsp;type)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;com.palantir.javapoet.TypeName&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDataTreeType(com.palantir.javapoet.TypeName)" class="member-name-link">getDataTreeType</a><wbr>(com.palantir.javapoet.TypeName&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSafeType(javax.lang.model.type.TypeMirror)" class="member-name-link">getSafeType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
@@ -125,18 +150,30 @@ primitives, the erasure for parameterized types, otherwise simply the type itsel
 </div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isConfigType(javax.lang.model.type.TypeMirror)" class="member-name-link">isConfigType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCollection(javax.lang.model.type.TypeMirror)" class="member-name-link">isCollection</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isConfigType(javax.lang.model.type.TypeMirror)" class="member-name-link">isConfigType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if a type is a config type (annotated with @Config).</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isList(javax.lang.model.type.TypeMirror)" class="member-name-link">isList</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.Element)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isMap(javax.lang.model.type.TypeMirror)" class="member-name-link">isMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.element.Element)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/Element.html" title="class or interface in javax.lang.model.element" class="external-link">Element</a>&nbsp;element)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Return if a <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/VariableElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>VariableElement</code></a> should be considered nullable or not Everything is
 considered non-nullable unless it is specifically annotated as nullable.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.type.TypeMirror)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNullable(javax.lang.model.type.TypeMirror)" class="member-name-link">isNullable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;typeMirror)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isSet(javax.lang.model.type.TypeMirror)" class="member-name-link">isSet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -150,6 +187,25 @@ considered non-nullable unless it is specifically annotated as nullable.</div>
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<li>
+<section class="constructor-details" id="constructor-detail">
+<h2>Constructor Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="&lt;init&gt;(javax.lang.model.util.Types,javax.lang.model.util.Elements,me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache)">
+<h3>TypesUtil</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="annotations"><a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Inject.html" title="class or interface in com.google.inject" class="external-link">@Inject</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">TypesUtil</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/util/Types.html" title="class or interface in javax.lang.model.util" class="external-link">Types</a>&nbsp;types,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/util/Elements.html" title="class or interface in javax.lang.model.util" class="external-link">Elements</a>&nbsp;elements,
+ <a href="../compile/GeneratedTypeCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">GeneratedTypeCache</a>&nbsp;generatedTypeCache)</span></div>
+</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -244,10 +300,42 @@ in <a href="../../config/generate/CascadeToInnerClasses.html" title="annotation 
 </section>
 </li>
 <li>
-<section class="detail" id="getDataTreeType(com.squareup.javapoet.TypeName)">
+<section class="detail" id="getDataTreeType(com.palantir.javapoet.TypeName)">
 <h3>getDataTreeType</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;com.squareup.javapoet.TypeName&gt;</span>&nbsp;<span class="element-name">getDataTreeType</span><wbr><span class="parameters">(com.squareup.javapoet.TypeName&nbsp;type)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;com.palantir.javapoet.TypeName&gt;</span>&nbsp;<span class="element-name">getDataTreeType</span><wbr><span class="parameters">(com.palantir.javapoet.TypeName&nbsp;type)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isList(javax.lang.model.type.TypeMirror)">
+<h3>isList</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isList</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isSet(javax.lang.model.type.TypeMirror)">
+<h3>isSet</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSet</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isMap(javax.lang.model.type.TypeMirror)">
+<h3>isMap</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isMap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isCollection(javax.lang.model.type.TypeMirror)">
+<h3>isCollection</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isCollection</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</span></div>
 </div>
 </section>
 </li>

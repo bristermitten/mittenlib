@@ -64,6 +64,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#getByName(java.lang.String)" tabindex="0">getByName(String)</a></li>
+<li><a href="#put(javax.lang.model.element.TypeElement,java.lang.String)" tabindex="0">put(TypeElement, String)</a></li>
 </ol>
 </li>
 </ol>
@@ -128,6 +129,12 @@ always use the <a href="../../config/GeneratedConfig.html#source()"><code>Genera
 <div class="block">Gets all the known DTO classes which generate a configuration class with the given qualified
 name</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#put(javax.lang.model.element.TypeElement,java.lang.String)" class="member-name-link">put</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;source,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Registers a mapping from a source DTO type to the generated configuration class name.</div>
+</div>
 </div>
 </div>
 </div>
@@ -173,6 +180,21 @@ name</div>
 <dd><code>name</code> - the qualified name of the configuration class</dd>
 <dt>Returns:</dt>
 <dd>a set of all the DTO classes which generate the given configuration class</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="put(javax.lang.model.element.TypeElement,java.lang.String)">
+<h3>put</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">put</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;source,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="block">Registers a mapping from a source DTO type to the generated configuration class name.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>source</code> - the source DTO class element</dd>
+<dd><code>name</code> - the generated configuration class name</dd>
 </dl>
 </div>
 </section>

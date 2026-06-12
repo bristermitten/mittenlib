@@ -55,6 +55,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list" tabindex="-1">
 <li><a href="#" tabindex="0">Description</a></li>
 <li><a href="#field-summary" tabindex="0">Field Summary</a></li>
+<li><a href="#constructor-summary" tabindex="0">Constructor Summary</a></li>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#field-detail" tabindex="0">Field Details</a>
 <ol class="toc-list">
@@ -66,9 +67,14 @@ loadScripts(document, 'script');</script>
 <li><a href="#CONFIG_LOADER_MODULE_NAME" tabindex="0">CONFIG_LOADER_MODULE_NAME</a></li>
 </ol>
 </li>
+<li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
+<ol class="toc-list">
+<li><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.ConfigNameCache)" tabindex="0">ConfigurationClassNameGenerator(ConfigNameCache)</a></li>
+</ol>
+</li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#translateConfigClassName(com.squareup.javapoet.ClassName)" tabindex="0">translateConfigClassName(ClassName)</a></li>
+<li><a href="#translateConfigClassName(com.palantir.javapoet.ClassName)" tabindex="0">translateConfigClassName(ClassName)</a></li>
 <li><a href="#translateConfigClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" tabindex="0">translateConfigClassName(AbstractConfigStructure)</a></li>
 <li><a href="#getPublicClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" tabindex="0">getPublicClassName(AbstractConfigStructure)</a></li>
 <li><a href="#getConcreteConfigClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" tabindex="0">getConcreteConfigClassName(AbstractConfigStructure)</a></li>
@@ -79,7 +85,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#getDeserializerProviderFieldName(javax.lang.model.type.TypeMirror)" tabindex="0">getDeserializerProviderFieldName(TypeMirror)</a></li>
 <li><a href="#getSerializerProviderFieldName(javax.lang.model.type.TypeMirror)" tabindex="0">getSerializerProviderFieldName(TypeMirror)</a></li>
 <li><a href="#getValidatorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" tabindex="0">getValidatorFieldName(Property)</a></li>
+<li><a href="#getValidatorElementFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" tabindex="0">getValidatorElementFieldName(Property)</a></li>
+<li><a href="#getValidatorKeyFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" tabindex="0">getValidatorKeyFieldName(Property)</a></li>
 <li><a href="#getValidatorErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" tabindex="0">getValidatorErrorFieldName(Property)</a></li>
+<li><a href="#getValidatorElementErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" tabindex="0">getValidatorElementErrorFieldName(Property)</a></li>
+<li><a href="#getValidatorKeyErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" tabindex="0">getValidatorKeyErrorFieldName(Property)</a></li>
 <li><a href="#getDefaultMethodAccessClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" tabindex="0">getDefaultMethodAccessClassName(AbstractConfigStructure)</a></li>
 <li><a href="#getLoaderModuleClassName(java.lang.String)" tabindex="0">getLoaderModuleClassName(String)</a></li>
 <li><a href="#getProvidesProviderMethodName(java.lang.String)" tabindex="0">getProvidesProviderMethodName(String)</a></li>
@@ -147,6 +157,19 @@ into account nesting, package names, and custom naming specified in annotations.
 </div>
 </section>
 </li>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<li>
+<section class="constructor-summary" id="constructor-summary">
+<h2>Constructor Summary</h2>
+<div class="caption"><span>Constructors</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Constructor</div>
+<div class="table-header col-last">Description</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(me.bristermitten.mittenlib.annotations.compile.ConfigNameCache)" class="member-name-link">ConfigurationClassNameGenerator</a><wbr>(<a href="ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a>&nbsp;configNameCache)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -158,31 +181,31 @@ into account nesting, package names, and custom naming specified in annotations.
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#generateConfigurationClassName(javax.lang.model.element.TypeElement)" class="member-name-link">generateConfigurationClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;configDTOType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Generates a ClassName for the actual generated configuration class from a given DTO, using the
 package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>TypeElement</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConcreteConfigClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getConcreteConfigClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the concrete class name for a config structure.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.TypeName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.TypeName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConfigPropertyClassName(javax.lang.model.type.TypeMirror)" class="member-name-link">getConfigPropertyClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the config property class name for a type mirror.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefaultMethodAccessClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getDefaultMethodAccessClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDeserializerClassName(javax.lang.model.type.TypeMirror)" class="member-name-link">getDeserializerClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the ClassName of the loader for a given TypeMirror.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDeserializerClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getDeserializerClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the ClassName of the deserializer for a given configuration structure.</div>
@@ -195,10 +218,10 @@ package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDeserializerProviderFieldName(javax.lang.model.type.TypeMirror)" class="member-name-link">getDeserializerProviderFieldName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable com.squareup.javapoet.ClassName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable com.palantir.javapoet.ClassName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInnerDaoName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getInnerDaoName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLoaderModuleClassName(java.lang.String)" class="member-name-link">getLoaderModuleClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
@@ -213,12 +236,12 @@ package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getProvidesToProviderSetMethodName(java.lang.String)" class="member-name-link">getProvidesToProviderSetMethodName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;simpleName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPublicClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getPublicClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the <i>public</i> class name for a config structure.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSerializerClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getSerializerClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the <code>ClassName</code> of the serializer for a given configuration structure.</div>
@@ -231,8 +254,14 @@ package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSerializerProviderFieldName(javax.lang.model.type.TypeMirror)" class="member-name-link">getSerializerProviderFieldName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">getValidatorClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorElementErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getValidatorElementErrorFieldName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorElementFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getValidatorElementFieldName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getValidatorErrorFieldName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
@@ -240,22 +269,28 @@ package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getValidatorFieldName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.TypeName</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorKeyErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getValidatorKeyErrorFieldName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getValidatorKeyFieldName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">getValidatorKeyFieldName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.TypeName</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#publicPropertyClassName(javax.lang.model.type.TypeMirror)" class="member-name-link">publicPropertyClassName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the public property class name for a type mirror.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.TypeName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.TypeName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#publicPropertyClassName(me.bristermitten.mittenlib.annotations.ast.Property)" class="member-name-link">publicPropertyClassName</a><wbr>(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;p)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get the public property class name for a property.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.squareup.javapoet.ClassName</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#translateConfigClassName(com.squareup.javapoet.ClassName)" class="member-name-link">translateConfigClassName</a><wbr>(com.squareup.javapoet.ClassName&nbsp;dtoClassName)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static com.palantir.javapoet.ClassName</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#translateConfigClassName(com.palantir.javapoet.ClassName)" class="member-name-link">translateConfigClassName</a><wbr>(com.palantir.javapoet.ClassName&nbsp;dtoClassName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a class name for the implementation of a DTO class.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.ClassName</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.ClassName</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#translateConfigClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)" class="member-name-link">translateConfigClassName</a><wbr>(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a class name for the implementation of a configuration structure.</div>
@@ -376,16 +411,33 @@ package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api
 </ul>
 </section>
 </li>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<li>
+<section class="constructor-details" id="constructor-detail">
+<h2>Constructor Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="&lt;init&gt;(me.bristermitten.mittenlib.annotations.compile.ConfigNameCache)">
+<h3>ConfigurationClassNameGenerator</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="annotations"><a href="https://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Inject.html" title="class or interface in com.google.inject" class="external-link">@Inject</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="element-name">ConfigurationClassNameGenerator</span><wbr><span class="parameters">(<a href="ConfigNameCache.html" title="class in me.bristermitten.mittenlib.annotations.compile">ConfigNameCache</a>&nbsp;configNameCache)</span></div>
+</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="translateConfigClassName(com.squareup.javapoet.ClassName)">
+<section class="detail" id="translateConfigClassName(com.palantir.javapoet.ClassName)">
 <h3>translateConfigClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">translateConfigClassName</span><wbr><span class="parameters">(com.squareup.javapoet.ClassName&nbsp;dtoClassName)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">translateConfigClassName</span><wbr><span class="parameters">(com.palantir.javapoet.ClassName&nbsp;dtoClassName)</span></div>
 <div class="block">Creates a class name for the implementation of a DTO class. If the class name ends with "DTO",
 it removes that suffix. Otherwise, it appends "Impl" to the class name.</div>
 <dl class="notes">
@@ -401,7 +453,7 @@ it removes that suffix. Otherwise, it appends "Impl" to the class name.</div>
 <section class="detail" id="translateConfigClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>translateConfigClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">translateConfigClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">translateConfigClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Creates a class name for the implementation of a configuration structure. This method handles
 nested classes by checking if the structure is enclosed in another structure.</div>
 <dl class="notes">
@@ -417,7 +469,7 @@ nested classes by checking if the structure is enclosed in another structure.</d
 <section class="detail" id="getPublicClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getPublicClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getPublicClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getPublicClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Get the <i>public</i> class name for a config structure. "Public" is defined as the type that
 the user should primarily interact with. For interfaces, this is the interface itself, and for
 classes, this is the generated implementation class (as the DTO class becomes mostly useless
@@ -435,7 +487,7 @@ after code generation).</div>
 <section class="detail" id="getConcreteConfigClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getConcreteConfigClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getConcreteConfigClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getConcreteConfigClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Get the concrete class name for a config structure. This is the actual implementation class
 that will be instantiated. For classes, this is the original DTO class, and for interfaces,
 this is the generated implementation class.</div>
@@ -452,7 +504,7 @@ this is the generated implementation class.</div>
 <section class="detail" id="getConfigPropertyClassName(javax.lang.model.type.TypeMirror)">
 <h3>getConfigPropertyClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">getConfigPropertyClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.TypeName</span>&nbsp;<span class="element-name">getConfigPropertyClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
 <div class="block">Get the config property class name for a type mirror.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -467,7 +519,7 @@ this is the generated implementation class.</div>
 <section class="detail" id="publicPropertyClassName(me.bristermitten.mittenlib.annotations.ast.Property)">
 <h3>publicPropertyClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">publicPropertyClassName</span><wbr><span class="parameters">(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;p)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.TypeName</span>&nbsp;<span class="element-name">publicPropertyClassName</span><wbr><span class="parameters">(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;p)</span></div>
 <div class="block">Get the public property class name for a property.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -482,7 +534,7 @@ this is the generated implementation class.</div>
 <section class="detail" id="publicPropertyClassName(javax.lang.model.type.TypeMirror)">
 <h3>publicPropertyClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.TypeName</span>&nbsp;<span class="element-name">publicPropertyClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.TypeName</span>&nbsp;<span class="element-name">publicPropertyClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;mirror)</span></div>
 <div class="block">Get the public property class name for a type mirror.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -497,7 +549,7 @@ this is the generated implementation class.</div>
 <section class="detail" id="generateConfigurationClassName(javax.lang.model.element.TypeElement)">
 <h3>generateConfigurationClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">generateConfigurationClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;configDTOType)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">generateConfigurationClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;configDTOType)</span></div>
 <div class="block">Generates a ClassName for the actual generated configuration class from a given DTO, using the
 package of the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link"><code>TypeElement</code></a>. If the given type is not a config, its unchanged name
 is returned. The returned class name will be the same as the given type, but with the suffix
@@ -536,6 +588,22 @@ removed. It can also be manually specified in the Config annotation with <a href
 </section>
 </li>
 <li>
+<section class="detail" id="getValidatorElementFieldName(me.bristermitten.mittenlib.annotations.ast.Property)">
+<h3>getValidatorElementFieldName</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getValidatorElementFieldName</span><wbr><span class="parameters">(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getValidatorKeyFieldName(me.bristermitten.mittenlib.annotations.ast.Property)">
+<h3>getValidatorKeyFieldName</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getValidatorKeyFieldName</span><wbr><span class="parameters">(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</span></div>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="getValidatorErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)">
 <h3>getValidatorErrorFieldName</h3>
 <div class="horizontal-scroll">
@@ -544,10 +612,26 @@ removed. It can also be manually specified in the Config annotation with <a href
 </section>
 </li>
 <li>
+<section class="detail" id="getValidatorElementErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)">
+<h3>getValidatorElementErrorFieldName</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getValidatorElementErrorFieldName</span><wbr><span class="parameters">(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getValidatorKeyErrorFieldName(me.bristermitten.mittenlib.annotations.ast.Property)">
+<h3>getValidatorKeyErrorFieldName</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getValidatorKeyErrorFieldName</span><wbr><span class="parameters">(<a href="../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property)</span></div>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="getDefaultMethodAccessClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getDefaultMethodAccessClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getDefaultMethodAccessClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getDefaultMethodAccessClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 </div>
 </section>
 </li>
@@ -555,7 +639,7 @@ removed. It can also be manually specified in the Config annotation with <a href
 <section class="detail" id="getLoaderModuleClassName(java.lang.String)">
 <h3>getLoaderModuleClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getLoaderModuleClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getLoaderModuleClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;packageName)</span></div>
 </div>
 </section>
 </li>
@@ -595,7 +679,7 @@ removed. It can also be manually specified in the Config annotation with <a href
 <section class="detail" id="getDeserializerClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getDeserializerClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getDeserializerClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getDeserializerClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Gets the ClassName of the deserializer for a given configuration structure. For <code>
 MyConfig</code>, the deserializer is <code>MyConfigImpl</code>. For nested class OuterConfig.InnerConfig,
 the loader is OuterConfigDeserializer.InnerConfigDeserializer.</div>
@@ -606,7 +690,7 @@ the loader is OuterConfigDeserializer.InnerConfigDeserializer.</div>
 <section class="detail" id="getDeserializerClassName(javax.lang.model.type.TypeMirror)">
 <h3>getDeserializerClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getDeserializerClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getDeserializerClassName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;type)</span></div>
 <div class="block">Gets the ClassName of the loader for a given TypeMirror.</div>
 </div>
 </section>
@@ -625,7 +709,7 @@ InterfaceConfig</code>, it returns <code>interfaceConfigDeserializer</code>.</di
 <section class="detail" id="getSerializerClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getSerializerClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getSerializerClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getSerializerClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 <div class="block">Gets the <code>ClassName</code> of the serializer for a given configuration structure. For <code>
 MyConfigImpl</code>, the saver is <code>MyConfigImplSerializer</code>. For nested class <code>
 OuterConfigImpl.InnerConfigImpl</code>, the saver is <code>
@@ -647,7 +731,7 @@ InterfaceConfig</code>, it returns <code>"interfaceConfigSerializer"</code>.</di
 <section class="detail" id="getValidatorClassName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getValidatorClassName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getValidatorClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getValidatorClassName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 </div>
 </section>
 </li>
@@ -655,7 +739,7 @@ InterfaceConfig</code>, it returns <code>"interfaceConfigSerializer"</code>.</di
 <section class="detail" id="getInnerDaoName(me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure)">
 <h3>getInnerDaoName</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable com.squareup.javapoet.ClassName</span>&nbsp;<span class="element-name">getInnerDaoName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable com.palantir.javapoet.ClassName</span>&nbsp;<span class="element-name">getInnerDaoName</span><wbr><span class="parameters">(<a href="../ast/AbstractConfigStructure.html" title="interface in me.bristermitten.mittenlib.annotations.ast">AbstractConfigStructure</a>&nbsp;ast)</span></div>
 </div>
 </section>
 </li>

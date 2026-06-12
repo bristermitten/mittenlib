@@ -57,8 +57,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#dataTreeConvert(com.squareup.javapoet.TypeName,com.squareup.javapoet.TypeName,com.squareup.javapoet.CodeBlock)" tabindex="0">dataTreeConvert(TypeName, TypeName, CodeBlock)</a></li>
-<li><a href="#handleNonGenericType(com.squareup.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper,java.lang.String,com.squareup.javapoet.TypeName)" tabindex="0">handleNonGenericType(MethodSpec.Builder, Property, TypeElement, TypeMirror, TypeMirrorWrapper, String, TypeName)</a></li>
+<li><a href="#dataTreeConvert(com.palantir.javapoet.TypeName,com.palantir.javapoet.TypeName,com.palantir.javapoet.CodeBlock)" tabindex="0">dataTreeConvert(TypeName, TypeName, CodeBlock)</a></li>
+<li><a href="#handleNonGenericType(com.palantir.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper,java.lang.String,com.palantir.javapoet.TypeName)" tabindex="0">handleNonGenericType(MethodSpec.Builder, Property, TypeElement, TypeMirror, TypeMirrorWrapper, String, TypeName)</a></li>
 </ol>
 </li>
 </ol>
@@ -107,21 +107,21 @@ objectMapper fallbacks).
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.squareup.javapoet.CodeBlock</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataTreeConvert(com.squareup.javapoet.TypeName,com.squareup.javapoet.TypeName,com.squareup.javapoet.CodeBlock)" class="member-name-link">dataTreeConvert</a><wbr>(com.squareup.javapoet.TypeName&nbsp;type,
- com.squareup.javapoet.TypeName&nbsp;dataTreeType,
- com.squareup.javapoet.CodeBlock&nbsp;value)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.palantir.javapoet.CodeBlock</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataTreeConvert(com.palantir.javapoet.TypeName,com.palantir.javapoet.TypeName,com.palantir.javapoet.CodeBlock)" class="member-name-link">dataTreeConvert</a><wbr>(com.palantir.javapoet.TypeName&nbsp;type,
+ com.palantir.javapoet.TypeName&nbsp;dataTreeType,
+ com.palantir.javapoet.CodeBlock&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Translates a <a href="../../../config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> literal value to its corresponding JVM primitive type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleNonGenericType(com.squareup.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper,java.lang.String,com.squareup.javapoet.TypeName)" class="member-name-link">handleNonGenericType</a><wbr>(com.squareup.javapoet.MethodSpec.Builder&nbsp;builder,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleNonGenericType(com.palantir.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper,java.lang.String,com.palantir.javapoet.TypeName)" class="member-name-link">handleNonGenericType</a><wbr>(com.palantir.javapoet.MethodSpec.Builder&nbsp;builder,
  <a href="../../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;elementType,
  io.toolisticon.aptk.tools.TypeMirrorWrapper&nbsp;wrappedElementType,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fromMapName,
- com.squareup.javapoet.TypeName&nbsp;safeType)</code></div>
+ com.palantir.javapoet.TypeName&nbsp;safeType)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Generate deserialization code for non-generic properties.</div>
 </div>
@@ -143,12 +143,12 @@ objectMapper fallbacks).
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="dataTreeConvert(com.squareup.javapoet.TypeName,com.squareup.javapoet.TypeName,com.squareup.javapoet.CodeBlock)">
+<section class="detail" id="dataTreeConvert(com.palantir.javapoet.TypeName,com.palantir.javapoet.TypeName,com.palantir.javapoet.CodeBlock)">
 <h3>dataTreeConvert</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.squareup.javapoet.CodeBlock</span>&nbsp;<span class="element-name">dataTreeConvert</span><wbr><span class="parameters">(com.squareup.javapoet.TypeName&nbsp;type,
- com.squareup.javapoet.TypeName&nbsp;dataTreeType,
- com.squareup.javapoet.CodeBlock&nbsp;value)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.palantir.javapoet.CodeBlock</span>&nbsp;<span class="element-name">dataTreeConvert</span><wbr><span class="parameters">(com.palantir.javapoet.TypeName&nbsp;type,
+ com.palantir.javapoet.TypeName&nbsp;dataTreeType,
+ com.palantir.javapoet.CodeBlock&nbsp;value)</span></div>
 <div class="block">Translates a <a href="../../../config/tree/DataTree.html" title="class in me.bristermitten.mittenlib.config.tree"><code>DataTree</code></a> literal value to its corresponding JVM primitive type.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -163,16 +163,16 @@ objectMapper fallbacks).
 </section>
 </li>
 <li>
-<section class="detail" id="handleNonGenericType(com.squareup.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper,java.lang.String,com.squareup.javapoet.TypeName)">
+<section class="detail" id="handleNonGenericType(com.palantir.javapoet.MethodSpec.Builder,me.bristermitten.mittenlib.annotations.ast.Property,javax.lang.model.element.TypeElement,javax.lang.model.type.TypeMirror,io.toolisticon.aptk.tools.TypeMirrorWrapper,java.lang.String,com.palantir.javapoet.TypeName)">
 <h3>handleNonGenericType</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">handleNonGenericType</span><wbr><span class="parameters">(com.squareup.javapoet.MethodSpec.Builder&nbsp;builder,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">handleNonGenericType</span><wbr><span class="parameters">(com.palantir.javapoet.MethodSpec.Builder&nbsp;builder,
  <a href="../../ast/Property.html" title="class in me.bristermitten.mittenlib.annotations.ast">Property</a>&nbsp;property,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/element/TypeElement.html" title="class or interface in javax.lang.model.element" class="external-link">TypeElement</a>&nbsp;dtoType,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/lang/model/type/TypeMirror.html" title="class or interface in javax.lang.model.type" class="external-link">TypeMirror</a>&nbsp;elementType,
  io.toolisticon.aptk.tools.TypeMirrorWrapper&nbsp;wrappedElementType,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;fromMapName,
- com.squareup.javapoet.TypeName&nbsp;safeType)</span></div>
+ com.palantir.javapoet.TypeName&nbsp;safeType)</span></div>
 <div class="block">Generate deserialization code for non-generic properties. Tries all the cases described in the
 documentation of <a href="NonGenericTypeDeserializerGenerator.html" title="class in me.bristermitten.mittenlib.annotations.compile.deserializer"><code>NonGenericTypeDeserializerGenerator</code></a>, in order.</div>
 <dl class="notes">

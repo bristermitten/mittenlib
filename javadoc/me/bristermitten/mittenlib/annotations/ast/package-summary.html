@@ -67,62 +67,65 @@ loadScripts(document, 'script');</script>
 <section class="package-description" id="package-description">
 <div class="block">The structure of a config's data in a more abstract form than a class hierarchy.
 
-<p>As a reference, there are 3 ways of organising data for a config. The first, most simple, is
-an atomic structure, described by a simple class or interface, eg:
-
+ <p>As a reference, there are 3 ways of organising data for a config. The first, most simple, is
+ an atomic structure, described by a simple class or interface, eg:
+ <p>
+ 
 <div class="snippet-container"><button class="copy snippet-copy" aria-label="Copy snippet" onclick="copySnippet(this)"><span data-copied="Copied!">Copy</span><img src="../../../../../resource-files/copy.svg" alt="Copy snippet"></button>
 <pre class="snippet" id="snippet-me.bristermitten.mittenlib.annotations.ast1"><code class="language-java">
-@Config public interface TestConfig {
-int number();
-}
+ @Config public interface TestConfig {
+ int number();
+ }
 </code></pre>
 </div>
 
 
-<p>We can then compose config types into bigger ones using inheritance, creating an intersection
-structure:
-
+ <p>We can then compose config types into bigger ones using inheritance, creating an intersection
+ structure:
+ <p>
+ 
 <div class="snippet-container"><button class="copy snippet-copy" aria-label="Copy snippet" onclick="copySnippet(this)"><span data-copied="Copied!">Copy</span><img src="../../../../../resource-files/copy.svg" alt="Copy snippet"></button>
-<pre class="snippet" id="snippet-me.bristermitten.mittenlib.annotations.ast2"><code class="language-java">    @Config
-    public interface AddedConfig extends TestConfig {
-        int anotherNumber();
-    }
+<pre class="snippet" id="snippet-me.bristermitten.mittenlib.annotations.ast2"><code class="language-java">     @Config
+     public interface AddedConfig extends TestConfig {
+         int anotherNumber();
+     }
 </code></pre>
 </div>
 
-
-This describes a structure with 2 properties, the <code>int number</code> and the <code>
-int anotherNumber</code>. When using interfaces, multiple inheritance is allowed for more
-flexible composition. Note that the actual implementation (composition vs inheritance) is left as
-an implementation detail. Finally, we can create a union of types:
-
+ <p>
+ This describes a structure with 2 properties, the <code>int number</code> and the <code>
+ int anotherNumber</code>. When using interfaces, multiple inheritance is allowed for more
+ flexible composition. Note that the actual implementation (composition vs inheritance) is left as
+ an implementation detail. Finally, we can create a union of types:
+ <p>
+ 
 <div class="snippet-container"><button class="copy snippet-copy" aria-label="Copy snippet" onclick="copySnippet(this)"><span data-copied="Copied!">Copy</span><img src="../../../../../resource-files/copy.svg" alt="Copy snippet"></button>
 <pre class="snippet" id="snippet-me.bristermitten.mittenlib.annotations.ast3"><code class="language-java">
-import me.bristermitten.mittenlib.config.Config;
-import org.jspecify.annotations.Nullable;
-    @ConfigUnion
-    public interface RepositoryConfig {
-        @Config
-        interface URLConfig extends RepositoryConfig {
-            String url();
+ import me.bristermitten.mittenlib.config.Config;
+ import org.jspecify.annotations.Nullable;
+     @ConfigUnion
+     public interface RepositoryConfig {
+         @Config
+         interface URLConfig extends RepositoryConfig {
+             String url();
 
-            @Nullable String authToken();
-        }
+             @Nullable String authToken();
+         }
 
-        @Config
-        interface FileSystemConfig extends RepositoryConfig {
-            String path();
-        }
-    }
+         @Config
+         interface FileSystemConfig extends RepositoryConfig {
+             String path();
+         }
+     }
 </code></pre>
 </div>
 
-
-which essentially says that anytime a <code>RepositoryConfig</code> is referenced, it can be in
-the form of either of the subtypes. Note that this is an <i>undiscriminated</i> union, i.e.
-there's nothing to distinguish between the two subtypes aside from their structure. This is not
-considered a design flaw, but it means there's often no fast way to deserialise aside from trial
-and error.</div>
+ <p>
+ which essentially says that anytime a <code>RepositoryConfig</code> is referenced, it can be in
+ the form of either of the subtypes. Note that this is an <i>undiscriminated</i> union, i.e.
+ there's nothing to distinguish between the two subtypes aside from their structure. This is not
+ considered a design flaw, but it means there's often no fast way to deserialise aside from trial
+ and error.</div>
 </section>
 </div>
 <section class="summary">
