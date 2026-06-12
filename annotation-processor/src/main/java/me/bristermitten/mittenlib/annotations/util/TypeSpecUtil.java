@@ -1,7 +1,8 @@
 package me.bristermitten.mittenlib.annotations.util;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.MethodSpec;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.TypeName;
 import java.lang.annotation.Repeatable;
 import java.util.function.Consumer;
 
@@ -17,8 +18,8 @@ public class TypeSpecUtil {
             MethodSpec.Builder builder, Class<?> annotation, Consumer<AnnotationSpec.Builder> builderConsumer) {
         // check if the builder already has the annotation, if so, only add it if the annotation is
         // repeatable
-        boolean hasAnnotation = builder.annotations.stream()
-                .anyMatch(existing -> existing.type.toString().equals(annotation.getCanonicalName()));
+        boolean hasAnnotation = builder.build().annotations().stream()
+                .anyMatch(existing -> existing.type().equals(TypeName.get(annotation)));
 
         if (!hasAnnotation || annotation.isAnnotationPresent(Repeatable.class)) {
             AnnotationSpec.Builder annotationBuilder = AnnotationSpec.builder(annotation);

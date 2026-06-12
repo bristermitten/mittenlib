@@ -7,13 +7,13 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.ProvidesIntoSet;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.WildcardTypeName;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.JavaFile;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeSpec;
+import com.palantir.javapoet.WildcardTypeName;
 import io.toolisticon.aptk.tools.MessagerUtils;
 import java.util.List;
 import javax.annotation.processing.Generated;
@@ -27,6 +27,7 @@ import me.bristermitten.mittenlib.config.DeserializationFunction;
 import me.bristermitten.mittenlib.config.MittenLibConfigLoader;
 import me.bristermitten.mittenlib.config.SerializationFunction;
 import me.bristermitten.mittenlib.config.provider.ConfigProvider;
+import me.bristermitten.mittenlib.config.provider.SaveableConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
 import org.jspecify.annotations.Nullable;
@@ -63,6 +64,11 @@ public class ConfigLoaderModuleGenerator {
                         .build());
 
         MethodSpec.Builder configureMethod = MethodSpec.methodBuilder("configure")
+                .addJavadoc("""
+                        Configures Guice bindings for serializer and deserializer functions.
+
+                        @param binder the Guice binder
+                        """)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(Binder.class, "binder");
@@ -92,6 +98,11 @@ public class ConfigLoaderModuleGenerator {
         builder.addType(internalModuleBuilder.build());
 
         MethodSpec asModuleMethod = MethodSpec.methodBuilder("asModule")
+                .addJavadoc("""
+                        Returns the Guice module containing all provides methods and configuration bindings.
+
+                        @return the Guice module instance
+                        """)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(com.google.inject.Module.class)
@@ -100,7 +111,9 @@ public class ConfigLoaderModuleGenerator {
 
         builder.addMethod(asModuleMethod);
 
-        return JavaFile.builder(moduleClassName.packageName(), builder.build()).build();
+        return JavaFile.builder(moduleClassName.packageName(), builder.build())
+                .skipJavaLangImports(true)
+                .build();
     }
 
     private void addFunctionBindings(MethodSpec.Builder configureMethod, AbstractConfigStructure ast) {
@@ -150,14 +163,16 @@ public class ConfigLoaderModuleGenerator {
             ClassName implClassName = classNameGenerator.translateConfigClassName(ast);
             String name = publicClassName.simpleName();
 
-            // @Provides ConfigProvider<Public>
-            MethodSpec.Builder providerMethod = MethodSpec.methodBuilder(
-                            classNameGenerator.getProvidesProviderMethodName(name))
-                    .addJavadoc("Provides a {@link $T} for {@link $T}.", ConfigProvider.class, publicClassName)
+            // @Provides SaveableConfigProvider<Public>
+            MethodSpec.Builder saveableProviderMethod = MethodSpec.methodBuilder("provide" + name + "SaveableProvider")
+                    .addJavadoc("Provides a {@link $T} for {@link $T}.", SaveableConfigProvider.class, publicClassName)
                     .addAnnotation(Provides.class)
                     .addAnnotation(Singleton.class)
+                    .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
+                            .addMember("value", "$S", "unchecked")
+                            .build())
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName))
+                    .returns(ParameterizedTypeName.get(ClassName.get(SaveableConfigProvider.class), publicClassName))
                     .addParameter(ConfigProviderFactory.class, "factory")
                     .addParameter(ConfigProviderImprover.class, "improver")
                     .addParameter(
@@ -167,10 +182,73 @@ public class ConfigLoaderModuleGenerator {
                             ParameterizedTypeName.get(ClassName.get(SerializationFunction.class), publicClassName),
                             "serializer")
                     .addStatement(
-                            "return improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
+                            "return ($T) improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
+                            ParameterizedTypeName.get(ClassName.get(SaveableConfigProvider.class), publicClassName),
                             implClassName);
 
+            builder.addMethod(saveableProviderMethod.build());
+
+            // @Provides ConfigProvider<Public>
+            MethodSpec.Builder providerMethod = MethodSpec.methodBuilder(
+                            classNameGenerator.getProvidesProviderMethodName(name))
+                    .addJavadoc("Provides a {@link $T} for {@link $T}.", ConfigProvider.class, publicClassName)
+                    .addAnnotation(Provides.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName))
+                    .addParameter(
+                            ParameterizedTypeName.get(ClassName.get(SaveableConfigProvider.class), publicClassName),
+                            "provider")
+                    .addStatement("return provider");
+
             builder.addMethod(providerMethod.build());
+
+            if (!publicClassName.equals(implClassName)) {
+                // @Provides SaveableConfigProvider<Impl>
+                MethodSpec.Builder saveableImplProviderMethod = MethodSpec.methodBuilder(
+                                "provide" + name + "ImplSaveableProvider")
+                        .addJavadoc(
+                                "Provides a {@link $T} for {@link $T}.", SaveableConfigProvider.class, implClassName)
+                        .addAnnotation(Provides.class)
+                        .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
+                                .addMember("value", "$S", "unchecked")
+                                .build())
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(ParameterizedTypeName.get(ClassName.get(SaveableConfigProvider.class), implClassName))
+                        .addParameter(
+                                ParameterizedTypeName.get(ClassName.get(SaveableConfigProvider.class), publicClassName),
+                                "provider")
+                        .addStatement(
+                                "return ($T) (SaveableConfigProvider<?>) provider",
+                                ParameterizedTypeName.get(ClassName.get(SaveableConfigProvider.class), implClassName));
+                builder.addMethod(saveableImplProviderMethod.build());
+
+                // @Provides ConfigProvider<Impl>
+                MethodSpec.Builder implProviderMethod = MethodSpec.methodBuilder("provide" + name + "ImplProvider")
+                        .addJavadoc("Provides a {@link $T} for {@link $T}.", ConfigProvider.class, implClassName)
+                        .addAnnotation(Provides.class)
+                        .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
+                                .addMember("value", "$S", "unchecked")
+                                .build())
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), implClassName))
+                        .addParameter(
+                                ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), publicClassName),
+                                "provider")
+                        .addStatement(
+                                "return ($T) (ConfigProvider<?>) provider",
+                                ParameterizedTypeName.get(ClassName.get(ConfigProvider.class), implClassName));
+                builder.addMethod(implProviderMethod.build());
+
+                // @Provides Impl
+                MethodSpec.Builder implMethod = MethodSpec.methodBuilder("provide" + name + "Impl")
+                        .addJavadoc("Provides the {@link $T} instance.", implClassName)
+                        .addAnnotation(Provides.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(implClassName)
+                        .addParameter(publicClassName, "config")
+                        .addStatement("return ($T) config", implClassName);
+                builder.addMethod(implMethod.build());
+            }
 
             // @Provides Public
             MethodSpec.Builder configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))

@@ -2,7 +2,7 @@ package me.bristermitten.mittenlib.codegen.record;
 
 import static javax.lang.model.element.Modifier.*;
 
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

@@ -1,8 +1,8 @@
 package me.bristermitten.mittenlib.annotations.config;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.TypeName;
+import com.palantir.javapoet.TypeSpec;
 import io.toolisticon.cute.Cute;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -36,7 +36,7 @@ class BigBenchmarkGeneratorTest {
         Cute.blackBoxTest()
                 .given()
                 .processor(ConfigProcessor.class)
-                .andSourceFile(build.name, build.toString())
+                .andSourceFile(build.name(), build.toString())
                 .whenCompiled()
                 .thenExpectThat()
                 .compilationSucceeds()

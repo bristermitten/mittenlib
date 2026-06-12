@@ -1,6 +1,6 @@
 package me.bristermitten.mittenlib.codegen.record;
 
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import me.bristermitten.mittenlib.codegen.GenericTypeSpec;
 
 public interface RecordSpecLike extends GenericTypeSpec {

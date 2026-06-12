@@ -44,7 +44,7 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mo
 mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito" }
 mockbukkit = { group = "com.github.bristermitten", name = "MockBukkit", version = "93122b01fcbb3f66b211aede5eb66000e78b117f" }
 
-javapoet = { group = "com.squareup", name = "javapoet", version = "1.13.0" }
+javapoet = { group = "com.palantir.javapoet", name = "javapoet", version = "0.16.0" }
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version = "23.0.0" }
 jspecify = { group = "org.jspecify", name = "jspecify", version = "1.0.0" }
 acf-paper = { group = "co.aikar", name = "acf-paper", version = "0.5.1-SNAPSHOT" }

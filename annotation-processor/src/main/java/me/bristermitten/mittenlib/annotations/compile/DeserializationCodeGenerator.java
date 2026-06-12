@@ -1,7 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.*;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import java.util.Optional;
@@ -117,6 +117,21 @@ public class DeserializationCodeGenerator {
         if (daoName != null && property.settings().hasDefaultValue()) {
             builder.addParameter(
                     ParameterSpec.builder(daoName, "dao", Modifier.FINAL).build());
+            builder.addJavadoc("""
+                    Deserializes the {@code $L} property from the configuration data,
+                    falling back to the default value from the DTO/DAO if not present.
+
+                    @param context the deserialization context containing the raw data
+                    @param dao the default value provider instance
+                    @return a Result containing the deserialized value or a loading error
+                    """, property.name());
+        } else {
+            builder.addJavadoc("""
+                    Deserializes the {@code $L} property from the configuration data.
+
+                    @param context the deserialization context containing the raw data
+                    @return a Result containing the deserialized value or a loading error
+                    """, property.name());
         }
 
         return builder;

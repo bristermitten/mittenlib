@@ -6,7 +6,10 @@ import static org.assertj.core.api.Assertions.*;
 import com.google.inject.*;
 import com.google.inject.util.Types;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import me.bristermitten.mittenlib.MittenLibConsumer;
 import me.bristermitten.mittenlib.config.Configuration;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
@@ -21,6 +24,7 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unchecked")
 public class IntegrationTest {
 
     private Injector injector;
@@ -55,7 +59,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, InterfaceConfig.class),
+                        new Configuration<>(null, InterfaceConfig.class, InterfaceConfigImpl.class),
                         (DeserializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, InterfaceConfig.class)))),
                         (SerializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -71,6 +75,7 @@ public class IntegrationTest {
                 .isEqualTo(new InterfaceConfigImpl(
                         "b", 4, List.of(new InterfaceConfigImpl("c", 5, List.of(), null)), null));
 
+        //noinspection DataFlowIssue intellij doesnt understand isNotNull()
         assertThat(interfaceConfig.child())
                 .isNotNull()
                 .extracting(InterfaceConfig.ChildConfig::id)
@@ -85,7 +90,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
+                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl.class),
                         (DeserializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))),
                         (SerializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -101,6 +106,7 @@ public class IntegrationTest {
                 .isEqualTo(new InterfaceConfigImpl(
                         "b", 4, List.of(new InterfaceConfigImpl("c", 5, List.of(), null)), null));
 
+        //noinspection DataFlowIssue
         assertThat(classConfig.child())
                 .isNotNull()
                 .extracting(ClassConfig.ChildConfig::id)
@@ -117,7 +123,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ClassConfigImpl.class),
+                        new Configuration<>(null, ClassConfigImpl.class, ClassConfigImpl.class),
                         (DeserializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, ClassConfigImpl.class)))),
                         (SerializationFunction<ClassConfigImpl>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -128,7 +134,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, InterfaceConfig.class),
+                        new Configuration<>(null, InterfaceConfig.class, InterfaceConfigImpl.class),
                         (DeserializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, InterfaceConfig.class)))),
                         (SerializationFunction<InterfaceConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -161,7 +167,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, IntersectionConfig.class),
+                        new Configuration<>(null, IntersectionConfig.class, IntersectionConfigImpl.class),
                         (DeserializationFunction<IntersectionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, IntersectionConfig.class)))),
                         (SerializationFunction<IntersectionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -181,7 +187,10 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, IntersectionConfig.ChildIntersectionConfig.class),
+                        new Configuration<>(
+                                null,
+                                IntersectionConfig.ChildIntersectionConfig.class,
+                                IntersectionConfigImpl.ChildIntersectionConfigImpl.class),
                         (DeserializationFunction<IntersectionConfig.ChildIntersectionConfig>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class,
@@ -210,7 +219,7 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, UnionConfig.class),
+                        new Configuration<>(null, UnionConfig.class, UnionConfigImpl.class),
                         (DeserializationFunction<UnionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
                                 Types.newParameterizedType(DeserializationFunction.class, UnionConfig.class)))),
                         (SerializationFunction<UnionConfig>) injector.getInstance(Key.get(TypeLiteral.get(
@@ -235,7 +244,8 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, NoNoArgConstructorConfigImpl.class),
+                        new Configuration<>(
+                                null, NoNoArgConstructorConfigImpl.class, NoNoArgConstructorConfigImpl.class),
                         (DeserializationFunction<NoNoArgConstructorConfigImpl>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class, NoNoArgConstructorConfigImpl.class)))),
@@ -259,7 +269,10 @@ public class IntegrationTest {
                 .createStringReaderProvider(
                         injector.getInstance(YamlFileType.class),
                         fileContents,
-                        new Configuration<>(null, ConstructorAndDefaultValueConfigImpl.class),
+                        new Configuration<>(
+                                null,
+                                ConstructorAndDefaultValueConfigImpl.class,
+                                ConstructorAndDefaultValueConfigImpl.class),
                         (DeserializationFunction<ConstructorAndDefaultValueConfigImpl>)
                                 injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
                                         DeserializationFunction.class, ConstructorAndDefaultValueConfigImpl.class)))),
@@ -447,5 +460,153 @@ public class IntegrationTest {
         assertThat(message)
                 .contains(
                         "Property 'customValidated' (invalid value: not-mitten): Must start with expected prefix, but was 'not-mitten'");
+    }
+
+    @Test
+    void testCollectionValidationConfigSuccess() {
+        var fileContents = """
+                names:
+                  - "alex"
+                  - "bob"
+                values:
+                  - 1
+                  - 2
+                scores:
+                  alex: 10
+                  bob: 20
+                nullableNames:
+                  - "charlie"
+                  - null
+                customList:
+                  - "mitten-lib-1"
+                  - "mitten-lib-2"
+                customMap:
+                  alex: "mitten-lib-3"
+                """;
+
+        var provider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, CollectionValidationConfig.class),
+                        (DeserializationFunction<CollectionValidationConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        DeserializationFunction.class, CollectionValidationConfig.class)))),
+                        (SerializationFunction<CollectionValidationConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        SerializationFunction.class, CollectionValidationConfig.class)))))
+                .getOrThrow();
+
+        CollectionValidationConfig config = provider.get();
+
+        assertThat(config).isNotNull();
+        assertThat(config.names()).containsExactly("alex", "bob");
+        assertThat(config.values()).containsExactlyInAnyOrder(1, 2);
+        assertThat(config.scores()).containsEntry("alex", 10).containsEntry("bob", 20);
+        assertThat(config.nullableNames()).containsExactly("charlie", null);
+        assertThat(config.customList()).containsExactly("mitten-lib-1", "mitten-lib-2");
+        assertThat(config.customMap()).containsEntry("alex", "mitten-lib-3");
+    }
+
+    @Test
+    void testCollectionValidationConfigFailure() {
+        var fileContents = """
+                names:
+                  - "   "
+                  - "bob"
+                values:
+                  - -1
+                  - 2
+                scores:
+                  "": 10
+                  bob: -5
+                nullableNames:
+                  - "   "
+                customList:
+                  - "invalid-1"
+                customMap:
+                  alex: "invalid-2"
+                """;
+
+        var provider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, CollectionValidationConfig.class),
+                        (DeserializationFunction<CollectionValidationConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        DeserializationFunction.class, CollectionValidationConfig.class)))),
+                        (SerializationFunction<CollectionValidationConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        SerializationFunction.class, CollectionValidationConfig.class)))))
+                .getOrThrow();
+
+        assertThatThrownBy(provider::get)
+                .isInstanceOf(ConfigValidationException.class)
+                .hasMessageContaining("Configuration validation failed for class CollectionValidationConfig")
+                .hasMessageContaining("Property 'names[0]' (invalid value:    ): Must not be blank")
+                .hasMessageContaining("Property 'values[-1]' (invalid value: -1): Must be positive")
+                .hasMessageContaining("Property 'scores[]' (invalid value: ): Key Must not be blank")
+                .hasMessageContaining("Property 'scores[bob]' (invalid value: -5): Must be at least 0.0")
+                .hasMessageContaining("Property 'nullableNames[0]' (invalid value:    ): Must not be blank")
+                .hasMessageContaining(
+                        "Property 'customList[0]' (invalid value: invalid-1): Must start with expected prefix, but was 'invalid-1'")
+                .hasMessageContaining(
+                        "Property 'customMap[alex]' (invalid value: invalid-2): Must start with expected prefix, but was 'invalid-2'");
+    }
+
+    @Test
+    void testCollectionValidationConfigNullability() {
+        var fileContents = """
+                names:
+                  - null
+                values:
+                  - 1
+                scores:
+                  alex: null
+                nullableNames:
+                  - null
+                customList:
+                  - null
+                customMap:
+                  alex: null
+                """;
+
+        var provider = injector.getInstance(ConfigProviderFactory.class)
+                .createStringReaderProvider(
+                        injector.getInstance(YamlFileType.class),
+                        fileContents,
+                        new Configuration<>(null, CollectionValidationConfig.class),
+                        (DeserializationFunction<CollectionValidationConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        DeserializationFunction.class, CollectionValidationConfig.class)))),
+                        (SerializationFunction<CollectionValidationConfig>)
+                                injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+                                        SerializationFunction.class, CollectionValidationConfig.class)))))
+                .getOrThrow();
+
+        assertThatThrownBy(provider::get)
+                .isInstanceOf(ConfigValidationException.class)
+                .hasMessageContaining("Configuration validation failed for class CollectionValidationConfig")
+                .hasMessageContaining("Property 'names[0]' (invalid value: null): Must not be null")
+                .hasMessageContaining("Property 'scores[alex]' (invalid value: null): Must not be null")
+                .hasMessageContaining("Property 'customList[0]' (invalid value: null): Must not be null")
+                .hasMessageContaining("Property 'customMap[alex]' (invalid value: null): Must not be null");
+    }
+
+    @Test
+    void testCollectionValidationConfigProgrammaticNullKey() {
+        var scores = new HashMap<String, Integer>();
+        scores.put(null, 10);
+
+        var config = new CollectionValidationConfig(
+                List.of("alex"), Set.of(1), scores, List.of(), List.of("mitten-lib-1"), Map.of());
+
+        var result =
+                injector.getInstance(CollectionValidationConfigValidator.class).validate(config);
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.error().orElseThrow())
+                .isInstanceOf(ConfigValidationException.class)
+                .hasMessageContaining("Property 'scores[null]' (invalid value: null): Key must not be null");
     }
 }

@@ -1,9 +1,9 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.ParameterizedTypeName;
+import com.palantir.javapoet.TypeName;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import java.util.List;
 import java.util.function.Function;
@@ -35,7 +35,7 @@ public class ConfigurationClassNameGenerator {
     private final ConfigNameCache configNameCache;
 
     @Inject
-    ConfigurationClassNameGenerator(ConfigNameCache configNameCache) {
+    public ConfigurationClassNameGenerator(ConfigNameCache configNameCache) {
         this.configNameCache = configNameCache;
     }
 
@@ -269,8 +269,24 @@ public class ConfigurationClassNameGenerator {
         return property.name() + VALIDATOR_SUFFIX;
     }
 
+    public String getValidatorElementFieldName(Property property) {
+        return property.name() + "Element" + VALIDATOR_SUFFIX;
+    }
+
+    public String getValidatorKeyFieldName(Property property) {
+        return property.name() + "Key" + VALIDATOR_SUFFIX;
+    }
+
     public String getValidatorErrorFieldName(Property property) {
         return property.name() + "ValidationError";
+    }
+
+    public String getValidatorElementErrorFieldName(Property property) {
+        return property.name() + "ElementValidationError";
+    }
+
+    public String getValidatorKeyErrorFieldName(Property property) {
+        return property.name() + "KeyValidationError";
     }
 
     public ClassName getDefaultMethodAccessClassName(AbstractConfigStructure ast) {

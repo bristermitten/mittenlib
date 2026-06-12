@@ -1,10 +1,20 @@
 package me.bristermitten.mittenlib.annotations.compile;
 
 import com.google.inject.Inject;
-import com.squareup.javapoet.*;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.CodeBlock;
+import com.palantir.javapoet.FieldSpec;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterSpec;
+import com.palantir.javapoet.TypeSpec;
 import io.toolisticon.aptk.tools.wrapper.AnnotationMirrorWrapper;
 import java.util.StringJoiner;
-import javax.lang.model.element.*;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
 import me.bristermitten.mittenlib.annotations.ast.Property;
@@ -34,16 +44,21 @@ public class AccessorGenerator {
      * Creates a getter method for a field.
      *
      * @param typeSpecBuilder The builder for the type spec
-     * @param element The variable element
-     * @param field The field spec
+     * @param element         The variable element
+     * @param field           The field spec
      */
     public void createGetterMethod(TypeSpec.Builder typeSpecBuilder, VariableElement element, FieldSpec field) {
         var safeName = getFieldAccessorName(element);
 
         var builder = MethodSpec.methodBuilder(safeName)
+                .addJavadoc("""
+                                Gets the value of the {@code $L} property.
+
+                                @return the value of the property
+                                """, field.name())
                 .addModifiers(Modifier.PUBLIC)
-                .returns(field.type)
-                .addStatement("return " + field.name);
+                .returns(field.type())
+                .addStatement("return " + field.name());
 
         builder.addAnnotation(AnnotationSpec.builder(Contract.class)
                 .addMember("pure", CodeBlock.of("true"))
@@ -57,15 +72,20 @@ public class AccessorGenerator {
      * contract annotations.
      *
      * @param typeSpecBuilder The builder for the type spec
-     * @param overriding The executable element being overridden
-     * @param fromField The field spec that the getter will return
+     * @param overriding      The executable element being overridden
+     * @param fromField       The field spec that the getter will return
      */
     public void createGetterMethodOverriding(
             TypeSpec.Builder typeSpecBuilder, ExecutableElement overriding, FieldSpec fromField) {
         var builder = MethodSpec.methodBuilder(overriding.getSimpleName().toString())
+                .addJavadoc("""
+                                Gets the value of the {@code $L} property, overriding the original config method.
+
+                                @return the value of the property
+                                """, fromField.name())
                 .addModifiers(Modifier.PUBLIC)
-                .returns(fromField.type)
-                .addStatement("return " + fromField.name)
+                .returns(fromField.type())
+                .addStatement("return " + fromField.name())
                 .addAnnotation(Override.class);
 
         for (AnnotationMirror annotationMirror : overriding.getAnnotationMirrors()) {
@@ -85,7 +105,7 @@ public class AccessorGenerator {
      * Creates "with" methods (immutable setters) for each field.
      *
      * @param typeSpecBuilder The builder for the type spec
-     * @param ast The config ast
+     * @param ast             The config ast
      */
     public void createWithMethods(TypeSpec.Builder typeSpecBuilder, AbstractConfigStructure ast) {
 
@@ -93,6 +113,12 @@ public class AccessorGenerator {
             ClassName configImplClassName = configurationClassNameGenerator.generateConfigurationClassName(
                     ast.source().element());
             MethodSpec.Builder withMethodBuilder = MethodSpec.methodBuilder("with" + Strings.capitalize(field.name()))
+                    .addJavadoc("""
+                                    Returns a new instance of this configuration with the {@code $L} property updated.
+
+                                    @param $L the new value for the property
+                                    @return a new configuration instance with the updated value
+                                    """, field.name(), field.name())
                     .addModifiers(Modifier.PUBLIC)
                     .returns(configImplClassName)
                     .addParameter(ParameterSpec.builder(

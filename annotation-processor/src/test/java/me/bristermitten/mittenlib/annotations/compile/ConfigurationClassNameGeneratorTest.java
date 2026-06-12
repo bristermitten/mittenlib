@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.CompilationSubject;
 import com.google.testing.compile.JavaFileObjects;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.ClassName;
 import me.bristermitten.mittenlib.annotations.ast.ASTSettings;
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure;
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource;
