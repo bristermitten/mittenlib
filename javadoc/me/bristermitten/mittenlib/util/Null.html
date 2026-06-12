@@ -93,21 +93,21 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;A,<wbr>B&gt;&nbsp;B</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#map(A,java.util.function.Function)" class="member-name-link">map</a><wbr>(A&nbsp;a,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A, @NotNull B&gt;&nbsp;function)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;A,<wbr>B&gt;&nbsp;@Nullable B</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#map(A,java.util.function.Function)" class="member-name-link">map</a><wbr>(@Nullable A&nbsp;a,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@NonNull A, @NonNull B&gt;&nbsp;function)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Applies the given function to the given value if it is not null, or returns null if it is.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,java.util.function.Supplier)" class="member-name-link">orElse</a><wbr>(T&nbsp;t,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@NotNull T&gt;&nbsp;other)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;@NonNull T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,java.util.function.Supplier)" class="member-name-link">orElse</a><wbr>(@Nullable T&nbsp;t,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@NonNull T&gt;&nbsp;other)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the given value if it is not null, or the value returned by the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a>
 if it is.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,T)" class="member-name-link">orElse</a><wbr>(T&nbsp;t,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orElse(T,T)" class="member-name-link">orElse</a><wbr>(@Nullable T&nbsp;t,
  T&nbsp;other)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the given value if it is not null, or the given other value if it is.</div>
@@ -134,8 +134,7 @@ if it is.</div>
 <h3 id="orElse(java.lang.Object,java.lang.Object)">orElse</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@Contract("null, null -&gt; null; _, _ -&gt; !null")
-</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(@Nullable
- T&nbsp;t,
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(@Nullable T&nbsp;t,
  T&nbsp;other)</span></div>
 <div class="block">Returns the given value if it is not null, or the given other value if it is. Analogous to
 <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html#orElse(T)" title="class or interface in java.util" class="external-link"><code>Optional.orElse(Object)</code></a> or Kotlin's Elvis operator.</div>
@@ -156,11 +155,8 @@ if it is.</div>
 <h3 id="orElse(java.lang.Object,java.util.function.Supplier)">orElse</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@Contract("_, _ -&gt; !null")
-@NotNull
-</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(@Nullable
- T&nbsp;t,
- @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@NotNull T&gt;&nbsp;other)</span></div>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">@NonNull T</span>&nbsp;<span class="element-name">orElse</span><wbr><span class="parameters">(@Nullable T&nbsp;t,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;@NonNull T&gt;&nbsp;other)</span></div>
 <div class="block">Returns the given value if it is not null, or the value returned by the given <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link"><code>Supplier</code></a>
 if it is. Analogous to <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html#orElseGet(java.util.function.Supplier)" title="class or interface in java.util" class="external-link"><code>Optional.orElseGet(Supplier)</code></a></div>
 <dl class="notes">
@@ -180,10 +176,8 @@ if it is. Analogous to <a href="https://docs.oracle.com/en/java/javase/25/docs/a
 <h3 id="map(java.lang.Object,java.util.function.Function)">map</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@Contract("null, _ -&gt; null; !null, _ -&gt; !null")
-@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>B&gt;</span>&nbsp;<span class="return-type">B</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(@Nullable
- A&nbsp;a,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A, @NotNull B&gt;&nbsp;function)</span></div>
+</span><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>B&gt;</span>&nbsp;<span class="return-type">@Nullable B</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(@Nullable A&nbsp;a,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;@NonNull A, @NonNull B&gt;&nbsp;function)</span></div>
 <div class="block">Applies the given function to the given value if it is not null, or returns null if it is.
 Analogous to <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html#map(java.util.function.Function)" title="class or interface in java.util" class="external-link"><code>Optional.map(Function)</code></a> or Kotlin's <code>?.</code> operator.</div>
 <dl class="notes">
