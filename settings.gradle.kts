@@ -1,4 +1,5 @@
 rootProject.name = "mittenlib"
+include("codegen-dsl")
 include("annotation-processor")
 include("core")
 include("demo")

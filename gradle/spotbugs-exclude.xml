@@ -64,6 +64,10 @@
         <Class name="~.*Test(\$.*)?" />
     </Match>
     <Match>
+        <Bug pattern="NM_CLASS_NAMING_CONVENTION" />
+        <Class name="~.*\$package.*" />
+    </Match>
+    <Match>
         <Package name="~me\.bristermitten\.mittenlib\.annotations\.integration(\..*)?" />
     </Match>
     <Match>
@@ -71,5 +75,9 @@
     </Match>
     <Match>
         <Package name="~me\.bristermitten\.mittenlib\.annotation\.benchmark(\..*)?" />
+    </Match>
+    <Match>
+        <Class name="me.bristermitten.mittenlib.annotations.compile.NamingNode" />
+        <Bug pattern="SE_BAD_FIELD" />
     </Match>
 </FindBugsFilter>
