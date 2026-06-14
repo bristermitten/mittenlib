@@ -163,6 +163,35 @@ public class TypesUtil {
         return mirror instanceof DeclaredType declaredType && NewtypeUtil.isNewtype(declaredType.asElement());
     }
 
+    public TypeMirror getNewtypeUnderlyingType(TypeMirror newtypeMirror) {
+        if (!(newtypeMirror instanceof DeclaredType declaredType)) {
+            throw new IllegalArgumentException("Newtype must be a DeclaredType: " + newtypeMirror);
+        }
+        TypeElement element = (TypeElement) declaredType.asElement();
+        if (element.getKind() == javax.lang.model.element.ElementKind.RECORD) {
+            var components = element.getRecordComponents();
+            if (components.size() != 1) {
+                throw new IllegalArgumentException("Newtype record " + element + " must have exactly one component");
+            }
+            var component = components.get(0);
+            var accessor = component.getAccessor();
+            var resolvedMethod = (javax.lang.model.type.ExecutableType) types.asMemberOf(declaredType, accessor);
+            return resolvedMethod.getReturnType();
+        } else if (element.getKind() == javax.lang.model.element.ElementKind.INTERFACE) {
+            var methods = javax.lang.model.util.ElementFilter.methodsIn(element.getEnclosedElements()).stream()
+                    .filter(m -> !m.isDefault() && !m.getModifiers().contains(javax.lang.model.element.Modifier.STATIC))
+                    .toList();
+            if (methods.size() != 1) {
+                throw new IllegalArgumentException(
+                        "Newtype interface " + element + " must have exactly one abstract method");
+            }
+            var method = methods.get(0);
+            var resolvedMethod = (javax.lang.model.type.ExecutableType) types.asMemberOf(declaredType, method);
+            return resolvedMethod.getReturnType();
+        }
+        throw new IllegalArgumentException("Newtype annotation only supports records and interfaces: " + element);
+    }
+
     public Optional<TypeName> getDataTreeType(TypeName type) {
         type = type.isBoxedPrimitive() ? type.unbox() : type;
         if (type.equals(TypeName.INT)

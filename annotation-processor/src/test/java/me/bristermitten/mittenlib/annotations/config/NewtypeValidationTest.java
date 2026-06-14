@@ -133,4 +133,96 @@ class NewtypeValidationTest {
                         "Newtype interface me.bristermitten.mittenlib.tests.TwoMethodInterfaceNewtype must have exactly one abstract method")
                 .executeTest();
     }
+
+    @Test
+    void testGenericRecordNewtypeCompiles() {
+        Cute.blackBoxTest()
+                .given()
+                .processor(ConfigProcessor.class)
+                .andSourceFile("GenericRecordNewtype", """
+                        package me.bristermitten.mittenlib.tests;
+
+                        import me.bristermitten.mittenlib.config.Newtype;
+
+                        @Newtype
+                        public record GenericRecordNewtype<T>(String value) {}
+                        """)
+                .whenCompiled()
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
+    }
+
+    @Test
+    void testGenericInterfaceNewtypeCompiles() {
+        Cute.blackBoxTest()
+                .given()
+                .processor(ConfigProcessor.class)
+                .andSourceFile("GenericInterfaceNewtype", """
+                        package me.bristermitten.mittenlib.tests;
+
+                        import me.bristermitten.mittenlib.config.Newtype;
+
+                        @Newtype
+                        public interface GenericInterfaceNewtype<T> {
+                            T value();
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
+    }
+
+    @Test
+    void testGenericNewtypeConfigCompiles() {
+        Cute.blackBoxTest()
+                .given()
+                .processor(ConfigProcessor.class)
+                .andSourceFile("GenericNewtypeConfig", """
+                        package me.bristermitten.mittenlib.tests;
+
+                        import me.bristermitten.mittenlib.config.Config;
+                        import me.bristermitten.mittenlib.config.Newtype;
+
+                        @Config
+                        public interface GenericNewtypeConfig {
+                            Id<String> id();
+
+                            @Newtype
+                            interface Id<T> {
+                                T value();
+                            }
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
+    }
+
+    @Test
+    void testGenericRecordNewtypeConfigCompiles() {
+        Cute.blackBoxTest()
+                .given()
+                .processor(ConfigProcessor.class)
+                .andSourceFile("GenericRecordNewtypeConfig", """
+                        package me.bristermitten.mittenlib.tests;
+
+                        import me.bristermitten.mittenlib.config.Config;
+                        import me.bristermitten.mittenlib.config.Newtype;
+
+                        @Config
+                        public interface GenericRecordNewtypeConfig {
+                            Id<String> id();
+
+                            @Newtype
+                            record Id<T>(T value) {}
+                        }
+                        """)
+                .whenCompiled()
+                .thenExpectThat()
+                .compilationSucceeds()
+                .executeTest();
+    }
 }

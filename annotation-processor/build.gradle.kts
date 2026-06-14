@@ -3,6 +3,7 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     id("mittenlib.java-conventions")
     id("mittenlib.publishing-conventions")
+    scala
 }
 
 java {
@@ -10,7 +11,12 @@ java {
     targetCompatibility = sourceCompatibility
 }
 
+scala {
+    scalaVersion = "3.3.6"
+}
+
 dependencies {
+    implementation(project(":codegen-dsl"))
     implementation(project(":core"))
     implementation(libs.javapoet)
     implementation(libs.aptk.tools)
@@ -42,6 +48,18 @@ dependencies {
     testAnnotationProcessor(project(":annotation-processor"))
 }
 
+sourceSets {
+    main {
+        scala {
+            srcDirs("src/main/scala", "src/main/java")
+        }
+    }
+}
+
+tasks.compileJava {
+    enabled = false
+}
+
 tasks.withType<JavaCompile>().configureEach {
     options.errorprone.excludedPaths.set(".*/build/generated/.*")
 }
@@ -60,4 +78,8 @@ tasks.jacocoTestReport {
             },
         ),
     )
+}
+
+tasks.withType<Jar>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
