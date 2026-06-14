@@ -3,11 +3,28 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     id("mittenlib.java-conventions")
     id("mittenlib.publishing-conventions")
+    scala
+}
+
+scala {
+    scalaVersion = "3.3.6"
+}
+
+sourceSets {
+    main {
+        scala {
+            srcDirs("src/main/scala", "src/main/java")
+        }
+    }
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = sourceCompatibility
+}
+
+tasks.compileJava {
+    enabled = false
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -17,6 +34,7 @@ tasks.withType<JavaCompile>().configureEach {
 dependencies {
     implementation(project(":core"))
     implementation(project(":record-generator:api"))
+    implementation(project(":codegen-dsl"))
     implementation(libs.javapoet)
     implementation(libs.aptk.tools)
     implementation(libs.aptk.compilermessages.api)
@@ -35,4 +53,8 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.compile.testing)
     testAnnotationProcessor(project(":annotation-processor"))
+}
+
+tasks.withType<Jar>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
