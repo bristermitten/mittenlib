@@ -38,11 +38,10 @@ public class ConfigDataModule extends AbstractModule {
             configurationMultibinder.addBinding().toInstance(configuration);
 
             // Bind ConfigProvider<T> to DelegatingConfigProvider<T> in Singleton scope
-            final TypeLiteral<ConfigProvider<?>> providerType =
-                    (TypeLiteral<ConfigProvider<?>>) TypeLiteral.get(new CompositeType(ConfigProvider.class, key));
-            final TypeLiteral<DelegatingConfigProvider<?>> delegatingProviderType =
-                    (TypeLiteral<DelegatingConfigProvider<?>>)
-                            TypeLiteral.get(new CompositeType(DelegatingConfigProvider.class, key));
+            final Key<ConfigProvider<?>> providerType =
+                    (Key<ConfigProvider<?>>) Key.get(new CompositeType(ConfigProvider.class, key));
+            final Key<DelegatingConfigProvider<?>> delegatingProviderType =
+                    (Key<DelegatingConfigProvider<?>>) Key.get(new CompositeType(DelegatingConfigProvider.class, key));
 
             bind(providerType).to(delegatingProviderType).in(Singleton.class);
             configProviderMultibinder.addBinding().to(delegatingProviderType);
