@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.config;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
+import java.util.Collections;
+import java.util.Set;
 import me.bristermitten.mittenlib.MittenLib;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -13,6 +15,15 @@ import org.jetbrains.annotations.ApiStatus;
  * {@link MittenLib} to register configurations and set up the necessary infrastructure.
  */
 public abstract class MittenLibConfigLoader {
+
+    /**
+     * Get the configurations loaded by this module.
+     *
+     * @return the set of configurations
+     */
+    public Set<Configuration<?>> getConfigurations() {
+        return Collections.emptySet();
+    }
 
     /**
      * Configure the configurations for this module. This is called internally when building the Guice

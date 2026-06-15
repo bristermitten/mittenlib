@@ -47,7 +47,7 @@ public class ConfigDataModule extends AbstractModule {
             configProviderMultibinder.addBinding().to(delegatingProviderType);
 
             // Bind T to the provider key
-            bind((Class<? super Object>) key).toProvider(Key.get(providerType));
+            bind((Class<? super Object>) key).toProvider(providerType);
         });
     }
 

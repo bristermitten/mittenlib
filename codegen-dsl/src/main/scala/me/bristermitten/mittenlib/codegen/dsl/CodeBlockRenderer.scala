@@ -116,7 +116,12 @@ object CodeBlockRenderer:
       CodeBlock.of("new $T($L) {}", tpe.toTypeName, joinExprs(args))
 
     case Expr.Cast(tpe, e) =>
-      CodeBlock.of("(($T) $L)", tpe.toTypeName, renderExpr(e))
+      val targetTypeName = tpe.toTypeName
+      if (targetTypeName.isPrimitive) {
+        CodeBlock.of("(($T) $L)", targetTypeName, renderExpr(e))
+      } else {
+        CodeBlock.of("(($T) (Object) $L)", targetTypeName, renderExpr(e))
+      }
 
     case Expr.InstanceOf(e, tpe) =>
       CodeBlock.of("$L instanceof $T", renderExpr(e), tpe.toTypeName)
@@ -137,7 +142,7 @@ object CodeBlockRenderer:
 
     case Expr.Lambda(params, body) =>
       val ps = params.map(_.generatedName).mkString(", ")
-      CodeBlock.of("($L) -> {\n$L}", ps, render(body))
+      CodeBlock.of("($L) -> {\n$L}", ps, renderNested(body))
 
     case Expr.LambdaExpr(params, body) =>
       val ps = params.map(_.generatedName).mkString(", ")
@@ -145,9 +150,82 @@ object CodeBlockRenderer:
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
 
+  def renderNested(block: Block[?]): CodeBlock =
+    val builder = CodeBlock.builder()
+    block.statements.foreach(renderStatementNested(_, builder))
+    block.terminator.foreach(renderTerminatorNested(_, builder))
+    builder.build()
+
   private def appendBlock(block: Block[?], b: CodeBlock.Builder): Unit =
     block.statements.foreach(renderStatement(_, b))
     block.terminator.foreach(renderTerminator(_, b))
+
+  private def appendBlockNested(block: Block[?], b: CodeBlock.Builder): Unit =
+    block.statements.foreach(renderStatementNested(_, b))
+    block.terminator.foreach(renderTerminatorNested(_, b))
+
+  private def renderStatementNested(stmt: Statement, b: CodeBlock.Builder): Unit = stmt match
+    case Statement.DeclareAssign(v, value) =>
+      b.add("$T $L = $L;\n", v.tpe.toTypeName, v.generatedName, renderExpr(value))
+
+    case Statement.Assign(target, value) =>
+      b.add("$L = $L;\n", renderExpr(target), renderExpr(value))
+
+    case Statement.ExprStatement(expr) =>
+      b.add("$L;\n", renderExpr(expr))
+
+    case Statement.IfThen(cond, body) =>
+      b.add("if ($L) {\n", renderExpr(cond))
+      b.indent()
+      appendBlockNested(body, b)
+      b.unindent()
+      b.add("}\n")
+
+    case Statement.IfThenElse(cond, thenBlock, elseBlock) =>
+      b.add("if ($L) {\n", renderExpr(cond))
+      b.indent()
+      appendBlockNested(thenBlock, b)
+      b.unindent()
+      b.add("} else {\n")
+      b.indent()
+      appendBlockNested(elseBlock, b)
+      b.unindent()
+      b.add("}\n")
+
+    case Statement.ForEach(element, iterable, body) =>
+      b.add("for ($T $L : $L) {\n",
+        element.tpe.toTypeName, element.generatedName, renderExpr(iterable))
+      b.indent()
+      appendBlockNested(body, b)
+      b.unindent()
+      b.add("}\n")
+
+    case Statement.ForLoop(init, cond, update, body) =>
+      val initCode = renderStatementInline(init)
+      b.add("for ($L; $L; $L) {\n", initCode, renderExpr(cond), renderExpr(update))
+      b.indent()
+      appendBlockNested(body, b)
+      b.unindent()
+      b.add("}\n")
+
+    case Statement.TryCatch(tryBody, exType, exVar, catchBody) =>
+      b.add("try {\n")
+      b.indent()
+      appendBlockNested(tryBody, b)
+      b.unindent()
+      b.add("} catch ($T $L) {\n", exType.toTypeName, exVar.generatedName)
+      b.indent()
+      appendBlockNested(catchBody, b)
+      b.unindent()
+      b.add("}\n")
+
+    case Statement.BlankLine  => b.add("\n")
+    case Statement.Comment(t) => b.add("// $L\n", t)
+
+  private def renderTerminatorNested(term: Terminator, b: CodeBlock.Builder): Unit = term match
+    case Terminator.Return(v)  => b.add("return $L;\n", renderExpr(v))
+    case Terminator.ReturnVoid => b.add("return;\n")
+    case Terminator.Throw(e)   => b.add("throw $L;\n", renderExpr(e))
 
   private def joinExprs(args: List[Expr]): CodeBlock =
     args.map(renderExpr).asJava

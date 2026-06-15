@@ -82,6 +82,26 @@ class ConfigLoaderModuleGenerator @Inject() (
 
     builder.addType(internalModuleBuilder.build())
 
+    val allConfigsWithSource = asts.asScala.flatMap(findAllConfigsWithSource).toList
+
+    val getConfigurationsMethod = MethodSpec.methodBuilder("getConfigurations")
+      .addAnnotation(classOf[Override])
+      .addModifiers(Modifier.PUBLIC)
+      .returns(ParameterizedTypeName.get(
+        ClassName.get(classOf[JSet[?]]),
+        ParameterizedTypeName.get(ClassName.get(classOf[Configuration[?]]), WildcardTypeName.subtypeOf(classOf[Object]))
+      ))
+
+    if (allConfigsWithSource.isEmpty) {
+      getConfigurationsMethod.addStatement("return $T.emptySet()", classOf[java.util.Collections])
+    } else {
+      val args = allConfigsWithSource.map(ast => CodeBlock.of("$T.CONFIG", classNameGenerator.translateConfigClassName(ast)))
+      val joined = args.asJava.stream().collect(CodeBlock.joining(", "))
+      getConfigurationsMethod.addStatement("return $T.of($L)", classOf[JSet[?]], joined)
+    }
+
+    builder.addMethod(getConfigurationsMethod.build())
+
     val asModuleMethod = MethodSpec.methodBuilder("asModule")
       .addJavadoc(
         """Returns the Guice module containing all provides methods and configuration bindings.
@@ -237,8 +257,10 @@ class ConfigLoaderModuleGenerator @Inject() (
           .addAnnotation(classOf[Provides])
           .addModifiers(Modifier.PUBLIC)
           .returns(implClassName)
-          .addParameter(publicClassName, "config")
-          .addStatement("return ($T) config", implClassName)
+          .addParameter(
+            ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), implClassName), "provider"
+          )
+          .addStatement("return provider.get()")
         builder.addMethod(implMethod.build())
       }
 
@@ -254,32 +276,6 @@ class ConfigLoaderModuleGenerator @Inject() (
         .addStatement("return provider.get()")
 
       builder.addMethod(configMethod.build())
-
-      // Multibinder registrations
-
-      val configMultiBinder = MethodSpec.methodBuilder(
-          classNameGenerator.getProvidesToConfigSetMethodName(name))
-        .addJavadoc("Adds {@link $T} to the set of all configurations.", publicClassName)
-        .addAnnotation(classOf[ProvidesIntoSet])
-        .addModifiers(Modifier.PUBLIC)
-        .returns(ParameterizedTypeName.get(
-          ClassName.get(classOf[Configuration[?]]), WildcardTypeName.subtypeOf(classOf[Object])))
-        .addStatement("return $T.CONFIG", implClassName)
-      builder.addMethod(configMultiBinder.build())
-
-      val providerMultiBinder = MethodSpec.methodBuilder(
-          classNameGenerator.getProvidesToProviderSetMethodName(name))
-        .addJavadoc("Adds the {@link $T} for {@link $T} to the set of all providers.",
-          classOf[ConfigProvider[?]], publicClassName)
-        .addAnnotation(classOf[ProvidesIntoSet])
-        .addModifiers(Modifier.PUBLIC)
-        .returns(ParameterizedTypeName.get(
-          ClassName.get(classOf[ConfigProvider[?]]), WildcardTypeName.subtypeOf(classOf[Object])))
-        .addParameter(
-          ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName), "provider"
-        )
-        .addStatement("return provider")
-      builder.addMethod(providerMultiBinder.build())
     } else if (isParentProvided && parent != null) {
       isCurrentProvided = addNestedProvidesMethod(builder, parent, ast)
     }
@@ -344,3 +340,8 @@ class ConfigLoaderModuleGenerator @Inject() (
       .addStatement("return parent.$L()", methodNames.safeMethodName(propertyToBind))
     builder.addMethod(configMethod.build())
     true
+
+  private def findAllConfigsWithSource(ast: AbstractConfigStructure): List[AbstractConfigStructure] =
+    val current = if (ast.settings().source() != null) List(ast) else Nil
+    val children = ast.enclosed().asScala.flatMap(findAllConfigsWithSource).toList
+    current ++ children

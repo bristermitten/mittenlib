@@ -138,10 +138,14 @@ public class MittenLib<T extends Plugin> {
         List<Module> allModules = new ArrayList<>(modules.values());
 
         if (!configModules.isEmpty() || !manualConfigs.isEmpty()) {
-            configModules.values().forEach(module -> allModules.add(module.asModule()));
+            Set<Configuration<?>> combinedConfigs = new LinkedHashSet<>(manualConfigs);
+            configModules.values().forEach(module -> {
+                allModules.add(module.asModule());
+                combinedConfigs.addAll(module.getConfigurations());
+            });
 
-            if (!manualConfigs.isEmpty()) {
-                allModules.add(new ConfigDataModule(manualConfigs));
+            if (!combinedConfigs.isEmpty()) {
+                allModules.add(new ConfigDataModule(combinedConfigs));
             }
 
             allModules.add(new ConfigInfrastructureModule(

@@ -35,7 +35,7 @@ object Types:
   val SerializationContext: TypeRef =
     TypeRef.of("me.bristermitten.mittenlib.config", "SerializationContext")
   val CollectionsUtils: TypeRef =
-    TypeRef.of("me.bristermitten.mittenlib.util", "CollectionsUtils")
+    TypeRef.of("me.bristermitten.mittenlib.config", "CollectionsUtils")
   val TypeToken: TypeRef =
     TypeRef.of("com.google.gson.reflect", "TypeToken")
   val Function: TypeRef =

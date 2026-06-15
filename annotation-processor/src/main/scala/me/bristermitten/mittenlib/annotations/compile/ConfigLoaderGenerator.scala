@@ -80,7 +80,7 @@ class ConfigLoaderGenerator @Inject() (
     addFieldsAndConstructor(ast, builder)
 
     // Add property deserialization methods
-    val daoName = getDaoName(ast, classNameGenerator)
+    val daoName = GeneratorUtil.getDaoName(ast, classNameGenerator)
     val dtoType = ast.source().element()
     val deserializeMethods = ast.properties().asScala
       .map(property => deserializationCodeGenerator.createDeserializeMethodFor(dtoType, ast, property, daoName))

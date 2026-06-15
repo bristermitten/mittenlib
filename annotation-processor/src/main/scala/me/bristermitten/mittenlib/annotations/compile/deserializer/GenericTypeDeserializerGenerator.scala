@@ -53,7 +53,7 @@ class GenericTypeDeserializerGenerator @Inject() (
     } else if (typesUtil.isConfigType(tpe)) {
       val loaderField = configurationClassNameGenerator.getDeserializerProviderFieldName(tpe)
       Expr.This.field(loaderField).call("get")
-    } else if (wrapped.hasTypeArguments) {
+    } else if (wrapped.hasTypeArguments && !typesUtil.isNewtype(tpe)) {
       val canonicalName = wrapped.erasure().getQualifiedName()
       val ctxVar = Var(s"ctx$depth", Types.DeserializationContext)
       if (canonicalName == classOf[java.util.List[?]].getName) {
