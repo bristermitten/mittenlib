@@ -13,10 +13,16 @@ import me.bristermitten.mittenlib.util.CompositeType;
 
 /** Guice module for binding configurations. */
 public class ConfigDataModule extends AbstractModule {
-    private final Set<Configuration<?>> configurations;
+    private final Set<Configuration<?>> manualConfigurations;
+    private final Set<Configuration<?>> generatedConfigurations;
 
     public ConfigDataModule(Set<Configuration<?>> configurations) {
-        this.configurations = configurations;
+        this(configurations, java.util.Collections.emptySet());
+    }
+
+    public ConfigDataModule(Set<Configuration<?>> manualConfigurations, Set<Configuration<?>> generatedConfigurations) {
+        this.manualConfigurations = manualConfigurations;
+        this.generatedConfigurations = generatedConfigurations;
     }
 
     @SuppressWarnings("unchecked")
@@ -28,7 +34,8 @@ public class ConfigDataModule extends AbstractModule {
         Multibinder<ConfigProvider<?>> configProviderMultibinder =
                 Multibinder.newSetBinder(binder(), new TypeLiteral<ConfigProvider<?>>() {});
 
-        configurations.forEach(configuration -> {
+        // Bind manual configurations fully
+        manualConfigurations.forEach(configuration -> {
             final Class<?> key = configuration.getType();
 
             // Bind Configuration<T> dynamically
@@ -49,6 +56,22 @@ public class ConfigDataModule extends AbstractModule {
             // Bind T to the provider key
             bind((Class<? super Object>) key).toProvider(providerType);
         });
+
+        // Bind generated configurations (only multibinder contributions and Configuration<T>)
+        generatedConfigurations.forEach(configuration -> {
+            final Class<?> key = configuration.getType();
+
+            // Bind Configuration<T> dynamically
+            final TypeLiteral<Configuration<?>> configType =
+                    (TypeLiteral<Configuration<?>>) TypeLiteral.get(new CompositeType(Configuration.class, key));
+            bind(configType).toInstance(configuration);
+            configurationMultibinder.addBinding().toInstance(configuration);
+
+            // Add the already-bound ConfigProvider<T> to the multibinder
+            final Key<ConfigProvider<?>> providerType =
+                    (Key<ConfigProvider<?>>) Key.get(new CompositeType(ConfigProvider.class, key));
+            configProviderMultibinder.addBinding().to(providerType);
+        });
     }
 
     @Override
@@ -56,11 +79,12 @@ public class ConfigDataModule extends AbstractModule {
         if (this == o) return true;
         if (!(o instanceof ConfigDataModule)) return false;
         ConfigDataModule that = (ConfigDataModule) o;
-        return Objects.equals(configurations, that.configurations);
+        return Objects.equals(manualConfigurations, that.manualConfigurations)
+                && Objects.equals(generatedConfigurations, that.generatedConfigurations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(configurations);
+        return Objects.hash(manualConfigurations, generatedConfigurations);
     }
 }
