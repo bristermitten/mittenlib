@@ -227,161 +227,166 @@ class ConfigValidatorGenerator @Inject() (
         }
 
         if (typesUtil.isCollection(property.propertyType()) && !elementConstraints.isEmpty) {
-          val elementType = property.propertyType().asInstanceOf[DeclaredType].getTypeArguments().get(0)
-          val elementTypeName = TypeName.get(elementType)
-          val isElementNullable = typesUtil.isNullable(elementType)
-          val isElementPrimitive = elementTypeName.isPrimitive()
+          val typeArguments = property.propertyType().asInstanceOf[DeclaredType].getTypeArguments()
+          if (!typeArguments.isEmpty) {
+            val elementType = typeArguments.get(0)
+            val elementTypeName = TypeName.get(elementType)
+            val isElementNullable = typesUtil.isNullable(elementType)
+            val isElementPrimitive = elementTypeName.isPrimitive()
 
-          if (typesUtil.isSet(property.propertyType())) {
-            validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall)
-            if (!isElementPrimitive) {
-              if (!isElementNullable) {
-                validateMethod.beginControlFlow("if (element == null)")
-                validateMethod.addStatement(
-                  "violations.add(new $T.Violation($S + \"[\" + element + \"]\", null, $S))",
-                  classOf[ConfigValidationException],
-                  configKey,
-                  "Must not be null"
-                )
-                validateMethod.nextControlFlow("else")
-              } else {
-                validateMethod.beginControlFlow("if (element != null)")
+            if (typesUtil.isSet(property.propertyType())) {
+              validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall)
+              if (!isElementPrimitive) {
+                if (!isElementNullable) {
+                  validateMethod.beginControlFlow("if (element == null)")
+                  validateMethod.addStatement(
+                    "violations.add(new $T.Violation($S + \"[\" + element + \"]\", null, $S))",
+                    classOf[ConfigValidationException],
+                    configKey,
+                    "Must not be null"
+                  )
+                  validateMethod.nextControlFlow("else")
+                } else {
+                  validateMethod.beginControlFlow("if (element != null)")
+                }
               }
-            }
-            for (constraint <- elementConstraints.asScala) {
-              generateConstraintCheck(
-                validateMethod,
-                constraint,
-                "element",
-                "$S + \"[\" + element + \"]\"",
-                configKey,
-                "this." + classNameGenerator.getValidatorElementFieldName(property),
-                classNameGenerator.getValidatorElementErrorFieldName(property),
-                ""
-              )
-            }
-            if (!isElementPrimitive) {
+              for (constraint <- elementConstraints.asScala) {
+                generateConstraintCheck(
+                  validateMethod,
+                  constraint,
+                  "element",
+                  "$S + \"[\" + element + \"]\"",
+                  configKey,
+                  "this." + classNameGenerator.getValidatorElementFieldName(property),
+                  classNameGenerator.getValidatorElementErrorFieldName(property),
+                  ""
+                )
+              }
+              if (!isElementPrimitive) {
+                validateMethod.endControlFlow()
+              }
+              validateMethod.endControlFlow()
+            } else {
+              validateMethod.addStatement("int i = 0")
+              validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall)
+              if (!isElementPrimitive) {
+                if (!isElementNullable) {
+                  validateMethod.beginControlFlow("if (element == null)")
+                  validateMethod.addStatement(
+                    "violations.add(new $T.Violation($S + \"[\" + i + \"]\", null, $S))",
+                    classOf[ConfigValidationException],
+                    configKey,
+                    "Must not be null"
+                  )
+                  validateMethod.nextControlFlow("else")
+                } else {
+                  validateMethod.beginControlFlow("if (element != null)")
+                }
+              }
+              for (constraint <- elementConstraints.asScala) {
+                generateConstraintCheck(
+                  validateMethod,
+                  constraint,
+                  "element",
+                  "$S + \"[\" + i + \"]\"",
+                  configKey,
+                  "this." + classNameGenerator.getValidatorElementFieldName(property),
+                  classNameGenerator.getValidatorElementErrorFieldName(property),
+                  ""
+                )
+              }
+              if (!isElementPrimitive) {
+                validateMethod.endControlFlow()
+              }
+              validateMethod.addStatement("i++")
               validateMethod.endControlFlow()
             }
-            validateMethod.endControlFlow()
-          } else {
-            validateMethod.addStatement("int i = 0")
-            validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall)
-            if (!isElementPrimitive) {
-              if (!isElementNullable) {
-                validateMethod.beginControlFlow("if (element == null)")
-                validateMethod.addStatement(
-                  "violations.add(new $T.Violation($S + \"[\" + i + \"]\", null, $S))",
-                  classOf[ConfigValidationException],
-                  configKey,
-                  "Must not be null"
-                )
-                validateMethod.nextControlFlow("else")
-              } else {
-                validateMethod.beginControlFlow("if (element != null)")
-              }
-            }
-            for (constraint <- elementConstraints.asScala) {
-              generateConstraintCheck(
-                validateMethod,
-                constraint,
-                "element",
-                "$S + \"[\" + i + \"]\"",
-                configKey,
-                "this." + classNameGenerator.getValidatorElementFieldName(property),
-                classNameGenerator.getValidatorElementErrorFieldName(property),
-                ""
-              )
-            }
-            if (!isElementPrimitive) {
-              validateMethod.endControlFlow()
-            }
-            validateMethod.addStatement("i++")
-            validateMethod.endControlFlow()
           }
         } else if (typesUtil.isMap(property.propertyType())
           && (!keyConstraints.isEmpty || !elementConstraints.isEmpty)) {
           val typeArguments = property.propertyType().asInstanceOf[DeclaredType].getTypeArguments()
-          val keyType = typeArguments.get(0)
-          val valType = typeArguments.get(1)
-          val keyTypeName = TypeName.get(keyType)
-          val valTypeName = TypeName.get(valType)
+          if (typeArguments.size() >= 2) {
+            val keyType = typeArguments.get(0)
+            val valType = typeArguments.get(1)
+            val keyTypeName = TypeName.get(keyType)
+            val valTypeName = TypeName.get(valType)
 
-          val isKeyNullable = typesUtil.isNullable(keyType)
-          val isKeyPrimitive = keyTypeName.isPrimitive()
-          val isValNullable = typesUtil.isNullable(valType)
-          val isValPrimitive = valTypeName.isPrimitive()
+            val isKeyNullable = typesUtil.isNullable(keyType)
+            val isKeyPrimitive = keyTypeName.isPrimitive()
+            val isValNullable = typesUtil.isNullable(valType)
+            val isValPrimitive = valTypeName.isPrimitive()
 
-          val entryTypeName = ParameterizedTypeName.get(ClassName.get(classOf[JMap.Entry[?, ?]]), keyTypeName, valTypeName)
-          validateMethod.beginControlFlow("for ($T entry : $L.entrySet())", entryTypeName, accessorCall)
-          validateMethod.addStatement("$T key = entry.getKey()", keyTypeName)
-          validateMethod.addStatement("$T value = entry.getValue()", valTypeName)
+            val entryTypeName = ParameterizedTypeName.get(ClassName.get(classOf[JMap.Entry[?, ?]]), keyTypeName, valTypeName)
+            validateMethod.beginControlFlow("for ($T entry : $L.entrySet())", entryTypeName, accessorCall)
+            validateMethod.addStatement("$T key = entry.getKey()", keyTypeName)
+            validateMethod.addStatement("$T value = entry.getValue()", valTypeName)
 
-          if (!keyConstraints.isEmpty) {
-            if (!isKeyPrimitive) {
-              if (!isKeyNullable) {
-                validateMethod.beginControlFlow("if (key == null)")
-                validateMethod.addStatement(
-                  "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
-                  classOf[ConfigValidationException],
+            if (!keyConstraints.isEmpty) {
+              if (!isKeyPrimitive) {
+                if (!isKeyNullable) {
+                  validateMethod.beginControlFlow("if (key == null)")
+                  validateMethod.addStatement(
+                    "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
+                    classOf[ConfigValidationException],
+                    configKey,
+                    "Key must not be null"
+                  )
+                  validateMethod.nextControlFlow("else")
+                } else {
+                  validateMethod.beginControlFlow("if (key != null)")
+                }
+              }
+              for (constraint <- keyConstraints.asScala) {
+                generateConstraintCheck(
+                  validateMethod,
+                  constraint,
+                  "key",
+                  "$S + \"[\" + key + \"]\"",
                   configKey,
-                  "Key must not be null"
+                  "this." + classNameGenerator.getValidatorKeyFieldName(property),
+                  classNameGenerator.getValidatorKeyErrorFieldName(property),
+                  "Key "
                 )
-                validateMethod.nextControlFlow("else")
-              } else {
-                validateMethod.beginControlFlow("if (key != null)")
+              }
+              if (!isKeyPrimitive) {
+                validateMethod.endControlFlow()
               }
             }
-            for (constraint <- keyConstraints.asScala) {
-              generateConstraintCheck(
-                validateMethod,
-                constraint,
-                "key",
-                "$S + \"[\" + key + \"]\"",
-                configKey,
-                "this." + classNameGenerator.getValidatorKeyFieldName(property),
-                classNameGenerator.getValidatorKeyErrorFieldName(property),
-                "Key "
-              )
-            }
-            if (!isKeyPrimitive) {
-              validateMethod.endControlFlow()
-            }
-          }
 
-          if (!elementConstraints.isEmpty) {
-            if (!isValPrimitive) {
-              if (!isValNullable) {
-                validateMethod.beginControlFlow("if (value == null)")
-                validateMethod.addStatement(
-                  "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
-                  classOf[ConfigValidationException],
+            if (!elementConstraints.isEmpty) {
+              if (!isValPrimitive) {
+                if (!isValNullable) {
+                  validateMethod.beginControlFlow("if (value == null)")
+                  validateMethod.addStatement(
+                    "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
+                    classOf[ConfigValidationException],
+                    configKey,
+                    "Must not be null"
+                  )
+                  validateMethod.nextControlFlow("else")
+                } else {
+                  validateMethod.beginControlFlow("if (value != null)")
+                }
+              }
+              for (constraint <- elementConstraints.asScala) {
+                generateConstraintCheck(
+                  validateMethod,
+                  constraint,
+                  "value",
+                  "$S + \"[\" + key + \"]\"",
                   configKey,
-                  "Must not be null"
+                  "this." + classNameGenerator.getValidatorElementFieldName(property),
+                  classNameGenerator.getValidatorElementErrorFieldName(property),
+                  ""
                 )
-                validateMethod.nextControlFlow("else")
-              } else {
-                validateMethod.beginControlFlow("if (value != null)")
+              }
+              if (!isValPrimitive) {
+                validateMethod.endControlFlow()
               }
             }
-            for (constraint <- elementConstraints.asScala) {
-              generateConstraintCheck(
-                validateMethod,
-                constraint,
-                "value",
-                "$S + \"[\" + key + \"]\"",
-                configKey,
-                "this." + classNameGenerator.getValidatorElementFieldName(property),
-                classNameGenerator.getValidatorElementErrorFieldName(property),
-                ""
-              )
-            }
-            if (!isValPrimitive) {
-              validateMethod.endControlFlow()
-            }
-          }
 
-          validateMethod.endControlFlow()
+            validateMethod.endControlFlow()
+          }
         }
 
         if (!isPrimitive
