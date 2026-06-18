@@ -18,6 +18,8 @@ import me.bristermitten.mittenlib.config.GeneratedConfig
 import me.bristermitten.mittenlib.config.Source
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors
 import scala.jdk.CollectionConverters.*
+import scala.jdk.OptionConverters.*
+
 
 class ConfigImplGenerator @Inject() (
   private val accessorGenerator: AccessorGenerator,
@@ -106,12 +108,14 @@ class ConfigImplGenerator @Inject() (
       case _: ConfigTypeSource.InterfaceConfigTypeSource =>
         source.addSuperinterface(ast.name())
       case classParent: ConfigTypeSource.ClassConfigTypeSource =>
-        if (classParent.parent().isPresent) {
-          configNameCache.lookupAST(classParent.parent().get()).ifPresent(parent =>
-            source.superclass(configurationClassNameGenerator.translateConfigClassName(parent))
-          )
+        for {
+          parentType <- classParent.parent().toScala
+          parentAst <- configNameCache.lookupAST(parentType).toScala
+        } {
+          source.superclass(configurationClassNameGenerator.translateConfigClassName(parentAst))
         }
     }
+
 
   /**
    * Adds {@link GeneratedConfig} and {@link Generated} annotations to the class.
@@ -204,15 +208,14 @@ class ConfigImplGenerator @Inject() (
 
   private def getSuperClass(ast: AbstractConfigStructure): Option[TypeMirror] =
     ast.source() match {
-      case classParent: ConfigTypeSource.ClassConfigTypeSource if classParent.parent().isPresent =>
-        Some(classParent.parent().get())
+      case classParent: ConfigTypeSource.ClassConfigTypeSource =>
+        classParent.parent().toScala
       case _ =>
         None
     }
 
   private def getSuperClass(tpe: TypeMirror): Option[TypeMirror] =
-    val opt = configNameCache.lookupAST(tpe)
-    if (opt.isPresent) getSuperClass(opt.get()) else None
+    configNameCache.lookupAST(tpe).toScala.flatMap(getSuperClass)
 
   /**
    * Adds an all-argument constructor to the implementation class.
@@ -231,35 +234,36 @@ class ConfigImplGenerator @Inject() (
    * Adds a parameter to the constructor for the parent configuration class, if applicable.
    */
   private def addSuperClassParameter(ast: AbstractConfigStructure, constructor: MethodSpec.Builder): Unit =
-    val parentMirrorOpt = getSuperClass(ast)
-
-    parentMirrorOpt.foreach(parent => {
-      val parentConfig = configNameCache.lookupAST(parent)
-        .orElseThrow(() => new IllegalStateException("could not determine a config for parent class " + parent))
+    for {
+      parent <- getSuperClass(ast)
+      parentConfig <- configNameCache.lookupAST(parent).toScala.orElse(
+        throw new IllegalStateException("could not determine a config for parent class " + parent)
+      )
+    } {
       val parentName = configurationClassNameGenerator.translateConfigClassName(parentConfig)
-
       val superParameterName = "parent"
       constructor.addParameter(ParameterSpec.builder(parentName, superParameterName, Modifier.FINAL).build())
 
       val parentParams = buildSuperConstructorParams(parent, parentConfig, superParameterName)
       constructor.addStatement("super($L)", parentParams.mkString(", "))
       constructor.addStatement("this.parent = parent")
-    })
+    }
 
   /**
    * Adds a field to the implementation class to store the parent configuration instance.
    */
   private def addSuperClassField(ast: AbstractConfigStructure, builder: TypeSpec.Builder): Unit =
-    val parentMirrorOpt = getSuperClass(ast)
-
-    parentMirrorOpt.foreach(parent => {
-      val parentConfig = configNameCache.lookupAST(parent)
-        .orElseThrow(() => new IllegalStateException("could not determine a config for parent class " + parent))
+    for {
+      parent <- getSuperClass(ast)
+      parentConfig <- configNameCache.lookupAST(parent).toScala.orElse(
+        throw new IllegalStateException("could not determine a config for parent class " + parent)
+      )
+    } {
       val parentName = configurationClassNameGenerator.translateConfigClassName(parentConfig)
       val field = FieldSpec.builder(parentName, "parent", Modifier.PRIVATE, Modifier.FINAL)
-
       builder.addField(field.build())
-    })
+    }
+
 
   /**
    * Builds the list of parameters to be passed to the super constructor.

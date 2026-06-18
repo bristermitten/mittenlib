@@ -19,6 +19,8 @@ import me.bristermitten.mittenlib.config.Config
 import me.bristermitten.mittenlib.util.Strings
 import org.jspecify.annotations.Nullable
 import scala.jdk.CollectionConverters.*
+import scala.jdk.OptionConverters.*
+
 
 object ConfigurationClassNameGenerator:
   val DESERIALIZER_SUFFIX = "Deserializer"
@@ -149,12 +151,11 @@ class ConfigurationClassNameGenerator @Inject() (
     astMapper: AbstractConfigStructure => ClassName,
     recursiveMapper: TypeMirror => TypeName
   ): TypeName =
-    val opt = configNameCache.lookupAST(mirror)
-    if (opt.isPresent) {
-      astMapper(opt.get())
-    } else {
-      translateDTOParameters(mirror, recursiveMapper)
+    configNameCache.lookupAST(mirror).toScala match {
+      case Some(ast) => astMapper(ast)
+      case None => translateDTOParameters(mirror, recursiveMapper)
     }
+
 
   def generateConfigurationClassName(configDTOType: TypeElement): ClassName =
     if (configDTOType.getNestingKind == NestingKind.MEMBER) {
@@ -213,17 +214,18 @@ class ConfigurationClassNameGenerator @Inject() (
     getRecursiveName(node(ast), n => getCleanSimpleName(n) + DESERIALIZER_SUFFIX)
 
   def getDeserializerClassName(typeMirror: TypeMirror): ClassName =
-    val ast = configNameCache.lookupAST(typeMirror)
-      .orElseThrow(() => new IllegalStateException("Not a config type: " + typeMirror))
+    val ast = configNameCache.lookupAST(typeMirror).toScala
+      .getOrElse(throw new IllegalStateException("Not a config type: " + typeMirror))
     getDeserializerClassName(ast)
 
   private def getFieldName(typeMirror: TypeMirror, suffix: String): String =
-    val ast = configNameCache.lookupAST(typeMirror)
-      .orElseThrow(() => new IllegalStateException("Not a config type: " + typeMirror))
+    val ast = configNameCache.lookupAST(typeMirror).toScala
+      .getOrElse(throw new IllegalStateException("Not a config type: " + typeMirror))
     val publicName = getPublicClassName(ast)
     val safePkg = publicName.packageName().replace('.', '_')
     val prefix = if (safePkg.isEmpty) "" else safePkg + "_"
     Strings.uncapitalize(prefix + ConfigurationClassNameGenerator.getCleanSimpleName(publicName)) + suffix
+
 
   def getDeserializerFieldName(typeMirror: TypeMirror): String =
     getFieldName(typeMirror, DESERIALIZER_SUFFIX)

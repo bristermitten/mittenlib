@@ -10,10 +10,23 @@ scala {
     scalaVersion = "3.3.6"
 }
 
+val generateProcessorServiceFile by tasks.registering {
+    val outputDir = layout.buildDirectory.dir("generated/resources")
+    outputs.dir(outputDir)
+    doLast {
+        val file = outputDir.get().file("META-INF/services/javax.annotation.processing.Processor").asFile
+        file.parentFile.mkdirs()
+        file.writeText("me.bristermitten.mittenlib.codegen.MittenLibCodegenProcessor\n")
+    }
+}
+
 sourceSets {
     main {
         scala {
             srcDirs("src/main/scala", "src/main/java")
+        }
+        resources {
+            srcDir(generateProcessorServiceFile)
         }
     }
 }
