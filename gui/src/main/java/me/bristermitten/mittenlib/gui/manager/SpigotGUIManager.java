@@ -43,7 +43,7 @@ public class SpigotGUIManager implements GUIManager<SpigotCommandContext> {
         this.viewerToSession = new ConcurrentHashMap<>();
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "FutureReturnValueIgnored"})
     @Override
     public <
                     Model,

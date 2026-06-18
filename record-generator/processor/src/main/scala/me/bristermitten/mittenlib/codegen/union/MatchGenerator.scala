@@ -101,12 +101,10 @@ object MatchGenerator:
       case 1 =>
         val firstField = fields.head
         val tpe = firstField.`type`
-        if (!tpe.isPrimitive()) {
-          ParameterizedTypeName.get(ClassName.get(classOf[Consumer[?]]), tpe)
-        } else if (tpe == TypeName.INT) {
+        if (tpe == TypeName.INT) {
           ClassName.get(classOf[IntConsumer])
         } else {
-          throw new UnsupportedOperationException("Unsupported type for match method with single field: " + tpe)
+          ParameterizedTypeName.get(ClassName.get(classOf[Consumer[?]]), tpe.box())
         }
       case 2 =>
         ParameterizedTypeName.get(
@@ -134,12 +132,10 @@ object MatchGenerator:
           case 1 =>
             val firstField = fields.head
             val tpe = firstField.`type`
-            if (!tpe.isPrimitive()) {
-              ParameterizedTypeName.get(ClassName.get(classOf[Function[?, ?]]), tpe, returning)
-            } else if (tpe == TypeName.INT) {
+            if (tpe == TypeName.INT) {
               ParameterizedTypeName.get(ClassName.get(classOf[IntFunction[?]]), returning)
             } else {
-              throw new UnsupportedOperationException("Unsupported type for match method with single field: " + tpe)
+              ParameterizedTypeName.get(ClassName.get(classOf[Function[?, ?]]), tpe.box(), returning)
             }
           case 2 =>
             ParameterizedTypeName.get(

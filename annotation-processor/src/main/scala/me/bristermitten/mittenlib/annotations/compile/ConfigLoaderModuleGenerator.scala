@@ -94,10 +94,19 @@ class ConfigLoaderModuleGenerator @Inject() (
 
     if (allConfigsWithSource.isEmpty) {
       getConfigurationsMethod.addStatement("return $T.emptySet()", classOf[java.util.Collections])
+    } else if (allConfigsWithSource.size == 1) {
+      val singleConfig = allConfigsWithSource.head
+      getConfigurationsMethod.addStatement("return $T.singleton($T.CONFIG)",
+        classOf[java.util.Collections],
+        classNameGenerator.translateConfigClassName(singleConfig))
     } else {
       val args = allConfigsWithSource.map(ast => CodeBlock.of("$T.CONFIG", classNameGenerator.translateConfigClassName(ast)))
       val joined = args.asJava.stream().collect(CodeBlock.joining(", "))
-      getConfigurationsMethod.addStatement("return $T.of($L)", classOf[JSet[?]], joined)
+      getConfigurationsMethod.addStatement("return $T.unmodifiableSet(new $T<>($T.asList($L)))",
+        classOf[java.util.Collections],
+        classOf[java.util.HashSet[?]],
+        classOf[java.util.Arrays],
+        joined)
     }
 
     builder.addMethod(getConfigurationsMethod.build())
