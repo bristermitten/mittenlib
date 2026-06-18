@@ -1,13 +1,13 @@
 package me.bristermitten.mittenlib.annotations.compile
 
 import com.google.inject.Inject
-import com.palantir.javapoet.ClassName
-import com.palantir.javapoet.MethodSpec
-import java.util.{List => JList, Objects => JObjects}
+import com.palantir.javapoet.{ArrayTypeName, ClassName, MethodSpec, TypeName}
+
+import java.util.{List as JList, Objects as JObjects}
 import javax.lang.model.element.Modifier
 import me.bristermitten.mittenlib.annotations.ast.Property
-import scala.jdk.CollectionConverters.*
 
+import scala.jdk.CollectionConverters.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.given
@@ -23,8 +23,8 @@ class EqualsHashCodeGenerator @Inject() (
 
   private def toSharedFields(properties: JList[Property]): List[SharedField] =
     properties.asScala.toList.map { p =>
-      val t = TypeRef.of(com.palantir.javapoet.TypeName.get(p.propertyType()))
-      val isArr = com.palantir.javapoet.TypeName.get(p.propertyType()).isInstanceOf[com.palantir.javapoet.ArrayTypeName]
+      val t = TypeRef.of(TypeName.get(p.propertyType()))
+      val isArr = TypeName.get(p.propertyType()).isInstanceOf[ArrayTypeName]
       SharedField(
         name = p.name(),
         tpe = t,

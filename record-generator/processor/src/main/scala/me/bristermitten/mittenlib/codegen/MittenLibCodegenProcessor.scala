@@ -3,7 +3,6 @@ package me.bristermitten.mittenlib.codegen
 import com.google.auto.service.AutoService
 import com.palantir.javapoet.ClassName
 import com.palantir.javapoet.TypeName
-import io.toolisticon.aptk.compilermessage.api.DeclareCompilerMessage
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor
 import io.toolisticon.aptk.tools.MessagerUtils
 import io.toolisticon.aptk.tools.TypeUtils
@@ -57,7 +56,7 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
         method.getReturnType(), typeElement.asType().unwrap())) {
       MessagerUtils.error(
         method,
-        MittenLibCodegenProcessorCompilerMessages.METHOD_BAD_RETURN,
+        MittenLibCodegenProcessorMessagesCompilerMessages.METHOD_BAD_RETURN,
         typeElement.unwrap()
       )
       return Optional.empty()
@@ -66,7 +65,7 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     if (existingConstructors.stream().anyMatch(con => con.equals(constructorName))) {
       MessagerUtils.error(
         method,
-        MittenLibCodegenProcessorCompilerMessages.DUPLICATE_CONSTRUCTOR,
+        MittenLibCodegenProcessorMessagesCompilerMessages.DUPLICATE_CONSTRUCTOR,
         constructorName
       )
       return Optional.empty()
@@ -102,23 +101,12 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     AbstractAnnotationProcessor.createSupportedAnnotationSet(classOf[RecordSpec], classOf[UnionSpec])
   }
 
-  @DeclareCompilerMessage(
-    code = "001",
-    enumValueName = "METHOD_BAD_RETURN",
-    message = "Method must return the record type ${0}!"
-  )
-  @DeclareCompilerMessage(
-    code = "002",
-    enumValueName = "DUPLICATE_CONSTRUCTOR",
-    message = "Constructors must have distinct names, overloading is not allowed"
-  )
   override def processAnnotations(annotations: java.util.Set[? <: TypeElement], roundEnv: RoundEnvironment): Boolean = {
     val unions = processUnions(roundEnv)
     val records = processRecords(roundEnv)
     unions && records
   }
 
-  @DeclareCompilerMessage(code = "003", enumValueName = "INVALID_RECORD", message = "Could not parse record ${0}.")
   private def processRecords(roundEnv: RoundEnvironment): Boolean = {
     val records = new java.util.ArrayList[me.bristermitten.mittenlib.codegen.record.RecordSpec]()
     var hasError = false
@@ -136,7 +124,7 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
       val recordConstructorSpec = parseRecord(typeElement)
       if (recordConstructorSpec.isEmpty()) {
-        MessagerUtils.error(element, MittenLibCodegenProcessorCompilerMessages.INVALID_RECORD, typeElement)
+        MessagerUtils.error(element, MittenLibCodegenProcessorMessagesCompilerMessages.INVALID_RECORD, typeElement)
         hasError = true
       } else {
         val constructor = recordConstructorSpec.get()

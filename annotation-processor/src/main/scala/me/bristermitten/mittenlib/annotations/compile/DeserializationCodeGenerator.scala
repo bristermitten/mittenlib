@@ -42,8 +42,8 @@ class DeserializationCodeGenerator @Inject() (
     )
 
     val wrappedElementType = TypeMirrorWrapper.wrap(elementType)
-    val isGenericType = wrappedElementType.hasTypeArguments() && !typesUtil.isNewtype(elementType)
-    val typeElementOpt = wrappedElementType.getTypeElement()
+    val isGenericType = wrappedElementType.hasTypeArguments && !typesUtil.isNewtype(elementType)
+    val typeElementOpt = wrappedElementType.getTypeElement
 
     if (isGenericType && typeElementOpt.isPresent) {
       genericTypeDeserializerGenerator.generateDeserializeMethod(

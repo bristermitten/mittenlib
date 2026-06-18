@@ -44,9 +44,7 @@ class ConfigLoaderModuleGenerator @Inject() (
         + "This module should be installed in your application's injector.")
       .addModifiers(Modifier.PUBLIC)
       .superclass(classOf[MittenLibConfigLoader])
-      .addAnnotation(AnnotationSpec.builder(classOf[Generated])
-        .addMember("value", "$S", "me.bristermitten.mittenlib.annotations.config.ConfigProcessor")
-        .build())
+      .addAnnotation(GeneratorUtil.generatedAnnotation())
 
     val configureMethod = MethodSpec.methodBuilder("configure")
       .addJavadoc(

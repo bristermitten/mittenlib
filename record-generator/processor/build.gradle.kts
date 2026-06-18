@@ -24,7 +24,7 @@ java {
 }
 
 tasks.compileJava {
-    enabled = false
+    enabled = true
 }
 
 tasks.withType<JavaCompile>().configureEach {

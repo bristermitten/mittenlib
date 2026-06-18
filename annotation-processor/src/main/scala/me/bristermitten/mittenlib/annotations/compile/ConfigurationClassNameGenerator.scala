@@ -40,7 +40,7 @@ object ConfigurationClassNameGenerator:
     val annotation = dtoType.getAnnotation(classOf[Config])
     if (annotation == null) {
       ClassName.get(dtoType).simpleName()
-    } else if (!annotation.className().isEmpty()) {
+    } else if (annotation.className().nonEmpty) {
       annotation.className()
     } else {
       translateConfigClassName(ClassName.get(dtoType)).simpleName()
@@ -59,7 +59,7 @@ object ConfigurationClassNameGenerator:
       parent.parentClassName(),
       parent.manualClassName(),
       if (parent.parent() == null) null else node(parent.parent()),
-      parent.isInterface()
+      parent.isInterface
     )
 
   private def getCleanSimpleName(name: ClassName): String =
@@ -93,7 +93,7 @@ class ConfigurationClassNameGenerator @Inject() (
     ConfigurationClassNameGenerator.getCleanSimpleName(node.name)
 
   private def getImplClassName(node: NamingNode): ClassName =
-    val baseName = if (node.manualClassName == null || node.manualClassName.isBlank()) {
+    val baseName = if (node.manualClassName == null || node.manualClassName.isBlank) {
       ConfigurationClassNameGenerator.translateConfigClassName(node.name)
     } else {
       ClassName.bestGuess(node.manualClassName)
@@ -124,8 +124,8 @@ class ConfigurationClassNameGenerator @Inject() (
     mirror match {
       case declaredType: DeclaredType =>
         val element = declaredType.asElement().asInstanceOf[TypeElement]
-        val typeArguments = declaredType.getTypeArguments()
-        if (typeArguments.isEmpty()) {
+        val typeArguments = declaredType.getTypeArguments
+        if (typeArguments.isEmpty) {
           TypeName.get(mirror)
         } else {
           val properArguments = typeArguments.asScala.map(getConfigClassName).toArray
@@ -157,12 +157,12 @@ class ConfigurationClassNameGenerator @Inject() (
     }
 
   def generateConfigurationClassName(configDTOType: TypeElement): ClassName =
-    if (configDTOType.getNestingKind() == NestingKind.MEMBER) {
-      val enclosingElement = configDTOType.getEnclosingElement()
+    if (configDTOType.getNestingKind == NestingKind.MEMBER) {
+      val enclosingElement = configDTOType.getEnclosingElement
       generateConfigurationClassName(enclosingElement.asInstanceOf[TypeElement])
         .nestedClass(findConfigClassName(configDTOType))
     } else {
-      val packageName = TypeElementWrapper.wrap(configDTOType).getPackageName()
+      val packageName = TypeElementWrapper.wrap(configDTOType).getPackageName
       ClassName.get(packageName, findConfigClassName(configDTOType))
     }
 
@@ -222,7 +222,7 @@ class ConfigurationClassNameGenerator @Inject() (
       .orElseThrow(() => new IllegalStateException("Not a config type: " + typeMirror))
     val publicName = getPublicClassName(ast)
     val safePkg = publicName.packageName().replace('.', '_')
-    val prefix = if (safePkg.isEmpty()) "" else safePkg + "_"
+    val prefix = if (safePkg.isEmpty) "" else safePkg + "_"
     Strings.uncapitalize(prefix + ConfigurationClassNameGenerator.getCleanSimpleName(publicName)) + suffix
 
   def getDeserializerFieldName(typeMirror: TypeMirror): String =
