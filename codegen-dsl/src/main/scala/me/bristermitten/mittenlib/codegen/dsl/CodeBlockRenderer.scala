@@ -240,6 +240,9 @@ object CodeBlockRenderer:
     val builder = MethodSpec.methodBuilder(decl.name)
       .addModifiers(decl.modifiers *)
       .returns(decl.returnType.toTypeName)
+    for (ann <- decl.annotations) {
+      builder.addAnnotation(ann)
+    }
     for (param <- decl.parameters) {
       builder.addParameter(param.tpe.toTypeName, param.generatedName)
     }

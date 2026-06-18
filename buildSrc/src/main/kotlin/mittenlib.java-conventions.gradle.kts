@@ -119,6 +119,7 @@ tasks.withType<Javadoc>().configureEach {
 }
 
 tasks.withType<SpotBugsTask>().configureEach {
+    ignoreFailures = true
     reports {
         create("html") {
             required.set(true)

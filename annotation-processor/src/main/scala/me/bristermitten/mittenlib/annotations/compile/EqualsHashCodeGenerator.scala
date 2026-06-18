@@ -21,50 +21,29 @@ class EqualsHashCodeGenerator @Inject() (
   private val methodNames: MethodNames
 ):
 
+  private def toSharedFields(properties: JList[Property]): List[SharedField] =
+    properties.asScala.toList.map { p =>
+      val t = TypeRef.of(com.palantir.javapoet.TypeName.get(p.propertyType()))
+      val isArr = com.palantir.javapoet.TypeName.get(p.propertyType()).isInstanceOf[com.palantir.javapoet.ArrayTypeName]
+      SharedField(
+        name = p.name(),
+        tpe = t,
+        accessor = receiver => receiver.call(methodNames.safeMethodName(p)),
+        isArray = isArr
+      )
+    }
+
   /**
    * Generates an equals method for a configuration class.
    */
   def generateEquals(configClassName: ClassName, properties: JList[Property]): MethodSpec =
-    val context = StagedExpr.param[Any](Types.Object, "o")
-    val methodDecl = MethodDecl.build(
-      name = "equals",
-      returnType = Types.Boolean,
-      parameters = List(context.asVar),
-      modifiers = List(Modifier.PUBLIC)
-    ) {
-      ifThen(Expr.This === context) {
-        return_(Expr.bool(true))
-      }
-      ifThen(context.isNull || (Expr.This.call("getClass") !== context.call("getClass"))) {
-        return_(Expr.bool(false))
-      }
-      val thatType = TypeRef.of(configClassName)
-      val that = declare(thatType, "that", context.cast(thatType))
-
-      for (property <- properties.asScala) {
-        val safeName = methodNames.safeMethodName(property)
-        ifThen(!Expr.staticCall(TypeRef.of(classOf[JObjects]), "equals", Expr.This.call(safeName), that.call(safeName))) {
-          return_(Expr.bool(false))
-        }
-      }
-      return_(Expr.bool(true))
-    }
-
+    val methodDecl = BoilerplateHelper.equalsDecl(configClassName, toSharedFields(properties))
     CodeBlockRenderer.renderMethod(methodDecl)
 
   /**
    * Generates a hashCode method for a configuration class.
    */
   def generateHashCode(properties: JList[Property]): MethodSpec =
-    val methodDecl = MethodDecl.build(
-      name = "hashCode",
-      returnType = Types.Int,
-      parameters = Nil,
-      modifiers = List(Modifier.PUBLIC)
-    ) {
-      val args = properties.asScala.map(p => Expr.This.call(methodNames.safeMethodName(p))).toList
-      return_(Expr.staticCall(TypeRef.of(classOf[JObjects]), "hash", args *))
-    }
-
+    val methodDecl = BoilerplateHelper.hashCodeDecl(toSharedFields(properties))
     CodeBlockRenderer.renderMethod(methodDecl)
 

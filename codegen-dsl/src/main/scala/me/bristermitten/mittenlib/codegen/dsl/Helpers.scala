@@ -149,3 +149,114 @@ extension [T](e: StagedExpr[Result[T]])
   def getOrThrow: StagedExpr[T] = StagedExpr(e.expr.call("getOrThrow"))
   def mapResult[U](f: Expr): StagedExpr[Result[U]] = StagedExpr(e.expr.call("map", f))
   def flatMapResult[U](f: Expr): StagedExpr[Result[U]] = StagedExpr(e.expr.call("flatMap", f))
+
+// ─── Shared Boilerplate Generation ───────────────────────────────────────────
+
+case class SharedField(
+  name: String,
+  tpe: TypeRef,
+  accessor: Expr => Expr,
+  isArray: Boolean = false
+)
+
+object BoilerplateHelper:
+  import com.palantir.javapoet.AnnotationSpec
+  import java.util.Objects
+  import java.util.Arrays
+  import javax.lang.model.element.Modifier
+  import BlockBuilder.*
+  import _root_.me.bristermitten.mittenlib.codegen.dsl.given
+
+  private val overrideAnn = AnnotationSpec.builder(classOf[java.lang.Override]).build()
+
+  def equalsDecl(className: ClassName, fields: List[SharedField]): MethodDecl =
+    val context = StagedExpr.param[Any](Types.Object, "o")
+    MethodDecl.build(
+      name = "equals",
+      returnType = Types.Boolean,
+      parameters = List(context.asVar),
+      modifiers = List(Modifier.PUBLIC),
+      annotations = List(overrideAnn)
+    ) {
+      ifThen(Expr.This === context) {
+        return_(Expr.bool(true))
+      }
+      ifThen(context.isNull || (Expr.This.call("getClass") !== context.call("getClass"))) {
+        return_(Expr.bool(false))
+      }
+      val targetType = TypeRef.of(className)
+      val that = declare(targetType, "that", context.cast(targetType))
+
+      if (fields.isEmpty) {
+        return_(Expr.bool(true))
+      } else {
+        var equalsExpr: Expr = equalsCall(fields.head, that)
+        for (field <- fields.tail) {
+          equalsExpr = Expr.BinaryOp(equalsExpr, "&&", equalsCall(field, that))
+        }
+        return_(equalsExpr)
+      }
+    }
+
+  private def equalsCall(field: SharedField, that: Var): Expr =
+    val thisField = field.accessor(Expr.This)
+    val thatField = field.accessor(that)
+    if (field.isArray) {
+      Expr.staticCall(TypeRef.of(classOf[Arrays]), "equals", thisField, thatField)
+    } else {
+      Expr.staticCall(TypeRef.of(classOf[Objects]), "equals", thisField, thatField)
+    }
+
+  def hashCodeDecl(fields: List[SharedField]): MethodDecl =
+    MethodDecl.build(
+      name = "hashCode",
+      returnType = Types.Int,
+      parameters = Nil,
+      modifiers = List(Modifier.PUBLIC),
+      annotations = List(overrideAnn)
+    ) {
+      if (fields.isEmpty) {
+        return_(Expr.staticCall(TypeRef.of(classOf[System]), "identityHashCode", Expr.This))
+      } else {
+        val args = fields.map(hashCodeCall)
+        return_(Expr.staticCall(TypeRef.of(classOf[Objects]), "hash", args *))
+      }
+    }
+
+  private def hashCodeCall(field: SharedField): Expr =
+    val thisField = field.accessor(Expr.This)
+    if (field.isArray) {
+      Expr.staticCall(TypeRef.of(classOf[Arrays]), "hashCode", thisField)
+    } else {
+      Expr.staticCall(TypeRef.of(classOf[Objects]), "hashCode", thisField)
+    }
+
+  def toStringDecl(className: ClassName, fields: List[SharedField], separator: String = ","): MethodDecl =
+    var expr: Expr = Expr.str(s"${className.simpleName()}{")
+
+    for ((field, idx) <- fields.zipWithIndex) {
+      expr = Expr.BinaryOp(expr, "+", Expr.str(s"${field.name}="))
+      expr = Expr.BinaryOp(expr, "+", toStringCall(field))
+      if (idx != fields.size - 1) {
+        expr = Expr.BinaryOp(expr, "+", Expr.str(separator))
+      }
+    }
+    expr = Expr.BinaryOp(expr, "+", Expr.str("}"))
+
+    MethodDecl.build(
+      name = "toString",
+      returnType = Types.String,
+      parameters = Nil,
+      modifiers = List(Modifier.PUBLIC),
+      annotations = List(overrideAnn)
+    ) {
+      return_(expr)
+    }
+
+  private def toStringCall(field: SharedField): Expr =
+    val thisField = field.accessor(Expr.This)
+    if (field.isArray) {
+      Expr.staticCall(TypeRef.of(classOf[Arrays]), "toString", thisField)
+    } else {
+      thisField
+    }

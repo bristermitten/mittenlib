@@ -22,26 +22,17 @@ class ToStringGenerator @Inject() ():
    * Generates a toString method for a configuration class.
    */
   def generateToString(properties: JList[Property], className: ClassName): MethodSpec =
-    val propsList = properties.asScala.toList
-    var expr: Expr = Expr.str(s"${className.simpleName()}{")
-
-    for ((fieldSpec, idx) <- propsList.zipWithIndex) {
-      expr = Expr.BinaryOp(expr, "+", Expr.str(s"${fieldSpec.name()}="))
-      expr = Expr.BinaryOp(expr, "+", Expr.This.call(fieldSpec.name()))
-      if (idx != propsList.size - 1) {
-        expr = Expr.BinaryOp(expr, "+", Expr.str(","))
-      }
-    }
-    expr = Expr.BinaryOp(expr, "+", Expr.str("}"))
-
-    val methodDecl = MethodDecl.build(
-      name = "toString",
-      returnType = Types.String,
-      parameters = Nil,
-      modifiers = List(Modifier.PUBLIC)
-    ) {
-      return_(expr)
+    val fields = properties.asScala.toList.map { p =>
+      val t = TypeRef.of(com.palantir.javapoet.TypeName.get(p.propertyType()))
+      val isArr = com.palantir.javapoet.TypeName.get(p.propertyType()).isInstanceOf[com.palantir.javapoet.ArrayTypeName]
+      SharedField(
+        name = p.name(),
+        tpe = t,
+        accessor = receiver => if (receiver == Expr.This) Var(p.name(), t) else receiver.field(p.name()),
+        isArray = isArr
+      )
     }
 
+    val methodDecl = BoilerplateHelper.toStringDecl(className, fields, ",")
     CodeBlockRenderer.renderMethod(methodDecl)
 

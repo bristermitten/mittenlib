@@ -225,40 +225,10 @@ class NonGenericTypeDeserializerGenerator @Inject() (
       parameters = params,
       modifiers = List(Modifier.PRIVATE)
     ) {
-      // 1. Initial statements
-      val data = declare(Types.DataTree, "$data", context.getData)
-      val key = fieldNameGenerator.getConfigFieldName(property)
-      val fromMapName = property.name() + "FromMap"
-      
-      val fromMap = if (hasDefault) {
-        val defaultAccess = propertyAST.source() match {
-          case source: ConfigTypeSource.ClassConfigTypeSource => dao.get.field(property.name())
-          case source: ConfigTypeSource.InterfaceConfigTypeSource => dao.get.call(property.name())
-        }
-        declare(Types.Object, fromMapName, data.call("getOrDefault", Expr.str(key), defaultAccess))
-      } else {
-        declare(Types.DataTree, fromMapName, data.call("get", Expr.str(key)))
-      }
-      
-      // 2. Null checks
-      if (property.settings().isNullable()) {
-        ifThen(fromMap.isNull) {
-          return_(ResultExpr.ok(Expr.Null))
-        }
-      } else {
-        ifThen(fromMap.isNull) {
-          return_(
-            ResultExpr.fail(
-              Expr.staticCall(TypeRef.of(classOf[ConfigLoadingErrors]), "notFoundException",
-                Expr.str(property.name()),
-                Expr.str(TypeName.get(elementType).withoutAnnotations().toString),
-                Expr.staticField(TypeRef.of(dtoType), "class"),
-                Expr.str(key)
-              )
-            )
-          )
-        }
-      }
+      // 1. Initial statements and Null checks
+      val fromMap = _root_.me.bristermitten.mittenlib.annotations.compile.GeneratorUtil.declareAndCheckFromMap(
+        propertyAST, property, dtoType, elementType, context, hasDefault, dao, fieldNameGenerator
+      )
       
       // 3. Handlers
       handleNonGenericType(property, dtoType, elementType, wrappedElementType, fromMap, context, safeType)

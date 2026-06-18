@@ -4,8 +4,19 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
-import java.util.*;
-import me.bristermitten.mittenlib.config.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import me.bristermitten.mittenlib.config.ConfigDataModule;
+import me.bristermitten.mittenlib.config.ConfigInfrastructureModule;
+import me.bristermitten.mittenlib.config.Configuration;
+import me.bristermitten.mittenlib.config.MittenLibConfigLoader;
+import me.bristermitten.mittenlib.config.PluginConfigModule;
 import me.bristermitten.mittenlib.config.paths.PluginConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.paths.PluginConfigPathResolver;
 import me.bristermitten.mittenlib.files.FileTypeModule;
@@ -119,6 +130,13 @@ public class MittenLib<T extends Plugin> {
     }
 
     public MittenLib<T> addModules(Module... modules) {
+        for (Module module : modules) {
+            addModule0(module);
+        }
+        return this;
+    }
+
+    public MittenLib<T> addModules(Iterable<? extends Module> modules) {
         for (Module module : modules) {
             addModule0(module);
         }

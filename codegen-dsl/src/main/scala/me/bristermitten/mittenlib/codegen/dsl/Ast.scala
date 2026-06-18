@@ -24,8 +24,6 @@ enum TypeRef:
 
   def array: TypeRef = ArrayOf(this)
 
-  def toJavaClass: Option[Class[?]] = AstValidator.toJavaClass(this)
-
 object TypeRef:
   def of(cls: Class[?]): TypeRef = Simple(ClassName.get(cls))
 
@@ -77,39 +75,6 @@ sealed trait Expr:
   def unary_! : Expr = Expr.UnaryOp("!", this)
 
   def instanceOf(t: TypeRef): Expr = Expr.InstanceOf(this, t)
-
-  def exprType: Option[TypeRef] = this match
-    case Var(_, t) => Some(t)
-    case Expr.Literal(s) =>
-      if (s.startsWith("\"") && s.endsWith("\"")) Some(TypeRef.of(classOf[String]))
-      else None
-    case Expr.Null => None
-    case Expr.BoolLit(_) => Some(TypeRef.of(TypeName.BOOLEAN))
-    case Expr.This => None
-    case Expr.Super => None
-    case Expr.Cast(t, _) => Some(t)
-    case Expr.InstanceOf(_, _) => Some(TypeRef.of(TypeName.BOOLEAN))
-    case Expr.NewInstance(t, _) => Some(t)
-    case Expr.NewAnonymousInstance(t, _) => Some(t)
-    case Expr.Ternary(_, ifTrue, _) => ifTrue.exprType
-    case Expr.BinaryOp(_, op, _) =>
-      if (Seq("==", "!=", "<", ">", "<=", ">=", "&&", "||").contains(op)) Some(TypeRef.of(TypeName.BOOLEAN))
-      else None
-    case Expr.UnaryOp(op, operand) =>
-      if (op == "!") Some(TypeRef.of(TypeName.BOOLEAN))
-      else operand.exprType
-    case Expr.MethodCall(receiver, method, _) =>
-      AstValidator.findMethodReturnType(receiver.exprType, method)
-    case Expr.StaticCall(t, method, _) =>
-      AstValidator.findMethodReturnType(Some(t), method)
-    case Expr.FieldAccess(receiver, fieldName) =>
-      AstValidator.findFieldType(receiver.exprType, fieldName)
-    case Expr.StaticField(t, fieldName) =>
-      AstValidator.findFieldType(Some(t), fieldName)
-    case Expr.MethodRef(_, _) => None
-    case Expr.StaticMethodRef(_, _) => None
-    case Expr.Lambda(_, _) => None
-    case Expr.LambdaExpr(_, _) => None
 
 object Expr:
   // Leaves
@@ -234,168 +199,6 @@ object Statement:
 
   case class Comment(text: String) extends Statement
 
-// ─── Validation ──────────────────────────────────────────────────────────────
-
-class AstValidationException(message: String) extends IllegalArgumentException(message)
-
-object AstValidator:
-  private val classCache = new ConcurrentHashMap[String, Option[Class[?]]]()
-  private val methodCache = new ConcurrentHashMap[Class[?], List[java.lang.reflect.Method]]()
-  private val fieldCache = new ConcurrentHashMap[Class[?], List[java.lang.reflect.Field]]()
-
-  private def loadClass(name: String): Option[Class[?]] =
-    val cached = classCache.get(name)
-    if (cached != null) cached
-    else
-      val cl = Thread.currentThread().getContextClassLoader
-      val res = try Some(Class.forName(name, false, cl))
-      catch
-        case _: ClassNotFoundException =>
-          try Some(Class.forName(name, false, getClass.getClassLoader))
-          catch case _: ClassNotFoundException => None
-      classCache.put(name, res)
-      res
-
-  def toJavaClass(tpe: TypeRef): Option[Class[?]] = tpe match
-    case TypeRef.Simple(t: ClassName) =>
-      loadClass(t.reflectionName())
-    case TypeRef.Simple(t) =>
-      if (t == TypeName.INT) Some(java.lang.Integer.TYPE)
-      else if (t == TypeName.LONG) Some(java.lang.Long.TYPE)
-      else if (t == TypeName.DOUBLE) Some(java.lang.Double.TYPE)
-      else if (t == TypeName.FLOAT) Some(java.lang.Float.TYPE)
-      else if (t == TypeName.SHORT) Some(java.lang.Short.TYPE)
-      else if (t == TypeName.BYTE) Some(java.lang.Byte.TYPE)
-      else if (t == TypeName.CHAR) Some(java.lang.Character.TYPE)
-      else if (t == TypeName.BOOLEAN) Some(java.lang.Boolean.TYPE)
-      else if (t == TypeName.VOID) Some(java.lang.Void.TYPE)
-      else if (t.isInstanceOf[ClassName]) loadClass(t.asInstanceOf[ClassName].reflectionName())
-      else loadClass(t.toString)
-    case TypeRef.Parameterized(raw, _) =>
-      loadClass(raw.reflectionName())
-    case TypeRef.ArrayOf(componentType) =>
-      toJavaClass(componentType).flatMap { componentClass =>
-        try Some(java.lang.reflect.Array.newInstance(componentClass, 0).getClass)
-        catch case _: Exception => None
-      }
-
-  private def getAllMethods(clazz: Class[?]): List[java.lang.reflect.Method] =
-    if (clazz == null) Nil
-    else
-      val cached = methodCache.get(clazz)
-      if (cached != null) cached
-      else
-        val declared = try clazz.getDeclaredMethods.toList catch case _: SecurityException | _: NoClassDefFoundError => Nil
-        val inherited = getAllMethods(clazz.getSuperclass) ++ clazz.getInterfaces.flatMap(getAllMethods)
-        val res = (declared ++ inherited).distinct
-        methodCache.put(clazz, res)
-        res
-
-  private def formatAvailableMethods(clazz: Class[?]): String =
-    val methods = getAllMethods(clazz)
-      .map { m =>
-        val params = m.getParameterTypes.map(_.getSimpleName).mkString(", ")
-        s"  - ${m.getName}($params)"
-      }
-      .sorted
-      .distinct
-      .mkString("\n")
-    if (methods.isEmpty) "  (none)" else methods
-
-  def findMethodReturnType(receiverTpe: Option[TypeRef], methodName: String): Option[TypeRef] =
-    receiverTpe.flatMap(toJavaClass).flatMap { clazz =>
-      val methods = getAllMethods(clazz).filter(_.getName == methodName)
-      if (methods.nonEmpty) {
-        val retClass = methods.head.getReturnType
-        Some(TypeRef.of(retClass))
-      } else {
-        None
-      }
-    }
-
-  private def getAllFields(clazz: Class[?]): List[java.lang.reflect.Field] =
-    if (clazz == null) Nil
-    else
-      val cached = fieldCache.get(clazz)
-      if (cached != null) cached
-      else
-        val declared = try clazz.getDeclaredFields.toList catch case _: SecurityException | _: NoClassDefFoundError => Nil
-        val inherited = getAllFields(clazz.getSuperclass)
-        val res = (declared ++ inherited).distinct
-        fieldCache.put(clazz, res)
-        res
-
-  private def formatAvailableFields(clazz: Class[?]): String =
-    val fields = getAllFields(clazz)
-      .map { f => s"  - ${f.getName}: ${f.getType.getSimpleName}" }
-      .sorted
-      .distinct
-      .mkString("\n")
-    if (fields.isEmpty) "  (none)" else fields
-
-  def findFieldType(receiverTpe: Option[TypeRef], fieldName: String): Option[TypeRef] =
-    if (fieldName == "class") Some(TypeRef.of(classOf[Class[?]]))
-    else
-      receiverTpe.flatMap(toJavaClass).flatMap { clazz =>
-        if (clazz.isArray && fieldName == "length") Some(TypeRef.of(TypeName.INT))
-        else
-          getAllFields(clazz).find(_.getName == fieldName).map { field =>
-            TypeRef.of(field.getType)
-          }
-      }
-
-  def validateMethodCall(receiver: Expr, method: String): Unit =
-    receiver.exprType.foreach { rTpe =>
-      toJavaClass(rTpe).foreach { clazz =>
-        val hasMethod = getAllMethods(clazz).exists(_.getName == method)
-        if (!hasMethod) {
-          throw AstValidationException(
-            s"Method '$method' not found on class '${clazz.getName}'.\nAvailable methods:\n${formatAvailableMethods(clazz)}"
-          )
-        }
-      }
-    }
-
-  def validateStaticCall(tpe: TypeRef, method: String): Unit =
-    toJavaClass(tpe).foreach { clazz =>
-      val hasMethod = getAllMethods(clazz).exists(_.getName == method)
-      if (!hasMethod) {
-        throw AstValidationException(
-          s"Static method '$method' not found on class '${clazz.getName}'.\nAvailable methods:\n${formatAvailableMethods(clazz)}"
-        )
-      }
-    }
-
-  def validateFieldAccess(receiver: Expr, fieldName: String): Unit =
-    if (fieldName != "class") {
-      receiver.exprType.foreach { rTpe =>
-        toJavaClass(rTpe).foreach { clazz =>
-          if (clazz.isArray && fieldName == "length") {
-            // OK
-          } else {
-            val hasField = getAllFields(clazz).exists(_.getName == fieldName)
-            if (!hasField) {
-              throw AstValidationException(
-                s"Field '$fieldName' not found on class '${clazz.getName}'.\nAvailable fields:\n${formatAvailableFields(clazz)}"
-              )
-            }
-          }
-        }
-      }
-    }
-
-  def validateStaticField(tpe: TypeRef, fieldName: String): Unit =
-    if (fieldName != "class") {
-      toJavaClass(tpe).foreach { clazz =>
-        val hasField = getAllFields(clazz).exists(_.getName == fieldName)
-        if (!hasField) {
-          throw AstValidationException(
-            s"Static field '$fieldName' not found on class '${clazz.getName}'.\nAvailable fields:\n${formatAvailableFields(clazz)}"
-          )
-        }
-      }
-    }
-
 // ─── Declarations ────────────────────────────────────────────────────────────
 
 case class FieldDecl(
@@ -409,6 +212,7 @@ case class MethodDecl(
   returnType: TypeRef,
   parameters: List[Var],
   modifiers: List[javax.lang.model.element.Modifier] = Nil,
+  annotations: List[com.palantir.javapoet.AnnotationSpec] = Nil,
   body: Block[?]
 )
 
@@ -417,10 +221,11 @@ object MethodDecl:
     name: String,
     returnType: TypeRef,
     parameters: List[Var],
-    modifiers: List[javax.lang.model.element.Modifier] = Nil
+    modifiers: List[javax.lang.model.element.Modifier] = Nil,
+    annotations: List[com.palantir.javapoet.AnnotationSpec] = Nil
   )(body: BlockBuilder ?=> Block[S]): MethodDecl =
     val block = BlockBuilder.build(body)
-    MethodDecl(name, returnType, parameters, modifiers, block)
+    MethodDecl(name, returnType, parameters, modifiers, annotations, block)
 
 case class ClassDecl(
   packageName: String,

@@ -75,11 +75,11 @@ class ConfigurationClassNameGeneratorTest {
     void testTranslateConfigClassName() {
         ClassName dtoName = ClassName.bestGuess("TestConfigDTO");
 
-        assertThat(ConfigurationClassNameGenerator.translateConfigClassName(dtoName))
+        assertThat(ConfigurationClassNameGenerator$.MODULE$.translateConfigClassName(dtoName))
                 .isEqualTo(ClassName.bestGuess("TestConfig"));
 
         ClassName configName = ClassName.bestGuess("TestConfig");
-        assertThat(ConfigurationClassNameGenerator.translateConfigClassName(configName))
+        assertThat(ConfigurationClassNameGenerator$.MODULE$.translateConfigClassName(configName))
                 .isEqualTo(ClassName.bestGuess("TestConfigImpl"));
     }
 

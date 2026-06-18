@@ -3,7 +3,6 @@ package me.bristermitten.mittenlib.annotations.compile.deserializer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.palantir.javapoet.MethodSpec;
 import io.toolisticon.aptk.common.ToolingProvider;
 import io.toolisticon.aptk.tools.TypeMirrorWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
@@ -68,8 +67,32 @@ class GenericTypeDeserializerGeneratorTest {
                     TypeElementWrapper typeElementWrapper = TypeElementWrapper.wrap(
                             (TypeElement) processingEnvironment.getTypeUtils().asElement(field.asType()));
 
-                    assertThatThrownBy(() ->
-                                    generator.handleGenericType(null, element, property, wrapper, typeElementWrapper))
+                    assertThatThrownBy(() -> generator.generateDeserializeMethod(
+                                    new me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure.Atomic(
+                                            com.palantir.javapoet.ClassName.get("test", "Test"),
+                                            new me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource
+                                                    .ClassConfigTypeSource(element, java.util.Optional.empty()),
+                                            new me.bristermitten.mittenlib.annotations.ast.ASTSettings
+                                                    .ConfigASTSettings(
+                                                    null,
+                                                    null,
+                                                    element.getAnnotation(
+                                                            me.bristermitten.mittenlib.config.Config.class),
+                                                    false),
+                                            java.util.List.of(),
+                                            null,
+                                            java.util.List.of()),
+                                    property,
+                                    element,
+                                    field.asType(),
+                                    wrapper,
+                                    typeElementWrapper,
+                                    com.palantir.javapoet.TypeName.get(field.asType()),
+                                    null,
+                                    new me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator(),
+                                    new me.bristermitten.mittenlib.annotations.compile.MethodNames(
+                                            new me.bristermitten.mittenlib.annotations.util.ElementsFinder(
+                                                    processingEnvironment.getElementUtils()))))
                             .isInstanceOf(IllegalStateException.class)
                             .hasMessageContaining("Unexpected generic type: java.util.Optional");
                 })
@@ -175,11 +198,32 @@ class GenericTypeDeserializerGeneratorTest {
                                                 .getTypeUtils()
                                                 .erasure(field.asType())));
 
-                        var builder = MethodSpec.methodBuilder("temp");
-                        var result =
-                                generator.handleGenericType(builder, element, property, wrapper, typeElementWrapper);
-                        assertThat(result).isPresent();
-                        assertThat(builder.build().code().toString()).isNotBlank();
+                        var result = generator.generateDeserializeMethod(
+                                new me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure.Atomic(
+                                        com.palantir.javapoet.ClassName.get("test", "Test"),
+                                        new me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource
+                                                .ClassConfigTypeSource(element, java.util.Optional.empty()),
+                                        new me.bristermitten.mittenlib.annotations.ast.ASTSettings.ConfigASTSettings(
+                                                null,
+                                                null,
+                                                element.getAnnotation(me.bristermitten.mittenlib.config.Config.class),
+                                                false),
+                                        java.util.List.of(),
+                                        null,
+                                        java.util.List.of()),
+                                property,
+                                element,
+                                field.asType(),
+                                wrapper,
+                                typeElementWrapper,
+                                com.palantir.javapoet.TypeName.get(field.asType()),
+                                null,
+                                new me.bristermitten.mittenlib.annotations.compile.FieldNameGenerator(),
+                                new me.bristermitten.mittenlib.annotations.compile.MethodNames(
+                                        new me.bristermitten.mittenlib.annotations.util.ElementsFinder(
+                                                processingEnvironment.getElementUtils())));
+                        assertThat(result).isNotNull();
+                        assertThat(result.toString()).isNotBlank();
                     }
                 })
                 .thenExpectThat()

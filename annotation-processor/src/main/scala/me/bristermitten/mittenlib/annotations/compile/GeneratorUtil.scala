@@ -3,6 +3,8 @@ package me.bristermitten.mittenlib.annotations.compile
 import com.palantir.javapoet.{ClassName, CodeBlock, MethodSpec}
 import me.bristermitten.mittenlib.annotations.ast.{AbstractConfigStructure, ConfigTypeSource, Property}
 import org.jspecify.annotations.Nullable
+import javax.lang.model.element.TypeElement
+import javax.lang.model.`type`.TypeMirror
 
 object GeneratorUtil:
 
@@ -42,3 +44,53 @@ object GeneratorUtil:
           configExpr.field(property.name())
         }
     }
+
+  def declareAndCheckFromMap(
+    propertyAST: AbstractConfigStructure,
+    property: Property,
+    dtoType: TypeElement,
+    elementType: TypeMirror,
+    context: me.bristermitten.mittenlib.codegen.dsl.StagedExpr[me.bristermitten.mittenlib.config.DeserializationContext],
+    hasDefault: Boolean,
+    dao: Option[me.bristermitten.mittenlib.codegen.dsl.StagedExpr[Any]],
+    fieldNameGenerator: FieldNameGenerator
+  )(using me.bristermitten.mittenlib.codegen.dsl.BlockBuilder): me.bristermitten.mittenlib.codegen.dsl.Var =
+    import me.bristermitten.mittenlib.codegen.dsl.*
+    import me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
+    import me.bristermitten.mittenlib.codegen.dsl.given
+    import com.palantir.javapoet.TypeName
+    import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors
+
+    val data = declare(Types.DataTree, "$data", context.getData)
+    val key = fieldNameGenerator.getConfigFieldName(property)
+    val fromMapName = property.name() + "FromMap"
+
+    val fromMap = if (hasDefault) {
+      val defaultAccess = propertyAST.source() match {
+        case source: ConfigTypeSource.ClassConfigTypeSource => dao.get.field(property.name())
+        case source: ConfigTypeSource.InterfaceConfigTypeSource => dao.get.call(property.name())
+      }
+      declare(Types.Object, fromMapName, data.call("getOrDefault", Expr.str(key), defaultAccess))
+    } else {
+      declare(Types.DataTree, fromMapName, data.call("get", Expr.str(key)))
+    }
+
+    if (property.settings().isNullable()) {
+      ifThen(fromMap.isNull) {
+        return_(ResultExpr.ok(Expr.Null))
+      }
+    } else {
+      ifThen(fromMap.isNull) {
+        return_(
+          ResultExpr.fail(
+            Expr.staticCall(TypeRef.of(classOf[ConfigLoadingErrors]), "notFoundException",
+              Expr.str(property.name()),
+              Expr.str(TypeName.get(elementType).withoutAnnotations().toString),
+              Expr.staticField(TypeRef.of(dtoType), "class"),
+              Expr.str(key)
+            )
+          )
+        )
+      }
+    }
+    fromMap
