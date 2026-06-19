@@ -16,6 +16,7 @@ import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A {@link Result} encapsulates a computation that may fail, throwing an exception. It either holds
@@ -270,6 +271,16 @@ public interface Result<T> {
     @NotNull Result<T> orElse(Supplier<Result<T>> supplier);
 
     /**
+     * Applies an "or" operation to the {@link Result}. If the {@link Result} is {@link Ok}, the {@link Result#getOrThrow()} is returned.
+     * If the {@link Result} is {@link Fail}, the result of the supplier is returned.
+     * Analogous to {@link Optional#orElseGet(Supplier)}
+     * @param supplier A supplier for the fallback value.
+     * @return The result's value, or the fallback value if the {@link Result} is {@link Fail}.
+     */
+    @Contract(pure = true)
+    @NonNull T orElseGet(@NotNull Supplier<@NotNull T> supplier);
+
+    /**
      * Applies a function to the {@link Result}, passing through the exception if the {@link Result}
      * is {@link Fail} This allows the composition of {@link Result}-ful functions, making {@link
      * Result} a monad (technically not a lawful monad because the function can throw exceptions)
@@ -410,6 +421,11 @@ public interface Result<T> {
         }
 
         @Override
+        public @NonNull T orElseGet(@NotNull Supplier<T> supplier) {
+            return supplier.get();
+        }
+
+        @Override
         public <R> @NotNull Result<R> flatMap(SafeFunction<T, Result<R>> function) {
             //noinspection unchecked
             return (Result<R>) this;
@@ -494,6 +510,11 @@ public interface Result<T> {
         @Override
         public @NotNull Result<T> orElse(Supplier<Result<T>> supplier) {
             return this;
+        }
+
+        @Override
+        public @NonNull T orElseGet(@NotNull Supplier<T> supplier) {
+            return this.value;
         }
 
         @Override
