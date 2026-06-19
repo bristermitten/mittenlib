@@ -1,6 +1,7 @@
 package me.bristermitten.mittenlib;
 
 import com.google.inject.AbstractModule;
+import java.util.logging.Logger;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +38,9 @@ public class MittenLibCoreModule<T extends Plugin> extends AbstractModule {
     @Override
     protected void configure() {
         if (plugin != null) {
+            // make sure that all our loggers get sent to the plugin's logger
+            Logger.getLogger("me.bristermitten.mittenlib").setParent(plugin.getLogger());
+
             bind(Plugin.class).to(plugin.getClass());
             if (plugin instanceof JavaPlugin) {
                 // I know we should avoid conditional bindings

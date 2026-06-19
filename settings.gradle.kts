@@ -7,6 +7,7 @@ include("commands")
 include("gui")
 include("minimessage")
 include("papi")
+include("testing")
 include("annotation-processor:benchmark")
 findProject(":annotation-processor:benchmark")?.name = "benchmark"
 

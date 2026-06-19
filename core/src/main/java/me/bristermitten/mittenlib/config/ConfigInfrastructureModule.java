@@ -8,6 +8,7 @@ import me.bristermitten.mittenlib.config.paths.ConfigInitializationStrategy;
 import me.bristermitten.mittenlib.config.paths.ConfigPathResolver;
 import me.bristermitten.mittenlib.config.paths.JarResourcesConfigPathResolver;
 import me.bristermitten.mittenlib.config.paths.NoOpConfigInitializationStrategy;
+import me.bristermitten.mittenlib.config.provider.ConfigProvider;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderFactory;
 import me.bristermitten.mittenlib.config.provider.construct.ConfigProviderImprover;
 import me.bristermitten.mittenlib.config.provider.construct.SimpleConfigProviderFactory;
@@ -64,5 +65,8 @@ public class ConfigInfrastructureModule extends AbstractModule {
         Multibinder.newSetBinder(binder(), TypeAdapterFactory.class)
                 .addBinding()
                 .to(DataTreeTypeAdapterFactory.class);
+
+        Multibinder.newSetBinder(binder(), new TypeLiteral<Configuration<?>>() {});
+        Multibinder.newSetBinder(binder(), new TypeLiteral<ConfigProvider<?>>() {});
     }
 }

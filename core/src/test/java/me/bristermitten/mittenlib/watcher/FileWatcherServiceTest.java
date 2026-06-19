@@ -24,7 +24,8 @@ class FileWatcherServiceTest {
 
             var ws = fs.newWatchService();
 
-            FileWatcherService service = new FileWatcherService(() -> ws, new TestMittenLibConsumer());
+            FileWatcherService service = new NativeFileWatcherService(
+                    () -> ws, new TestMittenLibConsumer(), java.util.logging.Logger.getLogger("test"));
 
             CompletableFuture<Void> viewed = new CompletableFuture<>();
             service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null)))
@@ -46,7 +47,8 @@ class FileWatcherServiceTest {
 
             var ws = fs.newWatchService();
 
-            FileWatcherService service = new FileWatcherService(() -> ws, new TestMittenLibConsumer());
+            FileWatcherService service = new NativeFileWatcherService(
+                    () -> ws, new TestMittenLibConsumer(), java.util.logging.Logger.getLogger("test"));
 
             CompletableFuture<Void> viewed = new CompletableFuture<>();
             service.addWatcher(new FileWatcher(testFile, event -> viewed.complete(null)))

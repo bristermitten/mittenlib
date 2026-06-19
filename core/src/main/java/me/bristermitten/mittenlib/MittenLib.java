@@ -31,6 +31,7 @@ public class MittenLib<T extends Plugin> {
     private final Map<Class<? extends MittenLibConfigLoader>, MittenLibConfigLoader> configModules =
             new LinkedHashMap<>();
     private final Set<Configuration<?>> manualConfigs = new LinkedHashSet<>();
+    private final List<Module> overrides = new ArrayList<>();
 
     public MittenLib(T plugin) {
         addModule(new MittenLibCoreModule<>(plugin));
@@ -42,6 +43,16 @@ public class MittenLib<T extends Plugin> {
 
     public static <T extends Plugin> MittenLib<T> empty(@NotNull T plugin) {
         return new MittenLib<>(plugin);
+    }
+
+    public MittenLib<T> overrideWith(Module... modules) {
+        Collections.addAll(this.overrides, modules);
+        return this;
+    }
+
+    public MittenLib<T> overrideWith(Collection<? extends Module> modules) {
+        this.overrides.addAll(modules);
+        return this;
     }
 
     public MittenLib<T> addDefaultModules() {
@@ -155,6 +166,14 @@ public class MittenLib<T extends Plugin> {
     public @NotNull Injector setup() {
         List<Module> allModules = new ArrayList<>(modules.values());
 
+        // Always add config infrastructure module if not already present
+        boolean hasConfigInfra =
+                allModules.stream().anyMatch(m -> m.getClass().equals(ConfigInfrastructureModule.class));
+        if (!hasConfigInfra) {
+            allModules.add(new ConfigInfrastructureModule(
+                    PluginConfigInitializationStrategy.class, PluginConfigPathResolver.class));
+        }
+
         if (!configModules.isEmpty() || !manualConfigs.isEmpty()) {
             Set<Configuration<?>> generatedConfigs = new LinkedHashSet<>();
             configModules.values().forEach(module -> {
@@ -163,12 +182,14 @@ public class MittenLib<T extends Plugin> {
             });
 
             allModules.add(new ConfigDataModule(manualConfigs, generatedConfigs));
-
-            allModules.add(new ConfigInfrastructureModule(
-                    PluginConfigInitializationStrategy.class, PluginConfigPathResolver.class));
         }
 
-        return Guice.createInjector(allModules);
+        Module combined = Modules.combine(allModules);
+        if (!overrides.isEmpty()) {
+            combined = Modules.override(combined).with(overrides);
+        }
+
+        return Guice.createInjector(combined);
     }
 
     private void addModule0(Module module) {

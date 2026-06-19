@@ -6,6 +6,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.multibindings.Multibinder;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.event.Listener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,5 +41,6 @@ class MittenLibGuiceTest {
 
         assertEquals(
                 plugin.getName(), build.getInstance(MittenLibConsumer.class).getName());
+        build.getInstance(BukkitAudiences.class);
     }
 }
