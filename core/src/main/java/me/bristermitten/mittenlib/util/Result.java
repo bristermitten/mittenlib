@@ -15,8 +15,6 @@ import me.bristermitten.mittenlib.util.lambda.SafeFunction;
 import me.bristermitten.mittenlib.util.lambda.SafeRunnable;
 import me.bristermitten.mittenlib.util.lambda.SafeSupplier;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 /**
  * A {@link Result} encapsulates a computation that may fail, throwing an exception. It either holds
@@ -33,7 +31,7 @@ public interface Result<T> {
      * @return a {@link Result} containing the given value
      */
     @Contract(pure = true, value = "_ -> new")
-    static <T> @NotNull Result<T> ok(@NotNull T t) {
+    static <T> Result<T> ok(T t) {
         return new Ok<>(t);
     }
 
@@ -46,7 +44,7 @@ public interface Result<T> {
      * @return a {@link Result} containing the given exception
      */
     @Contract(pure = true, value = "_ -> new")
-    static <T, E extends Exception> @NotNull Result<T> fail(@NotNull E e) {
+    static <T, E extends Exception> Result<T> fail(E e) {
         return new Fail<>(e);
     }
 
@@ -59,7 +57,7 @@ public interface Result<T> {
      * @return a {@link Result} containing the returned value or any thrown exception
      */
     @Contract(value = "_ -> new")
-    static <T> @NotNull Result<T> runCatching(@NotNull SafeSupplier<T> supplier) {
+    static <T> Result<T> runCatching(SafeSupplier<T> supplier) {
         try {
             return ok(supplier.get());
         } catch (Exception e) {
@@ -75,7 +73,7 @@ public interface Result<T> {
      * @return A {@link Result} wrapping the exception, if any
      */
     @Contract(value = "_ -> new")
-    static @NotNull Result<Unit> execCatching(SafeRunnable runnable) {
+    static Result<Unit> execCatching(SafeRunnable runnable) {
         try {
             runnable.run();
             return Unit.unitResult();
@@ -96,7 +94,7 @@ public interface Result<T> {
      * @return A {@link Result} wrapping the returned {@link Result}'s value or any thrown exception
      */
     @Contract(value = "_ -> new")
-    static <T> @NotNull Result<T> computeCatching(@NotNull SafeSupplier<Result<T>> supplier) {
+    static <T> Result<T> computeCatching(SafeSupplier<Result<T>> supplier) {
         try {
             Result<T> tResult = supplier.get();
             if (tResult instanceof Fail) {
@@ -121,8 +119,8 @@ public interface Result<T> {
      * @param <R>              The type of the resource
      * @return A {@link Result}, which is either the result of the function or an exception
      */
-    static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(
-            @NotNull SafeSupplier<R> resourceSupplier, SafeFunction<R, Result<T>> function) {
+    static <T, R extends AutoCloseable> Result<T> tryWithResources(
+            SafeSupplier<R> resourceSupplier, SafeFunction<R, Result<T>> function) {
         try (R resource = resourceSupplier.get()) {
             return tryWithResources(resource, function);
         } catch (Exception e) {
@@ -140,8 +138,7 @@ public interface Result<T> {
      * @param <R>      The type of the resource
      * @return A {@link Result}, which is either the result of the function or an exception
      */
-    static <T, R extends AutoCloseable> @NotNull Result<T> tryWithResources(
-            @NotNull R resource, SafeFunction<R, Result<T>> function) {
+    static <T, R extends AutoCloseable> Result<T> tryWithResources(R resource, SafeFunction<R, Result<T>> function) {
         try (R r = resource) {
             return function.apply(r);
         } catch (Exception e) {
@@ -163,7 +160,7 @@ public interface Result<T> {
      * CompletableFuture}s
      */
     @Contract(value = "_ -> new")
-    static <T> @NotNull Result<Collection<T>> sequence(@NotNull Collection<@NotNull Result<T>> results) {
+    static <T> Result<Collection<T>> sequence(Collection<Result<T>> results) {
         if (results.isEmpty()) {
             return ok(Collections.emptySet());
         }
@@ -188,7 +185,7 @@ public interface Result<T> {
      *
      * @return The value, if present, in an {@link Optional}
      */
-    @NotNull @Contract(pure = true)
+    @Contract(pure = true)
     Optional<T> toOptional();
 
     /**
@@ -198,7 +195,7 @@ public interface Result<T> {
      * present
      * @apiNote Synonymous with {@link #toOptional()}
      */
-    @NotNull @Contract(pure = true)
+    @Contract(pure = true)
     default Optional<T> value() {
         return toOptional();
     }
@@ -209,7 +206,7 @@ public interface Result<T> {
      *
      * @return The exception, if present, in an {@link Optional}
      */
-    @NotNull @Contract(pure = true)
+    @Contract(pure = true)
     Optional<Exception> error();
 
     /**
@@ -230,7 +227,7 @@ public interface Result<T> {
      * {@link Result}
      */
     @Contract(pure = true)
-    @NotNull default <R> Result<R> mapUnsafe(SafeFunction<T, R> function) {
+    default <R> Result<R> mapUnsafe(SafeFunction<T, R> function) {
         return flatMap(t -> ok(function.apply(t)));
     }
 
@@ -242,7 +239,7 @@ public interface Result<T> {
      * @return A new {@link Result} containing the output of the function or the exception from this {@link Result}
      */
     @Contract(pure = true)
-    @NotNull <R> Result<R> map(Function<T, R> function);
+    <R> Result<R> map(Function<T, R> function);
 
     /**
      * Applies the given {@link SafeConsumer} if the {@link Result} is {@link Ok}. If the {@link
@@ -252,7 +249,7 @@ public interface Result<T> {
      * @return The {@link Result} after the {@link SafeConsumer} has been applied
      */
     @Contract(pure = true)
-    @NotNull default Result<Unit> ifOk(SafeConsumer<T> t) {
+    default Result<Unit> ifOk(SafeConsumer<T> t) {
         return flatMap(t1 -> {
             t.consume(t1);
             return ok(Unit.UNIT);
@@ -268,7 +265,7 @@ public interface Result<T> {
      * @return The result of the "or" operation
      */
     @Contract(pure = true)
-    @NotNull Result<T> orElse(Supplier<Result<T>> supplier);
+    Result<T> orElse(Supplier<Result<T>> supplier);
 
     /**
      * Applies an "or" operation to the {@link Result}. If the {@link Result} is {@link Ok}, the {@link Result#getOrThrow()} is returned.
@@ -278,7 +275,7 @@ public interface Result<T> {
      * @return The result's value, or the fallback value if the {@link Result} is {@link Fail}.
      */
     @Contract(pure = true)
-    @NonNull T orElseGet(@NotNull Supplier<@NotNull T> supplier);
+    T orElseGet(Supplier<T> supplier);
 
     /**
      * Applies a function to the {@link Result}, passing through the exception if the {@link Result}
@@ -296,7 +293,7 @@ public interface Result<T> {
      * @see #flatMapPure(Function) a version that cannot throw checked exceptions
      */
     @Contract(pure = true)
-    @NotNull <R> Result<R> flatMap(SafeFunction<T, Result<R>> function);
+    <R> Result<R> flatMap(SafeFunction<T, Result<R>> function);
 
     /**
      * Like {@link #flatMap(SafeFunction)}, but the function cannot throw checked exceptions
@@ -308,7 +305,7 @@ public interface Result<T> {
      * @see #flatMap(SafeFunction) a version that can throw checked exceptions
      */
     @Contract(pure = true)
-    @NotNull default <R> Result<R> flatMapPure(Function<T, Result<R>> function) {
+    default <R> Result<R> flatMapPure(Function<T, Result<R>> function) {
         return flatMap(function::apply);
     }
 
@@ -344,7 +341,7 @@ public interface Result<T> {
      *                          will <b>not</b> be wrapped in a {@link RuntimeException}. However, {@link RuntimeException}
      *                          is used in the method signature to avoid manual try/catch blocks
      */
-    @NotNull T getOrThrow() throws RuntimeException;
+    T getOrThrow() throws RuntimeException;
 
     /**
      * Handle the 2 cases of the {@link Result} separately with 2 functions If the {@link Result} is
@@ -399,46 +396,46 @@ public interface Result<T> {
         /**
          * The underlying exception
          */
-        private final @NotNull E exception;
+        private final E exception;
 
-        private Fail(@NotNull E exception) {
+        private Fail(E exception) {
             this.exception = exception;
         }
 
         @Override
-        public @NotNull Optional<T> toOptional() {
+        public Optional<T> toOptional() {
             return Optional.empty();
         }
 
         @Override
-        public @NotNull Optional<Exception> error() {
+        public Optional<Exception> error() {
             return Optional.of(exception);
         }
 
         @Override
-        public @NotNull Result<T> orElse(Supplier<Result<T>> supplier) {
+        public Result<T> orElse(Supplier<Result<T>> supplier) {
             return supplier.get();
         }
 
         @Override
-        public @NonNull T orElseGet(@NotNull Supplier<T> supplier) {
+        public T orElseGet(Supplier<T> supplier) {
             return supplier.get();
         }
 
         @Override
-        public <R> @NotNull Result<R> flatMap(SafeFunction<T, Result<R>> function) {
+        public <R> Result<R> flatMap(SafeFunction<T, Result<R>> function) {
             //noinspection unchecked
             return (Result<R>) this;
         }
 
         @Override
-        public @NotNull <R> Result<R> map(Function<T, R> function) {
+        public <R> Result<R> map(Function<T, R> function) {
             //noinspection unchecked
             return (Result<R>) this;
         }
 
         @Override
-        public @NotNull T getOrThrow() {
+        public T getOrThrow() {
             Errors.sneakyThrow(exception);
             return null;
         }
@@ -491,34 +488,34 @@ public interface Result<T> {
         /**
          * The underlying value of the {@link Result}
          */
-        private final @NotNull T value;
+        private final T value;
 
-        private Ok(@NotNull T value) {
+        private Ok(T value) {
             this.value = value;
         }
 
         @Override
-        public @NotNull Optional<T> toOptional() {
+        public Optional<T> toOptional() {
             return Optional.of(value);
         }
 
         @Override
-        public @NotNull Optional<Exception> error() {
+        public Optional<Exception> error() {
             return Optional.empty();
         }
 
         @Override
-        public @NotNull Result<T> orElse(Supplier<Result<T>> supplier) {
+        public Result<T> orElse(Supplier<Result<T>> supplier) {
             return this;
         }
 
         @Override
-        public @NonNull T orElseGet(@NotNull Supplier<T> supplier) {
+        public T orElseGet(Supplier<T> supplier) {
             return this.value;
         }
 
         @Override
-        public <R> @NotNull Result<R> flatMap(SafeFunction<T, Result<R>> function) {
+        public <R> Result<R> flatMap(SafeFunction<T, Result<R>> function) {
             try {
                 return function.apply(value);
             } catch (Exception e) {
@@ -527,12 +524,12 @@ public interface Result<T> {
         }
 
         @Override
-        public @NotNull <R> Result<R> map(Function<T, R> function) {
+        public <R> Result<R> map(Function<T, R> function) {
             return new Ok<>(function.apply(this.value));
         }
 
         @Override
-        public @NotNull T getOrThrow() {
+        public T getOrThrow() {
             return value;
         }
 

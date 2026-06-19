@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 
 public class Strings {
     private Strings() {}
@@ -64,9 +63,7 @@ public class Strings {
      * @return A joined string
      */
     public static <T> String joinWith(
-            @NotNull Collection<T> collection,
-            @NotNull Function<? super T, ? extends CharSequence> toString,
-            @NotNull String separator) {
+            Collection<T> collection, Function<? super T, ? extends CharSequence> toString, String separator) {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
             stringJoiner.add(Objects.requireNonNull(toString.apply(t)));
@@ -80,9 +77,7 @@ public class Strings {
      * @see #joinWith(Collection, Function, String)
      */
     public static <T> String joinWith(
-            @NotNull T[] collection,
-            @NotNull Function<? super T, ? extends CharSequence> toString,
-            @NotNull String separator) {
+            T[] collection, Function<? super T, ? extends CharSequence> toString, String separator) {
         final StringJoiner stringJoiner = new StringJoiner(separator);
         for (T t : collection) {
             stringJoiner.add(Objects.requireNonNull(toString.apply(t)));

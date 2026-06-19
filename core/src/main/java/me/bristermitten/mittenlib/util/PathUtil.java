@@ -12,7 +12,6 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
 import java.util.Objects;
 import me.bristermitten.mittenlib.util.lambda.IOFunction;
-import org.jetbrains.annotations.NotNull;
 
 /** Utility class for working with {@link Path}s */
 public class PathUtil {
@@ -25,7 +24,7 @@ public class PathUtil {
      * @deprecated Resource leak, use {@link #resourceToPath(URL, IOFunction)} instead
      */
     @Deprecated
-    public static @NotNull Path resourceToPath(@NotNull URL resource) throws IOException, URISyntaxException {
+    public static Path resourceToPath(URL resource) throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");
         URI uri = resource.toURI();
@@ -54,7 +53,7 @@ public class PathUtil {
         return path;
     }
 
-    public static @NotNull <T> T resourceToPath(@NotNull URL resource, IOFunction<Path, T> function)
+    public static <T> T resourceToPath(URL resource, IOFunction<Path, T> function)
             throws IOException, URISyntaxException {
 
         Objects.requireNonNull(resource, "Resource URL cannot be null");

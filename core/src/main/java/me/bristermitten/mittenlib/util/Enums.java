@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.util;
 
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Utility class for enums */
@@ -16,7 +15,7 @@ public class Enums {
      * @param <E> The type of the enum
      * @return The prettified name of the enum
      */
-    public static <E extends Enum<E>> @NotNull String prettyName(@NotNull E e) {
+    public static <E extends Enum<E>> String prettyName(E e) {
         final String[] split = e.name().toLowerCase(Locale.getDefault()).split("_");
         return Strings.joinWith(split, Strings::capitalize, " ");
     }
@@ -30,7 +29,7 @@ public class Enums {
      * @param <E> the type of the enum.
      * @return the matching enum constant, or {@code null} if no match is found.
      */
-    public static <E extends Enum<E>> @Nullable E valueOfIgnoreCase(@NotNull String name, @NotNull Class<E> enumClass) {
+    public static <E extends Enum<E>> @Nullable E valueOfIgnoreCase(String name, Class<E> enumClass) {
         if (!enumClass.isEnum()) {
             throw new IllegalArgumentException("The specified class is not an enum!");
         }
@@ -51,7 +50,7 @@ public class Enums {
      * @param <E> the type of the enum.
      * @return the matching enum constant, or {@code null} if no match is found.
      */
-    public static <E extends Enum<E>> @Nullable E valueOfOrNull(@NotNull String name, @NotNull Class<E> enumClass) {
+    public static <E extends Enum<E>> @Nullable E valueOfOrNull(String name, Class<E> enumClass) {
         try {
             return Enum.valueOf(enumClass, name);
         } catch (IllegalArgumentException e) {

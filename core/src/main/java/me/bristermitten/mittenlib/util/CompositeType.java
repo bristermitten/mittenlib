@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link ParameterizedType} that can take a dynamic number of type arguments. Required when not
@@ -34,17 +34,17 @@ public class CompositeType implements ParameterizedType {
     }
 
     @Override
-    public Type @NonNull [] getActualTypeArguments() {
+    public Type[] getActualTypeArguments() {
         return parameters.clone();
     }
 
     @Override
-    public @NonNull Type getRawType() {
+    public Type getRawType() {
         return baseClass;
     }
 
     @Override
-    public Type getOwnerType() {
+    @Nullable public Type getOwnerType() {
         return null;
     }
 

@@ -1,11 +1,11 @@
 package me.bristermitten.mittenlib.util;
 
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link Supplier} which caches the value it supplies.
+ * This value is NOT thread-safe.
  *
  * @param <T> The type of the value.
  */
@@ -18,7 +18,7 @@ public class Cached<T> implements Supplier<T> {
      *
      * @param computeWith The supplier to compute the value with.
      */
-    public Cached(@NotNull Supplier<@NotNull T> computeWith) {
+    public Cached(Supplier<T> computeWith) {
         this(computeWith, false);
     }
 
@@ -29,7 +29,7 @@ public class Cached<T> implements Supplier<T> {
      * @param eager Whether to eagerly compute the value. If true, the supplier will be called
      *     immediately.
      */
-    public Cached(Supplier<@NotNull T> computeWith, boolean eager) {
+    public Cached(Supplier<T> computeWith, boolean eager) {
         this.computeWith = computeWith;
         if (eager) {
             update();
@@ -45,7 +45,7 @@ public class Cached<T> implements Supplier<T> {
         t = null;
     }
 
-    private @NotNull T update() {
+    private T update() {
         return t = computeWith.get();
     }
 
@@ -55,7 +55,7 @@ public class Cached<T> implements Supplier<T> {
      * @return The cached value.
      */
     @Override
-    @NotNull public T get() {
+    public T get() {
         if (t == null) {
             return update();
         }

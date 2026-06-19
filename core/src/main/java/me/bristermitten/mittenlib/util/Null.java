@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,7 +22,7 @@ public class Null {
      * @return {@code t} if it is not null, or {@code other} if it is
      */
     @Contract("null, null -> null; _, _ -> !null")
-    public static <T> T orElse(@Nullable T t, T other) {
+    @Nullable public static <T> T orElse(@Nullable T t, @Nullable T other) {
         return t == null ? other : t;
     }
 
@@ -37,7 +36,7 @@ public class Null {
      * @return {@code t} if it is not null, or the value returned by {@code other} if it is
      */
     @Contract("_, _ -> !null")
-    public static <T> @NonNull T orElse(@Nullable T t, @NonNull Supplier<@NonNull T> other) {
+    public static <T> T orElse(@Nullable T t, Supplier<T> other) {
         return t == null ? other.get() : t;
     }
 
@@ -52,7 +51,7 @@ public class Null {
      * @return the result of applying the function to the value, or null if the value is null
      */
     @Contract("null, _ -> null; !null, _ -> !null")
-    public static <A, B> @Nullable B map(@Nullable A a, Function<@NonNull A, @NonNull B> function) {
+    public static <A, B> @Nullable B map(@Nullable A a, Function<A, B> function) {
         if (a == null) {
             return null;
         }
