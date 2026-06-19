@@ -10,36 +10,49 @@ import javax.lang.model.element.Modifier
 import scala.jdk.CollectionConverters.*
 
 object RecordGenerator:
-  case class GeneratedRecord(recordImplName: ClassName, typeSpecBuilder: TypeSpec.Builder)
+  case class GeneratedRecord(
+      recordImplName: ClassName,
+      typeSpecBuilder: TypeSpec.Builder
+  )
 
   def addAllArgsConstructor(
-    constructor: RecordConstructorSpec,
-    constructorTypeSpecBuilder: TypeSpec.Builder
+      constructor: RecordConstructorSpec,
+      constructorTypeSpecBuilder: TypeSpec.Builder
   ): Unit =
     constructorTypeSpecBuilder.addMethod(
-      MethodSpec.constructorBuilder()
+      MethodSpec
+        .constructorBuilder()
         .addModifiers(Modifier.PUBLIC)
-        .addParameters(
-          constructor.fields.asScala.map { field =>
-            ParameterSpec.builder(field.`type`, field.name).build()
-          }.asJava
-        )
+        .addParameters(constructor.fields.asScala.map { field =>
+          ParameterSpec.builder(field.`type`, field.name).build()
+        }.asJava)
         .addCode(
-          constructor.fields.asScala.map { field =>
-            s"this.${field.name} = ${field.name};"
-          }.map(s => CodeBlock.of(s)).asJava.stream().collect(CodeBlock.joining("\n"))
+          constructor.fields.asScala
+            .map { field =>
+              s"this.${field.name} = ${field.name};"
+            }
+            .map(s => CodeBlock.of(s))
+            .asJava
+            .stream()
+            .collect(CodeBlock.joining("\n"))
         )
         .build()
     )
 
   def addFieldAndGetter(
-    field: RecordConstructorSpec.RecordFieldSpec,
-    constructorTypeSpecBuilder: TypeSpec.Builder
+      field: RecordConstructorSpec.RecordFieldSpec,
+      constructorTypeSpecBuilder: TypeSpec.Builder
   ): Unit =
-    constructorTypeSpecBuilder.addField(field.`type`, field.name, Modifier.PRIVATE, Modifier.FINAL)
+    constructorTypeSpecBuilder.addField(
+      field.`type`,
+      field.name,
+      Modifier.PRIVATE,
+      Modifier.FINAL
+    )
 
     constructorTypeSpecBuilder.addMethod(
-      MethodSpec.methodBuilder(field.name)
+      MethodSpec
+        .methodBuilder(field.name)
         .addModifiers(Modifier.PUBLIC)
         .returns(field.`type`)
         .addStatement("return this.$N", field.name)
@@ -47,56 +60,67 @@ object RecordGenerator:
     )
 
   def addWithMethod(
-    constructorSpec: RecordConstructorSpec,
-    field: RecordConstructorSpec.RecordFieldSpec,
-    returnTypeName: ClassName,
-    typeSpecBuilder: TypeSpec.Builder
+      constructorSpec: RecordConstructorSpec,
+      field: RecordConstructorSpec.RecordFieldSpec,
+      returnTypeName: ClassName,
+      typeSpecBuilder: TypeSpec.Builder
   ): Unit =
-    val capitalizedName = field.name.substring(0, 1).toUpperCase(Locale.ROOT) + field.name.substring(1)
+    val capitalizedName =
+      field.name.substring(0, 1).toUpperCase(Locale.ROOT) + field.name
+        .substring(1)
     typeSpecBuilder.addMethod(
-      MethodSpec.methodBuilder(s"with$capitalizedName")
+      MethodSpec
+        .methodBuilder(s"with$capitalizedName")
         .addModifiers(Modifier.PUBLIC)
         .returns(returnTypeName)
         .addParameter(field.`type`, field.name)
         .addStatement(
           "return new $T($L)",
           returnTypeName,
-          constructorSpec.fields.asScala.map { f =>
-            if (f.name == field.name) {
-              CodeBlock.of(field.name)
-            } else {
-              CodeBlock.of("this.$L", f.name)
+          constructorSpec.fields.asScala
+            .map { f =>
+              if (f.name == field.name) {
+                CodeBlock.of(field.name)
+              } else {
+                CodeBlock.of("this.$L", f.name)
+              }
             }
-          }.asJava.stream().collect(CodeBlock.joining(", "))
+            .asJava
+            .stream()
+            .collect(CodeBlock.joining(", "))
         )
         .build()
     )
 
   def addFactoryMethod(
-    constructor: RecordConstructorSpec,
-    returnTypeName: ClassName,
-    typeSpecBuilder: TypeSpec.Builder
+      constructor: RecordConstructorSpec,
+      returnTypeName: ClassName,
+      typeSpecBuilder: TypeSpec.Builder
   ): Unit =
     typeSpecBuilder.addMethod(
-      MethodSpec.methodBuilder(constructor.name)
+      MethodSpec
+        .methodBuilder(constructor.name)
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .returns(returnTypeName)
-        .addParameters(
-          constructor.fields.asScala.map { field =>
-            ParameterSpec.builder(field.`type`, field.name).build()
-          }.asJava
-        )
+        .addParameters(constructor.fields.asScala.map { field =>
+          ParameterSpec.builder(field.`type`, field.name).build()
+        }.asJava)
         .addStatement(
           "return new $L($L)",
           returnTypeName,
-          constructor.fields.asScala.map(_.name).map(s => CodeBlock.of(s)).asJava.stream().collect(CodeBlock.joining(", "))
+          constructor.fields.asScala
+            .map(_.name)
+            .map(s => CodeBlock.of(s))
+            .asJava
+            .stream()
+            .collect(CodeBlock.joining(", "))
         )
         .build()
     )
 
   def generateBasicRecordTypeSpec(
-    record: RecordSpecLike,
-    extendSpec: Boolean
+      record: RecordSpecLike,
+      extendSpec: Boolean
   ): RecordGenerator.GeneratedRecord =
     val recordImplName = record.name
 
@@ -106,17 +130,31 @@ object RecordGenerator:
       typeSpecBuilder.addSuperinterface(record.source)
     }
     typeSpecBuilder.addAnnotation(
-      AnnotationSpec.builder(classOf[me.bristermitten.mittenlib.codegen.GeneratedRecord])
+      AnnotationSpec
+        .builder(classOf[me.bristermitten.mittenlib.codegen.GeneratedRecord])
         .addMember("source", "$T.class", record.source)
         .build()
     )
 
     typeSpecBuilder.addAnnotation(
-      AnnotationSpec.builder(classOf[Generated])
-        .addMember("value", "$S", "me.bristermitten.mittenlib.codegen.BoilerplateGenerator")
-        .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
+      AnnotationSpec
+        .builder(classOf[Generated])
         .addMember(
-          "date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT)
+          "value",
+          "$S",
+          "me.bristermitten.mittenlib.codegen.BoilerplateGenerator"
+        )
+        .addMember(
+          "comments",
+          "$S",
+          "Generated by MittenLib Annotation Processor"
+        )
+        .addMember(
+          "date",
+          "$S",
+          ZonedDateTime
+            .now(ZoneId.systemDefault())
+            .format(DateTimeFormatter.ISO_INSTANT)
         )
         .build()
     )
@@ -128,7 +166,9 @@ object RecordGenerator:
     addAllArgsConstructor(record.constructor, typeSpecBuilder)
 
     val bp = me.bristermitten.mittenlib.codegen.BoilerplateGenerator
-    typeSpecBuilder.addMethod(bp.genToString(record.constructor, recordImplName))
+    typeSpecBuilder.addMethod(
+      bp.genToString(record.constructor, recordImplName)
+    )
     typeSpecBuilder.addMethod(bp.genEquals(record.constructor, recordImplName))
     typeSpecBuilder.addMethod(bp.genHashCode(record.constructor))
 
@@ -141,7 +181,9 @@ class RecordGenerator:
     val result = generateBasicRecordTypeSpec(record, true)
     addFactoryMethod(record.constructor, record.name, result.typeSpecBuilder)
 
-    JavaFile.builder(
-      result.recordImplName.packageName(),
-      result.typeSpecBuilder.build()
-    ).build()
+    JavaFile
+      .builder(
+        result.recordImplName.packageName(),
+        result.typeSpecBuilder.build()
+      )
+      .build()

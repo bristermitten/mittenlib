@@ -17,9 +17,9 @@ class FieldNameGenerator @Inject() ():
     getConfigFieldName(configName, namingPattern, fieldName)
 
   private def getConfigFieldName(
-    @Nullable configName: ConfigName,
-    @Nullable namingPattern: NamingPattern,
-    fieldName: String
+      @Nullable configName: ConfigName,
+      @Nullable namingPattern: NamingPattern,
+      fieldName: String
   ): String =
     if (configName != null) {
       configName.value()

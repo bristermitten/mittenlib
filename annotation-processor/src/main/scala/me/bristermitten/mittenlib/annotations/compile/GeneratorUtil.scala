@@ -1,7 +1,11 @@
 package me.bristermitten.mittenlib.annotations.compile
 
 import com.palantir.javapoet.{ClassName, CodeBlock, MethodSpec}
-import me.bristermitten.mittenlib.annotations.ast.{AbstractConfigStructure, ConfigTypeSource, Property}
+import me.bristermitten.mittenlib.annotations.ast.{
+  AbstractConfigStructure,
+  ConfigTypeSource,
+  Property
+}
 import org.jspecify.annotations.Nullable
 import javax.lang.model.element.TypeElement
 import javax.lang.model.`type`.TypeMirror
@@ -9,30 +13,32 @@ import javax.lang.model.`type`.TypeMirror
 object GeneratorUtil:
 
   def getDaoName(
-    ast: AbstractConfigStructure,
-    classNameGenerator: ConfigurationClassNameGenerator
+      ast: AbstractConfigStructure,
+      classNameGenerator: ConfigurationClassNameGenerator
   ): ClassName =
     ast.source() match {
-      case _: ConfigTypeSource.InterfaceConfigTypeSource => classNameGenerator.getInnerDaoName(ast)
+      case _: ConfigTypeSource.InterfaceConfigTypeSource =>
+        classNameGenerator.getInnerDaoName(ast)
       case _: ConfigTypeSource.ClassConfigTypeSource => ast.name()
     }
 
   def addDaoInstantiationIfNecessary(
-    ast: AbstractConfigStructure,
-    methodBuilder: MethodSpec.Builder,
-    @Nullable daoName: ClassName
+      ast: AbstractConfigStructure,
+      methodBuilder: MethodSpec.Builder,
+      @Nullable daoName: ClassName
   ): Unit =
-    val hasAnyDefault = ast.properties().stream().anyMatch(p => p.settings().hasDefaultValue())
+    val hasAnyDefault =
+      ast.properties().stream().anyMatch(p => p.settings().hasDefaultValue())
     if (daoName != null && hasAnyDefault) {
       methodBuilder.addStatement("$T dao = new $T()", daoName, daoName)
     }
 
   def getPropertyAccess(
-    ast: AbstractConfigStructure,
-    property: Property,
-    configExpr: me.bristermitten.mittenlib.codegen.dsl.Expr,
-    methodNames: MethodNames,
-    useGetters: Boolean
+      ast: AbstractConfigStructure,
+      property: Property,
+      configExpr: me.bristermitten.mittenlib.codegen.dsl.Expr,
+      methodNames: MethodNames,
+      useGetters: Boolean
   ): me.bristermitten.mittenlib.codegen.dsl.Expr =
     ast.source() match {
       case _: ConfigTypeSource.InterfaceConfigTypeSource =>
@@ -46,15 +52,19 @@ object GeneratorUtil:
     }
 
   def declareAndCheckFromMap(
-    propertyAST: AbstractConfigStructure,
-    property: Property,
-    dtoType: TypeElement,
-    elementType: TypeMirror,
-    context: me.bristermitten.mittenlib.codegen.dsl.StagedExpr[me.bristermitten.mittenlib.config.DeserializationContext],
-    hasDefault: Boolean,
-    dao: Option[me.bristermitten.mittenlib.codegen.dsl.StagedExpr[Any]],
-    fieldNameGenerator: FieldNameGenerator
-  )(using me.bristermitten.mittenlib.codegen.dsl.BlockBuilder): me.bristermitten.mittenlib.codegen.dsl.Var =
+      propertyAST: AbstractConfigStructure,
+      property: Property,
+      dtoType: TypeElement,
+      elementType: TypeMirror,
+      context: me.bristermitten.mittenlib.codegen.dsl.StagedExpr[
+        me.bristermitten.mittenlib.config.DeserializationContext
+      ],
+      hasDefault: Boolean,
+      dao: Option[me.bristermitten.mittenlib.codegen.dsl.StagedExpr[Any]],
+      fieldNameGenerator: FieldNameGenerator
+  )(using
+      me.bristermitten.mittenlib.codegen.dsl.BlockBuilder
+  ): me.bristermitten.mittenlib.codegen.dsl.Var =
     import me.bristermitten.mittenlib.codegen.dsl.*
     import me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
     import me.bristermitten.mittenlib.codegen.dsl.given
@@ -67,10 +77,16 @@ object GeneratorUtil:
 
     val fromMap = if (hasDefault) {
       val defaultAccess = propertyAST.source() match {
-        case source: ConfigTypeSource.ClassConfigTypeSource => dao.get.field(property.name())
-        case source: ConfigTypeSource.InterfaceConfigTypeSource => dao.get.call(property.name())
+        case source: ConfigTypeSource.ClassConfigTypeSource =>
+          dao.get.field(property.name())
+        case source: ConfigTypeSource.InterfaceConfigTypeSource =>
+          dao.get.call(property.name())
       }
-      declare(Types.Object, fromMapName, data.call("getOrDefault", Expr.str(key), defaultAccess))
+      declare(
+        Types.Object,
+        fromMapName,
+        data.call("getOrDefault", Expr.str(key), defaultAccess)
+      )
     } else {
       declare(Types.DataTree, fromMapName, data.call("get", Expr.str(key)))
     }
@@ -83,7 +99,9 @@ object GeneratorUtil:
       ifThen(fromMap.isNull) {
         return_(
           ResultExpr.fail(
-            Expr.staticCall(TypeRef.of(classOf[ConfigLoadingErrors]), "notFoundException",
+            Expr.staticCall(
+              TypeRef.of(classOf[ConfigLoadingErrors]),
+              "notFoundException",
               Expr.str(property.name()),
               Expr.str(TypeName.get(elementType).withoutAnnotations().toString),
               Expr.staticField(TypeRef.of(dtoType), "class"),
@@ -95,7 +113,9 @@ object GeneratorUtil:
     }
     fromMap
 
-  def generatedAnnotation(includeDate: Boolean = false): com.palantir.javapoet.AnnotationSpec =
+  def generatedAnnotation(
+      includeDate: Boolean = false
+  ): com.palantir.javapoet.AnnotationSpec =
     import com.palantir.javapoet.AnnotationSpec
     import java.time.ZoneId
     import java.time.ZonedDateTime
@@ -103,13 +123,22 @@ object GeneratorUtil:
     import javax.annotation.processing.Generated
     import me.bristermitten.mittenlib.annotations.config.ConfigProcessor
 
-    val builder = AnnotationSpec.builder(classOf[Generated])
+    val builder = AnnotationSpec
+      .builder(classOf[Generated])
       .addMember("value", "$S", classOf[ConfigProcessor].getName)
-      .addMember("comments", "$S", "Generated by MittenLib Annotation Processor")
+      .addMember(
+        "comments",
+        "$S",
+        "Generated by MittenLib Annotation Processor"
+      )
 
     if (includeDate) {
       builder.addMember(
-        "date", "$S", ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_INSTANT)
+        "date",
+        "$S",
+        ZonedDateTime
+          .now(ZoneId.systemDefault())
+          .format(DateTimeFormatter.ISO_INSTANT)
       )
     }
     builder.build()

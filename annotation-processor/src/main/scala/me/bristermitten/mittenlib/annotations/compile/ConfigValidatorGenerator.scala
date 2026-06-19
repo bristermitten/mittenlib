@@ -2,22 +2,33 @@ package me.bristermitten.mittenlib.annotations.compile
 
 import com.google.inject.Inject
 import com.palantir.javapoet.*
-import java.util.{ArrayList => JArrayList, List => JList, Map => JMap, Optional => JOptional}
+import java.util.{
+  ArrayList => JArrayList,
+  List => JList,
+  Map => JMap,
+  Optional => JOptional
+}
 import javax.annotation.processing.Generated
 import javax.lang.model.element.Modifier
 import javax.lang.model.`type`.{DeclaredType, TypeMirror}
-import me.bristermitten.mittenlib.annotations.ast.{AbstractConfigStructure, Property, ValidationConstraint}
+import me.bristermitten.mittenlib.annotations.ast.{
+  AbstractConfigStructure,
+  Property,
+  ValidationConstraint
+}
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor
 import me.bristermitten.mittenlib.annotations.util.TypesUtil
 import me.bristermitten.mittenlib.config.exception.ConfigValidationException
 import me.bristermitten.mittenlib.util.Result
 import scala.jdk.CollectionConverters.*
+import _root_.me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
+import _root_.me.bristermitten.mittenlib.codegen.dsl.{*, given}
 
-class ConfigValidatorGenerator @Inject() (
-  private val classNameGenerator: ConfigurationClassNameGenerator,
-  private val fieldNameGenerator: FieldNameGenerator,
-  private val methodNames: MethodNames,
-  private val typesUtil: TypesUtil
+class ConfigValidatorGenerator @Inject (
+    private val classNameGenerator: ConfigurationClassNameGenerator,
+    private val fieldNameGenerator: FieldNameGenerator,
+    private val methodNames: MethodNames,
+    private val typesUtil: TypesUtil
 ):
 
   def emit(ast: AbstractConfigStructure): JavaFile =
@@ -25,25 +36,34 @@ class ConfigValidatorGenerator @Inject() (
     val builder = createValidatorBuilder(ast)
     addChildValidatorClasses(ast, builder)
 
-    JavaFile.builder(validatorClassName.packageName(), builder.build())
+    JavaFile
+      .builder(validatorClassName.packageName(), builder.build())
       .skipJavaLangImports(true)
       .build()
 
-  private def addChildValidatorClasses(ast: AbstractConfigStructure, builder: TypeSpec.Builder): Unit =
+  private def addChildValidatorClasses(
+      ast: AbstractConfigStructure,
+      builder: TypeSpec.Builder
+  ): Unit =
     for (child <- ast.enclosed().asScala) {
       val childBuilder = createValidatorBuilder(child)
       addChildValidatorClasses(child, childBuilder)
       builder.addType(childBuilder.build())
     }
 
-  private def createValidatorBuilder(ast: AbstractConfigStructure): TypeSpec.Builder =
+  private def createValidatorBuilder(
+      ast: AbstractConfigStructure
+  ): TypeSpec.Builder =
     val validatorClassName = classNameGenerator.getValidatorClassName(ast)
     val publicClassName = classNameGenerator.getPublicClassName(ast)
 
-    val builder = TypeSpec.classBuilder(validatorClassName.simpleName())
+    val builder = TypeSpec
+      .classBuilder(validatorClassName.simpleName())
       .addJavadoc(
         """Validator implementation for {@link $T}.
-          |""".stripMargin, publicClassName)
+          |""".stripMargin,
+        publicClassName
+      )
       .addModifiers(Modifier.PUBLIC)
 
     if (ast.enclosedIn() != null) {
@@ -63,18 +83,23 @@ class ConfigValidatorGenerator @Inject() (
 
     builder
 
-  private def addValidatorFields(ast: AbstractConfigStructure, builder: TypeSpec.Builder): Unit =
+  private def addValidatorFields(
+      ast: AbstractConfigStructure,
+      builder: TypeSpec.Builder
+  ): Unit =
     for (property <- ast.properties().asScala) {
       for (constraint <- property.settings().constraints().asScala) {
         constraint match {
           case custom: ValidationConstraint.Custom =>
             val validatorClassName = custom.validatorClassName()
-            val validatorField = FieldSpec.builder(
-              validatorClassName,
-              classNameGenerator.getValidatorFieldName(property),
-              Modifier.PRIVATE,
-              Modifier.FINAL
-            ).build()
+            val validatorField = FieldSpec
+              .builder(
+                validatorClassName,
+                classNameGenerator.getValidatorFieldName(property),
+                Modifier.PRIVATE,
+                Modifier.FINAL
+              )
+              .build()
             builder.addField(validatorField)
           case _ =>
         }
@@ -83,12 +108,14 @@ class ConfigValidatorGenerator @Inject() (
         constraint match {
           case custom: ValidationConstraint.Custom =>
             val validatorClassName = custom.validatorClassName()
-            val validatorField = FieldSpec.builder(
-              validatorClassName,
-              classNameGenerator.getValidatorKeyFieldName(property),
-              Modifier.PRIVATE,
-              Modifier.FINAL
-            ).build()
+            val validatorField = FieldSpec
+              .builder(
+                validatorClassName,
+                classNameGenerator.getValidatorKeyFieldName(property),
+                Modifier.PRIVATE,
+                Modifier.FINAL
+              )
+              .build()
             builder.addField(validatorField)
           case _ =>
         }
@@ -97,21 +124,29 @@ class ConfigValidatorGenerator @Inject() (
         constraint match {
           case custom: ValidationConstraint.Custom =>
             val validatorClassName = custom.validatorClassName()
-            val validatorField = FieldSpec.builder(
-              validatorClassName,
-              classNameGenerator.getValidatorElementFieldName(property),
-              Modifier.PRIVATE,
-              Modifier.FINAL
-            ).build()
+            val validatorField = FieldSpec
+              .builder(
+                validatorClassName,
+                classNameGenerator.getValidatorElementFieldName(property),
+                Modifier.PRIVATE,
+                Modifier.FINAL
+              )
+              .build()
             builder.addField(validatorField)
           case _ =>
         }
       }
     }
 
-  private def addGuiceConstructor(ast: AbstractConfigStructure, builder: TypeSpec.Builder): Unit =
-    val constructor = MethodSpec.constructorBuilder()
-      .addJavadoc("Constructs a new validator instance with its custom field/element/key validators.\n")
+  private def addGuiceConstructor(
+      ast: AbstractConfigStructure,
+      builder: TypeSpec.Builder
+  ): Unit =
+    val constructor = MethodSpec
+      .constructorBuilder()
+      .addJavadoc(
+        "Constructs a new validator instance with its custom field/element/key validators.\n"
+      )
       .addAnnotation(classOf[Inject])
       .addModifiers(Modifier.PUBLIC)
 
@@ -132,7 +167,8 @@ class ConfigValidatorGenerator @Inject() (
         constraint match {
           case custom: ValidationConstraint.Custom =>
             val validatorClassName = custom.validatorClassName()
-            val fieldName = classNameGenerator.getValidatorKeyFieldName(property)
+            val fieldName =
+              classNameGenerator.getValidatorKeyFieldName(property)
             constructor.addParameter(validatorClassName, fieldName)
             constructor.addStatement("this.$L = $L", fieldName, fieldName)
             hasCustom = true
@@ -143,7 +179,8 @@ class ConfigValidatorGenerator @Inject() (
         constraint match {
           case custom: ValidationConstraint.Custom =>
             val validatorClassName = custom.validatorClassName()
-            val fieldName = classNameGenerator.getValidatorElementFieldName(property)
+            val fieldName =
+              classNameGenerator.getValidatorElementFieldName(property)
             constructor.addParameter(validatorClassName, fieldName)
             constructor.addStatement("this.$L = $L", fieldName, fieldName)
             hasCustom = true
@@ -156,366 +193,663 @@ class ConfigValidatorGenerator @Inject() (
       builder.addMethod(constructor.build())
     }
 
-  private def addValidateMethod(ast: AbstractConfigStructure, builder: TypeSpec.Builder, publicClassName: ClassName): Unit =
-    val validateMethod = MethodSpec.methodBuilder("validate")
-      .addJavadoc(
-        """Validates the given {@link $T} instance and returns a {@link $T} containing
-          |either the validated config instance or a {@link $T}.
-          |
-          |@param config the configuration instance to validate, must not be null
-          |@return a Result containing the validated config if successful, or validation exceptions if failed
-          |""".stripMargin, publicClassName, classOf[Result[?]], classOf[ConfigValidationException])
-      .addModifiers(Modifier.PUBLIC)
-      .returns(ParameterizedTypeName.get(ClassName.get(classOf[Result[?]]), publicClassName))
-      .addParameter(publicClassName, "config", Modifier.FINAL)
-
-    validateMethod.addStatement(
-      "$T<$T.Violation> violations = new $T<>()",
-      classOf[JList[?]],
-      classOf[ConfigValidationException],
-      classOf[JArrayList[?]]
+  private def bracketedKey(base: Expr, index: Expr): Expr =
+    Expr.BinaryOp(
+      Expr.BinaryOp(base, "+", Expr.str("[")),
+      "+",
+      Expr.BinaryOp(index, "+", Expr.str("]"))
     )
 
-    for (property <- ast.properties().asScala) {
-      val constraints = property.settings().constraints()
-      val keyConstraints = property.settings().keyConstraints()
-      val elementConstraints = property.settings().elementConstraints()
-      val isNullable = property.settings().isNullable
-      val isPrimitive = TypeName.get(property.propertyType()).isPrimitive
-      val accessorCall = "config." + methodNames.safeMethodName(property) + "()"
-      val configKey = fieldNameGenerator.getConfigFieldName(property)
+  private def addValidateMethod(
+      ast: AbstractConfigStructure,
+      builder: TypeSpec.Builder,
+      publicClassName: ClassName
+  ): Unit =
+    val configParam = Var("config", TypeRef.of(publicClassName))
+    val validateMethodDecl = MethodDecl.build(
+      name = "validate",
+      returnType = Types.Result(TypeRef.of(publicClassName)),
+      parameters = List(configParam),
+      modifiers = List(Modifier.PUBLIC),
+      annotations = Nil
+    ) {
+      val violations = declare(
+        Types.List(Types.Violation),
+        "violations",
+        Expr.new_(Types.ArrayList(Types.Violation))
+      )
 
-      if (!constraints.isEmpty || !keyConstraints.isEmpty || !elementConstraints.isEmpty || !isNullable) {
-        if (!isPrimitive) {
-          if (!isNullable) {
-            // Property is NOT nullable: generate a null check
-            validateMethod.beginControlFlow("if ($L == null)", accessorCall)
-            validateMethod.addStatement(
-              "violations.add(new $T.Violation($S, null, $S))",
-              classOf[ConfigValidationException],
-              configKey,
-              "Must not be null"
-            )
-            if (!constraints.isEmpty || !keyConstraints.isEmpty || !elementConstraints.isEmpty) {
-              validateMethod.nextControlFlow("else")
+      for (property <- ast.properties().asScala) {
+        val constraints = property.settings().constraints()
+        val keyConstraints = property.settings().keyConstraints()
+        val elementConstraints = property.settings().elementConstraints()
+        val isNullable = property.settings().isNullable
+        val isPrimitive = TypeName.get(property.propertyType()).isPrimitive
+        val accessorCall = Expr.MethodCall(
+          configParam,
+          methodNames.safeMethodName(property),
+          Nil
+        )
+        val configKey =
+          Expr.str(fieldNameGenerator.getConfigFieldName(property))
+
+        val hasOtherConstraints =
+          !constraints.isEmpty || !keyConstraints.isEmpty || !elementConstraints.isEmpty
+
+        def generatePropertyConstraints()(using b: BlockBuilder): Unit = {
+          if (!constraints.isEmpty) {
+            for (constraint <- constraints.asScala) {
+              generateConstraintCheck(
+                constraint,
+                accessorCall,
+                configKey,
+                Expr.This.field(
+                  classNameGenerator.getValidatorFieldName(property)
+                ),
+                classNameGenerator.getValidatorErrorFieldName(property),
+                "",
+                violations
+              )
+            }
+          }
+
+          if (
+            typesUtil.isCollection(
+              property.propertyType()
+            ) && !elementConstraints.isEmpty
+          ) {
+            val typeArguments = property
+              .propertyType()
+              .asInstanceOf[DeclaredType]
+              .getTypeArguments
+            if (!typeArguments.isEmpty) {
+              val elementType = typeArguments.get(0)
+              val elementTypeName = TypeName.get(elementType)
+              val isElementNullable = typesUtil.isNullable(elementType)
+              val isElementPrimitive = elementTypeName.isPrimitive
+
+              if (typesUtil.isSet(property.propertyType())) {
+                forEach(
+                  TypeRef.of(TypeName.get(elementType)),
+                  accessorCall,
+                  Some("element")
+                ) { element =>
+                  if (!isElementPrimitive) {
+                    if (!isElementNullable) {
+                      ifThenElse(element.isNull) {
+                        statement(
+                          violations.call(
+                            "add",
+                            Expr.new_(
+                              Types.Violation,
+                              bracketedKey(configKey, element),
+                              Expr.Null,
+                              Expr.str("Must not be null")
+                            )
+                          )
+                        )
+                        buildOpen()
+                      } {
+                        for (constraint <- elementConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            element,
+                            bracketedKey(configKey, element),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorElementFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator
+                              .getValidatorElementErrorFieldName(property),
+                            "",
+                            violations
+                          )
+                        }
+                        buildOpen()
+                      }
+                    } else {
+                      ifThen(element.isNotNull) {
+                        for (constraint <- elementConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            element,
+                            bracketedKey(configKey, element),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorElementFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator
+                              .getValidatorElementErrorFieldName(property),
+                            "",
+                            violations
+                          )
+                        }
+                      }
+                    }
+                  } else {
+                    for (constraint <- elementConstraints.asScala) {
+                      generateConstraintCheck(
+                        constraint,
+                        element,
+                        bracketedKey(configKey, element),
+                        Expr.This.field(
+                          classNameGenerator.getValidatorElementFieldName(
+                            property
+                          )
+                        ),
+                        classNameGenerator.getValidatorElementErrorFieldName(
+                          property
+                        ),
+                        "",
+                        violations
+                      )
+                    }
+                  }
+                }
+              } else {
+                val i = declare(Types.Int, "i", Expr.int(0))
+                forEach(
+                  TypeRef.of(TypeName.get(elementType)),
+                  accessorCall,
+                  Some("element")
+                ) { element =>
+                  if (!isElementPrimitive) {
+                    if (!isElementNullable) {
+                      ifThenElse(element.isNull) {
+                        statement(
+                          violations.call(
+                            "add",
+                            Expr.new_(
+                              Types.Violation,
+                              bracketedKey(configKey, i),
+                              Expr.Null,
+                              Expr.str("Must not be null")
+                            )
+                          )
+                        )
+                        buildOpen()
+                      } {
+                        for (constraint <- elementConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            element,
+                            bracketedKey(configKey, i),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorElementFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator
+                              .getValidatorElementErrorFieldName(property),
+                            "",
+                            violations
+                          )
+                        }
+                        buildOpen()
+                      }
+                    } else {
+                      ifThen(element.isNotNull) {
+                        for (constraint <- elementConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            element,
+                            bracketedKey(configKey, i),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorElementFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator
+                              .getValidatorElementErrorFieldName(property),
+                            "",
+                            violations
+                          )
+                        }
+                      }
+                    }
+                  } else {
+                    for (constraint <- elementConstraints.asScala) {
+                      generateConstraintCheck(
+                        constraint,
+                        element,
+                        bracketedKey(configKey, i),
+                        Expr.This.field(
+                          classNameGenerator.getValidatorElementFieldName(
+                            property
+                          )
+                        ),
+                        classNameGenerator.getValidatorElementErrorFieldName(
+                          property
+                        ),
+                        "",
+                        violations
+                      )
+                    }
+                  }
+                  assign(i, Expr.BinaryOp(i, "+", Expr.int(1)))
+                }
+              }
+            }
+          } else if (
+            typesUtil.isMap(
+              property.propertyType()
+            ) && (!keyConstraints.isEmpty || !elementConstraints.isEmpty)
+          ) {
+            val typeArguments = property
+              .propertyType()
+              .asInstanceOf[DeclaredType]
+              .getTypeArguments
+            if (typeArguments.size() >= 2) {
+              val keyType = typeArguments.get(0)
+              val valType = typeArguments.get(1)
+              val keyTypeName = TypeName.get(keyType)
+              val valTypeName = TypeName.get(valType)
+
+              val isKeyNullable = typesUtil.isNullable(keyType)
+              val isKeyPrimitive = keyTypeName.isPrimitive
+              val isValNullable = typesUtil.isNullable(valType)
+              val isValPrimitive = valTypeName.isPrimitive
+
+              val entryTypeName = ParameterizedTypeName.get(
+                ClassName.get(classOf[JMap.Entry[?, ?]]),
+                keyTypeName,
+                valTypeName
+              )
+
+              forEach(
+                TypeRef.of(entryTypeName),
+                accessorCall.call("entrySet"),
+                Some("entry")
+              ) { entry =>
+                val key =
+                  declare(
+                    TypeRef.of(TypeName.get(keyType)),
+                    "key",
+                    entry.call("getKey")
+                  )
+                val value =
+                  declare(
+                    TypeRef.of(TypeName.get(valType)),
+                    "value",
+                    entry.call("getValue")
+                  )
+
+                if (!keyConstraints.isEmpty) {
+                  if (!isKeyPrimitive) {
+                    if (!isKeyNullable) {
+                      ifThenElse(key.isNull) {
+                        statement(
+                          violations.call(
+                            "add",
+                            Expr.new_(
+                              Types.Violation,
+                              bracketedKey(configKey, key),
+                              Expr.Null,
+                              Expr.str("Key must not be null")
+                            )
+                          )
+                        )
+                        buildOpen()
+                      } {
+                        for (constraint <- keyConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            key,
+                            bracketedKey(configKey, key),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorKeyFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator.getValidatorKeyErrorFieldName(
+                              property
+                            ),
+                            "Key ",
+                            violations
+                          )
+                        }
+                        buildOpen()
+                      }
+                    } else {
+                      ifThen(key.isNotNull) {
+                        for (constraint <- keyConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            key,
+                            bracketedKey(configKey, key),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorKeyFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator.getValidatorKeyErrorFieldName(
+                              property
+                            ),
+                            "Key ",
+                            violations
+                          )
+                        }
+                      }
+                    }
+                  } else {
+                    for (constraint <- keyConstraints.asScala) {
+                      generateConstraintCheck(
+                        constraint,
+                        key,
+                        bracketedKey(configKey, key),
+                        Expr.This.field(
+                          classNameGenerator.getValidatorKeyFieldName(property)
+                        ),
+                        classNameGenerator.getValidatorKeyErrorFieldName(
+                          property
+                        ),
+                        "Key ",
+                        violations
+                      )
+                    }
+                  }
+                }
+
+                if (!elementConstraints.isEmpty) {
+                  if (!isValPrimitive) {
+                    if (!isValNullable) {
+                      ifThenElse(value.isNull) {
+                        statement(
+                          violations.call(
+                            "add",
+                            Expr.new_(
+                              Types.Violation,
+                              bracketedKey(configKey, key),
+                              Expr.Null,
+                              Expr.str("Must not be null")
+                            )
+                          )
+                        )
+                        buildOpen()
+                      } {
+                        for (constraint <- elementConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            value,
+                            bracketedKey(configKey, key),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorElementFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator
+                              .getValidatorElementErrorFieldName(property),
+                            "",
+                            violations
+                          )
+                        }
+                        buildOpen()
+                      }
+                    } else {
+                      ifThen(value.isNotNull) {
+                        for (constraint <- elementConstraints.asScala) {
+                          generateConstraintCheck(
+                            constraint,
+                            value,
+                            bracketedKey(configKey, key),
+                            Expr.This.field(
+                              classNameGenerator.getValidatorElementFieldName(
+                                property
+                              )
+                            ),
+                            classNameGenerator
+                              .getValidatorElementErrorFieldName(property),
+                            "",
+                            violations
+                          )
+                        }
+                      }
+                    }
+                  } else {
+                    for (constraint <- elementConstraints.asScala) {
+                      generateConstraintCheck(
+                        constraint,
+                        value,
+                        bracketedKey(configKey, key),
+                        Expr.This.field(
+                          classNameGenerator.getValidatorElementFieldName(
+                            property
+                          )
+                        ),
+                        classNameGenerator.getValidatorElementErrorFieldName(
+                          property
+                        ),
+                        "",
+                        violations
+                      )
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (hasOtherConstraints || !isNullable) {
+          if (!isPrimitive) {
+            if (!isNullable) {
+              if (hasOtherConstraints) {
+                ifThenElse(accessorCall.isNull) {
+                  statement(
+                    violations.call(
+                      "add",
+                      Expr.new_(
+                        Types.Violation,
+                        configKey,
+                        Expr.Null,
+                        Expr.str("Must not be null")
+                      )
+                    )
+                  )
+                  buildOpen()
+                } {
+                  generatePropertyConstraints()
+                  buildOpen()
+                }
+              } else {
+                ifThen(accessorCall.isNull) {
+                  statement(
+                    violations.call(
+                      "add",
+                      Expr.new_(
+                        Types.Violation,
+                        configKey,
+                        Expr.Null,
+                        Expr.str("Must not be null")
+                      )
+                    )
+                  )
+                }
+              }
             } else {
-              validateMethod.endControlFlow()
+              ifThen(accessorCall.isNotNull) {
+                generatePropertyConstraints()
+              }
             }
           } else {
-            // Property IS nullable: only validate other constraints if it's not null
-            validateMethod.beginControlFlow("if ($L != null)", accessorCall)
+            generatePropertyConstraints()
           }
-        }
-
-        if (!constraints.isEmpty) {
-          for (constraint <- constraints.asScala) {
-            generateConstraintCheck(
-              validateMethod,
-              constraint,
-              accessorCall,
-              "$S",
-              configKey,
-              "this." + classNameGenerator.getValidatorFieldName(property),
-              classNameGenerator.getValidatorErrorFieldName(property),
-              ""
-            )
-          }
-        }
-
-        if (typesUtil.isCollection(property.propertyType()) && !elementConstraints.isEmpty) {
-          val typeArguments = property.propertyType().asInstanceOf[DeclaredType].getTypeArguments
-          if (!typeArguments.isEmpty) {
-            val elementType = typeArguments.get(0)
-            val elementTypeName = TypeName.get(elementType)
-            val isElementNullable = typesUtil.isNullable(elementType)
-            val isElementPrimitive = elementTypeName.isPrimitive
-
-            if (typesUtil.isSet(property.propertyType())) {
-              validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall)
-              if (!isElementPrimitive) {
-                if (!isElementNullable) {
-                  validateMethod.beginControlFlow("if (element == null)")
-                  validateMethod.addStatement(
-                    "violations.add(new $T.Violation($S + \"[\" + element + \"]\", null, $S))",
-                    classOf[ConfigValidationException],
-                    configKey,
-                    "Must not be null"
-                  )
-                  validateMethod.nextControlFlow("else")
-                } else {
-                  validateMethod.beginControlFlow("if (element != null)")
-                }
-              }
-              for (constraint <- elementConstraints.asScala) {
-                generateConstraintCheck(
-                  validateMethod,
-                  constraint,
-                  "element",
-                  "$S + \"[\" + element + \"]\"",
-                  configKey,
-                  "this." + classNameGenerator.getValidatorElementFieldName(property),
-                  classNameGenerator.getValidatorElementErrorFieldName(property),
-                  ""
-                )
-              }
-              if (!isElementPrimitive) {
-                validateMethod.endControlFlow()
-              }
-              validateMethod.endControlFlow()
-            } else {
-              validateMethod.addStatement("int i = 0")
-              validateMethod.beginControlFlow("for ($T element : $L)", elementTypeName, accessorCall)
-              if (!isElementPrimitive) {
-                if (!isElementNullable) {
-                  validateMethod.beginControlFlow("if (element == null)")
-                  validateMethod.addStatement(
-                    "violations.add(new $T.Violation($S + \"[\" + i + \"]\", null, $S))",
-                    classOf[ConfigValidationException],
-                    configKey,
-                    "Must not be null"
-                  )
-                  validateMethod.nextControlFlow("else")
-                } else {
-                  validateMethod.beginControlFlow("if (element != null)")
-                }
-              }
-              for (constraint <- elementConstraints.asScala) {
-                generateConstraintCheck(
-                  validateMethod,
-                  constraint,
-                  "element",
-                  "$S + \"[\" + i + \"]\"",
-                  configKey,
-                  "this." + classNameGenerator.getValidatorElementFieldName(property),
-                  classNameGenerator.getValidatorElementErrorFieldName(property),
-                  ""
-                )
-              }
-              if (!isElementPrimitive) {
-                validateMethod.endControlFlow()
-              }
-              validateMethod.addStatement("i++")
-              validateMethod.endControlFlow()
-            }
-          }
-        } else if (typesUtil.isMap(property.propertyType())
-          && (!keyConstraints.isEmpty || !elementConstraints.isEmpty)) {
-          val typeArguments = property.propertyType().asInstanceOf[DeclaredType].getTypeArguments
-          if (typeArguments.size() >= 2) {
-            val keyType = typeArguments.get(0)
-            val valType = typeArguments.get(1)
-            val keyTypeName = TypeName.get(keyType)
-            val valTypeName = TypeName.get(valType)
-
-            val isKeyNullable = typesUtil.isNullable(keyType)
-            val isKeyPrimitive = keyTypeName.isPrimitive
-            val isValNullable = typesUtil.isNullable(valType)
-            val isValPrimitive = valTypeName.isPrimitive
-
-            val entryTypeName = ParameterizedTypeName.get(ClassName.get(classOf[JMap.Entry[?, ?]]), keyTypeName, valTypeName)
-            validateMethod.beginControlFlow("for ($T entry : $L.entrySet())", entryTypeName, accessorCall)
-            validateMethod.addStatement("$T key = entry.getKey()", keyTypeName)
-            validateMethod.addStatement("$T value = entry.getValue()", valTypeName)
-
-            if (!keyConstraints.isEmpty) {
-              if (!isKeyPrimitive) {
-                if (!isKeyNullable) {
-                  validateMethod.beginControlFlow("if (key == null)")
-                  validateMethod.addStatement(
-                    "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
-                    classOf[ConfigValidationException],
-                    configKey,
-                    "Key must not be null"
-                  )
-                  validateMethod.nextControlFlow("else")
-                } else {
-                  validateMethod.beginControlFlow("if (key != null)")
-                }
-              }
-              for (constraint <- keyConstraints.asScala) {
-                generateConstraintCheck(
-                  validateMethod,
-                  constraint,
-                  "key",
-                  "$S + \"[\" + key + \"]\"",
-                  configKey,
-                  "this." + classNameGenerator.getValidatorKeyFieldName(property),
-                  classNameGenerator.getValidatorKeyErrorFieldName(property),
-                  "Key "
-                )
-              }
-              if (!isKeyPrimitive) {
-                validateMethod.endControlFlow()
-              }
-            }
-
-            if (!elementConstraints.isEmpty) {
-              if (!isValPrimitive) {
-                if (!isValNullable) {
-                  validateMethod.beginControlFlow("if (value == null)")
-                  validateMethod.addStatement(
-                    "violations.add(new $T.Violation($S + \"[\" + key + \"]\", null, $S))",
-                    classOf[ConfigValidationException],
-                    configKey,
-                    "Must not be null"
-                  )
-                  validateMethod.nextControlFlow("else")
-                } else {
-                  validateMethod.beginControlFlow("if (value != null)")
-                }
-              }
-              for (constraint <- elementConstraints.asScala) {
-                generateConstraintCheck(
-                  validateMethod,
-                  constraint,
-                  "value",
-                  "$S + \"[\" + key + \"]\"",
-                  configKey,
-                  "this." + classNameGenerator.getValidatorElementFieldName(property),
-                  classNameGenerator.getValidatorElementErrorFieldName(property),
-                  ""
-                )
-              }
-              if (!isValPrimitive) {
-                validateMethod.endControlFlow()
-              }
-            }
-
-            validateMethod.endControlFlow()
-          }
-        }
-
-        if (!isPrimitive
-          && (isNullable
-          || !constraints.isEmpty
-          || !keyConstraints.isEmpty
-          || !elementConstraints.isEmpty)) {
-          validateMethod.endControlFlow()
         }
       }
+
+      ifThen(!violations.call("isEmpty")) {
+        return_(
+          Expr.staticCall(
+            Types.Result,
+            "fail",
+            Expr.new_(
+              Types.ConfigValidationException,
+              configParam.call("getClass"),
+              violations
+            )
+          )
+        )
+      }
+
+      return_(Expr.staticCall(Types.Result, "ok", configParam))
     }
 
-    validateMethod.beginControlFlow("if (!violations.isEmpty())")
-    validateMethod.addStatement(
-      "return $T.fail(new $T(config.getClass(), violations))", classOf[Result[?]], classOf[ConfigValidationException])
-    validateMethod.endControlFlow()
-
-    validateMethod.addStatement("return $T.ok(config)", classOf[Result[?]])
-    builder.addMethod(validateMethod.build())
+    val methodSpec = CodeBlockRenderer.renderMethod(validateMethodDecl)
+    builder.addMethod(methodSpec)
 
   private def generateConstraintCheck(
-    validateMethod: MethodSpec.Builder,
-    constraint: ValidationConstraint,
-    valueExpr: String,
-    keyFormat: String,
-    keyArg: Any,
-    validatorFieldName: String,
-    errorFieldName: String,
-    messagePrefix: String
-  ): Unit =
+      constraint: ValidationConstraint,
+      valueExpr: Expr,
+      keyExpr: Expr,
+      validatorField: Expr,
+      errorFieldName: String,
+      messagePrefix: String,
+      violations: Var
+  )(using b: BlockBuilder): Unit =
     constraint match {
       case _: ValidationConstraint.Positive =>
-        validateMethod.beginControlFlow("if ($L <= 0)", valueExpr)
-        validateMethod.addStatement(
-          "violations.add(new $T.Violation(" + keyFormat + ", $L, $S))",
-          classOf[ConfigValidationException],
-          keyArg,
-          valueExpr,
-          messagePrefix + "Must be positive"
-        )
-        validateMethod.endControlFlow()
+        ifThen(valueExpr <= Expr.int(0)) {
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                Expr.str(messagePrefix + "Must be positive")
+              )
+            )
+          )
+        }
 
       case _: ValidationConstraint.Negative =>
-        validateMethod.beginControlFlow("if ($L >= 0)", valueExpr)
-        validateMethod.addStatement(
-          "violations.add(new $T.Violation(" + keyFormat + ", $L, $S))",
-          classOf[ConfigValidationException],
-          keyArg,
-          valueExpr,
-          messagePrefix + "Must be negative"
-        )
-        validateMethod.endControlFlow()
+        ifThen(valueExpr >= Expr.int(0)) {
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                Expr.str(messagePrefix + "Must be negative")
+              )
+            )
+          )
+        }
 
       case min: ValidationConstraint.Min =>
         val valDouble = min.value()
-        validateMethod.beginControlFlow("if ($L < $L)", valueExpr, Double.box(valDouble))
-        validateMethod.addStatement(
-          "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L))",
-          classOf[ConfigValidationException],
-          keyArg,
-          valueExpr,
-          messagePrefix + "Must be at least ",
-          Double.box(valDouble)
-        )
-        validateMethod.endControlFlow()
+        val limit = Expr.Literal(valDouble.toString)
+        ifThen(valueExpr < limit) {
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                Expr.BinaryOp(
+                  Expr.str(messagePrefix + "Must be at least "),
+                  "+",
+                  limit
+                )
+              )
+            )
+          )
+        }
 
       case max: ValidationConstraint.Max =>
         val valDouble = max.value()
-        validateMethod.beginControlFlow("if ($L > $L)", valueExpr, Double.box(valDouble))
-        validateMethod.addStatement(
-          "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L))",
-          classOf[ConfigValidationException],
-          keyArg,
-          valueExpr,
-          messagePrefix + "Must be at most ",
-          Double.box(valDouble)
-        )
-        validateMethod.endControlFlow()
+        val limit = Expr.Literal(valDouble.toString)
+        ifThen(valueExpr > limit) {
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                Expr.BinaryOp(
+                  Expr.str(messagePrefix + "Must be at most "),
+                  "+",
+                  limit
+                )
+              )
+            )
+          )
+        }
 
       case range: ValidationConstraint.Range =>
         val minDouble = range.min()
         val maxDouble = range.max()
-        validateMethod.beginControlFlow("if ($L < $L || $L > $L)", valueExpr, Double.box(minDouble), valueExpr, Double.box(maxDouble))
-        validateMethod.addStatement(
-          "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L + $S + $L))",
-          classOf[ConfigValidationException],
-          keyArg,
-          valueExpr,
-          messagePrefix + "Must be between ",
-          Double.box(minDouble),
-          " and ",
-          Double.box(maxDouble)
-        )
-        validateMethod.endControlFlow()
-
-      case _: ValidationConstraint.NotBlank =>
-        validateMethod.beginControlFlow("if ($L.trim().isEmpty())", valueExpr)
-        validateMethod.addStatement(
-          "violations.add(new $T.Violation(" + keyFormat + ", $L, $S))",
-          classOf[ConfigValidationException],
-          keyArg,
-          valueExpr,
-          messagePrefix + "Must not be blank"
-        )
-        validateMethod.endControlFlow()
-
-      case custom: ValidationConstraint.Custom =>
-        validateMethod.addStatement(
-          "$T<$T> $L = $L.validate($L)",
-          classOf[JOptional[?]],
-          classOf[String],
-          errorFieldName,
-          validatorFieldName,
-          valueExpr
-        )
-        validateMethod.beginControlFlow("if ($L.isPresent())", errorFieldName)
-        if (messagePrefix.isEmpty) {
-          validateMethod.addStatement(
-            "violations.add(new $T.Violation(" + keyFormat + ", $L, $L.get()))",
-            classOf[ConfigValidationException],
-            keyArg,
-            valueExpr,
-            errorFieldName
-          )
-        } else {
-          validateMethod.addStatement(
-            "violations.add(new $T.Violation(" + keyFormat + ", $L, $S + $L.get()))",
-            classOf[ConfigValidationException],
-            keyArg,
-            valueExpr,
-            messagePrefix,
-            errorFieldName
+        val minLimit = Expr.Literal(minDouble.toString)
+        val maxLimit = Expr.Literal(maxDouble.toString)
+        ifThen(valueExpr < minLimit || valueExpr > maxLimit) {
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                Expr.BinaryOp(
+                  Expr.BinaryOp(
+                    Expr.str(messagePrefix + "Must be between "),
+                    "+",
+                    minLimit
+                  ),
+                  "+",
+                  Expr.BinaryOp(Expr.str(" and "), "+", maxLimit)
+                )
+              )
+            )
           )
         }
-        validateMethod.endControlFlow()
+
+      case _: ValidationConstraint.NotBlank =>
+        ifThen(valueExpr.call("trim").call("isEmpty")) {
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                Expr.str(messagePrefix + "Must not be blank")
+              )
+            )
+          )
+        }
+
+      case custom: ValidationConstraint.Custom =>
+        val errorVar = declare(
+          TypeRef.of(
+            ParameterizedTypeName.get(
+              ClassName.get(classOf[java.util.Optional[?]]),
+              ClassName.get(classOf[java.lang.String])
+            )
+          ),
+          errorFieldName,
+          validatorField.call("validate", valueExpr)
+        )
+        ifThen(errorVar.call("isPresent")) {
+          val msg = if (messagePrefix.isEmpty) {
+            errorVar.call("get")
+          } else {
+            Expr.BinaryOp(Expr.str(messagePrefix), "+", errorVar.call("get"))
+          }
+          statement(
+            violations.call(
+              "add",
+              Expr.new_(
+                Types.Violation,
+                keyExpr,
+                valueExpr,
+                msg
+              )
+            )
+          )
+        }
     }

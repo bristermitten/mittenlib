@@ -15,7 +15,9 @@ import _root_.me.bristermitten.mittenlib.codegen.dsl.given
 
 object BoilerplateGenerator:
 
-  private def toSharedFields(recordConstructorSpec: RecordConstructorSpec): List[SharedField] =
+  private def toSharedFields(
+      recordConstructorSpec: RecordConstructorSpec
+  ): List[SharedField] =
     recordConstructorSpec.fields.asScala.toList.map { f =>
       val t = TypeRef.of(f.`type`)
       val isArr = f.`type`.isInstanceOf[com.palantir.javapoet.ArrayTypeName]
@@ -27,15 +29,26 @@ object BoilerplateGenerator:
       )
     }
 
-  def genEquals(recordConstructorSpec: RecordConstructorSpec, name: ClassName): MethodSpec =
-    val methodDecl = BoilerplateHelper.equalsDecl(name, toSharedFields(recordConstructorSpec))
+  def genEquals(
+      recordConstructorSpec: RecordConstructorSpec,
+      name: ClassName
+  ): MethodSpec =
+    val methodDecl =
+      BoilerplateHelper.equalsDecl(name, toSharedFields(recordConstructorSpec))
     CodeBlockRenderer.renderMethod(methodDecl)
 
   def genHashCode(recordConstructorSpec: RecordConstructorSpec): MethodSpec =
-    val methodDecl = BoilerplateHelper.hashCodeDecl(toSharedFields(recordConstructorSpec))
+    val methodDecl =
+      BoilerplateHelper.hashCodeDecl(toSharedFields(recordConstructorSpec))
     CodeBlockRenderer.renderMethod(methodDecl)
 
-  def genToString(recordConstructorSpec: RecordConstructorSpec, name: ClassName): MethodSpec =
-    val methodDecl = BoilerplateHelper.toStringDecl(name, toSharedFields(recordConstructorSpec), ", ")
+  def genToString(
+      recordConstructorSpec: RecordConstructorSpec,
+      name: ClassName
+  ): MethodSpec =
+    val methodDecl = BoilerplateHelper.toStringDecl(
+      name,
+      toSharedFields(recordConstructorSpec),
+      ", "
+    )
     CodeBlockRenderer.renderMethod(methodDecl)
-

@@ -1,21 +1,24 @@
 package me.bristermitten.mittenlib.codegen.dsl
 
-import com.palantir.javapoet.{ArrayTypeName, ClassName, ParameterizedTypeName, TypeName}
-import java.util.concurrent.ConcurrentHashMap
-import javax.lang.model.element.TypeElement
+import com.palantir.javapoet.*
+
+import javax.lang.model.element.{Modifier, TypeElement}
 import scala.jdk.CollectionConverters.*
 
 // ─── TypeRef ──────────────────────────────────────────────────────────────────
 
-/** Reference to a Java type. Wraps JavaPoet's TypeName with a richer factory API. */
+/** Reference to a Java type. Wraps JavaPoet's TypeName with a richer factory
+  * API.
+  */
 enum TypeRef:
   case Simple(typeName: TypeName)
   case Parameterized(raw: ClassName, typeArgs: List[TypeRef])
   case ArrayOf(componentType: TypeRef)
 
   def toTypeName: TypeName = this match
-    case Simple(t) => t
-    case Parameterized(r, as) => ParameterizedTypeName.get(r, as.map(_.toTypeName) *)
+    case Simple(t)            => t
+    case Parameterized(r, as) =>
+      ParameterizedTypeName.get(r, as.map(_.toTypeName)*)
     case ArrayOf(c) => ArrayTypeName.of(c.toTypeName)
 
   def apply(args: TypeRef*): TypeRef = this match
@@ -37,24 +40,24 @@ object TypeRef:
 
 // ─── Var ──────────────────────────────────────────────────────────────────────
 
-/**
- * A handle to a declared variable. Implements Expr so it's usable directly in
- * expression contexts: `myVar.call("toString")`, `ResultExpr.ok(myVar)`, etc.
- */
+/** A handle to a declared variable. Implements Expr so it's usable directly in
+  * expression contexts: `myVar.call("toString")`, `ResultExpr.ok(myVar)`, etc.
+  */
 case class Var(generatedName: String, tpe: TypeRef) extends Expr:
   /** Use this Var as an expression — identity, but reads clearly in chains. */
   def ref: Expr = this
 
 // ─── Expr ─────────────────────────────────────────────────────────────────────
 
-/**
- * Pure data representing a Java expression. All variants are case classes —
- * immutable, no side effects. Fluent composition methods are available on all Exprs.
- *
- * Since [[Var]] extends [[Expr]], variables are first-class expressions.
- */
+/** Pure data representing a Java expression. All variants are case classes —
+  * immutable, no side effects. Fluent composition methods are available on all
+  * Exprs.
+  *
+  * Since [[Var]] extends [[Expr]], variables are first-class expressions.
+  */
 sealed trait Expr:
-  def call(method: String, args: Expr*): Expr = Expr.MethodCall(this, method, args.toList)
+  def call(method: String, args: Expr*): Expr =
+    Expr.MethodCall(this, method, args.toList)
 
   def field(name: String): Expr = Expr.FieldAccess(this, name)
 
@@ -67,6 +70,14 @@ sealed trait Expr:
   def isNull: Expr = Expr.BinaryOp(this, "==", Expr.Null)
 
   def isNotNull: Expr = Expr.BinaryOp(this, "!=", Expr.Null)
+
+  def <(other: Expr): Expr = Expr.BinaryOp(this, "<", other)
+
+  def <=(other: Expr): Expr = Expr.BinaryOp(this, "<=", other)
+
+  def >(other: Expr): Expr = Expr.BinaryOp(this, ">", other)
+
+  def >=(other: Expr): Expr = Expr.BinaryOp(this, ">=", other)
 
   def &&(other: Expr): Expr = Expr.BinaryOp(this, "&&", other)
 
@@ -89,9 +100,11 @@ object Expr:
   case object Super extends Expr
 
   // Composite
-  case class MethodCall(receiver: Expr, method: String, args: List[Expr]) extends Expr
+  case class MethodCall(receiver: Expr, method: String, args: List[Expr])
+      extends Expr
 
-  case class StaticCall(tpe: TypeRef, method: String, args: List[Expr]) extends Expr
+  case class StaticCall(tpe: TypeRef, method: String, args: List[Expr])
+      extends Expr
 
   case class FieldAccess(receiver: Expr, fieldName: String) extends Expr
 
@@ -127,38 +140,47 @@ object Expr:
 
   def bool(b: Boolean): Expr = BoolLit(b)
 
-  def staticCall(t: TypeRef, m: String, args: Expr*): Expr = StaticCall(t, m, args.toList)
+  def staticCall(t: TypeRef, m: String, args: Expr*): Expr =
+    StaticCall(t, m, args.toList)
 
   def new_(t: TypeRef, args: Expr*): Expr = NewInstance(t, args.toList)
 
-  def newAnonymous(t: TypeRef, args: Expr*): Expr = NewAnonymousInstance(t, args.toList)
+  def newAnonymous(t: TypeRef, args: Expr*): Expr =
+    NewAnonymousInstance(t, args.toList)
 
   def staticField(t: TypeRef, f: String): Expr = StaticField(t, f)
 
-  def methodRef(receiver: Expr, method: String): Expr = MethodRef(receiver, method)
+  def methodRef(receiver: Expr, method: String): Expr =
+    MethodRef(receiver, method)
 
   def staticMethodRef(t: TypeRef, m: String): Expr = StaticMethodRef(t, m)
 
   def lambda(body: Block[?], params: Var*): Expr = Lambda(params.toList, body)
 
-  def lambdaExpr(body: Expr, params: Var*): Expr = LambdaExpr(params.toList, body)
+  def lambdaExpr(body: Expr, params: Var*): Expr =
+    LambdaExpr(params.toList, body)
 
 // ─── Block & Terminator ───────────────────────────────────────────────────────
 
-/**
- * Evidence of how a block ends, carried as a phantom type parameter.
- *
- * - [[Block[Terminated]]] — has an explicit return/throw. Method bodies require this.
- * - [[Block[Open]]]       — no explicit terminator (void bodies, loop bodies, etc.)
- *
- * The phantom type means `ifThenElse` taking two `Builder ?=> Block[Terminated]`
- * arguments returns `Block[Terminated]` — no Optional needed.
- */
+/** Evidence of how a block ends, carried as a phantom type parameter.
+  *
+  *   - [[Block[Terminated]]] — has an explicit return/throw. Method bodies
+  *     require this.
+  *   - [[Block[Open]]] — no explicit terminator (void bodies, loop bodies,
+  *     etc.)
+  *
+  * The phantom type means `ifThenElse` taking two `Builder ?=>
+  * Block[Terminated]` arguments returns `Block[Terminated]` — no Optional
+  * needed.
+  */
 sealed trait Terminated
 
 sealed trait Open
 
-case class Block[+S](statements: List[Statement], terminator: Option[Terminator]):
+case class Block[+S](
+    statements: List[Statement],
+    terminator: Option[Terminator]
+):
   def isTerminated: Boolean = terminator.isDefined
 
 object Block:
@@ -186,14 +208,21 @@ object Statement:
 
   case class IfThen(cond: Expr, body: Block[?]) extends Statement
 
-  case class IfThenElse(cond: Expr, thenBlock: Block[?], elseBlock: Block[?]) extends Statement
+  case class IfThenElse(cond: Expr, thenBlock: Block[?], elseBlock: Block[?])
+      extends Statement
 
-  case class ForEach(element: Var, iterable: Expr, body: Block[?]) extends Statement
+  case class ForEach(element: Var, iterable: Expr, body: Block[?])
+      extends Statement
 
-  case class ForLoop(init: Statement, cond: Expr, update: Expr, body: Block[?]) extends Statement
+  case class ForLoop(init: Statement, cond: Expr, update: Expr, body: Block[?])
+      extends Statement
 
-  case class TryCatch(tryBody: Block[?], exType: TypeRef, exVar: Var,
-                      catchBody: Block[?]) extends Statement
+  case class TryCatch(
+      tryBody: Block[?],
+      exType: TypeRef,
+      exVar: Var,
+      catchBody: Block[?]
+  ) extends Statement
 
   case object BlankLine extends Statement
 
@@ -202,37 +231,36 @@ object Statement:
 // ─── Declarations ────────────────────────────────────────────────────────────
 
 case class FieldDecl(
-  name: String,
-  tpe: TypeRef,
-  modifiers: List[javax.lang.model.element.Modifier] = Nil
+    name: String,
+    tpe: TypeRef,
+    modifiers: List[Modifier] = Nil
 )
 
 case class MethodDecl(
-  name: String,
-  returnType: TypeRef,
-  parameters: List[Var],
-  modifiers: List[javax.lang.model.element.Modifier] = Nil,
-  annotations: List[com.palantir.javapoet.AnnotationSpec] = Nil,
-  body: Block[?]
+    name: String,
+    returnType: TypeRef,
+    parameters: List[Var],
+    modifiers: List[Modifier] = Nil,
+    annotations: List[AnnotationSpec] = Nil,
+    body: Block[?]
 )
 
 object MethodDecl:
   def build[S](
-    name: String,
-    returnType: TypeRef,
-    parameters: List[Var],
-    modifiers: List[javax.lang.model.element.Modifier] = Nil,
-    annotations: List[com.palantir.javapoet.AnnotationSpec] = Nil
+      name: String,
+      returnType: TypeRef,
+      parameters: List[Var],
+      modifiers: List[Modifier] = Nil,
+      annotations: List[AnnotationSpec] = Nil
   )(body: BlockBuilder ?=> Block[S]): MethodDecl =
     val block = BlockBuilder.build(body)
     MethodDecl(name, returnType, parameters, modifiers, annotations, block)
 
 case class ClassDecl(
-  packageName: String,
-  name: String,
-  modifiers: List[javax.lang.model.element.Modifier] = Nil,
-  superinterfaces: List[TypeRef] = Nil,
-  fields: List[FieldDecl] = Nil,
-  methods: List[MethodDecl] = Nil
+    packageName: String,
+    name: String,
+    modifiers: List[Modifier] = Nil,
+    superinterfaces: List[TypeRef] = Nil,
+    fields: List[FieldDecl] = Nil,
+    methods: List[MethodDecl] = Nil
 )
-

@@ -8,15 +8,28 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.{Collections => JCollections, LinkedHashMap => JLinkedHashMap, LinkedHashSet => JLinkedHashSet, List => JList, Map => JMap, Set => JSet}
+import java.util.{
+  Collections => JCollections,
+  LinkedHashMap => JLinkedHashMap,
+  LinkedHashSet => JLinkedHashSet,
+  List => JList,
+  Map => JMap,
+  Set => JSet
+}
 import javax.annotation.processing.Generated
 import javax.lang.model.element.{Modifier, TypeElement}
 import javax.lang.model.`type`.TypeMirror
-import me.bristermitten.mittenlib.annotations.ast.{AbstractConfigStructure, Property}
+import me.bristermitten.mittenlib.annotations.ast.{
+  AbstractConfigStructure,
+  Property
+}
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers
 import me.bristermitten.mittenlib.annotations.util.TypesUtil
-import me.bristermitten.mittenlib.config.{SerializationContext, SerializationFunction}
+import me.bristermitten.mittenlib.config.{
+  SerializationContext,
+  SerializationFunction
+}
 import me.bristermitten.mittenlib.config.tree.DataTree
 import me.bristermitten.mittenlib.util.Strings
 import scala.jdk.CollectionConverters.*
@@ -26,71 +39,97 @@ import _root_.me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.given
 
 class ConfigSaverGenerator @Inject() (
-  private val classNameGenerator: ConfigurationClassNameGenerator,
-  private val serializationCodeGenerator: SerializationCodeGenerator,
-  private val methodNames: MethodNames,
-  private val typesUtil: TypesUtil,
-  private val fieldNameGenerator: FieldNameGenerator,
-  private val configNameCache: ConfigNameCache,
-  private val customSerializers: CustomSerializers
+    private val classNameGenerator: ConfigurationClassNameGenerator,
+    private val serializationCodeGenerator: SerializationCodeGenerator,
+    private val methodNames: MethodNames,
+    private val typesUtil: TypesUtil,
+    private val fieldNameGenerator: FieldNameGenerator,
+    private val configNameCache: ConfigNameCache,
+    private val customSerializers: CustomSerializers
 ):
 
-  /**
-   * Entry point for generating a {@link JavaFile} for a configuration saver.
-   *
-   * @param ast the configuration structure to generate a saver for
-   * @return a {@link JavaFile} containing the generated saver class
-   */
+  /** Entry point for generating a {@@@@@linkJavaFile} for a configuration
+    * saver.
+    *
+    * @param ast
+    *   the configuration structure to generate a saver for
+    * @return
+    *   a {@@@@@linkJavaFile} containing the generated saver class
+    */
   def emit(ast: AbstractConfigStructure): JavaFile =
     val saverClassName = classNameGenerator.getSerializerClassName(ast)
     val builder = createSaverBuilder(ast)
-    JavaFile.builder(saverClassName.packageName(), builder.build())
+    JavaFile
+      .builder(saverClassName.packageName(), builder.build())
       .skipJavaLangImports(true)
       .build()
 
-  /**
-   * Creates the {@link TypeSpec.Builder} for the saver class, including its annotations,
-   * constructor, fields, and serialization methods.
-   *
-   * @param ast the configuration structure
-   * @return a builder for the saver class
-   */
-  private def createSaverBuilder(ast: AbstractConfigStructure): TypeSpec.Builder =
+  /** Creates the {@@@@@linkTypeSpec.Builder} for the saver class, including its
+    * annotations, constructor, fields, and serialization methods.
+    *
+    * @param ast
+    *   the configuration structure
+    * @return
+    *   a builder for the saver class
+    */
+  private def createSaverBuilder(
+      ast: AbstractConfigStructure
+  ): TypeSpec.Builder =
     val publicClassName = classNameGenerator.getPublicClassName(ast)
     val saverClassName = classNameGenerator.getSerializerClassName(ast)
 
-    val builder = TypeSpec.classBuilder(saverClassName)
+    val builder = TypeSpec
+      .classBuilder(saverClassName)
       .addJavadoc(
         """Serializer implementation for {@link $T}.
-          |""".stripMargin, publicClassName)
+          |""".stripMargin,
+        publicClassName
+      )
       .addModifiers(Modifier.PUBLIC)
       .addSuperinterface(
-        ParameterizedTypeName.get(ClassName.get(classOf[SerializationFunction[?]]), publicClassName))
+        ParameterizedTypeName.get(
+          ClassName.get(classOf[SerializationFunction[?]]),
+          publicClassName
+        )
+      )
 
     builder.addAnnotation(GeneratorUtil.generatedAnnotation(true))
 
-    val constructorBuilder = MethodSpec.constructorBuilder()
+    val constructorBuilder = MethodSpec
+      .constructorBuilder()
       .addJavadoc("Constructs a new serializer instance.\n")
       .addAnnotation(classOf[Inject])
       .addModifiers(Modifier.PUBLIC)
 
     // Add child savers as dependencies recursively
     for (property <- ast.properties().asScala) {
-      collectSaverDependencies(property.propertyType(), builder, constructorBuilder)
+      collectSaverDependencies(
+        property.propertyType(),
+        builder,
+        constructorBuilder
+      )
     }
 
     // Add custom serializers as dependencies recursively
     val injectedTypes = new JLinkedHashSet[TypeName]()
     val injectedFieldNames = new JLinkedHashMap[TypeName, String]()
     for (property <- ast.properties().asScala) {
-      collectCustomSerializers(property.propertyType(), injectedTypes, injectedFieldNames)
+      collectCustomSerializers(
+        property.propertyType(),
+        injectedTypes,
+        injectedFieldNames
+      )
     }
 
     for (typeName <- injectedTypes.asScala) {
       val fieldName = injectedFieldNames.get(typeName)
-      val providerType = ParameterizedTypeName.get(ClassName.get(classOf[Provider[?]]), typeName)
-      builder.addField(FieldSpec.builder(providerType, fieldName, Modifier.PRIVATE, Modifier.FINAL)
-        .build())
+      val providerType =
+        ParameterizedTypeName.get(ClassName.get(classOf[Provider[?]]), typeName)
+      builder.addField(
+        FieldSpec
+          .builder(providerType, fieldName, Modifier.PRIVATE, Modifier.FINAL)
+          .build()
+      )
       constructorBuilder.addParameter(providerType, fieldName)
       constructorBuilder.addStatement("this.$L = $L", fieldName, fieldName)
     }
@@ -98,14 +137,17 @@ class ConfigSaverGenerator @Inject() (
     builder.addMethod(constructorBuilder.build())
 
     // Implement apply method
-    val applyMethod = MethodSpec.methodBuilder("apply")
+    val applyMethod = MethodSpec
+      .methodBuilder("apply")
       .addJavadoc(
         """Serializes the configuration instance into a {@link $T}.
           |
           |@param config the configuration instance to serialize
           |@param context the serialization context
           |@return the serialized DataTree representation
-          |""".stripMargin, classOf[DataTree])
+          |""".stripMargin,
+        classOf[DataTree]
+      )
       .addAnnotation(classOf[Override])
       .addModifiers(Modifier.PUBLIC)
       .returns(classOf[DataTree])
@@ -114,20 +156,32 @@ class ConfigSaverGenerator @Inject() (
 
     val applyBlock = BlockBuilder.buildOpen {
       val config = Var("config", TypeRef.of(publicClassName))
-      val context = StagedExpr.param[SerializationContext](Types.SerializationContext, "context")
+      val context = StagedExpr
+        .param[SerializationContext](Types.SerializationContext, "context")
 
       val mapType = Types.Map(Types.DataTree, Types.DataTree)
-      val map = declare(mapType, "map", Expr.new_(TypeRef.of(classOf[JLinkedHashMap[?, ?]])))
+      val map = declare(
+        mapType,
+        "map",
+        Expr.new_(TypeRef.of(classOf[JLinkedHashMap[?, ?]]))
+      )
 
       for (property <- ast.properties().asScala) {
         val key = fieldNameGenerator.getConfigFieldName(property)
         val serializeMethodName = methodNames.getSerializeMethodName(property)
 
         // Get the property value based on source type
-        val propAccessExpr = GeneratorUtil.getPropertyAccess(ast, property, config, methodNames, true)
+        val propAccessExpr = GeneratorUtil.getPropertyAccess(
+          ast,
+          property,
+          config,
+          methodNames,
+          true
+        )
 
         statement(
-          map.call("put",
+          map.call(
+            "put",
             Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
             Expr.This.call(serializeMethodName, propAccessExpr, context)
           )
@@ -153,19 +207,25 @@ class ConfigSaverGenerator @Inject() (
 
     builder
 
-  /**
-   * Adds the {@code generateDefault} method to the saver, which creates a default {@link DataTree}
-   * for the configuration structure, using a DAO for default values when possible.
-   */
-  private def addGenerateDefaultMethod(ast: AbstractConfigStructure, builder: TypeSpec.Builder): Unit =
-    val method = MethodSpec.methodBuilder("generateDefault")
+  /** Adds the {@@@@@codegenerateDefault} method to the saver, which creates a
+    * default {@@@@@linkDataTree} for the configuration structure, using a DAO
+    * for default values when possible.
+    */
+  private def addGenerateDefaultMethod(
+      ast: AbstractConfigStructure,
+      builder: TypeSpec.Builder
+  ): Unit =
+    val method = MethodSpec
+      .methodBuilder("generateDefault")
       .addJavadoc(
         """Generates a default {@link $T} representation of the configuration,
           |populating default values using method defaults.
           |
           |@param context the serialization context
           |@return the default DataTree representation
-          |""".stripMargin, classOf[DataTree])
+          |""".stripMargin,
+        classOf[DataTree]
+      )
       .addAnnotation(classOf[Override])
       .addModifiers(Modifier.PUBLIC)
       .returns(classOf[DataTree])
@@ -174,33 +234,60 @@ class ConfigSaverGenerator @Inject() (
     val daoName = GeneratorUtil.getDaoName(ast, classNameGenerator)
 
     val dslBlock = BlockBuilder.buildOpen {
-      val context = StagedExpr.param[SerializationContext](Types.SerializationContext, "context")
-      val daoVar = if (daoName != null && ast.properties().asScala.exists(_.settings().hasDefaultValue())) {
-        Some(declare(TypeRef.of(daoName), "dao", Expr.new_(TypeRef.of(daoName))))
-      } else {
-        None
-      }
+      val context = StagedExpr
+        .param[SerializationContext](Types.SerializationContext, "context")
+      val daoVar =
+        if (
+          daoName != null && ast
+            .properties()
+            .asScala
+            .exists(_.settings().hasDefaultValue())
+        ) {
+          Some(
+            declare(TypeRef.of(daoName), "dao", Expr.new_(TypeRef.of(daoName)))
+          )
+        } else {
+          None
+        }
       val mapType = Types.Map(Types.DataTree, Types.DataTree)
-      val map = declare(mapType, "map", Expr.new_(TypeRef.of(classOf[JLinkedHashMap[?, ?]])))
+      val map = declare(
+        mapType,
+        "map",
+        Expr.new_(TypeRef.of(classOf[JLinkedHashMap[?, ?]]))
+      )
 
       for (property <- ast.properties().asScala) {
         val key = fieldNameGenerator.getConfigFieldName(property)
         val propertyType = property.propertyType()
 
         if (property.settings().hasDefaultValue()) {
-          val propAccessExpr = GeneratorUtil.getPropertyAccess(ast, property, daoVar.get, methodNames, false)
+          val propAccessExpr = GeneratorUtil.getPropertyAccess(
+            ast,
+            property,
+            daoVar.get,
+            methodNames,
+            false
+          )
 
           if (hasConfigType(propertyType)) {
             statement(
-              map.call("put",
+              map.call(
+                "put",
                 Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
-                context.getMapper.map(propAccessExpr, Expr.newAnonymous(Types.TypeToken(Types.DataTree))).getOrThrow
+                context.getMapper
+                  .map(
+                    propAccessExpr,
+                    Expr.newAnonymous(Types.TypeToken(Types.DataTree))
+                  )
+                  .getOrThrow
               )
             )
           } else {
-            val serializeMethodName = methodNames.getSerializeMethodName(property)
+            val serializeMethodName =
+              methodNames.getSerializeMethodName(property)
             statement(
-              map.call("put",
+              map.call(
+                "put",
                 Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
                 Expr.This.call(serializeMethodName, propAccessExpr, context)
               )
@@ -209,17 +296,23 @@ class ConfigSaverGenerator @Inject() (
         } else if (typesUtil.isConfigType(propertyType)) {
           if (property.settings().isNullable()) {
             statement(
-              map.call("put",
+              map.call(
+                "put",
                 Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
                 Expr.staticCall(Types.DataTree, "null_")
               )
             )
           } else {
-            val saverFieldName = classNameGenerator.getSerializerProviderFieldName(propertyType)
+            val saverFieldName =
+              classNameGenerator.getSerializerProviderFieldName(propertyType)
             statement(
-              map.call("put",
+              map.call(
+                "put",
                 Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
-                Expr.This.field(saverFieldName).call("get").call("generateDefault", context)
+                Expr.This
+                  .field(saverFieldName)
+                  .call("get")
+                  .call("generateDefault", context)
               )
             )
           }
@@ -229,21 +322,29 @@ class ConfigSaverGenerator @Inject() (
             val canonicalName = wrapped.erasure().getQualifiedName()
             if (canonicalName == classOf[JList[?]].getName) {
               statement(
-                map.call("put",
+                map.call(
+                  "put",
                   Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
                   Expr.staticCall(Types.DataTree, "array")
                 )
               )
             } else if (canonicalName == classOf[JMap[?, ?]].getName) {
               statement(
-                map.call("put",
+                map.call(
+                  "put",
                   Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
-                  Expr.staticCall(Types.DataTree, "map", Expr.staticCall(TypeRef.of(classOf[JCollections]), "emptyMap"))
+                  Expr.staticCall(
+                    Types.DataTree,
+                    "map",
+                    Expr
+                      .staticCall(TypeRef.of(classOf[JCollections]), "emptyMap")
+                  )
                 )
               )
             } else {
               statement(
-                map.call("put",
+                map.call(
+                  "put",
                   Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
                   Expr.staticCall(Types.DataTree, "null_")
                 )
@@ -251,7 +352,8 @@ class ConfigSaverGenerator @Inject() (
             }
           } else {
             statement(
-              map.call("put",
+              map.call(
+                "put",
                 Expr.staticCall(Types.DataTree, "string", Expr.str(key)),
                 Expr.staticCall(Types.DataTree, "null_")
               )
@@ -265,10 +367,14 @@ class ConfigSaverGenerator @Inject() (
     method.addCode(CodeBlockRenderer.render(dslBlock))
     builder.addMethod(method.build())
 
-  /**
-   * Adds a dependency on another configuration saver to the class fields and constructor.
-   */
-  private def addSaverDependency(builder: TypeSpec.Builder, constructorBuilder: MethodSpec.Builder, tpe: TypeMirror): Unit =
+  /** Adds a dependency on another configuration saver to the class fields and
+    * constructor.
+    */
+  private def addSaverDependency(
+      builder: TypeSpec.Builder,
+      constructorBuilder: MethodSpec.Builder,
+      tpe: TypeMirror
+  ): Unit =
     val astOpt = configNameCache.lookupAST(tpe)
     if (astOpt.isEmpty) return
     val ast = astOpt.get()
@@ -280,22 +386,28 @@ class ConfigSaverGenerator @Inject() (
       return
     }
 
-    val serializationFunctionType = ParameterizedTypeName.get(ClassName.get(classOf[SerializationFunction[?]]), publicChildClassName)
-    val providerType = ParameterizedTypeName.get(ClassName.get(classOf[Provider[?]]), serializationFunctionType)
+    val serializationFunctionType = ParameterizedTypeName.get(
+      ClassName.get(classOf[SerializationFunction[?]]),
+      publicChildClassName
+    )
+    val providerType = ParameterizedTypeName.get(
+      ClassName.get(classOf[Provider[?]]),
+      serializationFunctionType
+    )
 
     builder.addField(providerType, fieldName, Modifier.PRIVATE, Modifier.FINAL)
 
     constructorBuilder.addParameter(providerType, fieldName)
     constructorBuilder.addStatement("this.$L = $L", fieldName, fieldName)
 
-  /**
-   * Recursively traverses generic type arguments of a property's type to discover configuration
-   * savers that need to be injected into the generated saver as dependencies.
-   */
+  /** Recursively traverses generic type arguments of a property's type to
+    * discover configuration savers that need to be injected into the generated
+    * saver as dependencies.
+    */
   private def collectSaverDependencies(
-    tpe: TypeMirror,
-    builder: TypeSpec.Builder,
-    constructorBuilder: MethodSpec.Builder
+      tpe: TypeMirror,
+      builder: TypeSpec.Builder,
+      constructorBuilder: MethodSpec.Builder
   ): Unit =
     if (typesUtil.isConfigType(tpe)) {
       addSaverDependency(builder, constructorBuilder, tpe)
@@ -309,25 +421,29 @@ class ConfigSaverGenerator @Inject() (
       }
     }
 
-  /**
-   * Recursively traverses generic type arguments of a property's type to discover non-static custom
-   * serializers that need to be injected into the generated saver.
-   */
+  /** Recursively traverses generic type arguments of a property's type to
+    * discover non-static custom serializers that need to be injected into the
+    * generated saver.
+    */
   private def collectCustomSerializers(
-    tpe: TypeMirror,
-    injectedTypes: JSet[TypeName],
-    injectedFieldNames: JMap[TypeName, String]
+      tpe: TypeMirror,
+      injectedTypes: JSet[TypeName],
+      injectedFieldNames: JMap[TypeName, String]
   ): Unit =
-    customSerializers.getCustomInfo(tpe).ifPresent(info => {
-      if (!info.isStatic) {
-        val serializerClass = info.serializerClass()
-        val serializerClassName = ClassName.get(serializerClass)
-        val fieldName = Strings.uncapitalize(serializerClass.getSimpleName.toString) + ConfigurationClassNameGenerator.PROVIDER_SUFFIX
-        if (injectedTypes.add(serializerClassName)) {
-          injectedFieldNames.put(serializerClassName, fieldName)
+    customSerializers
+      .getCustomInfo(tpe)
+      .ifPresent(info => {
+        if (!info.isStatic) {
+          val serializerClass = info.serializerClass()
+          val serializerClassName = ClassName.get(serializerClass)
+          val fieldName = Strings.uncapitalize(
+            serializerClass.getSimpleName.toString
+          ) + ConfigurationClassNameGenerator.PROVIDER_SUFFIX
+          if (injectedTypes.add(serializerClassName)) {
+            injectedFieldNames.put(serializerClassName, fieldName)
+          }
         }
-      }
-    })
+      })
 
     val wrapped = TypeMirrorWrapper.wrap(tpe)
     if (wrapped.hasTypeArguments) {

@@ -12,14 +12,11 @@ import _root_.me.bristermitten.mittenlib.codegen.dsl.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.given
 
-/**
- * Generates equals and hashCode methods for configuration classes. This class creates standard
- * implementations that compare all properties of a configuration class for equality and generate
- * consistent hash codes.
- */
-class EqualsHashCodeGenerator @Inject() (
-  private val methodNames: MethodNames
-):
+/** Generates equals and hashCode methods for configuration classes. This class
+  * creates standard implementations that compare all properties of a
+  * configuration class for equality and generate consistent hash codes.
+  */
+class EqualsHashCodeGenerator @Inject() (private val methodNames: MethodNames):
 
   private def toSharedFields(properties: JList[Property]): List[SharedField] =
     properties.asScala.toList.map { p =>
@@ -33,17 +30,18 @@ class EqualsHashCodeGenerator @Inject() (
       )
     }
 
-  /**
-   * Generates an equals method for a configuration class.
-   */
-  def generateEquals(configClassName: ClassName, properties: JList[Property]): MethodSpec =
-    val methodDecl = BoilerplateHelper.equalsDecl(configClassName, toSharedFields(properties))
+  /** Generates an equals method for a configuration class.
+    */
+  def generateEquals(
+      configClassName: ClassName,
+      properties: JList[Property]
+  ): MethodSpec =
+    val methodDecl =
+      BoilerplateHelper.equalsDecl(configClassName, toSharedFields(properties))
     CodeBlockRenderer.renderMethod(methodDecl)
 
-  /**
-   * Generates a hashCode method for a configuration class.
-   */
+  /** Generates a hashCode method for a configuration class.
+    */
   def generateHashCode(properties: JList[Property]): MethodSpec =
     val methodDecl = BoilerplateHelper.hashCodeDecl(toSharedFields(properties))
     CodeBlockRenderer.renderMethod(methodDecl)
-

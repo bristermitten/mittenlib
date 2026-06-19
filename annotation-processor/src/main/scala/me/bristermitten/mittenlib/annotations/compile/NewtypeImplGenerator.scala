@@ -16,7 +16,8 @@ class NewtypeImplGenerator:
     val publicClassName = ClassName.get(element)
     val implClassName = NewtypeUtil.getImplClassName(element)
 
-    val builder = TypeSpec.classBuilder(implClassName)
+    val builder = TypeSpec
+      .classBuilder(implClassName)
       .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
       .addAnnotation(GeneratorUtil.generatedAnnotation())
 
@@ -27,26 +28,37 @@ class NewtypeImplGenerator:
         builder.addTypeVariable(TypeVariableName.get(tp))
       }
       val typeVars = typeParams.map(TypeVariableName.get).toArray
-      builder.addSuperinterface(ParameterizedTypeName.get(publicClassName, typeVars *))
+      builder.addSuperinterface(
+        ParameterizedTypeName.get(publicClassName, typeVars*)
+      )
     } else {
       builder.addSuperinterface(publicClassName)
     }
 
-    val method = ElementFilter.methodsIn(element.getEnclosedElements).asScala
+    val method = ElementFilter
+      .methodsIn(element.getEnclosedElements)
+      .asScala
       .find(m => !m.isDefault && !m.getModifiers.contains(Modifier.STATIC))
-      .getOrElse(throw new IllegalArgumentException("No abstract method found in newtype interface"))
+      .getOrElse(
+        throw new IllegalArgumentException(
+          "No abstract method found in newtype interface"
+        )
+      )
 
     val fieldName = method.getSimpleName.toString
     val typeName = TypeName.get(method.getReturnType)
 
     // Field
     builder.addField(
-      FieldSpec.builder(typeName, fieldName, Modifier.PRIVATE, Modifier.FINAL).build()
+      FieldSpec
+        .builder(typeName, fieldName, Modifier.PRIVATE, Modifier.FINAL)
+        .build()
     )
 
     // Constructor
     builder.addMethod(
-      MethodSpec.constructorBuilder()
+      MethodSpec
+        .constructorBuilder()
         .addModifiers(Modifier.PUBLIC)
         .addParameter(typeName, fieldName)
         .addStatement("this.$1L = $1L", fieldName)
@@ -55,7 +67,8 @@ class NewtypeImplGenerator:
 
     // Getter
     builder.addMethod(
-      MethodSpec.methodBuilder(fieldName)
+      MethodSpec
+        .methodBuilder(fieldName)
         .addModifiers(Modifier.PUBLIC)
         .addAnnotation(classOf[Override])
         .returns(typeName)
@@ -65,7 +78,8 @@ class NewtypeImplGenerator:
 
     // equals
     builder.addMethod(
-      MethodSpec.methodBuilder("equals")
+      MethodSpec
+        .methodBuilder("equals")
         .addModifiers(Modifier.PUBLIC)
         .addAnnotation(classOf[Override])
         .returns(classOf[Boolean])
@@ -73,13 +87,19 @@ class NewtypeImplGenerator:
         .addStatement("if (this == o) return true")
         .addStatement("if (!(o instanceof $T)) return false", publicClassName)
         .addStatement("$T other = ($T) o", publicClassName, publicClassName)
-        .addStatement("return $T.equals(this.$L, other.$L())", classOf[Objects], fieldName, fieldName)
+        .addStatement(
+          "return $T.equals(this.$L, other.$L())",
+          classOf[Objects],
+          fieldName,
+          fieldName
+        )
         .build()
     )
 
     // hashCode
     builder.addMethod(
-      MethodSpec.methodBuilder("hashCode")
+      MethodSpec
+        .methodBuilder("hashCode")
         .addModifiers(Modifier.PUBLIC)
         .addAnnotation(classOf[Override])
         .returns(classOf[Int])
@@ -89,14 +109,21 @@ class NewtypeImplGenerator:
 
     // toString
     builder.addMethod(
-      MethodSpec.methodBuilder("toString")
+      MethodSpec
+        .methodBuilder("toString")
         .addModifiers(Modifier.PUBLIC)
         .addAnnotation(classOf[Override])
         .returns(classOf[String])
-        .addStatement("return $S + $L + $S", implClassName.simpleName() + "{" + fieldName + "=", fieldName, "}")
+        .addStatement(
+          "return $S + $L + $S",
+          implClassName.simpleName() + "{" + fieldName + "=",
+          fieldName,
+          "}"
+        )
         .build()
     )
 
-    JavaFile.builder(implClassName.packageName(), builder.build())
+    JavaFile
+      .builder(implClassName.packageName(), builder.build())
       .skipJavaLangImports(true)
       .build()

@@ -15,8 +15,12 @@ class GeneratedTypeCache:
   private val generatedSpecs: BiMap[TypeElement, String] = HashBiMap.create()
 
   def getByName(name: String): java.util.Set[TypeElement] =
-    generatedSpecs.entrySet().stream()
-      .filter(entry => entry.getValue.contains(name) || name.contains(entry.getValue))
+    generatedSpecs
+      .entrySet()
+      .stream()
+      .filter(entry =>
+        entry.getValue.contains(name) || name.contains(entry.getValue)
+      )
       .map(entry => entry.getKey)
       .collect(Collectors.toSet())
 

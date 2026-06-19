@@ -1,51 +1,66 @@
 package me.bristermitten.mittenlib.codegen
 
-import com.palantir.javapoet.ClassName
-import com.palantir.javapoet.TypeName
-import io.toolisticon.aptk.tools.AbstractAnnotationProcessor
-import io.toolisticon.aptk.tools.MessagerUtils
-import io.toolisticon.aptk.tools.TypeUtils
+import com.palantir.javapoet.{ClassName, TypeName}
+import io.toolisticon.aptk.tools.{
+  AbstractAnnotationProcessor,
+  MessagerUtils,
+  TypeUtils
+}
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers
-import io.toolisticon.aptk.tools.wrapper.ElementWrapper
-import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper
+import io.toolisticon.aptk.tools.wrapper.{ElementWrapper, TypeElementWrapper}
+import me.bristermitten.mittenlib.codegen.record.{
+  RecordConstructorSpec,
+  RecordGenerator
+}
+import me.bristermitten.mittenlib.codegen.union.UnionGenerator
+
 import java.io.IOException
 import java.util.Optional
 import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.TypeElement
-import me.bristermitten.mittenlib.codegen.record.RecordConstructorSpec
-import me.bristermitten.mittenlib.codegen.record.RecordGenerator
-import me.bristermitten.mittenlib.codegen.union.UnionGenerator
+import javax.lang.model.element.{ExecutableElement, TypeElement}
 import scala.jdk.CollectionConverters.*
 import scala.jdk.OptionConverters.*
 
 class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
 
-  private def parseRecord(typeElementWrapper: TypeElementWrapper): Option[RecordConstructorSpec] = {
+  private def parseRecord(
+      typeElementWrapper: TypeElementWrapper
+  ): Option[RecordConstructorSpec] = {
     val getters = typeElementWrapper
       .filterEnclosedElements()
       .applyFilter(AptkCoreMatchers.IS_METHOD)
       .applyFilter(AptkCoreMatchers.HAS_NO_PARAMETERS)
       .getResult()
 
-    val fields = getters.stream()
-      .map(method => RecordConstructorSpec.RecordFieldSpec(
-        method.getSimpleName().toString(), TypeName.get(method.getReturnType())))
+    val fields = getters
+      .stream()
+      .map(method =>
+        RecordConstructorSpec.RecordFieldSpec(
+          method.getSimpleName().toString(),
+          TypeName.get(method.getReturnType())
+        )
+      )
       .toList()
 
-    Some(RecordConstructorSpec(
-      "create", // TODO: make customisable
-      fields
-    ))
+    Some(
+      RecordConstructorSpec(
+        "create", // TODO: make customisable
+        fields
+      )
+    )
   }
 
   private def parseConstructor(
-    method: ExecutableElement,
-    typeElement: TypeElementWrapper,
-    existingConstructors: java.util.Collection[String]
+      method: ExecutableElement,
+      typeElement: TypeElementWrapper,
+      existingConstructors: java.util.Collection[String]
   ): Option[RecordConstructorSpec] = {
-    if (!TypeUtils.TypeComparison.isTypeEqual(
-        method.getReturnType(), typeElement.asType().unwrap())) {
+    if (
+      !TypeUtils.TypeComparison.isTypeEqual(
+        method.getReturnType(),
+        typeElement.asType().unwrap()
+      )
+    ) {
       MessagerUtils.error(
         method,
         MittenLibCodegenProcessorMessagesCompilerMessages.METHOD_BAD_RETURN,
@@ -54,7 +69,9 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
       return None
     }
     val constructorName = method.getSimpleName().toString()
-    if (existingConstructors.stream().anyMatch(con => con.equals(constructorName))) {
+    if (
+      existingConstructors.stream().anyMatch(con => con.equals(constructorName))
+    ) {
       MessagerUtils.error(
         method,
         MittenLibCodegenProcessorMessagesCompilerMessages.DUPLICATE_CONSTRUCTOR,
@@ -62,18 +79,28 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
       )
       return None
     }
-    Some(RecordConstructorSpec(
-      constructorName,
-      method.getParameters().stream()
-        .map(param => RecordConstructorSpec.RecordFieldSpec(
-          param.getSimpleName().toString(), TypeName.get(param.asType())))
-        .toList()
-    ))
+    Some(
+      RecordConstructorSpec(
+        constructorName,
+        method
+          .getParameters()
+          .stream()
+          .map(param =>
+            RecordConstructorSpec.RecordFieldSpec(
+              param.getSimpleName().toString(),
+              TypeName.get(param.asType())
+            )
+          )
+          .toList()
+      )
+    )
   }
 
   private def getSpecName(spec: TypeElement): ClassName = {
     val wrapped = TypeElementWrapper.wrap(spec)
-    val explicitName = wrapped.getAnnotation(classOf[RecordSpec]).toScala
+    val explicitName = wrapped
+      .getAnnotation(classOf[RecordSpec])
+      .toScala
       .map(_.name())
       .orElse(wrapped.getAnnotation(classOf[UnionSpec]).toScala.map(_.name()))
       .filter(!_.isBlank)
@@ -91,33 +118,50 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
   }
 
   override def getSupportedAnnotationTypes(): java.util.Set[String] = {
-    AbstractAnnotationProcessor.createSupportedAnnotationSet(classOf[RecordSpec], classOf[UnionSpec])
+    AbstractAnnotationProcessor.createSupportedAnnotationSet(
+      classOf[RecordSpec],
+      classOf[UnionSpec]
+    )
   }
 
-  override def processAnnotations(annotations: java.util.Set[? <: TypeElement], roundEnv: RoundEnvironment): Boolean = {
+  override def processAnnotations(
+      annotations: java.util.Set[? <: TypeElement],
+      roundEnv: RoundEnvironment
+  ): Boolean = {
     val unions = processUnions(roundEnv)
     val records = processRecords(roundEnv)
     unions && records
   }
 
   private def processRecords(roundEnv: RoundEnvironment): Boolean = {
-    val elements = roundEnv.getElementsAnnotatedWith(classOf[RecordSpec]).asScala.toList
+    val elements =
+      roundEnv.getElementsAnnotatedWith(classOf[RecordSpec]).asScala.toList
 
     val parseResults = elements.flatMap { element =>
       val wrap = ElementWrapper.wrap(element)
-      wrap.validateWithFluentElementValidator()
+      wrap
+        .validateWithFluentElementValidator()
         .is(AptkCoreMatchers.IS_INTERFACE)
         .validateAndIssueMessages()
 
       val typeElement = ElementWrapper.toTypeElement(wrap)
       parseRecord(typeElement) match {
         case None =>
-          MessagerUtils.error(element, MittenLibCodegenProcessorMessagesCompilerMessages.INVALID_RECORD, typeElement)
+          MessagerUtils.error(
+            element,
+            MittenLibCodegenProcessorMessagesCompilerMessages.INVALID_RECORD,
+            typeElement
+          )
           None
         case Some(constructor) =>
           val recordSpecName = getSpecName(typeElement.unwrap())
-          Some(me.bristermitten.mittenlib.codegen.record.RecordSpec(
-            ClassName.get(typeElement.unwrap()), recordSpecName, constructor))
+          Some(
+            me.bristermitten.mittenlib.codegen.record.RecordSpec(
+              ClassName.get(typeElement.unwrap()),
+              recordSpecName,
+              constructor
+            )
+          )
       }
     }
 
@@ -137,29 +181,34 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
   }
 
   private def processUnions(roundEnv: RoundEnvironment): Boolean = {
-    val elements = roundEnv.getElementsAnnotatedWith(classOf[UnionSpec]).asScala.toList
+    val elements =
+      roundEnv.getElementsAnnotatedWith(classOf[UnionSpec]).asScala.toList
     if (elements.isEmpty) {
       return false
     }
 
     val unionSpecs = elements.flatMap { element =>
       val wrap = ElementWrapper.wrap(element)
-      wrap.validateWithFluentElementValidator()
+      wrap
+        .validateWithFluentElementValidator()
         .is(AptkCoreMatchers.IS_INTERFACE)
         .validateAndIssueMessages()
 
       val typeElement = ElementWrapper.toTypeElement(wrap)
-      val enclosed = typeElement.filterEnclosedElements()
+      val enclosed = typeElement
+        .filterEnclosedElements()
         .applyFilter(AptkCoreMatchers.IS_METHOD)
         .getResult()
 
-      val constructors = enclosed.asScala.foldLeft(List.empty[RecordConstructorSpec]) { (acc, method) =>
-        val existingNames = acc.map(_.name).asJava
-        parseConstructor(method, typeElement, existingNames) match {
-          case Some(spec) => acc :+ spec
-          case None => acc
+      val constructors =
+        enclosed.asScala.foldLeft(List.empty[RecordConstructorSpec]) {
+          (acc, method) =>
+            val existingNames = acc.map(_.name).asJava
+            parseConstructor(method, typeElement, existingNames) match {
+              case Some(spec) => acc :+ spec
+              case None       => acc
+            }
         }
-      }
 
       val recordSpecName = getSpecName(typeElement.unwrap())
       val matchStrategy = typeElement
@@ -168,8 +217,14 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
         .map(_.value())
         .getOrElse(MatchStrategies.NOMINAL)
 
-      Some(me.bristermitten.mittenlib.codegen.union.UnionSpec(
-        ClassName.get(typeElement.unwrap()), recordSpecName, matchStrategy, constructors.asJava))
+      Some(
+        me.bristermitten.mittenlib.codegen.union.UnionSpec(
+          ClassName.get(typeElement.unwrap()),
+          recordSpecName,
+          matchStrategy,
+          constructors.asJava
+        )
+      )
     }
 
     val generator = new UnionGenerator()

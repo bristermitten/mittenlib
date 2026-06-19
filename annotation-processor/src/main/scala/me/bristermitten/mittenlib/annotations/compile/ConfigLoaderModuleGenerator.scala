@@ -12,7 +12,10 @@ import io.toolisticon.aptk.tools.MessagerUtils
 import java.util.{List => JList, Map => JMap, Set => JSet}
 import javax.annotation.processing.Generated
 import javax.lang.model.element.Modifier
-import me.bristermitten.mittenlib.annotations.ast.{AbstractConfigStructure, Property}
+import me.bristermitten.mittenlib.annotations.ast.{
+  AbstractConfigStructure,
+  Property
+}
 import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis
 import me.bristermitten.mittenlib.config.BindProperty
 import me.bristermitten.mittenlib.config.Configuration
@@ -27,31 +30,40 @@ import org.jspecify.annotations.Nullable
 import scala.jdk.CollectionConverters.*
 
 class ConfigLoaderModuleGenerator @Inject() (
-  private val classNameGenerator: ConfigurationClassNameGenerator,
-  private val methodNames: MethodNames,
-  private val configStructureAnalysis: ConfigStructureAnalysis
+    private val classNameGenerator: ConfigurationClassNameGenerator,
+    private val methodNames: MethodNames,
+    private val configStructureAnalysis: ConfigStructureAnalysis
 ):
 
-  def emit(asts: JList[AbstractConfigStructure], rootPackage: String): JavaFile =
+  def emit(
+      asts: JList[AbstractConfigStructure],
+      rootPackage: String
+  ): JavaFile =
     if (asts.isEmpty) {
       throw new IllegalArgumentException("asts list cannot be empty")
     }
 
-    val moduleClassName = classNameGenerator.getLoaderModuleClassName(rootPackage)
+    val moduleClassName =
+      classNameGenerator.getLoaderModuleClassName(rootPackage)
 
-    val builder = TypeSpec.classBuilder(moduleClassName)
-      .addJavadoc("Generated Guice module for loading configurations.\n"
-        + "This module should be installed in your application's injector.")
+    val builder = TypeSpec
+      .classBuilder(moduleClassName)
+      .addJavadoc(
+        "Generated Guice module for loading configurations.\n"
+          + "This module should be installed in your application's injector."
+      )
       .addModifiers(Modifier.PUBLIC)
       .superclass(classOf[MittenLibConfigLoader])
       .addAnnotation(GeneratorUtil.generatedAnnotation())
 
-    val configureMethod = MethodSpec.methodBuilder("configure")
+    val configureMethod = MethodSpec
+      .methodBuilder("configure")
       .addJavadoc(
         """Configures Guice bindings for serializer and deserializer functions.
           |
           |@param binder the Guice binder
-          |""".stripMargin)
+          |""".stripMargin
+      )
       .addAnnotation(classOf[Override])
       .addModifiers(Modifier.PROTECTED)
       .addParameter(classOf[Binder], "binder")
@@ -63,15 +75,19 @@ class ConfigLoaderModuleGenerator @Inject() (
 
     builder.addMethod(configureMethod.build())
 
-    val internalModuleBuilder = TypeSpec.classBuilder("GeneratedModule")
+    val internalModuleBuilder = TypeSpec
+      .classBuilder("GeneratedModule")
       .addJavadoc("Internal module for providing configuration instances.")
       .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
       .superclass(classOf[AbstractModule])
-      .addMethod(MethodSpec.methodBuilder("configure")
-        .addAnnotation(classOf[Override])
-        .addModifiers(Modifier.PROTECTED)
-        .addStatement("$T.this.configure(binder())", moduleClassName)
-        .build())
+      .addMethod(
+        MethodSpec
+          .methodBuilder("configure")
+          .addAnnotation(classOf[Override])
+          .addModifiers(Modifier.PROTECTED)
+          .addStatement("$T.this.configure(binder())", moduleClassName)
+          .build()
+      )
 
     // Provides methods for providers and configs
     for (ast <- asts.asScala) {
@@ -80,38 +96,57 @@ class ConfigLoaderModuleGenerator @Inject() (
 
     builder.addType(internalModuleBuilder.build())
 
-    val allConfigsWithSource = asts.asScala.flatMap(findAllConfigsWithSource).toList
+    val allConfigsWithSource =
+      asts.asScala.flatMap(findAllConfigsWithSource).toList
 
-    val getConfigurationsMethod = MethodSpec.methodBuilder("getConfigurations")
+    val getConfigurationsMethod = MethodSpec
+      .methodBuilder("getConfigurations")
       .addAnnotation(classOf[Override])
       .addModifiers(Modifier.PUBLIC)
-      .returns(ParameterizedTypeName.get(
-        ClassName.get(classOf[JSet[?]]),
-        ParameterizedTypeName.get(ClassName.get(classOf[Configuration[?]]), WildcardTypeName.subtypeOf(classOf[Object]))
-      ))
+      .returns(
+        ParameterizedTypeName.get(
+          ClassName.get(classOf[JSet[?]]),
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[Configuration[?]]),
+            WildcardTypeName.subtypeOf(classOf[Object])
+          )
+        )
+      )
 
     if (allConfigsWithSource.isEmpty) {
-      getConfigurationsMethod.addStatement("return $T.emptySet()", classOf[java.util.Collections])
+      getConfigurationsMethod.addStatement(
+        "return $T.emptySet()",
+        classOf[java.util.Collections]
+      )
     } else if (allConfigsWithSource.size == 1) {
       val singleConfig = allConfigsWithSource.head
-      getConfigurationsMethod.addStatement("return $T.singleton($T.CONFIG)",
+      getConfigurationsMethod.addStatement(
+        "return $T.singleton($T.CONFIG)",
         classOf[java.util.Collections],
-        classNameGenerator.translateConfigClassName(singleConfig))
+        classNameGenerator.translateConfigClassName(singleConfig)
+      )
     } else {
-      val args = allConfigsWithSource.map(ast => CodeBlock.of("$T.CONFIG", classNameGenerator.translateConfigClassName(ast)))
+      val args = allConfigsWithSource.map(ast =>
+        CodeBlock.of(
+          "$T.CONFIG",
+          classNameGenerator.translateConfigClassName(ast)
+        )
+      )
       val joined = args.asJava.stream().collect(CodeBlock.joining(", "))
-      getConfigurationsMethod.addStatement("return $T.unmodifiableSet(new $T<>($T.asList($L)))",
+      getConfigurationsMethod.addStatement(
+        "return $T.unmodifiableSet(new $T<>($T.asList($L)))",
         classOf[java.util.Collections],
         classOf[java.util.HashSet[?]],
         classOf[java.util.Arrays],
-        joined)
+        joined
+      )
     }
 
     builder.addMethod(getConfigurationsMethod.build())
 
-    val asModuleMethod = MethodSpec.methodBuilder("asModule")
-      .addJavadoc(
-        """Returns the Guice module containing all provides methods and configuration bindings.
+    val asModuleMethod = MethodSpec
+      .methodBuilder("asModule")
+      .addJavadoc("""Returns the Guice module containing all provides methods and configuration bindings.
           |
           |@return the Guice module instance
           |""".stripMargin)
@@ -123,11 +158,15 @@ class ConfigLoaderModuleGenerator @Inject() (
 
     builder.addMethod(asModuleMethod)
 
-    JavaFile.builder(moduleClassName.packageName(), builder.build())
+    JavaFile
+      .builder(moduleClassName.packageName(), builder.build())
       .skipJavaLangImports(true)
       .build()
 
-  private def addFunctionBindings(configureMethod: MethodSpec.Builder, ast: AbstractConfigStructure): Unit =
+  private def addFunctionBindings(
+      configureMethod: MethodSpec.Builder,
+      ast: AbstractConfigStructure
+  ): Unit =
     val publicClassName = classNameGenerator.getPublicClassName(ast)
     val loaderClassName = classNameGenerator.getDeserializerClassName(ast)
     val saverClassName = classNameGenerator.getSerializerClassName(ast)
@@ -163,10 +202,10 @@ class ConfigLoaderModuleGenerator @Inject() (
     }
 
   private def addProvidesMethods(
-    builder: TypeSpec.Builder,
-    ast: AbstractConfigStructure,
-    parent: AbstractConfigStructure,
-    isParentProvided: Boolean
+      builder: TypeSpec.Builder,
+      ast: AbstractConfigStructure,
+      parent: AbstractConfigStructure,
+      isParentProvided: Boolean
   ): Unit =
     val publicClassName = classNameGenerator.getPublicClassName(ast)
     var isCurrentProvided = false
@@ -177,42 +216,74 @@ class ConfigLoaderModuleGenerator @Inject() (
       val name = publicClassName.simpleName()
 
       // @Provides SaveableConfigProvider<Public>
-      val saveableProviderMethod = MethodSpec.methodBuilder("provide" + name + "SaveableProvider")
-        .addJavadoc("Provides a {@link $T} for {@link $T}.", classOf[SaveableConfigProvider[?]], publicClassName)
+      val saveableProviderMethod = MethodSpec
+        .methodBuilder("provide" + name + "SaveableProvider")
+        .addJavadoc(
+          "Provides a {@link $T} for {@link $T}.",
+          classOf[SaveableConfigProvider[?]],
+          publicClassName
+        )
         .addAnnotation(classOf[Provides])
         .addAnnotation(classOf[Singleton])
-        .addAnnotation(AnnotationSpec.builder(classOf[SuppressWarnings])
-          .addMember("value", "$S", "unchecked")
-          .build())
+        .addAnnotation(
+          AnnotationSpec
+            .builder(classOf[SuppressWarnings])
+            .addMember("value", "$S", "unchecked")
+            .build()
+        )
         .addModifiers(Modifier.PUBLIC)
-        .returns(ParameterizedTypeName.get(ClassName.get(classOf[SaveableConfigProvider[?]]), publicClassName))
+        .returns(
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[SaveableConfigProvider[?]]),
+            publicClassName
+          )
+        )
         .addParameter(classOf[ConfigProviderFactory], "factory")
         .addParameter(classOf[ConfigProviderImprover], "improver")
         .addParameter(
-          ParameterizedTypeName.get(ClassName.get(classOf[DeserializationFunction[?]]), publicClassName),
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[DeserializationFunction[?]]),
+            publicClassName
+          ),
           "deserializer"
         )
         .addParameter(
-          ParameterizedTypeName.get(ClassName.get(classOf[SerializationFunction[?]]), publicClassName),
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[SerializationFunction[?]]),
+            publicClassName
+          ),
           "serializer"
         )
         .addStatement(
           "return ($T) improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
-          ParameterizedTypeName.get(ClassName.get(classOf[SaveableConfigProvider[?]]), publicClassName),
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[SaveableConfigProvider[?]]),
+            publicClassName
+          ),
           implClassName
         )
 
       builder.addMethod(saveableProviderMethod.build())
 
       // @Provides ConfigProvider<Public>
-      val providerMethod = MethodSpec.methodBuilder(
-          classNameGenerator.getProvidesProviderMethodName(name))
-        .addJavadoc("Provides a {@link $T} for {@link $T}.", classOf[ConfigProvider[?]], publicClassName)
+      val providerMethod = MethodSpec
+        .methodBuilder(classNameGenerator.getProvidesProviderMethodName(name))
+        .addJavadoc(
+          "Provides a {@link $T} for {@link $T}.",
+          classOf[ConfigProvider[?]],
+          publicClassName
+        )
         .addAnnotation(classOf[Provides])
         .addModifiers(Modifier.PUBLIC)
-        .returns(ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName))
+        .returns(
+          ParameterizedTypeName
+            .get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName)
+        )
         .addParameter(
-          ParameterizedTypeName.get(ClassName.get(classOf[SaveableConfigProvider[?]]), publicClassName),
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[SaveableConfigProvider[?]]),
+            publicClassName
+          ),
           "provider"
         )
         .addStatement("return provider")
@@ -221,64 +292,102 @@ class ConfigLoaderModuleGenerator @Inject() (
 
       if (publicClassName != implClassName) {
         // @Provides SaveableConfigProvider<Impl>
-        val saveableImplProviderMethod = MethodSpec.methodBuilder("provide" + name + "ImplSaveableProvider")
-          .addJavadoc("Provides a {@link $T} for {@link $T}.", classOf[SaveableConfigProvider[?]], implClassName)
+        val saveableImplProviderMethod = MethodSpec
+          .methodBuilder("provide" + name + "ImplSaveableProvider")
+          .addJavadoc(
+            "Provides a {@link $T} for {@link $T}.",
+            classOf[SaveableConfigProvider[?]],
+            implClassName
+          )
           .addAnnotation(classOf[Provides])
-          .addAnnotation(AnnotationSpec.builder(classOf[SuppressWarnings])
-            .addMember("value", "$S", "unchecked")
-            .build())
+          .addAnnotation(
+            AnnotationSpec
+              .builder(classOf[SuppressWarnings])
+              .addMember("value", "$S", "unchecked")
+              .build()
+          )
           .addModifiers(Modifier.PUBLIC)
-          .returns(ParameterizedTypeName.get(ClassName.get(classOf[SaveableConfigProvider[?]]), implClassName))
+          .returns(
+            ParameterizedTypeName.get(
+              ClassName.get(classOf[SaveableConfigProvider[?]]),
+              implClassName
+            )
+          )
           .addParameter(
-            ParameterizedTypeName.get(ClassName.get(classOf[SaveableConfigProvider[?]]), publicClassName),
+            ParameterizedTypeName.get(
+              ClassName.get(classOf[SaveableConfigProvider[?]]),
+              publicClassName
+            ),
             "provider"
           )
           .addStatement(
             "return ($T) (SaveableConfigProvider<?>) provider",
-            ParameterizedTypeName.get(ClassName.get(classOf[SaveableConfigProvider[?]]), implClassName)
+            ParameterizedTypeName.get(
+              ClassName.get(classOf[SaveableConfigProvider[?]]),
+              implClassName
+            )
           )
         builder.addMethod(saveableImplProviderMethod.build())
 
         // @Provides ConfigProvider<Impl>
-        val implProviderMethod = MethodSpec.methodBuilder("provide" + name + "ImplProvider")
-          .addJavadoc("Provides a {@link $T} for {@link $T}.", classOf[ConfigProvider[?]], implClassName)
+        val implProviderMethod = MethodSpec
+          .methodBuilder("provide" + name + "ImplProvider")
+          .addJavadoc(
+            "Provides a {@link $T} for {@link $T}.",
+            classOf[ConfigProvider[?]],
+            implClassName
+          )
           .addAnnotation(classOf[Provides])
-          .addAnnotation(AnnotationSpec.builder(classOf[SuppressWarnings])
-            .addMember("value", "$S", "unchecked")
-            .build())
+          .addAnnotation(
+            AnnotationSpec
+              .builder(classOf[SuppressWarnings])
+              .addMember("value", "$S", "unchecked")
+              .build()
+          )
           .addModifiers(Modifier.PUBLIC)
-          .returns(ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), implClassName))
+          .returns(
+            ParameterizedTypeName
+              .get(ClassName.get(classOf[ConfigProvider[?]]), implClassName)
+          )
           .addParameter(
-            ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName),
+            ParameterizedTypeName
+              .get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName),
             "provider"
           )
           .addStatement(
             "return ($T) (ConfigProvider<?>) provider",
-            ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), implClassName)
+            ParameterizedTypeName
+              .get(ClassName.get(classOf[ConfigProvider[?]]), implClassName)
           )
         builder.addMethod(implProviderMethod.build())
 
         // @Provides Impl
-        val implMethod = MethodSpec.methodBuilder("provide" + name + "Impl")
+        val implMethod = MethodSpec
+          .methodBuilder("provide" + name + "Impl")
           .addJavadoc("Provides the {@link $T} instance.", implClassName)
           .addAnnotation(classOf[Provides])
           .addModifiers(Modifier.PUBLIC)
           .returns(implClassName)
           .addParameter(
-            ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), implClassName), "provider"
+            ParameterizedTypeName
+              .get(ClassName.get(classOf[ConfigProvider[?]]), implClassName),
+            "provider"
           )
           .addStatement("return provider.get()")
         builder.addMethod(implMethod.build())
       }
 
       // @Provides Public
-      val configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
+      val configMethod = MethodSpec
+        .methodBuilder(classNameGenerator.getProvidesMethodName(name))
         .addJavadoc("Provides the {@link $T} instance.", publicClassName)
         .addAnnotation(classOf[Provides])
         .addModifiers(Modifier.PUBLIC)
         .returns(publicClassName)
         .addParameter(
-          ParameterizedTypeName.get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName), "provider"
+          ParameterizedTypeName
+            .get(ClassName.get(classOf[ConfigProvider[?]]), publicClassName),
+          "provider"
         )
         .addStatement("return provider.get()")
 
@@ -292,17 +401,21 @@ class ConfigLoaderModuleGenerator @Inject() (
     }
 
   private def addNestedProvidesMethod(
-    builder: TypeSpec.Builder,
-    parent: AbstractConfigStructure,
-    child: AbstractConfigStructure
+      builder: TypeSpec.Builder,
+      parent: AbstractConfigStructure,
+      child: AbstractConfigStructure
   ): Boolean =
     val parentPublicName = classNameGenerator.getPublicClassName(parent)
     val childPublicName = classNameGenerator.getPublicClassName(child)
 
-    val matchingProperties = parent.properties().stream()
+    val matchingProperties = parent
+      .properties()
+      .stream()
       .filter(property =>
-        classNameGenerator.publicPropertyClassName(property) == childPublicName)
-      .toList.asScala
+        classNameGenerator.publicPropertyClassName(property) == childPublicName
+      )
+      .toList
+      .asScala
 
     if (matchingProperties.isEmpty) {
       return false
@@ -314,7 +427,9 @@ class ConfigLoaderModuleGenerator @Inject() (
     } else {
       // Check for @BindProperty
       val explicitBindings = matchingProperties
-        .filter(p => p.source().element().getAnnotation(classOf[BindProperty]) != null)
+        .filter(p =>
+          p.source().element().getAnnotation(classOf[BindProperty]) != null
+        )
 
       if (explicitBindings.size == 1) {
         propertyToBind = explicitBindings.head
@@ -334,7 +449,8 @@ class ConfigLoaderModuleGenerator @Inject() (
     }
 
     val name = childPublicName.simpleName()
-    val configMethod = MethodSpec.methodBuilder(classNameGenerator.getProvidesMethodName(name))
+    val configMethod = MethodSpec
+      .methodBuilder(classNameGenerator.getProvidesMethodName(name))
       .addJavadoc(
         "Provides the {@link $T} instance from its parent {@link $T}.",
         childPublicName,
@@ -344,11 +460,17 @@ class ConfigLoaderModuleGenerator @Inject() (
       .addModifiers(Modifier.PUBLIC)
       .returns(childPublicName)
       .addParameter(parentPublicName, "parent")
-      .addStatement("return parent.$L()", methodNames.safeMethodName(propertyToBind))
+      .addStatement(
+        "return parent.$L()",
+        methodNames.safeMethodName(propertyToBind)
+      )
     builder.addMethod(configMethod.build())
     true
 
-  private def findAllConfigsWithSource(ast: AbstractConfigStructure): List[AbstractConfigStructure] =
+  private def findAllConfigsWithSource(
+      ast: AbstractConfigStructure
+  ): List[AbstractConfigStructure] =
     val current = if (ast.settings().source() != null) List(ast) else Nil
-    val children = ast.enclosed().asScala.flatMap(findAllConfigsWithSource).toList
+    val children =
+      ast.enclosed().asScala.flatMap(findAllConfigsWithSource).toList
     current ++ children

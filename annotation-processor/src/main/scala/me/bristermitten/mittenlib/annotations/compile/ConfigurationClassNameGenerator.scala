@@ -21,7 +21,6 @@ import org.jspecify.annotations.Nullable
 import scala.jdk.CollectionConverters.*
 import scala.jdk.OptionConverters.*
 
-
 object ConfigurationClassNameGenerator:
   val DESERIALIZER_SUFFIX = "Deserializer"
   val SERIALIZER_SUFFIX = "Serializer"
@@ -32,7 +31,9 @@ object ConfigurationClassNameGenerator:
 
   def translateConfigClassName(dtoClassName: ClassName): ClassName =
     val implName = if (dtoClassName.simpleName().endsWith("DTO")) {
-      dtoClassName.simpleName().substring(0, dtoClassName.simpleName().length() - 3)
+      dtoClassName
+        .simpleName()
+        .substring(0, dtoClassName.simpleName().length() - 3)
     } else {
       dtoClassName.simpleName() + "Impl"
     }
@@ -73,20 +74,25 @@ object ConfigurationClassNameGenerator:
     }
 
 private case class NamingNode(
-  name: ClassName,
-  @Nullable manualClassName: String,
-  @Nullable parent: NamingNode,
-  isInterface: Boolean
+    name: ClassName,
+    @Nullable manualClassName: String,
+    @Nullable parent: NamingNode,
+    isInterface: Boolean
 )
 
 class ConfigurationClassNameGenerator @Inject() (
-  private val configNameCache: ConfigNameCache
+    private val configNameCache: ConfigNameCache
 ):
   import ConfigurationClassNameGenerator.*
 
-  private def getRecursiveName(node: NamingNode, simpleNameSelector: NamingNode => String): ClassName =
+  private def getRecursiveName(
+      node: NamingNode,
+      simpleNameSelector: NamingNode => String
+  ): ClassName =
     if (node.parent != null) {
-      getRecursiveName(node.parent, simpleNameSelector).nestedClass(simpleNameSelector(node))
+      getRecursiveName(node.parent, simpleNameSelector).nestedClass(
+        simpleNameSelector(node)
+      )
     } else {
       node.name.peerClass(simpleNameSelector(node))
     }
@@ -95,11 +101,12 @@ class ConfigurationClassNameGenerator @Inject() (
     ConfigurationClassNameGenerator.getCleanSimpleName(node.name)
 
   private def getImplClassName(node: NamingNode): ClassName =
-    val baseName = if (node.manualClassName == null || node.manualClassName.isBlank) {
-      ConfigurationClassNameGenerator.translateConfigClassName(node.name)
-    } else {
-      ClassName.bestGuess(node.manualClassName)
-    }
+    val baseName =
+      if (node.manualClassName == null || node.manualClassName.isBlank) {
+        ConfigurationClassNameGenerator.translateConfigClassName(node.name)
+      } else {
+        ClassName.bestGuess(node.manualClassName)
+      }
 
     if (node.parent != null) {
       getImplClassName(node.parent).nestedClass(baseName.simpleName())
@@ -113,16 +120,21 @@ class ConfigurationClassNameGenerator @Inject() (
   def getPublicClassName(ast: AbstractConfigStructure): ClassName =
     ast.source() match {
       case _: ConfigTypeSource.InterfaceConfigTypeSource => ast.name()
-      case _: ConfigTypeSource.ClassConfigTypeSource => translateConfigClassName(ast)
+      case _: ConfigTypeSource.ClassConfigTypeSource     =>
+        translateConfigClassName(ast)
     }
 
   def getConcreteConfigClassName(ast: AbstractConfigStructure): ClassName =
     ast.source() match {
-      case _: ConfigTypeSource.ClassConfigTypeSource => ast.name()
-      case _: ConfigTypeSource.InterfaceConfigTypeSource => translateConfigClassName(ast)
+      case _: ConfigTypeSource.ClassConfigTypeSource     => ast.name()
+      case _: ConfigTypeSource.InterfaceConfigTypeSource =>
+        translateConfigClassName(ast)
     }
 
-  private def translateDTOParameters(mirror: TypeMirror, getConfigClassName: TypeMirror => TypeName): TypeName =
+  private def translateDTOParameters(
+      mirror: TypeMirror,
+      getConfigClassName: TypeMirror => TypeName
+  ): TypeName =
     mirror match {
       case declaredType: DeclaredType =>
         val element = declaredType.asElement().asInstanceOf[TypeElement]
@@ -130,15 +142,20 @@ class ConfigurationClassNameGenerator @Inject() (
         if (typeArguments.isEmpty) {
           TypeName.get(mirror)
         } else {
-          val properArguments = typeArguments.asScala.map(getConfigClassName).toArray
-          ParameterizedTypeName.get(ClassName.get(element), properArguments *)
+          val properArguments =
+            typeArguments.asScala.map(getConfigClassName).toArray
+          ParameterizedTypeName.get(ClassName.get(element), properArguments*)
         }
       case _ =>
         TypeName.get(mirror)
     }
 
   def getConfigPropertyClassName(mirror: TypeMirror): TypeName =
-    getPropertyClassName(mirror, translateConfigClassName, getConfigPropertyClassName)
+    getPropertyClassName(
+      mirror,
+      translateConfigClassName,
+      getConfigPropertyClassName
+    )
 
   def publicPropertyClassName(p: Property): TypeName =
     publicPropertyClassName(p.propertyType())
@@ -147,15 +164,14 @@ class ConfigurationClassNameGenerator @Inject() (
     getPropertyClassName(mirror, getPublicClassName, publicPropertyClassName)
 
   private def getPropertyClassName(
-    mirror: TypeMirror,
-    astMapper: AbstractConfigStructure => ClassName,
-    recursiveMapper: TypeMirror => TypeName
+      mirror: TypeMirror,
+      astMapper: AbstractConfigStructure => ClassName,
+      recursiveMapper: TypeMirror => TypeName
   ): TypeName =
     configNameCache.lookupAST(mirror).toScala match {
       case Some(ast) => astMapper(ast)
-      case None => translateDTOParameters(mirror, recursiveMapper)
+      case None      => translateDTOParameters(mirror, recursiveMapper)
     }
-
 
   def generateConfigurationClassName(configDTOType: TypeElement): ClassName =
     if (configDTOType.getNestingKind == NestingKind.MEMBER) {
@@ -193,7 +209,10 @@ class ConfigurationClassNameGenerator @Inject() (
 
   def getDefaultMethodAccessClassName(ast: AbstractConfigStructure): ClassName =
     val concreteConfigClassName = getConcreteConfigClassName(ast)
-    concreteConfigClassName.nestedClass(ConfigurationClassNameGenerator.getCleanSimpleName(ast.name()) + DEFAULT_METHOD_ACCESS_SUFFIX)
+    concreteConfigClassName.nestedClass(
+      ConfigurationClassNameGenerator
+        .getCleanSimpleName(ast.name()) + DEFAULT_METHOD_ACCESS_SUFFIX
+    )
 
   def getLoaderModuleClassName(packageName: String): ClassName =
     ClassName.get(packageName, CONFIG_LOADER_MODULE_NAME)
@@ -211,21 +230,33 @@ class ConfigurationClassNameGenerator @Inject() (
     "provide" + simpleName + "ToProviderSet"
 
   def getDeserializerClassName(ast: AbstractConfigStructure): ClassName =
-    getRecursiveName(node(ast), n => getCleanSimpleName(n) + DESERIALIZER_SUFFIX)
+    getRecursiveName(
+      node(ast),
+      n => getCleanSimpleName(n) + DESERIALIZER_SUFFIX
+    )
 
   def getDeserializerClassName(typeMirror: TypeMirror): ClassName =
-    val ast = configNameCache.lookupAST(typeMirror).toScala
-      .getOrElse(throw new IllegalStateException("Not a config type: " + typeMirror))
+    val ast = configNameCache
+      .lookupAST(typeMirror)
+      .toScala
+      .getOrElse(
+        throw new IllegalStateException("Not a config type: " + typeMirror)
+      )
     getDeserializerClassName(ast)
 
   private def getFieldName(typeMirror: TypeMirror, suffix: String): String =
-    val ast = configNameCache.lookupAST(typeMirror).toScala
-      .getOrElse(throw new IllegalStateException("Not a config type: " + typeMirror))
+    val ast = configNameCache
+      .lookupAST(typeMirror)
+      .toScala
+      .getOrElse(
+        throw new IllegalStateException("Not a config type: " + typeMirror)
+      )
     val publicName = getPublicClassName(ast)
     val safePkg = publicName.packageName().replace('.', '_')
     val prefix = if (safePkg.isEmpty) "" else safePkg + "_"
-    Strings.uncapitalize(prefix + ConfigurationClassNameGenerator.getCleanSimpleName(publicName)) + suffix
-
+    Strings.uncapitalize(
+      prefix + ConfigurationClassNameGenerator.getCleanSimpleName(publicName)
+    ) + suffix
 
   def getDeserializerFieldName(typeMirror: TypeMirror): String =
     getFieldName(typeMirror, DESERIALIZER_SUFFIX)
@@ -242,7 +273,10 @@ class ConfigurationClassNameGenerator @Inject() (
   def getInnerDaoName(ast: AbstractConfigStructure): ClassName =
     ast.source() match {
       case _: ConfigTypeSource.InterfaceConfigTypeSource =>
-        val hasAnyDefaultValue = ast.properties().asScala.exists(property => property.settings().hasDefaultValue())
+        val hasAnyDefaultValue = ast
+          .properties()
+          .asScala
+          .exists(property => property.settings().hasDefaultValue())
         if (!hasAnyDefaultValue) {
           null
         } else {
