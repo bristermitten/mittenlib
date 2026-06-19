@@ -28,6 +28,13 @@ spotless {
         target("*.gradle.kts")
         ktlint()
     }
+    scala {
+        scalafmt("3.11.1")
+            .scalaMajorVersion("3")
+            .configFile(rootProject.file(".scalafmt.conf"))
+    }
+
+
     format("misc") {
         target("*.md", ".gitignore")
         trimTrailingWhitespace()
