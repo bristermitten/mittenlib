@@ -138,13 +138,7 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
       roundEnv.getElementsAnnotatedWith(classOf[RecordSpec]).asScala.toList
 
     val parseResults = elements.flatMap { element =>
-      val wrap = ElementWrapper.wrap(element)
-      wrap
-        .validateWithFluentElementValidator()
-        .is(AptkCoreMatchers.IS_INTERFACE)
-        .validateAndIssueMessages()
-
-      val typeElement = ElementWrapper.toTypeElement(wrap)
+      val typeElement = validateAndGetTypeElement(element)
       parseRecord(typeElement) match {
         case None =>
           MessagerUtils.error(
@@ -188,13 +182,7 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     }
 
     val unionSpecs = elements.flatMap { element =>
-      val wrap = ElementWrapper.wrap(element)
-      wrap
-        .validateWithFluentElementValidator()
-        .is(AptkCoreMatchers.IS_INTERFACE)
-        .validateAndIssueMessages()
-
-      val typeElement = ElementWrapper.toTypeElement(wrap)
+      val typeElement = validateAndGetTypeElement(element)
       val enclosed = typeElement
         .filterEnclosedElements()
         .applyFilter(AptkCoreMatchers.IS_METHOD)
@@ -237,4 +225,14 @@ class MittenLibCodegenProcessor extends AbstractAnnotationProcessor {
     }
     true
   }
+
+  private def validateAndGetTypeElement(
+      element: javax.lang.model.element.Element
+  ): TypeElementWrapper =
+    val wrap = ElementWrapper.wrap(element)
+    wrap
+      .validateWithFluentElementValidator()
+      .is(AptkCoreMatchers.IS_INTERFACE)
+      .validateAndIssueMessages()
+    ElementWrapper.toTypeElement(wrap)
 }

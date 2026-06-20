@@ -7,21 +7,17 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.{ArrayDeque, List => JList, Optional => JOptional}
 import javax.annotation.processing.Generated
-import javax.lang.model.element.Modifier
+import javax.lang.model.element.{Modifier, TypeElement, Element}
 import javax.lang.model.`type`.TypeMirror
-import me.bristermitten.mittenlib.annotations.ast.{
-  ASTSettings,
-  AbstractConfigStructure,
-  ConfigTypeSource,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.*
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor
 import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis
-import me.bristermitten.mittenlib.annotations.util.Nullity
+import me.bristermitten.mittenlib.annotations.util.ElementsFinder
 import me.bristermitten.mittenlib.config.Configuration
 import me.bristermitten.mittenlib.config.GeneratedConfig
 import me.bristermitten.mittenlib.config.Source
 import me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors
+import javax.annotation.processing.ProcessingEnvironment
 import scala.jdk.CollectionConverters.*
 import scala.jdk.OptionConverters.*
 
@@ -32,8 +28,11 @@ class ConfigImplGenerator @Inject() (
     private val configurationClassNameGenerator: ConfigurationClassNameGenerator,
     private val configNameCache: ConfigNameCache,
     private val methodNames: MethodNames,
-    private val configStructureAnalysis: ConfigStructureAnalysis
+    private val configStructureAnalysis: ConfigStructureAnalysis,
+    private val elementsFinder: ElementsFinder,
+    processingEnv: ProcessingEnvironment
 ):
+  private val elements = processingEnv.getElementUtils
 
   /** Generates a JavaFile containing the implementation class for the given
     * configuration structure.
@@ -43,17 +42,16 @@ class ConfigImplGenerator @Inject() (
     * @return
     *   A JavaFile containing the generated implementation class
     */
-  def emit(ast: AbstractConfigStructure): JavaFile =
+  def emit(ast: ConfigStructure): JavaFile =
+    val dtoType = elements.getTypeElement(ast.name.canonicalName())
     val configImplClassName =
-      configurationClassNameGenerator.generateConfigurationClassName(
-        ast.source().element()
-      )
+      configurationClassNameGenerator.generateConfigurationClassName(dtoType)
     val source = TypeSpec
       .classBuilder(configImplClassName)
       .addJavadoc(
         """Generated data implementation of {@link $T}.
           |""".stripMargin,
-        ast.source().element()
+        dtoType
       )
 
     emitInto(ast, source)
@@ -63,17 +61,16 @@ class ConfigImplGenerator @Inject() (
       .skipJavaLangImports(true)
       .build()
 
-  /** Adds all necessary elements to the {@@@@@linkTypeSpec.Builder} to create a
+  /** Adds all necessary elements to the {@link TypeSpec.Builder} to create a
     * complete implementation class.
     */
   private def emitInto(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
+    val dtoType = elements.getTypeElement(ast.name.canonicalName())
     val configImplClassName =
-      configurationClassNameGenerator.generateConfigurationClassName(
-        ast.source().element()
-      )
+      configurationClassNameGenerator.generateConfigurationClassName(dtoType)
     source.addModifiers(Modifier.PUBLIC)
     makeAbstractIfUnion(ast, source)
     addSourceElement(ast, source)
@@ -89,23 +86,24 @@ class ConfigImplGenerator @Inject() (
     addChildClasses(ast, source)
 
   private def makeAbstractIfUnion(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
     ast match {
-      case _: AbstractConfigStructure.Union =>
+      case _: ConfigStructure.Union =>
         source.addModifiers(Modifier.ABSTRACT)
       case _ =>
     }
 
-  /** Adds the {@@@@@codeCONFIG} static field to the class if a
-    * {@@@@@linkSource} is defined.
+  /** Adds the {@code CONFIG} static field to the class if a {@link Source} is
+    * defined.
     */
   private def addSourceElement(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       builder: TypeSpec.Builder
   ): Unit =
-    if (ast.settings().source() != null) {
+    ast.settings.source.foreach { sourceVal =>
+      val dtoType = elements.getTypeElement(ast.name.canonicalName())
       val publicClassName =
         configurationClassNameGenerator.getPublicClassName(ast)
       val implementationClassName =
@@ -122,7 +120,7 @@ class ConfigImplGenerator @Inject() (
       configFieldBuilder.initializer(
         "new $T<>($S, $T.class, $T.class)",
         classOf[Configuration[?]],
-        ast.settings().source().value(),
+        sourceVal,
         publicClassName,
         implementationClassName
       )
@@ -133,44 +131,55 @@ class ConfigImplGenerator @Inject() (
   /** Adds inheritance information to the generated implementation class.
     */
   private def addInheritance(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
-    ast.source() match {
-      case _: ConfigTypeSource.InterfaceConfigTypeSource =>
-        source.addSuperinterface(ast.name())
-      case classParent: ConfigTypeSource.ClassConfigTypeSource =>
-        for {
-          parentType <- classParent.parent().toScala
-          parentAst <- configNameCache.lookupAST(parentType).toScala
-        } {
-          source.superclass(
-            configurationClassNameGenerator.translateConfigClassName(parentAst)
-          )
+    ast match {
+      case ConfigStructure.Atomic(name, isInterface, parentClass, _, _, _) =>
+        if (isInterface) {
+          source.addSuperinterface(name)
+        } else {
+          for {
+            parentType <- parentClass
+            parentAst <- configNameCache.lookupAST(parentType).toScala
+          } {
+            source.superclass(
+              configurationClassNameGenerator.translateConfigClassName(
+                parentAst
+              )
+            )
+          }
+        }
+      case ConfigStructure.Intersection(name, roots, _, _, _) =>
+        source.addSuperinterface(name)
+        for (root <- roots) {
+          source.addSuperinterface(root)
+        }
+      case ConfigStructure.Union(name, parents, _, _, _) =>
+        source.addSuperinterface(name)
+        for (parent <- parents) {
+          source.addSuperinterface(parent)
         }
     }
 
-  /** Adds {@@@@@linkGeneratedConfig} and {@@@@@linkGenerated} annotations to
-    * the class.
+  /** Adds {@link GeneratedConfig} and {@link Generated} annotations to the
+    * class.
     */
   private def addGeneratedConfigAnnotations(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
-    val uninitializableProperties = ast
-      .properties()
-      .asScala
+    val uninitializableProperties = ast.properties
       .filter(p =>
-        !p.settings().hasDefaultValue
-          && !p.settings().isNullable
-          && !configStructureAnalysis.isTypeInitializable(p.propertyType())
+        !p.hasDefault
+          && !p.isNullable
+          && !configStructureAnalysis.isTypeInitializable(p.propertyType)
       )
-      .map(_.name())
-      .toList
+      .map(_.name)
 
     val generatedConfigBuilder = AnnotationSpec
       .builder(classOf[GeneratedConfig])
-      .addMember("source", "$T.class", ast.name())
+      .addMember("source", "$T.class", ast.name)
       .addMember(
         "isDynamicallyInitializable",
         "$L",
@@ -186,60 +195,63 @@ class ConfigImplGenerator @Inject() (
     }
 
     source.addAnnotation(generatedConfigBuilder.build())
-
     source.addAnnotation(GeneratorUtil.generatedAnnotation(true))
 
-  /** Ensures nested classes are marked as {@@@@@codestatic} .
+  /** Ensures nested classes are marked as {@code static} .
     */
   private def addNestedClassModifiers(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
-    if (ast.enclosedIn() != null) {
+    if (ast.name.enclosingClassName() != null) {
       source.addModifiers(Modifier.STATIC)
     }
 
   /** Adds all properties as fields and accessors to the implementation class.
     */
   private def addProperties(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
-    for (property <- ast.properties().asScala) {
-      addProperty(property, source)
+    val dtoType = elements.getTypeElement(ast.name.canonicalName())
+    for (property <- ast.properties) {
+      addProperty(ast, property, dtoType, source)
     }
 
-  /** Adds {@@@@@codeequals} and {@@@@@codehashCode} methods, plus
-    * {@@@@@codetoString} if
-    * {@@@@linkASTSettings.ConfigASTSettings#generateToString()} is true
+  /** Adds {@code equals} and {@code hashCode} methods, and {@code toString}
     */
   private def addStandardObjectMethods(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       configImplClassName: ClassName,
       source: TypeSpec.Builder
   ): Unit =
-    if (ast.settings().generateToString()) {
-      val toString = toStringGenerator.generateToString(
-        ast.properties(),
-        configImplClassName
-      )
-      source.addMethod(toString)
-    }
+    val propertiesJavaList =
+      ast.properties.asJava // For toString/equals/hashCode generators
+    // toString, equals, hashCode are always generated now
+    val toString = toStringGenerator.generateToString(
+      propertiesJavaList,
+      configImplClassName
+    )
+    source.addMethod(toString)
 
     source.addMethod(
-      equalsHashCodeGenerator
-        .generateEquals(configImplClassName, ast.properties())
+      equalsHashCodeGenerator.generateEquals(
+        configImplClassName,
+        propertiesJavaList
+      )
     )
-    source.addMethod(equalsHashCodeGenerator.generateHashCode(ast.properties()))
+    source.addMethod(
+      equalsHashCodeGenerator.generateHashCode(propertiesJavaList)
+    )
 
   /** Recursively adds implementation classes for enclosed configuration
     * structures.
     */
   private def addChildClasses(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       source: TypeSpec.Builder
   ): Unit =
-    for (child <- ast.enclosed().asScala) {
+    for (child <- ast.enclosed) {
       val childClassName =
         configurationClassNameGenerator.translateConfigClassName(child)
       val childBuilder = TypeSpec.classBuilder(childClassName)
@@ -247,16 +259,27 @@ class ConfigImplGenerator @Inject() (
       source.addType(childBuilder.build())
     }
 
+  private def getAnnotatedPropertyType(property: Property): TypeName =
+    val nullityAnnotation =
+      if (property.isNullable) classOf[org.jspecify.annotations.Nullable]
+      else classOf[org.jspecify.annotations.NonNull]
+    configurationClassNameGenerator
+      .publicPropertyClassName(property)
+      .annotated(AnnotationSpec.builder(nullityAnnotation).build())
+
   /** Adds a single property as a private final field and its corresponding
     * getter.
     */
-  private def addProperty(property: Property, source: TypeSpec.Builder): Unit =
+  private def addProperty(
+      ast: ConfigStructure,
+      property: Property,
+      dtoType: TypeElement,
+      source: TypeSpec.Builder
+  ): Unit =
     val field = FieldSpec
       .builder(
-        configurationClassNameGenerator
-          .publicPropertyClassName(property)
-          .annotated(Nullity.getNullityAnnotationSpec(property)),
-        property.name(),
+        getAnnotatedPropertyType(property),
+        property.name,
         Modifier.FINAL,
         Modifier.PRIVATE
       )
@@ -264,37 +287,40 @@ class ConfigImplGenerator @Inject() (
 
     source.addField(field)
 
-    property.source() match {
-      case fieldSource: Property.PropertySource.FieldSource =>
-        accessorGenerator.createGetterMethod(
-          source,
-          fieldSource.element(),
-          field
-        )
-      case methodSource: Property.PropertySource.MethodSource =>
-        accessorGenerator.createGetterMethodOverriding(
-          source,
-          methodSource.element(),
-          field
-        )
+    val isInterface = ast match {
+      case ConfigStructure.Atomic(_, isInterface, _, _, _, _) => isInterface
+      case _                                                  => true
     }
 
-  private def getSuperClass(ast: AbstractConfigStructure): Option[TypeMirror] =
-    ast.source() match {
-      case classParent: ConfigTypeSource.ClassConfigTypeSource =>
-        classParent.parent().toScala
+    if (isInterface) {
+      val methodOpt = elementsFinder
+        .getPropertyMethods(dtoType)
+        .find(_.getSimpleName.toString == property.name)
+      methodOpt.foreach { method =>
+        accessorGenerator.createGetterMethodOverriding(source, method, field)
+      }
+    } else {
+      val fieldOpt = elementsFinder
+        .getApplicableVariableElements(dtoType)
+        .find(_.getSimpleName.toString == property.name)
+      fieldOpt.foreach { f =>
+        accessorGenerator.createGetterMethod(source, f, field)
+      }
+    }
+
+  private def getSuperClass(ast: ConfigStructure): Option[ClassName] =
+    ast match {
+      case ConfigStructure.Atomic(_, _, parentClass, _, _, _) =>
+        parentClass
       case _ =>
         None
     }
-
-  private def getSuperClass(tpe: TypeMirror): Option[TypeMirror] =
-    configNameCache.lookupAST(tpe).toScala.flatMap(getSuperClass)
 
   /** Adds an all-argument constructor to the implementation class.
     */
   private def addAllArgsConstructor(
       source: TypeSpec.Builder,
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): Unit =
     val constructor = MethodSpec
       .constructorBuilder()
@@ -308,24 +334,29 @@ class ConfigImplGenerator @Inject() (
 
     source.addMethod(constructor.build())
 
-  /** Adds a parameter to the constructor for the parent configuration class, if
-    * applicable.
-    */
-  private def addSuperClassParameter(
-      ast: AbstractConfigStructure,
-      constructor: MethodSpec.Builder
-  ): Unit =
-    for {
-      parent <- getSuperClass(ast)
-      parentConfig <- configNameCache
+  private def getParentConfig(
+      ast: ConfigStructure
+  ): Option[(ClassName, ConfigStructure)] =
+    getSuperClass(ast).map { parent =>
+      val parentConfig = configNameCache
         .lookupAST(parent)
         .toScala
-        .orElse(
+        .getOrElse(
           throw new IllegalStateException(
             "could not determine a config for parent class " + parent
           )
         )
-    } {
+      (parent, parentConfig)
+    }
+
+  /** Adds a parameter to the constructor for the parent configuration class, if
+    * applicable.
+    */
+  private def addSuperClassParameter(
+      ast: ConfigStructure,
+      constructor: MethodSpec.Builder
+  ): Unit =
+    getParentConfig(ast).foreach { case (parent, parentConfig) =>
       val parentName =
         configurationClassNameGenerator.translateConfigClassName(parentConfig)
       val superParameterName = "parent"
@@ -345,20 +376,10 @@ class ConfigImplGenerator @Inject() (
     * instance.
     */
   private def addSuperClassField(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       builder: TypeSpec.Builder
   ): Unit =
-    for {
-      parent <- getSuperClass(ast)
-      parentConfig <- configNameCache
-        .lookupAST(parent)
-        .toScala
-        .orElse(
-          throw new IllegalStateException(
-            "could not determine a config for parent class " + parent
-          )
-        )
-    } {
+    getParentConfig(ast).foreach { case (_, parentConfig) =>
       val parentName =
         configurationClassNameGenerator.translateConfigClassName(parentConfig)
       val field = FieldSpec.builder(
@@ -373,22 +394,15 @@ class ConfigImplGenerator @Inject() (
   /** Builds the list of parameters to be passed to the super constructor.
     */
   private def buildSuperConstructorParams(
-      parent: TypeMirror,
-      parentConfig: AbstractConfigStructure,
+      parent: ClassName,
+      parentConfig: ConfigStructure,
       superParameterName: String
   ): List[String] =
-    val parentParams = parentConfig
-      .properties()
-      .asScala
-      .map(variableElement =>
-        superParameterName + "." + methodNames.safeMethodName(
-          variableElement
-        ) + "()"
-      )
-      .toList
+    val parentParams = parentConfig.properties
+      .map(p => superParameterName + "." + methodNames.safeMethodName(p) + "()")
 
-    getSuperClass(parent) match {
-      case Some(_) =>
+    getSuperClass(parentConfig) match {
+      case Some(grandParent) =>
         superParameterName :: parentParams
       case None =>
         parentParams
@@ -398,23 +412,20 @@ class ConfigImplGenerator @Inject() (
     * properties.
     */
   private def addPropertyParameters(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       constructor: MethodSpec.Builder
   ): Unit =
-    for (property <- ast.properties().asScala) {
+    for (property <- ast.properties) {
       val parameter = createPropertyParameter(property)
       constructor.addParameter(parameter)
-      constructor.addStatement("this.$N = $N", property.name(), property.name())
+      constructor.addStatement("this.$N = $N", property.name, property.name)
     }
 
   private def createPropertyParameter(property: Property): ParameterSpec =
-    val nullityAnnotation = Nullity.getNullityAnnotation(property)
     val builder = ParameterSpec
       .builder(
-        configurationClassNameGenerator
-          .publicPropertyClassName(property)
-          .annotated(AnnotationSpec.builder(nullityAnnotation).build()),
-        property.name()
+        getAnnotatedPropertyType(property),
+        property.name
       )
       .addModifiers(Modifier.FINAL)
 
@@ -424,15 +435,15 @@ class ConfigImplGenerator @Inject() (
     */
   private def addInnerDefaultMethodImpl(
       typeSpecBuilder: TypeSpec.Builder,
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): JOptional[ClassName] =
-    ast.source() match {
-      case _: ConfigTypeSource.InterfaceConfigTypeSource =>
-        val hasAnyDefaultValue =
-          ast.properties().asScala.exists(_.settings().hasDefaultValue())
+    ast match {
+      case ConfigStructure.Atomic(_, true, _, _, properties, _) =>
+        val hasAnyDefaultValue = properties.exists(_.hasDefault)
         if (!hasAnyDefaultValue) {
           JOptional.empty()
         } else {
+          val dtoType = elements.getTypeElement(ast.name.canonicalName())
           val concreteConfigClassName =
             configurationClassNameGenerator.getConcreteConfigClassName(ast)
           val innerName =
@@ -440,15 +451,15 @@ class ConfigImplGenerator @Inject() (
 
           val innerBuilder = TypeSpec.classBuilder(innerName)
           innerBuilder.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-          innerBuilder.addSuperinterface(ast.name())
+          innerBuilder.addSuperinterface(ast.name)
 
           for (
-            property <- ast.properties().asScala
-            if !property.settings().hasDefaultValue()
+            property <- properties
+            if !property.hasDefault
           ) {
             innerBuilder.addMethod(
               MethodSpec
-                .methodBuilder(property.name())
+                .methodBuilder(property.name)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(classOf[Override])
                 .returns(
@@ -459,7 +470,7 @@ class ConfigImplGenerator @Inject() (
                   "throw $T.defaultValueProxyException($T.class, $S)",
                   classOf[ConfigLoadingErrors],
                   concreteConfigClassName,
-                  property.name()
+                  property.name
                 )
                 .build()
             )
