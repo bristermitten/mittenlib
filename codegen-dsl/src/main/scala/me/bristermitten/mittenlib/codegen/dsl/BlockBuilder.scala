@@ -61,18 +61,18 @@ class BlockBuilder(private val names: NameGenerator):
     *
     * No need for a separate `letOpen` method.
     */
-  def let[S](tpe: TypeRef, value: Expr)(
-      body: Var => BlockBuilder ?=> Block[S]
+  def let[S](tpe: TypeRef[?], value: Expr[?])(
+      body: Var[?] => BlockBuilder ?=> Block[S]
   ): Block[S] =
     let(tpe, None, value)(body)
 
-  def let[S](tpe: TypeRef, hint: String, value: Expr)(
-      body: Var => BlockBuilder ?=> Block[S]
+  def let[S](tpe: TypeRef[?], hint: String, value: Expr[?])(
+      body: Var[?] => BlockBuilder ?=> Block[S]
   ): Block[S] =
     let(tpe, Some(hint), value)(body)
 
-  private def let[S](tpe: TypeRef, hint: Option[String], value: Expr)(
-      body: Var => BlockBuilder ?=> Block[S]
+  private def let[S](tpe: TypeRef[?], hint: Option[String], value: Expr[?])(
+      body: Var[?] => BlockBuilder ?=> Block[S]
   ): Block[S] =
     checkOpen()
     val v = names.generate(tpe, hint)
@@ -87,13 +87,17 @@ class BlockBuilder(private val names: NameGenerator):
     * for correctness — use this when multiple variables must be declared before
     * a natural termination point.
     */
-  def declare(tpe: TypeRef, value: Expr): Var =
+  def declare(tpe: TypeRef[?], value: Expr[?]): Var[Any] =
     declare(tpe, None, value)
 
-  def declare(tpe: TypeRef, hint: String, value: Expr): Var =
+  def declare(tpe: TypeRef[?], hint: String, value: Expr[?]): Var[Any] =
     declare(tpe, Some(hint), value)
 
-  private def declare(tpe: TypeRef, hint: Option[String], value: Expr): Var =
+  private def declare(
+      tpe: TypeRef[?],
+      hint: Option[String],
+      value: Expr[?]
+  ): Var[Any] =
     checkOpen()
     val v = names.generate(tpe, hint)
     stmts += Statement.DeclareAssign(v, value)
@@ -101,17 +105,17 @@ class BlockBuilder(private val names: NameGenerator):
 
   // ─── Assignment ─────────────────────────────────────────────────────────────
 
-  def assign(target: Var, value: Expr): Unit =
+  def assign(target: Var[?], value: Expr[?]): Unit =
     checkOpen()
     stmts += Statement.Assign(target, value)
 
-  def assignTo(target: Expr, value: Expr): Unit =
+  def assignTo(target: Expr[?], value: Expr[?]): Unit =
     checkOpen()
     stmts += Statement.Assign(target, value)
 
   // ─── Plain statements ────────────────────────────────────────────────────────
 
-  def statement(expr: Expr): Unit =
+  def statement(expr: Expr[?]): Unit =
     checkOpen()
     stmts += Statement.ExprStatement(expr)
 
@@ -122,7 +126,7 @@ class BlockBuilder(private val names: NameGenerator):
   // ─── Control flow ───────────────────────────────────────────────────────────
 
   /** `if (cond) { body }` — body is an Open sub-block */
-  def ifThen(cond: Expr)(body: BlockBuilder ?=> Unit): Unit =
+  def ifThen(cond: Expr[?])(body: BlockBuilder ?=> Unit): Unit =
     checkOpen()
     val inner = child()
     body(using inner)
@@ -138,7 +142,7 @@ class BlockBuilder(private val names: NameGenerator):
     * This is the Scala 3 type-class approximation — the compiler resolves
     * [[Merge]] at the call site based on the inferred branch types.
     */
-  def ifThenElse[A, B](cond: Expr)(thenBody: BlockBuilder ?=> Block[A])(
+  def ifThenElse[A, B](cond: Expr[?])(thenBody: BlockBuilder ?=> Block[A])(
       elseBody: BlockBuilder ?=> Block[B]
   ): Block[Merge[A, B]] =
     checkOpen()
@@ -157,8 +161,8 @@ class BlockBuilder(private val names: NameGenerator):
     Block(stmts.toList, terminator).asInstanceOf[Block[Merge[A, B]]]
 
   /** `for (elementType element : iterable) { body }` */
-  def forEach(tpe: TypeRef, iterable: Expr, hint: Option[String] = None)(
-      body: Var => BlockBuilder ?=> Unit
+  def forEach(tpe: TypeRef[?], iterable: Expr[?], hint: Option[String] = None)(
+      body: Var[?] => BlockBuilder ?=> Unit
   ): Unit =
     checkOpen()
     val element = names.generate(tpe, hint)
@@ -167,9 +171,9 @@ class BlockBuilder(private val names: NameGenerator):
     stmts += Statement.ForEach(element, iterable, inner.buildOpen())
 
   /** `try { tryBody } catch (ExType ex) { catchBody }` */
-  def tryCatch(exType: TypeRef, hint: Option[String] = None)(
+  def tryCatch(exType: TypeRef[?], hint: Option[String] = None)(
       tryBody: BlockBuilder ?=> Unit
-  )(catchBody: Var => BlockBuilder ?=> Unit): Unit =
+  )(catchBody: Var[?] => BlockBuilder ?=> Unit): Unit =
     checkOpen()
     val exVar = names.generate(exType, hint)
     val tryBuilder = child()
@@ -185,7 +189,7 @@ class BlockBuilder(private val names: NameGenerator):
 
   // ─── Terminators ────────────────────────────────────────────────────────────
 
-  def return_(value: Expr): Block[Terminated] =
+  def return_(value: Expr[?]): Block[Terminated] =
     checkOpen()
     done = true
     val term = Some(Terminator.Return(value))
@@ -199,7 +203,7 @@ class BlockBuilder(private val names: NameGenerator):
     this.terminator = term
     Block(stmts.toList, term)
 
-  def throw_(expr: Expr): Block[Terminated] =
+  def throw_(expr: Expr[?]): Block[Terminated] =
     checkOpen()
     done = true
     val term = Some(Terminator.Throw(expr))
@@ -234,57 +238,61 @@ object BlockBuilder:
     b.buildOpen()
 
   // Companion object helpers delegating to the context BlockBuilder
-  def return_(value: Expr)(using b: BlockBuilder): Block[Terminated] =
+  def return_(value: Expr[?])(using b: BlockBuilder): Block[Terminated] =
     b.return_(value)
 
   def returnVoid()(using b: BlockBuilder): Block[Terminated] = b.returnVoid()
 
-  def throw_(expr: Expr)(using b: BlockBuilder): Block[Terminated] =
+  def throw_(expr: Expr[?])(using b: BlockBuilder): Block[Terminated] =
     b.throw_(expr)
 
-  def let[S](tpe: TypeRef, value: Expr)(body: Var => BlockBuilder ?=> Block[S])(
-      using b: BlockBuilder
+  def let[S](tpe: TypeRef[?], value: Expr[?])(
+      body: Var[?] => BlockBuilder ?=> Block[S]
+  )(using
+      b: BlockBuilder
   ): Block[S] = b.let(tpe, value)(body)
 
-  def let[S](tpe: TypeRef, hint: String, value: Expr)(
-      body: Var => BlockBuilder ?=> Block[S]
+  def let[S](tpe: TypeRef[?], hint: String, value: Expr[?])(
+      body: Var[?] => BlockBuilder ?=> Block[S]
   )(using b: BlockBuilder): Block[S] = b.let(tpe, hint, value)(body)
 
-  def declare(tpe: TypeRef, value: Expr)(using b: BlockBuilder): Var =
+  def declare(tpe: TypeRef[?], value: Expr[?])(using
+      b: BlockBuilder
+  ): Var[Any] =
     b.declare(tpe, value)
 
-  def declare(tpe: TypeRef, hint: String, value: Expr)(using
+  def declare(tpe: TypeRef[?], hint: String, value: Expr[?])(using
       b: BlockBuilder
-  ): Var = b.declare(tpe, hint, value)
+  ): Var[Any] = b.declare(tpe, hint, value)
 
-  def assign(target: Var, value: Expr)(using b: BlockBuilder): Unit =
+  def assign(target: Var[?], value: Expr[?])(using b: BlockBuilder): Unit =
     b.assign(target, value)
 
-  def assignTo(target: Expr, value: Expr)(using b: BlockBuilder): Unit =
+  def assignTo(target: Expr[?], value: Expr[?])(using b: BlockBuilder): Unit =
     b.assignTo(target, value)
 
-  def statement(expr: Expr)(using b: BlockBuilder): Unit = b.statement(expr)
+  def statement(expr: Expr[?])(using b: BlockBuilder): Unit = b.statement(expr)
 
   def blankLine()(using b: BlockBuilder): Unit = b.blankLine()
 
   def comment(text: String)(using b: BlockBuilder): Unit = b.comment(text)
 
-  def ifThen(cond: Expr)(body: BlockBuilder ?=> Unit)(using
+  def ifThen(cond: Expr[?])(body: BlockBuilder ?=> Unit)(using
       b: BlockBuilder
   ): Unit = b.ifThen(cond)(body)
 
-  def ifThenElse[A, B](cond: Expr)(thenBody: BlockBuilder ?=> Block[A])(
+  def ifThenElse[A, B](cond: Expr[?])(thenBody: BlockBuilder ?=> Block[A])(
       elseBody: BlockBuilder ?=> Block[B]
   )(using b: BlockBuilder): Block[Merge[A, B]] =
     b.ifThenElse(cond)(thenBody)(elseBody)
 
-  def forEach(tpe: TypeRef, iterable: Expr, hint: Option[String] = None)(
-      body: Var => BlockBuilder ?=> Unit
+  def forEach(tpe: TypeRef[?], iterable: Expr[?], hint: Option[String] = None)(
+      body: Var[?] => BlockBuilder ?=> Unit
   )(using b: BlockBuilder): Unit = b.forEach(tpe, iterable, hint)(body)
 
-  def tryCatch(exType: TypeRef, hint: Option[String] = None)(
+  def tryCatch(exType: TypeRef[?], hint: Option[String] = None)(
       tryBody: BlockBuilder ?=> Unit
-  )(catchBody: Var => BlockBuilder ?=> Unit)(using b: BlockBuilder): Unit =
+  )(catchBody: Var[?] => BlockBuilder ?=> Unit)(using b: BlockBuilder): Unit =
     b.tryCatch(exType, hint)(tryBody)(catchBody)
 
   def buildOpen()(using b: BlockBuilder): Block[Open] = b.buildOpen()

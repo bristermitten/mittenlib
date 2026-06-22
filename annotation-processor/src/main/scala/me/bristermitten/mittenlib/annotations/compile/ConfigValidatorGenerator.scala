@@ -192,7 +192,7 @@ class ConfigValidatorGenerator @Inject (
       builder.addMethod(constructor.build())
     }
 
-  private def bracketedKey(base: Expr, index: Expr): Expr =
+  private def bracketedKey(base: Expr[?], index: Expr[?]): Expr[?] =
     Expr.BinaryOp(
       Expr.BinaryOp(base, "+", Expr.str("[")),
       "+",
@@ -242,7 +242,7 @@ class ConfigValidatorGenerator @Inject (
 
         def generatePropertyConstraints()(using b: BlockBuilder): Unit = {
           if (constraints.nonEmpty) {
-            def runChecks(valueExpr: Expr): Unit = {
+            def runChecks(valueExpr: Expr[?]): Unit = {
               for (constraint <- constraints) {
                 generateConstraintCheck(
                   constraint,
@@ -448,12 +448,12 @@ class ConfigValidatorGenerator @Inject (
 
   private def generatePropertyElementValidation(
       property: Property,
-      valueExpr: Expr,
-      keyExpr: Expr,
+      valueExpr: Expr[?],
+      keyExpr: Expr[?],
       isElementPrimitive: Boolean,
       isElementNullable: Boolean,
       elementConstraints: List[Constraint],
-      violations: Var
+      violations: Var[?]
   )(using BlockBuilder): Unit =
     generateElementValidation(
       valueExpr = valueExpr,
@@ -472,16 +472,16 @@ class ConfigValidatorGenerator @Inject (
     )
 
   private def generateElementValidation(
-      valueExpr: Expr,
-      keyExpr: Expr,
+      valueExpr: Expr[?],
+      keyExpr: Expr[?],
       isPrimitive: Boolean,
       isNullable: Boolean,
       nullMessage: String,
       constraints: List[Constraint],
-      validatorField: Expr,
+      validatorField: Expr[?],
       errorFieldName: String,
       messagePrefix: String,
-      violations: Var
+      violations: Var[?]
   )(using b: BlockBuilder): Unit =
     if (!isPrimitive) {
       if (!isNullable) {
@@ -542,10 +542,10 @@ class ConfigValidatorGenerator @Inject (
     }
 
   private def addViolation(
-      violations: Var,
-      keyExpr: Expr,
-      valueExpr: Expr,
-      messageExpr: Expr
+      violations: Var[?],
+      keyExpr: Expr[?],
+      valueExpr: Expr[?],
+      messageExpr: Expr[?]
   )(using BlockBuilder): Unit =
     statement(
       violations.call(
@@ -561,12 +561,12 @@ class ConfigValidatorGenerator @Inject (
 
   private def generateConstraintCheck(
       constraint: Constraint,
-      valueExpr: Expr,
-      keyExpr: Expr,
-      validatorField: Expr,
+      valueExpr: Expr[?],
+      keyExpr: Expr[?],
+      validatorField: Expr[?],
       errorFieldName: String,
       messagePrefix: String,
-      violations: Var
+      violations: Var[?]
   )(using b: BlockBuilder): Unit =
     constraint match {
       case Constraint.Positive =>

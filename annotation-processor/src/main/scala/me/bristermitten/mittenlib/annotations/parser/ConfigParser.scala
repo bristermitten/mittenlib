@@ -10,6 +10,15 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper
 import me.bristermitten.mittenlib.annotations.domain.*
+import me.bristermitten.mittenlib.annotations.{ast => astpkg}
+import me.bristermitten.mittenlib.annotations.ast.{
+  AbstractConfigStructure,
+  ASTSettings,
+  ASTParentReference,
+  ConfigTypeSource,
+  Property => ASTProperty,
+  ValidationConstraint
+}
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache
@@ -150,7 +159,8 @@ class ConfigParser @Inject() (
         .mapN { (enclosed, properties) =>
           if (properties.nonEmpty) {
             val invalidAlternatives =
-              enclosed.filter(alt => !alt.parents.contains(name))
+              enclosed
+                .filter(alt => !configStructureParents(alt).contains(name))
             if (invalidAlternatives.nonEmpty) {
               val errors = invalidAlternatives.map { alt =>
                 val altElement =
@@ -903,8 +913,159 @@ class ConfigParser @Inject() (
     }
   }
 
+  private def configStructureParents(
+      structure: ConfigStructure
+  ): List[ClassName] =
+    structure match {
+      case a: ConfigStructure.Atomic       => a.parentClass.toList
+      case i: ConfigStructure.Intersection => i.roots
+      case u: ConfigStructure.Union        => u.parents
+    }
+
+  private def buildEnclosedIn(name: ClassName): ASTParentReference = {
+    val enclosingName = name.enclosingClassName()
+    if (enclosingName == null) return null
+    val parentRef = buildEnclosedIn(enclosingName)
+    val enclosingDomain = configNameCache.lookupDomain(enclosingName)
+    val isInterface = enclosingDomain.exists {
+      case a: ConfigStructure.Atomic => a.isInterface
+      case _                         => false
+    }
+    val manualClassName = enclosingDomain.flatMap { ast =>
+      val enclosingElement = elements.getTypeElement(ast.name.canonicalName())
+      Option(typesUtil.getAnnotation(enclosingElement, classOf[Config]))
+        .filter(_.className().nonEmpty)
+        .map(_.className())
+    }.orNull
+    ASTParentReference(enclosingName, isInterface, manualClassName, parentRef)
+  }
+
+  private def createAbstractStructure(
+      ast: ConfigStructure,
+      element: TypeElement
+  ): AbstractConfigStructure = {
+    val name = ast.name
+    val configAnnotation = typesUtil.getAnnotation(element, classOf[Config])
+    val sourceAnnotation = typesUtil.getAnnotation(element, classOf[Source])
+    val namingPatternAnnotation =
+      typesUtil.getAnnotation(element, classOf[NamingPattern])
+    val astSettings = ASTSettings.ConfigASTSettings(
+      namingPatternAnnotation,
+      sourceAnnotation,
+      configAnnotation,
+      false
+    )
+    val enclosedIn = buildEnclosedIn(name)
+
+    val configTypeSource: ConfigTypeSource = if (element.getKind.isInterface) {
+      val parents = new java.util.ArrayList[TypeMirror]()
+      element.getInterfaces.forEach(parents.add)
+      ConfigTypeSource.InterfaceConfigTypeSource(element, parents)
+    } else {
+      val superclass = element.getSuperclass
+      val parentOpt =
+        if (
+          superclass.getKind != TypeKind.NONE && superclass.toString != "java.lang.Object"
+        ) {
+          java.util.Optional.of(superclass)
+        } else {
+          java.util.Optional.empty[TypeMirror]()
+        }
+      ConfigTypeSource.ClassConfigTypeSource(element, parentOpt)
+    }
+
+    // Get already-cached enclosed AbstractConfigStructures
+    val enclosedAst = new java.util.ArrayList[AbstractConfigStructure]()
+    for (enclosed <- ast.enclosed) {
+      configNameCache.lookupAST(enclosed.name).ifPresent(enclosedAst.add)
+    }
+
+    // Convert domain properties to AST properties
+    val astProperties = new java.util.ArrayList[ASTProperty]()
+    for (prop <- ast.properties) {
+      val propSource: ASTProperty.PropertySource =
+        if (prop.element.getKind.isField) {
+          ASTProperty.PropertySource.FieldSource(
+            prop.element.asInstanceOf[javax.lang.model.element.VariableElement]
+          )
+        } else {
+          ASTProperty.PropertySource.MethodSource(
+            prop.element
+              .asInstanceOf[javax.lang.model.element.ExecutableElement]
+          )
+        }
+      val fieldNamingPattern =
+        typesUtil.getAnnotation(prop.element, classOf[NamingPattern])
+      val effectiveNamingPattern =
+        if (fieldNamingPattern != null) fieldNamingPattern
+        else namingPatternAnnotation
+      val astPropSettings = ASTSettings.PropertyASTSettings(
+        effectiveNamingPattern,
+        typesUtil.getAnnotation(prop.element, classOf[ConfigName]),
+        typesUtil
+          .getAnnotation(prop.element, classOf[EnumParsingScheme]) match {
+          case null =>
+            me.bristermitten.mittenlib.config.EnumParsingSchemes.EXACT_MATCH
+          case a => a.value()
+        },
+        prop.isNullable,
+        prop.hasDefault,
+        new java.util.ArrayList[ValidationConstraint](),
+        new java.util.ArrayList[ValidationConstraint](),
+        new java.util.ArrayList[ValidationConstraint]()
+      )
+      astProperties.add(
+        ASTProperty(prop.name, prop.typeMirror, propSource, astPropSettings)
+      )
+    }
+
+    ast match {
+      case _: ConfigStructure.Union =>
+        AbstractConfigStructure.Union(
+          name,
+          configTypeSource,
+          astSettings,
+          enclosedIn,
+          new java.util.ArrayList[ClassName](),
+          enclosedAst,
+          astProperties
+        )
+      case i: ConfigStructure.Intersection =>
+        AbstractConfigStructure.Intersection(
+          name,
+          configTypeSource,
+          astSettings,
+          enclosedIn,
+          enclosedAst,
+          new java.util.ArrayList[ClassName](i.roots.asJava),
+          astProperties
+        )
+      case _ =>
+        AbstractConfigStructure.Atomic(
+          name,
+          configTypeSource,
+          astSettings,
+          enclosedAst,
+          enclosedIn,
+          astProperties
+        )
+    }
+  }
+
   private def putInCache(ast: ConfigStructure, element: TypeElement): Unit = {
-    configNameCache.put(ast)
+    // Put domain entry first so enclosed configs can find this parent in buildEnclosedIn
+    configNameCache.putDomain(ast)
+    // Cache enclosed configs (they need parent in domain cache for buildEnclosedIn)
+    for (enclosed <- ast.enclosed) {
+      val enclosedElement =
+        elements.getTypeElement(enclosed.name.canonicalName())
+      if (enclosedElement != null) {
+        putInCache(enclosed, enclosedElement)
+      }
+    }
+    // Create abstract AST after enclosed abstract ASTs are in cache
+    val abstractAst = createAbstractStructure(ast, element)
+    configNameCache.put(abstractAst)
     generatedTypeCache.put(
       element,
       classNameGenerator.getConcreteConfigClassName(ast).canonicalName()

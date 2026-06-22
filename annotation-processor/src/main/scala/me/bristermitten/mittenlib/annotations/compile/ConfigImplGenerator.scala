@@ -10,6 +10,7 @@ import javax.annotation.processing.Generated
 import javax.lang.model.element.{Modifier, TypeElement, Element}
 import javax.lang.model.`type`.TypeMirror
 import me.bristermitten.mittenlib.annotations.domain.*
+import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor
 import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder
@@ -80,7 +81,10 @@ class ConfigImplGenerator @Inject() (
     addNestedClassModifiers(ast, source)
     addProperties(ast, source)
     addSuperClassField(ast, source)
-    accessorGenerator.createWithMethods(source, ast)
+    configNameCache
+      .lookupAST(ast.name)
+      .toScala
+      .foreach(rawAst => accessorGenerator.createWithMethods(source, rawAst))
     addAllArgsConstructor(source, ast)
     addStandardObjectMethods(ast, configImplClassName, source)
     addChildClasses(ast, source)
@@ -150,16 +154,10 @@ class ConfigImplGenerator @Inject() (
             )
           }
         }
-      case ConfigStructure.Intersection(name, roots, _, _, _) =>
+      case ConfigStructure.Intersection(name, _, _, _, _) =>
         source.addSuperinterface(name)
-        for (root <- roots) {
-          source.addSuperinterface(root)
-        }
-      case ConfigStructure.Union(name, parents, _, _, _) =>
+      case ConfigStructure.Union(name, _, _, _, _) =>
         source.addSuperinterface(name)
-        for (parent <- parents) {
-          source.addSuperinterface(parent)
-        }
     }
 
   /** Adds {@link GeneratedConfig} and {@link Generated} annotations to the
@@ -228,20 +226,20 @@ class ConfigImplGenerator @Inject() (
     val propertiesJavaList =
       ast.properties.asJava // For toString/equals/hashCode generators
     // toString, equals, hashCode are always generated now
-    val toString = toStringGenerator.generateToString(
+    val toString = toStringGenerator.generateToStringDomain(
       propertiesJavaList,
       configImplClassName
     )
     source.addMethod(toString)
 
     source.addMethod(
-      equalsHashCodeGenerator.generateEquals(
+      equalsHashCodeGenerator.generateEqualsDomain(
         configImplClassName,
         propertiesJavaList
       )
     )
     source.addMethod(
-      equalsHashCodeGenerator.generateHashCode(propertiesJavaList)
+      equalsHashCodeGenerator.generateHashCodeDomain(propertiesJavaList)
     )
 
   /** Recursively adds implementation classes for enclosed configuration
@@ -336,7 +334,7 @@ class ConfigImplGenerator @Inject() (
 
   private def getParentConfig(
       ast: ConfigStructure
-  ): Option[(ClassName, ConfigStructure)] =
+  ): Option[(ClassName, AbstractConfigStructure)] =
     getSuperClass(ast).map { parent =>
       val parentConfig = configNameCache
         .lookupAST(parent)
@@ -395,17 +393,25 @@ class ConfigImplGenerator @Inject() (
     */
   private def buildSuperConstructorParams(
       parent: ClassName,
-      parentConfig: ConfigStructure,
+      parentConfig: AbstractConfigStructure,
       superParameterName: String
   ): List[String] =
-    val parentParams = parentConfig.properties
+    val parentParams = parentConfig
+      .properties()
+      .asScala
+      .toList
       .map(p => superParameterName + "." + methodNames.safeMethodName(p) + "()")
 
-    getSuperClass(parentConfig) match {
-      case Some(grandParent) =>
-        superParameterName :: parentParams
-      case None =>
-        parentParams
+    val grandParentExists = parentConfig.source() match {
+      case c: me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource.ClassConfigTypeSource =>
+        c.parentField.isPresent
+      case _ => false
+    }
+
+    if (grandParentExists) {
+      superParameterName :: parentParams
+    } else {
+      parentParams
     }
 
   /** Adds constructor parameters and initialization statements for all
@@ -437,13 +443,20 @@ class ConfigImplGenerator @Inject() (
       typeSpecBuilder: TypeSpec.Builder,
       ast: ConfigStructure
   ): JOptional[ClassName] =
-    ast match {
+    val isInterfaceWithDefaults = ast match {
       case ConfigStructure.Atomic(_, true, _, _, properties, _) =>
+        Some(properties)
+      case ConfigStructure.Intersection(_, _, _, properties, _) =>
+        Some(properties)
+      case _ => None
+    }
+    isInterfaceWithDefaults match {
+      case None             => JOptional.empty()
+      case Some(properties) =>
         val hasAnyDefaultValue = properties.exists(_.hasDefault)
         if (!hasAnyDefaultValue) {
           JOptional.empty()
         } else {
-          val dtoType = elements.getTypeElement(ast.name.canonicalName())
           val concreteConfigClassName =
             configurationClassNameGenerator.getConcreteConfigClassName(ast)
           val innerName =
@@ -479,6 +492,4 @@ class ConfigImplGenerator @Inject() (
           typeSpecBuilder.addType(innerBuilder.build())
           JOptional.of(innerName)
         }
-      case _ =>
-        JOptional.empty()
     }

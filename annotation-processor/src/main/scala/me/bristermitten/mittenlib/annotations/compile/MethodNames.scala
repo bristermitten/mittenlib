@@ -1,21 +1,25 @@
 package me.bristermitten.mittenlib.annotations.compile
 
 import com.google.inject.{Inject, Singleton}
-import java.util.{HashMap, HashSet, Map, Set}
+
 import javax.lang.model.element.{
   ExecutableElement,
   TypeElement,
   VariableElement
 }
 import me.bristermitten.mittenlib.annotations.ast.Property
+import me.bristermitten.mittenlib.annotations.domain.Property as DomainProperty
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder
 import me.bristermitten.mittenlib.util.Strings
+
+import scala.collection.mutable
 import scala.jdk.CollectionConverters.*
 
 @Singleton
 class MethodNames @Inject() (private val elementsFinder: ElementsFinder):
-  private val safeNameCache = new HashMap[VariableElement, String]()
-  private val methodNamesCache = new HashMap[VariableElement, Set[String]]()
+  private val safeNameCache = new mutable.HashMap[VariableElement, String]()
+  private val methodNamesCache =
+    new mutable.HashMap[VariableElement, mutable.Set[String]]()
 
   private val SERIALIZE_METHOD_PREFIX = "serialize"
   private val DESERIALIZE_METHOD_PREFIX = "deserialize"
@@ -24,15 +28,15 @@ class MethodNames @Inject() (private val elementsFinder: ElementsFinder):
       variableElement: VariableElement,
       enclosingClass: TypeElement
   ): String =
-    safeNameCache.computeIfAbsent(
+    safeNameCache.getOrElseUpdate(
       variableElement,
-      elem => safeMethodName0(elem, enclosingClass)
+      { safeMethodName0(variableElement, enclosingClass) }
     )
 
   def safeMethodName(property: Property): String =
     property.source() match {
       case fieldSource: Property.PropertySource.FieldSource =>
-        val field = fieldSource.element()
+        val field = fieldSource.elementField
         safeMethodName(
           field,
           field.getEnclosingElement.asInstanceOf[TypeElement]
@@ -41,13 +45,21 @@ class MethodNames @Inject() (private val elementsFinder: ElementsFinder):
         methodSource.element().getSimpleName.toString
     }
 
+  def safeMethodName(property: DomainProperty): String =
+    if (property.element.getKind.isField) {
+      val field = property.element.asInstanceOf[VariableElement]
+      safeMethodName(field, field.getEnclosingElement.asInstanceOf[TypeElement])
+    } else {
+      property.element.getSimpleName.toString
+    }
+
   private def safeMethodName0(
       variableElement: VariableElement,
       enclosingClass: TypeElement
   ): String =
-    val methodNames = methodNamesCache.computeIfAbsent(
+    val methodNames = methodNamesCache.getOrElseUpdate(
       variableElement,
-      _ => getNoArgMethodNames(enclosingClass)
+      { getNoArgMethodNames(enclosingClass) }
     )
     val name = new StringBuilder(variableElement.getSimpleName.toString)
     while (methodNames.contains(name.toString())) {
@@ -55,9 +67,11 @@ class MethodNames @Inject() (private val elementsFinder: ElementsFinder):
     }
     name.toString()
 
-  private def getNoArgMethodNames(enclosingClass: TypeElement): Set[String] =
-    val names = new HashSet[String]()
-    for (method <- elementsFinder.getAllMethods(enclosingClass).asScala) {
+  private def getNoArgMethodNames(
+      enclosingClass: TypeElement
+  ): mutable.Set[String] =
+    val names = new mutable.HashSet[String]()
+    for (method <- elementsFinder.getAllMethods(enclosingClass)) {
       if (method.getParameters.isEmpty) {
         names.add(method.getSimpleName.toString)
       }

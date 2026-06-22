@@ -16,7 +16,7 @@ import scala.collection.mutable
 class NameGenerator:
   private val counters = mutable.Map.empty[String, Int]
 
-  def generate(tpe: TypeRef, hint: Option[String] = None): Var =
+  def generate(tpe: TypeRef[?], hint: Option[String] = None): Var[Any] =
     val base = hint.filter(_.nonEmpty).getOrElse(deriveFromType(tpe))
     val clean = sanitize(base)
     val count = counters.getOrElse(clean, 0)
@@ -24,7 +24,7 @@ class NameGenerator:
     val name = if count == 0 then clean else s"$clean$count"
     Var(name, tpe)
 
-  private def deriveFromType(tpe: TypeRef): String =
+  private def deriveFromType(tpe: TypeRef[?]): String =
     val raw = tpe match
       case TypeRef.Simple(t) =>
         val s = t.toString

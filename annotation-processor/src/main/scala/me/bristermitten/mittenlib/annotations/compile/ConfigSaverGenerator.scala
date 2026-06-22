@@ -434,7 +434,7 @@ class ConfigSaverGenerator @Inject() (
       .getCustomInfo(tpe)
       .ifPresent(info => {
         if (!info.isStatic) {
-          val serializerClass = info.serializerClass()
+          val serializerClass = info.serializerClass
           val serializerClassName = ClassName.get(serializerClass)
           val fieldName = Strings.uncapitalize(
             serializerClass.getSimpleName.toString

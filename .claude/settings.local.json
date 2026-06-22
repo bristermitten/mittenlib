@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ./gradlew compileScala)",
+      "Bash(rtk grep *)",
+      "Bash(rtk git *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk ./gradlew :annotation-processor:compileScala)",
+      "Bash(rtk read *)",
+      "Bash(rtk ./gradlew :annotation-processor:compileJava)",
+      "Read(//tmp/**)",
+      "Bash(rtk ./gradlew :annotation-processor:test)",
+      "Bash(rtk find *)",
+      "Bash(rtk ./gradlew :annotation-processor:compileTestScala)",
+      "Bash(rtk ./gradlew :annotation-processor:compileTestJava)",
+      "Bash(rtk ./gradlew :annotation-processor:compileTestJava --info)",
+      "Bash(rtk ./gradlew :annotation-processor:compileTestJava --rerun-tasks)",
+      "Bash(jar tf *)",
+      "Bash(rtk ./gradlew :annotation-processor:jar --rerun-tasks)",
+      "Bash(rtk ./gradlew :annotation-processor:compileTestJava --rerun-tasks --stacktrace)",
+      "Bash(grep -v \"^\\\\[rtk\\\\]\\\\|^>\\\\|^$\")",
+      "Bash(rtk gradlew *)"
+    ]
+  }
+}

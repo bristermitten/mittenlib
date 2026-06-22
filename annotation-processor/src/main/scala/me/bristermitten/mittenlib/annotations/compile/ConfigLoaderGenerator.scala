@@ -176,7 +176,7 @@ class ConfigLoaderGenerator @Inject() (
 
     ast match {
       case union: AbstractConfigStructure.Union =>
-        for (alternative <- union.alternatives().asScala) {
+        for (alternative <- union.alternatives.asScala) {
           collectConfigTypes(
             alternative.source().element().asType(),
             injectedTypes,
@@ -252,7 +252,7 @@ class ConfigLoaderGenerator @Inject() (
       .getCustomInfo(tpe)
       .ifPresent(info => {
         if (!info.isStatic) {
-          val deserializerClass = info.deserializerClass()
+          val deserializerClass = info.deserializerClass
           val fieldName =
             Strings.uncapitalize(deserializerClass.getSimpleName.toString)
           val deserializerClassName = ClassName.get(deserializerClass)
@@ -314,7 +314,7 @@ class ConfigLoaderGenerator @Inject() (
         ast match {
           case union: AbstractConfigStructure.Union =>
             for (
-              (alternative, idx) <- union.alternatives().asScala.zipWithIndex
+              (alternative, idx) <- union.alternatives.asScala.zipWithIndex
             ) {
               val loaderFieldName =
                 classNameGenerator.getDeserializerProviderFieldName(
@@ -365,10 +365,10 @@ class ConfigLoaderGenerator @Inject() (
               None
             }
 
-            val constructorVars = new JArrayList[Var]()
+            val constructorVars = new JArrayList[Var[?]]()
             val superClass = ast.source() match {
               case c: ConfigTypeSource.ClassConfigTypeSource =>
-                if (c.parent().isPresent) Some(c.parent().get()) else None
+                if (c.parentField.isPresent) Some(c.parentField.get()) else None
               case _ => None
             }
 
@@ -415,7 +415,7 @@ class ConfigLoaderGenerator @Inject() (
                 case _ => TypeName.get(property.propertyType())
               }
 
-              val deserializeMethodArguments: List[Expr] =
+              val deserializeMethodArguments: List[Expr[?]] =
                 if (daoName != null && property.settings().hasDefaultValue()) {
                   List(context, daoVarOpt.get)
                 } else {
@@ -449,15 +449,12 @@ class ConfigLoaderGenerator @Inject() (
             if (configStructureAnalysis.needsValidation(ast)) {
               return_(
                 Expr
-                  .staticCall(
-                    Types.Result,
-                    "ok",
-                    constructorCall.cast(TypeRef.of(publicClassName))
-                  )
+                  .staticCall(Types.Result, "ok", constructorCall)
                   .call(
                     "flatMap",
                     Expr.methodRef(Expr.This.field("validator"), "validate")
                   )
+                  .cast(Types.Result(TypeRef.of(publicClassName)))
               )
             } else {
               return_(

@@ -15,6 +15,10 @@ import me.bristermitten.mittenlib.annotations.ast.ASTParentReference
 import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure
 import me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource
 import me.bristermitten.mittenlib.annotations.ast.Property
+import me.bristermitten.mittenlib.annotations.domain.{
+  ConfigStructure,
+  Property => DomainProperty
+}
 import me.bristermitten.mittenlib.config.Config
 import me.bristermitten.mittenlib.util.Strings
 import org.jspecify.annotations.Nullable
@@ -59,9 +63,9 @@ object ConfigurationClassNameGenerator:
 
   private def node(parent: ASTParentReference): NamingNode =
     NamingNode(
-      parent.parentClassName(),
-      parent.manualClassName(),
-      if (parent.parent() == null) null else node(parent.parent()),
+      parent.parentClassName,
+      parent.manualClassName,
+      if (parent.parent == null) null else node(parent.parent),
       parent.isInterface
     )
 
@@ -117,6 +121,29 @@ class ConfigurationClassNameGenerator @Inject() (
   def translateConfigClassName(ast: AbstractConfigStructure): ClassName =
     getImplClassName(node(ast))
 
+  def translateConfigClassName(ast: ConfigStructure): ClassName =
+    val manualName = configNameCache
+      .lookupAST(ast.name)
+      .toScala
+      .map(_.settings().config().className())
+      .filter(s => s != null && s.nonEmpty)
+    val simpleName = ast.name.simpleName()
+    val implSimpleName = manualName.getOrElse {
+      if (simpleName.endsWith("DTO")) simpleName.dropRight(3)
+      else simpleName + "Impl"
+    }
+    val enclosing = ast.name.enclosingClassName()
+    if (enclosing != null) {
+      configNameCache.lookupDomain(enclosing) match {
+        case Some(enclosingAst) =>
+          translateConfigClassName(enclosingAst).nestedClass(implSimpleName)
+        case None =>
+          ConfigurationClassNameGenerator.translateConfigClassName(ast.name)
+      }
+    } else {
+      ast.name.peerClass(implSimpleName)
+    }
+
   def getPublicClassName(ast: AbstractConfigStructure): ClassName =
     ast.source() match {
       case _: ConfigTypeSource.InterfaceConfigTypeSource => ast.name()
@@ -160,6 +187,9 @@ class ConfigurationClassNameGenerator @Inject() (
   def publicPropertyClassName(p: Property): TypeName =
     publicPropertyClassName(p.propertyType())
 
+  def publicPropertyClassName(p: DomainProperty): TypeName =
+    publicPropertyClassName(p.typeMirror)
+
   def publicPropertyClassName(mirror: TypeMirror): TypeName =
     getPropertyClassName(mirror, getPublicClassName, publicPropertyClassName)
 
@@ -192,26 +222,59 @@ class ConfigurationClassNameGenerator @Inject() (
   def getValidatorFieldName(property: Property): String =
     property.name() + VALIDATOR_SUFFIX
 
+  def getValidatorFieldName(property: DomainProperty): String =
+    property.name + VALIDATOR_SUFFIX
+
   def getValidatorElementFieldName(property: Property): String =
     property.name() + "Element" + VALIDATOR_SUFFIX
+
+  def getValidatorElementFieldName(property: DomainProperty): String =
+    property.name + "Element" + VALIDATOR_SUFFIX
 
   def getValidatorKeyFieldName(property: Property): String =
     property.name() + "Key" + VALIDATOR_SUFFIX
 
+  def getValidatorKeyFieldName(property: DomainProperty): String =
+    property.name + "Key" + VALIDATOR_SUFFIX
+
   def getValidatorErrorFieldName(property: Property): String =
     property.name() + "ValidationError"
+
+  def getValidatorErrorFieldName(property: DomainProperty): String =
+    property.name + "ValidationError"
 
   def getValidatorElementErrorFieldName(property: Property): String =
     property.name() + "ElementValidationError"
 
+  def getValidatorElementErrorFieldName(property: DomainProperty): String =
+    property.name + "ElementValidationError"
+
   def getValidatorKeyErrorFieldName(property: Property): String =
     property.name() + "KeyValidationError"
+
+  def getValidatorKeyErrorFieldName(property: DomainProperty): String =
+    property.name + "KeyValidationError"
 
   def getDefaultMethodAccessClassName(ast: AbstractConfigStructure): ClassName =
     val concreteConfigClassName = getConcreteConfigClassName(ast)
     concreteConfigClassName.nestedClass(
       ConfigurationClassNameGenerator
         .getCleanSimpleName(ast.name()) + DEFAULT_METHOD_ACCESS_SUFFIX
+    )
+
+  def getConcreteConfigClassName(ast: ConfigStructure): ClassName =
+    ast match {
+      case a: ConfigStructure.Atomic if !a.isInterface => a.name
+      case _ => translateConfigClassName(ast)
+    }
+
+  def getDefaultMethodAccessClassName(ast: ConfigStructure): ClassName =
+    val concreteConfigClassName = getConcreteConfigClassName(ast)
+    val simpleName = ast.name.simpleName()
+    val cleanName =
+      if (simpleName.endsWith("DTO")) simpleName.dropRight(3) else simpleName
+    concreteConfigClassName.nestedClass(
+      cleanName + DEFAULT_METHOD_ACCESS_SUFFIX
     )
 
   def getLoaderModuleClassName(packageName: String): ClassName =
@@ -234,6 +297,17 @@ class ConfigurationClassNameGenerator @Inject() (
       node(ast),
       n => getCleanSimpleName(n) + DESERIALIZER_SUFFIX
     )
+
+  def getDeserializerClassName(ast: ConfigStructure): ClassName =
+    configNameCache.lookupAST(ast.name).toScala match {
+      case Some(abstractAst) => getDeserializerClassName(abstractAst)
+      case None              =>
+        val simpleName = ast.name.simpleName()
+        val cleanName =
+          if (simpleName.endsWith("DTO")) simpleName.dropRight(3)
+          else simpleName
+        ast.name.peerClass(cleanName + DESERIALIZER_SUFFIX)
+    }
 
   def getDeserializerClassName(typeMirror: TypeMirror): ClassName =
     val ast = configNameCache
@@ -269,6 +343,30 @@ class ConfigurationClassNameGenerator @Inject() (
 
   def getValidatorClassName(ast: AbstractConfigStructure): ClassName =
     getRecursiveName(node(ast), n => getCleanSimpleName(n) + VALIDATOR_SUFFIX)
+
+  def getValidatorClassName(ast: ConfigStructure): ClassName =
+    val simpleName = ast.name.simpleName()
+    val cleanName =
+      if (simpleName.endsWith("DTO")) simpleName.dropRight(3) else simpleName
+    val baseName = cleanName + VALIDATOR_SUFFIX
+    val enclosing = ast.name.enclosingClassName()
+    if (enclosing != null) {
+      configNameCache.lookupDomain(enclosing) match {
+        case Some(enclosingAst) =>
+          getValidatorClassName(enclosingAst).nestedClass(baseName)
+        case None => enclosing.nestedClass(baseName)
+      }
+    } else {
+      ast.name.peerClass(baseName)
+    }
+
+  def getPublicClassName(ast: ConfigStructure): ClassName =
+    ast match {
+      case a: ConfigStructure.Atomic if a.isInterface => a.name
+      case _: ConfigStructure.Intersection            => ast.name
+      case _: ConfigStructure.Union                   => ast.name
+      case _ => translateConfigClassName(ast)
+    }
 
   def getInnerDaoName(ast: AbstractConfigStructure): ClassName =
     ast.source() match {

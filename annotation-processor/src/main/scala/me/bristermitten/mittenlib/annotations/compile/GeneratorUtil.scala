@@ -36,10 +36,10 @@ object GeneratorUtil:
   def getPropertyAccess(
       ast: AbstractConfigStructure,
       property: Property,
-      configExpr: me.bristermitten.mittenlib.codegen.dsl.Expr,
+      configExpr: me.bristermitten.mittenlib.codegen.dsl.Expr[?],
       methodNames: MethodNames,
       useGetters: Boolean
-  ): me.bristermitten.mittenlib.codegen.dsl.Expr =
+  ): me.bristermitten.mittenlib.codegen.dsl.Expr[?] =
     ast.source() match {
       case _: ConfigTypeSource.InterfaceConfigTypeSource =>
         configExpr.call(property.name())
@@ -64,7 +64,7 @@ object GeneratorUtil:
       fieldNameGenerator: FieldNameGenerator
   )(using
       me.bristermitten.mittenlib.codegen.dsl.BlockBuilder
-  ): me.bristermitten.mittenlib.codegen.dsl.Var =
+  ): me.bristermitten.mittenlib.codegen.dsl.Var[?] =
     import me.bristermitten.mittenlib.codegen.dsl.*
     import me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
     import me.bristermitten.mittenlib.codegen.dsl.given

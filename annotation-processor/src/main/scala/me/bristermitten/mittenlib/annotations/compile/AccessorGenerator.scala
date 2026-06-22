@@ -181,7 +181,7 @@ class AccessorGenerator @Inject() (
 
           ast.source() match {
             case classSource: ConfigTypeSource.ClassConfigTypeSource
-                if classSource.parent().isPresent =>
+                if classSource.parentField.isPresent =>
               val joiner = new StringJoiner(", ").add("this.parent")
               if (constructorParams.nonEmpty) {
                 joiner.add(constructorParams)

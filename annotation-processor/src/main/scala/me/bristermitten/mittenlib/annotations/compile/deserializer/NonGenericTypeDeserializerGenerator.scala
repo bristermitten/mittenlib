@@ -49,8 +49,8 @@ class NonGenericTypeDeserializerGenerator @Inject() (
   private def getDeserializationFunction(
       context: StagedExpr[DeserializationContext],
       info: CustomDeserializerInfo,
-      withDataExpression: Expr
-  ): Expr =
+      withDataExpression: Expr[?]
+  ): Expr[?] =
     if (info.isStatic) {
       Expr.staticCall(
         TypeRef.of(ClassName.get(info.deserializerClass)),
@@ -72,8 +72,8 @@ class NonGenericTypeDeserializerGenerator @Inject() (
   def dataTreeConvert(
       tpe: TypeName,
       dataTreeType: TypeName,
-      value: Expr
-  ): Expr =
+      value: Expr[?]
+  ): Expr[?] =
     val targetType = if (tpe.isBoxedPrimitive) tpe.unbox() else tpe
     if (
       dataTreeType == ClassName.get(
@@ -106,7 +106,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
       dtoType: TypeElement,
       elementType: TypeMirror,
       wrappedElementType: TypeMirrorWrapper,
-      fromMap: Expr,
+      fromMap: Expr[?],
       context: StagedExpr[DeserializationContext],
       safeType: TypeName
   )(using BlockBuilder): Block[Terminated] =
@@ -124,12 +124,12 @@ class NonGenericTypeDeserializerGenerator @Inject() (
 
     // 3.2 DataTree Type Match
     val treeTypeOpt = typesUtil.getDataTreeType(safeType)
-    if (treeTypeOpt.isPresent) {
-      val treeType = TypeRef.of(treeTypeOpt.get())
+    if (treeTypeOpt.isDefined) {
+      val treeType = TypeRef.of(treeTypeOpt.get)
       ifThen(fm.instanceOf(treeType)) {
         val convert = dataTreeConvert(
           safeType,
-          treeTypeOpt.get(),
+          treeTypeOpt.get,
           (~fm.cast(treeType))
             .as[DataTree]
             .value
@@ -344,9 +344,9 @@ class NonGenericTypeDeserializerGenerator @Inject() (
 
   private def addEnumDeserialisation(
       property: Property,
-      fromMap: Expr,
+      fromMap: Expr[?],
       safeType: TypeName,
-      convert: Expr
+      convert: Expr[?]
   )(using BlockBuilder): Block[Terminated] =
     val safeTypeRef = TypeRef.of(safeType)
     val fm = ~fromMap

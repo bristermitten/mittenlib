@@ -22,6 +22,10 @@ import me.bristermitten.mittenlib.config.tree.{DataTree, DataTreeTransforms}
 import me.bristermitten.mittenlib.util.Strings
 import scala.jdk.CollectionConverters.*
 
+import me.bristermitten.mittenlib.annotations.domain.{
+  ConfigStructure => DomainConfigStructure
+}
+
 import _root_.me.bristermitten.mittenlib.codegen.dsl.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.given
@@ -39,6 +43,9 @@ class SerializationCodeGenerator @Inject() (
       .asScala
       .forall(property => !propertyIsUnserializable(property))
 
+  def isSerializationSupported(ast: DomainConfigStructure): Boolean =
+    ast.properties.forall(property => !domainPropertyIsUnserializable(property))
+
   def getUnsupportedSerializationProperties(
       ast: AbstractConfigStructure
   ): java.util.List[String] =
@@ -49,6 +56,52 @@ class SerializationCodeGenerator @Inject() (
       }
     }
     unsupported
+
+  def getUnsupportedSerializationProperties(
+      ast: DomainConfigStructure
+  ): java.util.List[String] =
+    val unsupported = new ArrayList[String]()
+    for (property <- ast.properties) {
+      if (domainPropertyIsUnserializable(property)) {
+        unsupported.add(property.name + " (" + property.typeMirror + ")")
+      }
+    }
+    unsupported
+
+  private def domainPropertyIsUnserializable(
+      property: me.bristermitten.mittenlib.annotations.domain.Property
+  ): Boolean =
+    val propertyTypeMirror = property.typeMirror
+    if (
+      typesUtil.getAnnotation(
+        property.element,
+        classOf[UseObjectMapperSerialization]
+      ) != null
+    ) {
+      return false
+    }
+    val wrappedType = TypeMirrorWrapper.wrap(propertyTypeMirror)
+    if (typesUtil.isNewtype(propertyTypeMirror)) {
+      return false // domain properties don't carry underlying type info easily; treat as serializable
+    }
+    if (wrappedType.hasTypeArguments) {
+      val canonicalName = wrappedType.erasure().getQualifiedName()
+      if (
+        typesUtil.isCollection(propertyTypeMirror) || canonicalName == classOf[
+          java.util.Map[?, ?]
+        ].getName
+      ) {
+        return false // collections are serializable at domain level
+      }
+      return true
+    }
+    if (typesUtil.isConfigType(propertyTypeMirror)) {
+      return false
+    }
+    if (isKnownSerializableType(wrappedType)) {
+      return false
+    }
+    customSerializers.getCustomInfo(propertyTypeMirror).isEmpty
 
   private def propertyIsUnserializable(property: Property): Boolean =
     val propertyTypeMirror = property.propertyType()
@@ -210,7 +263,7 @@ class SerializationCodeGenerator @Inject() (
     }
 
     if (
-      typesUtil.getDataTreeType(TypeName.get(wrappedType.unwrap())).isPresent
+      typesUtil.getDataTreeType(TypeName.get(wrappedType.unwrap())).isDefined
     ) {
       return true
     }
@@ -220,9 +273,13 @@ class SerializationCodeGenerator @Inject() (
     }
     wrappedType.isEnum
 
-  private def generateSerialization(tpe: TypeMirror, input: Expr, depth: Int)(
-      using BlockBuilder
-  ): Expr =
+  private def generateSerialization(
+      tpe: TypeMirror,
+      input: Expr[?],
+      depth: Int
+  )(using
+      BlockBuilder
+  ): Expr[?] =
     val wrappedType = TypeMirrorWrapper.wrap(tpe)
 
     // Custom Serializer

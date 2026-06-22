@@ -23,7 +23,6 @@ dependencies {
     implementation(libs.aptk.compilermessages.api)
     implementation(libs.aptk.annotationwrapper.api)
     annotationProcessor(libs.aptk.compilermessages.processor)
-    annotationProcessor(libs.aptk.annotationwrapper.processor)
     implementation(libs.bundles.autoservice)
     implementation(libs.chalk)
     @Suppress(
@@ -33,6 +32,7 @@ dependencies {
     implementation(libs.gson)
 
     implementation(libs.guice)
+    implementation(libs.cats.core)
 
     implementation(libs.jspecify)
     implementation(libs.jetbrains.annotations)
@@ -41,6 +41,10 @@ dependencies {
     testImplementation(libs.cute)
     testImplementation(libs.mockito.core)
     testImplementation(libs.compile.testing)
+    testImplementation(libs.scalatest)
+    testImplementation(libs.scalatestplus.junit5)
+    testImplementation(libs.munit)
+    testRuntimeOnly(libs.munit)
 
     // we use these to test our compatibility with the actual annotations
     implementation("jakarta.validation:jakarta.validation-api:3.1.1")
@@ -51,7 +55,8 @@ dependencies {
 sourceSets {
     main {
         scala {
-            srcDirs("src/main/scala", "src/main/java")
+            srcDirs("src/main/scala", "src/main/java", "src/main/generated")
+            exclude("**/ASTVerifier.java", "**/ConfigClassParser.java")
         }
     }
 }

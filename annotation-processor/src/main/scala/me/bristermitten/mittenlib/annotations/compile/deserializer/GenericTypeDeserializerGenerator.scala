@@ -46,7 +46,7 @@ class GenericTypeDeserializerGenerator @Inject() (
       property: Property,
       tpe: TypeMirror,
       depth: Int
-  ): Expr =
+  ): Expr[?] =
     val wrapped = TypeMirrorWrapper.wrap(tpe)
     val customDeserializerOptional = customDeserializers.getCustomInfo(tpe)
     if (customDeserializerOptional.isPresent) {

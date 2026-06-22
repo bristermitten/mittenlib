@@ -255,9 +255,13 @@ class ConfigLoaderModuleGenerator @Inject() (
           "serializer"
         )
         .addStatement(
-          "return ($T) improver.improve(factory.createProvider($T.CONFIG, deserializer, serializer).getOrThrow())",
+          "return ($T) improver.improve(factory.createProvider(($T)(Object)$T.CONFIG, deserializer, serializer).getOrThrow())",
           ParameterizedTypeName.get(
             ClassName.get(classOf[SaveableConfigProvider[?]]),
+            publicClassName
+          ),
+          ParameterizedTypeName.get(
+            ClassName.get(classOf[Configuration[?]]),
             publicClassName
           ),
           implClassName

@@ -10,10 +10,11 @@ import scala.jdk.CollectionConverters.*
 /** Reference to a Java type. Wraps JavaPoet's TypeName with a richer factory
   * API.
   */
-enum TypeRef:
-  case Simple(typeName: TypeName)
-  case Parameterized(raw: ClassName, typeArgs: List[TypeRef])
-  case ArrayOf(componentType: TypeRef)
+enum TypeRef[+T]:
+  case Simple(typeName: TypeName) extends TypeRef[Nothing]
+  case Parameterized(raw: ClassName, typeArgs: List[TypeRef[?]])
+      extends TypeRef[Nothing]
+  case ArrayOf(componentType: TypeRef[?]) extends TypeRef[Nothing]
 
   def toTypeName: TypeName = this match
     case Simple(t)            => t
@@ -21,31 +22,32 @@ enum TypeRef:
       ParameterizedTypeName.get(r, as.map(_.toTypeName)*)
     case ArrayOf(c) => ArrayTypeName.of(c.toTypeName)
 
-  def apply(args: TypeRef*): TypeRef = this match
+  def apply(args: TypeRef[?]*): TypeRef[Any] = this match
     case Simple(t: ClassName) => Parameterized(t, args.toList)
     case _ => throw IllegalArgumentException(s"Cannot parameterize $this")
 
-  def array: TypeRef = ArrayOf(this)
+  def array: TypeRef[Any] = ArrayOf(this)
 
 object TypeRef:
-  def of(cls: Class[?]): TypeRef = Simple(ClassName.get(cls))
+  def of[T](cls: Class[T]): TypeRef[T] =
+    Simple(ClassName.get(cls)).asInstanceOf[TypeRef[T]]
 
-  def of(name: TypeName): TypeRef = Simple(name)
+  def of(name: TypeName): TypeRef[Any] = Simple(name)
 
-  def of(name: ClassName): TypeRef = Simple(name)
+  def of(name: ClassName): TypeRef[Any] = Simple(name)
 
-  def of(name: TypeElement): TypeRef = Simple(ClassName.get(name))
+  def of(name: TypeElement): TypeRef[Any] = Simple(ClassName.get(name))
 
-  def of(pkg: String, n: String): TypeRef = Simple(ClassName.get(pkg, n))
+  def of(pkg: String, n: String): TypeRef[Any] = Simple(ClassName.get(pkg, n))
 
 // ─── Var ──────────────────────────────────────────────────────────────────────
 
 /** A handle to a declared variable. Implements Expr so it's usable directly in
   * expression contexts: `myVar.call("toString")`, `ResultExpr.ok(myVar)`, etc.
   */
-case class Var(generatedName: String, tpe: TypeRef) extends Expr:
+case class Var[+T](generatedName: String, tpe: TypeRef[T]) extends Expr[T]:
   /** Use this Var as an expression — identity, but reads clearly in chains. */
-  def ref: Expr = this
+  def ref: Expr[T] = this
 
 // ─── Expr ─────────────────────────────────────────────────────────────────────
 
@@ -55,109 +57,116 @@ case class Var(generatedName: String, tpe: TypeRef) extends Expr:
   *
   * Since [[Var]] extends [[Expr]], variables are first-class expressions.
   */
-sealed trait Expr:
-  def call(method: String, args: Expr*): Expr =
+sealed trait Expr[+T]:
+  def call(method: String, args: Expr[?]*): Expr[Any] =
     Expr.MethodCall(this, method, args.toList)
 
-  def field(name: String): Expr = Expr.FieldAccess(this, name)
+  def field(name: String): Expr[Any] = Expr.FieldAccess(this, name)
 
-  def cast(t: TypeRef): Expr = Expr.Cast(t, this)
+  def cast(t: TypeRef[?]): Expr[Any] = Expr.Cast(t, this)
 
-  def ===(other: Expr): Expr = Expr.BinaryOp(this, "==", other)
+  def ===(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, "==", other)
 
-  def !==(other: Expr): Expr = Expr.BinaryOp(this, "!=", other)
+  def !==(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, "!=", other)
 
-  def isNull: Expr = Expr.BinaryOp(this, "==", Expr.Null)
+  def isNull: Expr[Boolean] = Expr.BinaryOp(this, "==", Expr.Null)
 
-  def isNotNull: Expr = Expr.BinaryOp(this, "!=", Expr.Null)
+  def isNotNull: Expr[Boolean] = Expr.BinaryOp(this, "!=", Expr.Null)
 
-  def <(other: Expr): Expr = Expr.BinaryOp(this, "<", other)
+  def <(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, "<", other)
 
-  def <=(other: Expr): Expr = Expr.BinaryOp(this, "<=", other)
+  def <=(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, "<=", other)
 
-  def >(other: Expr): Expr = Expr.BinaryOp(this, ">", other)
+  def >(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, ">", other)
 
-  def >=(other: Expr): Expr = Expr.BinaryOp(this, ">=", other)
+  def >=(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, ">=", other)
 
-  def &&(other: Expr): Expr = Expr.BinaryOp(this, "&&", other)
+  def &&(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, "&&", other)
 
-  def ||(other: Expr): Expr = Expr.BinaryOp(this, "||", other)
+  def ||(other: Expr[?]): Expr[Boolean] = Expr.BinaryOp(this, "||", other)
 
-  def unary_! : Expr = Expr.UnaryOp("!", this)
+  def unary_! : Expr[Boolean] = Expr.UnaryOp("!", this)
 
-  def instanceOf(t: TypeRef): Expr = Expr.InstanceOf(this, t)
+  def instanceOf(t: TypeRef[?]): Expr[Boolean] = Expr.InstanceOf(this, t)
 
 object Expr:
   // Leaves
-  case class Literal(rendered: String) extends Expr
+  case class Literal(rendered: String) extends Expr[Nothing]
 
-  case object Null extends Expr
+  case object Null extends Expr[Nothing]
 
-  case class BoolLit(value: Boolean) extends Expr
+  case class BoolLit(value: Boolean) extends Expr[Boolean]
 
-  case object This extends Expr
+  case object This extends Expr[Nothing]
 
-  case object Super extends Expr
+  case object Super extends Expr[Nothing]
 
   // Composite
-  case class MethodCall(receiver: Expr, method: String, args: List[Expr])
-      extends Expr
+  case class MethodCall(receiver: Expr[?], method: String, args: List[Expr[?]])
+      extends Expr[Any]
 
-  case class StaticCall(tpe: TypeRef, method: String, args: List[Expr])
-      extends Expr
+  case class StaticCall(tpe: TypeRef[?], method: String, args: List[Expr[?]])
+      extends Expr[Any]
 
-  case class FieldAccess(receiver: Expr, fieldName: String) extends Expr
+  case class FieldAccess(receiver: Expr[?], fieldName: String) extends Expr[Any]
 
-  case class StaticField(tpe: TypeRef, fieldName: String) extends Expr
+  case class StaticField(tpe: TypeRef[?], fieldName: String) extends Expr[Any]
 
-  case class MethodRef(receiver: Expr, method: String) extends Expr
+  case class MethodRef(receiver: Expr[?], method: String) extends Expr[Any]
 
-  case class StaticMethodRef(tpe: TypeRef, method: String) extends Expr
+  case class StaticMethodRef(tpe: TypeRef[?], method: String) extends Expr[Any]
 
-  case class NewInstance(tpe: TypeRef, args: List[Expr]) extends Expr
+  case class NewInstance(tpe: TypeRef[?], args: List[Expr[?]]) extends Expr[Any]
 
-  case class NewAnonymousInstance(tpe: TypeRef, args: List[Expr]) extends Expr
+  case class NewAnonymousInstance(tpe: TypeRef[?], args: List[Expr[?]])
+      extends Expr[Any]
 
-  case class Cast(tpe: TypeRef, expr: Expr) extends Expr
+  case class Cast(tpe: TypeRef[?], expr: Expr[?]) extends Expr[Any]
 
-  case class InstanceOf(expr: Expr, tpe: TypeRef) extends Expr
+  case class InstanceOf(expr: Expr[?], tpe: TypeRef[?]) extends Expr[Boolean]
 
-  case class Ternary(cond: Expr, ifTrue: Expr, ifFalse: Expr) extends Expr
+  case class Ternary(cond: Expr[?], ifTrue: Expr[?], ifFalse: Expr[?])
+      extends Expr[Any]
 
-  case class BinaryOp(left: Expr, op: String, right: Expr) extends Expr
+  case class BinaryOp(left: Expr[?], op: String, right: Expr[?])
+      extends Expr[Boolean]
 
-  case class UnaryOp(op: String, operand: Expr) extends Expr
+  case class UnaryOp(op: String, operand: Expr[?]) extends Expr[Boolean]
 
   // Lambdas
-  case class Lambda(params: List[Var], body: Block[?]) extends Expr
+  case class Lambda(params: List[Var[?]], body: Block[?]) extends Expr[Any]
 
-  case class LambdaExpr(params: List[Var], body: Expr) extends Expr
+  case class LambdaExpr(params: List[Var[?]], body: Expr[?]) extends Expr[Any]
 
   // Factories
-  def str(s: String): Expr = Literal(s"\"$s\"")
+  def str(s: String): Expr[String] =
+    Literal(s"\"$s\"").asInstanceOf[Expr[String]]
 
-  def int(n: Int): Expr = Literal(n.toString)
+  def int(n: Int): Expr[Int] = Literal(n.toString).asInstanceOf[Expr[Int]]
 
-  def bool(b: Boolean): Expr = BoolLit(b)
+  def bool(b: Boolean): Expr[Boolean] = BoolLit(b)
 
-  def staticCall(t: TypeRef, m: String, args: Expr*): Expr =
+  def staticCall(t: TypeRef[?], m: String, args: Expr[?]*): Expr[Any] =
     StaticCall(t, m, args.toList)
 
-  def new_(t: TypeRef, args: Expr*): Expr = NewInstance(t, args.toList)
+  def new_(t: TypeRef[?], args: Expr[?]*): Expr[Any] =
+    NewInstance(t, args.toList)
 
-  def newAnonymous(t: TypeRef, args: Expr*): Expr =
+  def newAnonymous(t: TypeRef[?], args: Expr[?]*): Expr[Any] =
     NewAnonymousInstance(t, args.toList)
 
-  def staticField(t: TypeRef, f: String): Expr = StaticField(t, f)
+  def staticField(t: TypeRef[?], f: String): Expr[Any] = StaticField(t, f)
 
-  def methodRef(receiver: Expr, method: String): Expr =
+  def methodRef(receiver: Expr[?], method: String): Expr[Any] =
     MethodRef(receiver, method)
 
-  def staticMethodRef(t: TypeRef, m: String): Expr = StaticMethodRef(t, m)
+  def staticMethodRef(t: TypeRef[?], m: String): Expr[Any] =
+    StaticMethodRef(t, m)
 
-  def lambda(body: Block[?], params: Var*): Expr = Lambda(params.toList, body)
+  def lambda(body: Block[?], params: Var[?]*): Expr[Any] =
+    Lambda(params.toList, body)
 
-  def lambdaExpr(body: Expr, params: Var*): Expr =
+  def lambdaExpr(body: Expr[?], params: Var[?]*): Expr[Any] =
     LambdaExpr(params.toList, body)
 
 // ─── Block & Terminator ───────────────────────────────────────────────────────
@@ -189,38 +198,42 @@ object Block:
 sealed trait Terminator
 
 object Terminator:
-  case class Return(value: Expr) extends Terminator
+  case class Return(value: Expr[?]) extends Terminator
 
   case object ReturnVoid extends Terminator
 
-  case class Throw(expr: Expr) extends Terminator
+  case class Throw(expr: Expr[?]) extends Terminator
 
 // ─── Statement ────────────────────────────────────────────────────────────────
 
 sealed trait Statement
 
 object Statement:
-  case class DeclareAssign(variable: Var, value: Expr) extends Statement
+  case class DeclareAssign(variable: Var[?], value: Expr[?]) extends Statement
 
-  case class Assign(target: Expr, value: Expr) extends Statement
+  case class Assign(target: Expr[?], value: Expr[?]) extends Statement
 
-  case class ExprStatement(expr: Expr) extends Statement
+  case class ExprStatement(expr: Expr[?]) extends Statement
 
-  case class IfThen(cond: Expr, body: Block[?]) extends Statement
+  case class IfThen(cond: Expr[?], body: Block[?]) extends Statement
 
-  case class IfThenElse(cond: Expr, thenBlock: Block[?], elseBlock: Block[?])
+  case class IfThenElse(cond: Expr[?], thenBlock: Block[?], elseBlock: Block[?])
       extends Statement
 
-  case class ForEach(element: Var, iterable: Expr, body: Block[?])
+  case class ForEach(element: Var[?], iterable: Expr[?], body: Block[?])
       extends Statement
 
-  case class ForLoop(init: Statement, cond: Expr, update: Expr, body: Block[?])
-      extends Statement
+  case class ForLoop(
+      init: Statement,
+      cond: Expr[?],
+      update: Expr[?],
+      body: Block[?]
+  ) extends Statement
 
   case class TryCatch(
       tryBody: Block[?],
-      exType: TypeRef,
-      exVar: Var,
+      exType: TypeRef[?],
+      exVar: Var[?],
       catchBody: Block[?]
   ) extends Statement
 
@@ -232,14 +245,33 @@ object Statement:
 
 case class FieldDecl(
     name: String,
-    tpe: TypeRef,
-    modifiers: List[Modifier] = Nil
+    tpe: TypeRef[?],
+    modifiers: List[Modifier] = Nil,
+    initializer: Option[Expr[?]] = None,
+    annotations: List[AnnotationSpec] = Nil,
+    javadoc: Option[String] = None
 )
+
+case class ConstructorDecl(
+    parameters: List[Var[?]],
+    modifiers: List[Modifier] = Nil,
+    annotations: List[AnnotationSpec] = Nil,
+    body: Block[?]
+)
+
+object ConstructorDecl:
+  def build[S](
+      parameters: List[Var[?]],
+      modifiers: List[Modifier] = Nil,
+      annotations: List[AnnotationSpec] = Nil
+  )(body: BlockBuilder ?=> Block[S]): ConstructorDecl =
+    val block = BlockBuilder.build(body)
+    ConstructorDecl(parameters, modifiers, annotations, block)
 
 case class MethodDecl(
     name: String,
-    returnType: TypeRef,
-    parameters: List[Var],
+    returnType: TypeRef[?],
+    parameters: List[Var[?]],
     modifiers: List[Modifier] = Nil,
     annotations: List[AnnotationSpec] = Nil,
     body: Block[?]
@@ -248,8 +280,8 @@ case class MethodDecl(
 object MethodDecl:
   def build[S](
       name: String,
-      returnType: TypeRef,
-      parameters: List[Var],
+      returnType: TypeRef[?],
+      parameters: List[Var[?]],
       modifiers: List[Modifier] = Nil,
       annotations: List[AnnotationSpec] = Nil
   )(body: BlockBuilder ?=> Block[S]): MethodDecl =
@@ -260,7 +292,12 @@ case class ClassDecl(
     packageName: String,
     name: String,
     modifiers: List[Modifier] = Nil,
-    superinterfaces: List[TypeRef] = Nil,
+    annotations: List[AnnotationSpec] = Nil,
+    superclass: Option[TypeRef[?]] = None,
+    superinterfaces: List[TypeRef[?]] = Nil,
+    constructors: List[ConstructorDecl] = Nil,
     fields: List[FieldDecl] = Nil,
-    methods: List[MethodDecl] = Nil
+    methods: List[MethodDecl] = Nil,
+    nestedTypes: List[ClassDecl] = Nil,
+    extraMethods: List[MethodSpec] = Nil
 )

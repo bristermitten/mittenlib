@@ -107,13 +107,13 @@ object CodeBlockRenderer:
 
   // ─── Expressions ────────────────────────────────────────────────────────────
 
-  def renderExpr(expr: Expr): CodeBlock = expr match
+  def renderExpr(expr: Expr[?]): CodeBlock = expr match
     case Expr.Literal(r) => CodeBlock.of("$L", r)
     case Expr.Null       => CodeBlock.of("null")
     case Expr.BoolLit(v) => CodeBlock.of("$L", v.toString)
     case Expr.This       => CodeBlock.of("this")
     case Expr.Super      => CodeBlock.of("super")
-    case v: Var          => CodeBlock.of("$L", v.generatedName)
+    case v: Var[?]       => CodeBlock.of("$L", v.generatedName)
 
     case Expr.MethodCall(recv, method, args) =>
       val argsBlock = joinExprs(args)
@@ -165,7 +165,7 @@ object CodeBlockRenderer:
 
     case Expr.UnaryOp(op, operand) =>
       operand match {
-        case _: Var | _: Expr.Literal | _: Expr.BoolLit | Expr.Null |
+        case _: Var[?] | _: Expr.Literal | _: Expr.BoolLit | Expr.Null |
             Expr.This | Expr.Super =>
           CodeBlock.of("$L$L", op, renderExpr(operand))
         case _ =>
@@ -279,7 +279,7 @@ object CodeBlockRenderer:
     case Terminator.ReturnVoid => b.add("return;\n")
     case Terminator.Throw(e)   => b.add("throw $L;\n", renderExpr(e))
 
-  private def joinExprs(args: List[Expr]): CodeBlock =
+  private def joinExprs(args: List[Expr[?]]): CodeBlock =
     args
       .map(renderExpr)
       .asJava
@@ -305,22 +305,55 @@ object CodeBlockRenderer:
     builder.addCode(bodyBlock)
     builder.build()
 
+  def renderConstructor(decl: ConstructorDecl): MethodSpec =
+    val builder = MethodSpec
+      .constructorBuilder()
+      .addModifiers(decl.modifiers*)
+    for (ann <- decl.annotations) {
+      builder.addAnnotation(ann)
+    }
+    for (param <- decl.parameters) {
+      builder.addParameter(param.tpe.toTypeName, param.generatedName)
+    }
+    val bodyBlock = render(decl.body)
+    builder.addCode(bodyBlock)
+    builder.build()
+
+  def renderField(field: FieldDecl): FieldSpec =
+    val builder =
+      FieldSpec.builder(field.tpe.toTypeName, field.name, field.modifiers*)
+    for (ann <- field.annotations) {
+      builder.addAnnotation(ann)
+    }
+    field.javadoc.foreach(text => builder.addJavadoc(text))
+    field.initializer.foreach(init => builder.initializer(renderExpr(init)))
+    builder.build()
+
   def renderClass(decl: ClassDecl): TypeSpec =
     val builder = TypeSpec
       .classBuilder(decl.name)
       .addModifiers(decl.modifiers*)
+    for (ann <- decl.annotations) {
+      builder.addAnnotation(ann)
+    }
+    decl.superclass.foreach(sc => builder.superclass(sc.toTypeName))
     for (superinterface <- decl.superinterfaces) {
       builder.addSuperinterface(superinterface.toTypeName)
     }
+    for (constructor <- decl.constructors) {
+      builder.addMethod(renderConstructor(constructor))
+    }
     for (field <- decl.fields) {
-      builder.addField(
-        FieldSpec
-          .builder(field.tpe.toTypeName, field.name, field.modifiers*)
-          .build()
-      )
+      builder.addField(renderField(field))
     }
     for (method <- decl.methods) {
       builder.addMethod(renderMethod(method))
+    }
+    for (nested <- decl.nestedTypes) {
+      builder.addType(renderClass(nested))
+    }
+    for (extra <- decl.extraMethods) {
+      builder.addMethod(extra)
     }
     builder.build()
 
