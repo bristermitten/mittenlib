@@ -1,7 +1,6 @@
 package me.bristermitten.mittenlib.annotations.compile.deserializer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.palantir.javapoet.MethodSpec;
 import io.toolisticon.aptk.common.ToolingProvider;
@@ -26,11 +25,11 @@ import org.junit.jupiter.api.Test;
 class GenericTypeDeserializerGeneratorTest {
 
     @Test
-    void testUnexpectedGenericTypeThrowsException() {
+    void testOptionalGenericType() {
         Cute.unitTest()
                 .when()
                 .passInElement()
-                .<TypeElement>fromSourceString("me.bristermitten.mittenlib.tests.UnexpectedGenericConfig", """
+                .<TypeElement>fromSourceString("me.bristermitten.mittenlib.tests.OptionalGenericConfig", """
                         package me.bristermitten.mittenlib.tests;
                         import me.bristermitten.mittenlib.config.Config;
                         import io.toolisticon.cute.PassIn;
@@ -38,7 +37,7 @@ class GenericTypeDeserializerGeneratorTest {
 
                         @Config
                         @PassIn
-                        public class UnexpectedGenericConfig {
+                        public class OptionalGenericConfig {
                             public Optional<String> optionalField;
                         }
                         """)
@@ -68,13 +67,13 @@ class GenericTypeDeserializerGeneratorTest {
                     TypeElementWrapper typeElementWrapper = TypeElementWrapper.wrap(
                             (TypeElement) processingEnvironment.getTypeUtils().asElement(field.asType()));
 
-                    assertThatThrownBy(() ->
-                                    generator.handleGenericType(null, element, property, wrapper, typeElementWrapper))
-                            .isInstanceOf(IllegalStateException.class)
-                            .hasMessageContaining("Unexpected generic type: java.util.Optional");
+                    var builder = MethodSpec.methodBuilder("temp");
+                    var result = generator.handleGenericType(builder, element, property, wrapper, typeElementWrapper);
+                    assertThat(result).isPresent();
+                    assertThat(builder.build().code().toString()).isNotBlank();
                 })
                 .thenExpectThat()
-                .compilationFails()
+                .compilationSucceeds()
                 .executeTest();
     }
 

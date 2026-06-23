@@ -22,6 +22,9 @@ import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers;
 import me.bristermitten.mittenlib.annotations.util.TypesUtil;
 import me.bristermitten.mittenlib.config.CollectionsUtils;
 import me.bristermitten.mittenlib.config.DeserializationFunction;
+import me.bristermitten.mittenlib.config.tree.DataTree;
+import me.bristermitten.mittenlib.config.tree.DataTreeTransforms;
+import me.bristermitten.mittenlib.util.Result;
 import me.bristermitten.mittenlib.util.Strings;
 
 /**
@@ -105,7 +108,7 @@ public class GenericTypeDeserializerGenerator {
                 .asError()
                 .check($ -> AptkCoreMatchers.BY_RAW_TYPE
                         .getValidator()
-                        .hasOneOf(elementType.unwrap(), List.class, Set.class, Map.class))
+                        .hasOneOf(elementType.unwrap(), List.class, Set.class, Map.class, Optional.class))
                 .validateAndIssueMessages();
 
         final String fromMapName = property.name() + "FromMap";
@@ -116,6 +119,8 @@ public class GenericTypeDeserializerGenerator {
             return handleSetType(builder, dtoType, property, wrappedElementType, fromMapName);
         } else if (canonicalName.equals(Map.class.getName())) {
             return handleMapType(builder, dtoType, property, wrappedElementType, fromMapName);
+        } else if (canonicalName.equals(Optional.class.getName())) {
+            return handleOptionalType(builder, dtoType, property, wrappedElementType, fromMapName);
         } else {
             throw new IllegalStateException("Unexpected generic type: " + canonicalName);
         }
@@ -189,6 +194,27 @@ public class GenericTypeDeserializerGenerator {
                         ctxVar,
                         ctxVar,
                         innerFunction);
+            } else if (canonicalName.equals(Optional.class.getName())) {
+                TypeMirror elementType = wrapped.getTypeArguments().getFirst();
+                CodeBlock innerFunction = getDeserializationFunction(dtoType, property, elementType, depth + 1);
+                return CodeBlock.builder()
+                        .add("($L) -> {\n", ctxVar)
+                        .indent()
+                        .beginControlFlow(
+                                "if ($1L.getData() == null || $1L.getData() instanceof $2T)",
+                                ctxVar,
+                                DataTree.DataTreeNull.class)
+                        .addStatement("return $T.ok($T.empty())", Result.class, Optional.class)
+                        .endControlFlow()
+                        .addStatement(
+                                "return (($T) $L).apply($L).map($T::ofNullable)",
+                                DeserializationFunction.class,
+                                innerFunction,
+                                ctxVar,
+                                Optional.class)
+                        .unindent()
+                        .add("}")
+                        .build();
             }
         }
 
@@ -294,6 +320,43 @@ public class GenericTypeDeserializerGenerator {
                 CollectionsUtils.class,
                 fromMapName,
                 deserializationFunction);
+        return Optional.of(builder.build());
+    }
+
+    private Optional<MethodSpec> handleOptionalType(
+            MethodSpec.Builder builder,
+            TypeElement dtoType,
+            Property property,
+            TypeMirrorWrapper wrappedElementType,
+            String fromMapName) {
+        var optionalType = wrappedElementType.getTypeArguments().getFirst();
+        CodeBlock deserializationFunction = getDeserializationFunction(dtoType, property, optionalType, 0);
+
+        if (property.settings().hasDefaultValue()) {
+            builder.beginControlFlow("if ($L instanceof $T)", fromMapName, Optional.class);
+            builder.addStatement("return $T.ok(($T) $L)", Result.class, Optional.class, fromMapName);
+            builder.endControlFlow();
+        }
+
+        builder.beginControlFlow("if ($L instanceof $T)", fromMapName, DataTree.DataTreeNull.class);
+        builder.addStatement("return $T.ok($T.empty())", Result.class, Optional.class);
+        builder.endControlFlow();
+
+        String treeVar = property.name() + "Tree";
+        if (property.settings().hasDefaultValue()) {
+            builder.addStatement(
+                    "$T $L = $T.loadFrom($L)", DataTree.class, treeVar, DataTreeTransforms.class, fromMapName);
+        } else {
+            builder.addStatement("$T $L = $L", DataTree.class, treeVar, fromMapName);
+        }
+
+        builder.addCode(
+                "$T<$T> innerResult = $L.apply(context.withData($L));\n",
+                Result.class,
+                typesUtil.getBoxedType(optionalType),
+                deserializationFunction,
+                treeVar);
+        builder.addStatement("return innerResult.map($T::ofNullable)", Optional.class);
         return Optional.of(builder.build());
     }
 }

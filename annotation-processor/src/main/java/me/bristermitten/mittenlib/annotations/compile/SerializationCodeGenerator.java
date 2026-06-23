@@ -107,7 +107,9 @@ public class SerializationCodeGenerator {
         if (wrappedType.hasTypeArguments()) {
             String canonicalName = wrappedType.erasure().getQualifiedName();
 
-            if (typesUtil.isCollection(propertyTypeMirror) || canonicalName.equals(Map.class.getName())) {
+            if (typesUtil.isCollection(propertyTypeMirror)
+                    || canonicalName.equals(Map.class.getName())
+                    || canonicalName.equals(Optional.class.getName())) {
                 var typeArguments = wrappedType.getTypeArguments();
                 for (TypeMirror typeArgument : typeArguments) {
                     if (propertyIsUnserializable(
@@ -362,7 +364,7 @@ public class SerializationCodeGenerator {
             return;
         }
 
-        // Generic collections (List, Map)
+        // Generic collections (List, Map, Optional)
         if (wrappedType.hasTypeArguments()) {
             String canonicalName = wrappedType.erasure().getQualifiedName();
             if (canonicalName.equals(List.class.getName()) || canonicalName.equals(Set.class.getName())) {
@@ -405,6 +407,20 @@ public class SerializationCodeGenerator {
                 builder.addStatement("return $L", valTarget);
                 builder.endControlFlow();
                 builder.addStatement(")");
+                return;
+            } else if (canonicalName.equals(Optional.class.getName())) {
+                TypeMirror elementType = wrappedType.getTypeArguments().getFirst();
+                String elVar = "el" + depth;
+                String elementTarget = "res" + depth;
+
+                builder.beginControlFlow("if ($L.isPresent())", inputVar);
+                builder.addStatement("$T $L = $L.get()", elementType, elVar, inputVar);
+                builder.addStatement("$T $L", DataTree.class, elementTarget);
+                generateSerialization(elementType, elVar, elementTarget, depth + 1, builder);
+                builder.addStatement("$L = $L", targetExpression, elementTarget);
+                builder.nextControlFlow("else");
+                builder.addStatement("$L = $T.null_()", targetExpression, DataTree.class);
+                builder.endControlFlow();
                 return;
             }
         }

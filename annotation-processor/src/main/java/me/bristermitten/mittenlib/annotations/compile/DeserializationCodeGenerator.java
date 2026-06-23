@@ -211,7 +211,14 @@ public class DeserializationCodeGenerator {
         final String key = fieldNameGenerator.getConfigFieldName(property);
         final String fromMapName = property.name() + "FromMap";
 
-        if (property.settings().isNullable()) {
+        if (TypeMirrorWrapper.wrap(property.propertyType())
+                .erasure()
+                .getQualifiedName()
+                .equals(Optional.class.getName())) {
+            builder.beginControlFlow("if ($L == null)", fromMapName);
+            builder.addStatement("return $T.ok($T.empty())", Result.class, Optional.class);
+            builder.endControlFlow();
+        } else if (property.settings().isNullable()) {
             // Short circuit the null rather than trying any deserialization
             builder.beginControlFlow("if ($L == null)", fromMapName);
             builder.addStatement("return $T.ok(null)", Result.class);
