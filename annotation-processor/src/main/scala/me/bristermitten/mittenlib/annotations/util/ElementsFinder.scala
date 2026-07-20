@@ -2,6 +2,8 @@ package me.bristermitten.mittenlib.annotations.util
 
 import com.google.inject.Inject
 import io.toolisticon.aptk.tools.TypeMirrorWrapper
+import me.bristermitten.mittenlib.config.ConfigTransient
+
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -61,6 +63,9 @@ class ElementsFinder @Inject() (private val elements: Elements):
   ): List[ExecutableElement] =
     getAllMethods(rootElement)
       .filter(_.getParameters.isEmpty)
+      .filter(method =>
+        method.getAnnotation(classOf[ConfigTransient]) == null
+      ) // ignore transient
       .filter(method =>
         TypeMirrorWrapper
           .wrap(method.getEnclosingElement.asType())
