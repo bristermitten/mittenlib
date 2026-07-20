@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import me.bristermitten.mittenlib.config.tree.DataTree;
@@ -260,6 +261,43 @@ public class CollectionsUtils {
             result.put(DataTreeTransforms.loadFrom(entry.getKey()), valueSerializer.apply(entry.getValue(), context));
         }
         return new DataTree.DataTreeMap(result);
+    }
+
+    /**
+     * Serialize an optional using the MittenLib config system.
+     *
+     * @param optional          the optional to serialize
+     * @param context           the serialization context
+     * @param elementSerializer the function to serialize the element if present
+     * @param <T>               the element type
+     * @return a {@link DataTree} representation of the optional
+     */
+    public static <T> DataTree serializeOptional(
+            @Nullable Optional<? extends T> optional,
+            SerializationContext context,
+            BiFunction<T, SerializationContext, DataTree> elementSerializer) {
+        if (optional == null || !optional.isPresent()) {
+            return DataTree.DataTreeNull.INSTANCE;
+        }
+        return elementSerializer.apply(optional.get(), context);
+    }
+
+    /**
+     * Attempt to deserialize an optional using the MittenLib config system.
+     *
+     * @param rawData                 the raw data to deserialize
+     * @param baseContext             the base context to use for deserialization
+     * @param deserializationFunction the function to use for deserializing the inner value if present
+     * @param <T>                     the inner type
+     * @return a {@link Result} containing the deserialized optional, or empty if the data is absent
+     */
+    public static <T> Result<Optional<T>> deserializeOptional(
+            Object rawData, DeserializationContext baseContext, DeserializationFunction<T> deserializationFunction) {
+        if (rawData == null || rawData instanceof DataTree.DataTreeNull) {
+            return Result.ok(Optional.empty());
+        }
+        DataTree dataTree = rawData instanceof DataTree ? (DataTree) rawData : DataTreeTransforms.loadFrom(rawData);
+        return deserializationFunction.apply(baseContext.withData(dataTree)).map(Optional::of);
     }
 
     /**
