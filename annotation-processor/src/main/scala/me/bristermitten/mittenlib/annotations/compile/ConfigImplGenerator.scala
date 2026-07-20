@@ -86,6 +86,14 @@ class ConfigImplGenerator @Inject() (
       .toScala
       .foreach(rawAst => accessorGenerator.createWithMethods(source, rawAst))
     addAllArgsConstructor(source, ast)
+    if (
+      configStructureAnalysis.isDynamicallyInitializable(ast) && !ast
+        .isInstanceOf[ConfigStructure.Union]
+    ) {
+      if (ast.properties.nonEmpty || getParentConfig(ast).isDefined) {
+        addNoArgsConstructor(source, ast)
+      }
+    }
     addStandardObjectMethods(ast, configImplClassName, source)
     addChildClasses(ast, source)
 
@@ -262,7 +270,7 @@ class ConfigImplGenerator @Inject() (
       if (property.isNullable) classOf[org.jspecify.annotations.Nullable]
       else classOf[org.jspecify.annotations.NonNull]
     configurationClassNameGenerator
-      .publicPropertyClassName(property)
+      .publicPropertyClassName(property.typeMirror)
       .annotated(AnnotationSpec.builder(nullityAnnotation).build())
 
   /** Adds a single property as a private final field and its corresponding
@@ -437,6 +445,65 @@ class ConfigImplGenerator @Inject() (
 
     builder.build()
 
+  private def addNoArgsConstructor(
+      source: TypeSpec.Builder,
+      ast: ConfigStructure
+  ): Unit =
+    val constructor = MethodSpec
+      .constructorBuilder()
+      .addJavadoc(
+        "Constructs a new implementation instance with default values.\n"
+      )
+      .addModifiers(Modifier.PUBLIC)
+
+    val parentOpt = getParentConfig(ast)
+    if (parentOpt.isDefined) {
+      constructor.addStatement("super()")
+      constructor.addStatement("this.parent = null")
+    }
+
+    val hasAnyDefaultValue =
+      ast.properties.exists(configStructureAnalysis.hasDefaultOrIsInitializable)
+    if (
+      hasAnyDefaultValue && (ast match {
+        case atomic: ConfigStructure.Atomic  => atomic.isInterface
+        case _: ConfigStructure.Intersection => true
+        case _: ConfigStructure.Union        => false
+      })
+    ) {
+      val innerName =
+        configurationClassNameGenerator.getDefaultMethodAccessClassName(ast)
+      constructor.addStatement(
+        "$T defaultAccess = new $T()",
+        innerName,
+        innerName
+      )
+      for (property <- ast.properties) {
+        constructor.addStatement(
+          "this.$N = defaultAccess.$N()",
+          property.name,
+          property.name
+        )
+      }
+    } else {
+      for (property <- ast.properties) {
+        val typeName = configurationClassNameGenerator.publicPropertyClassName(
+          property.typeMirror
+        )
+        if (typeName.isPrimitive) {
+          if (typeName == TypeName.BOOLEAN) {
+            constructor.addStatement("this.$N = false", property.name)
+          } else {
+            constructor.addStatement("this.$N = 0", property.name)
+          }
+        } else {
+          constructor.addStatement("this.$N = null", property.name)
+        }
+      }
+    }
+
+    source.addMethod(constructor.build())
+
   /** Create a dummy class/interface named "DefaultMethodAccess".
     */
   private def addInnerDefaultMethodImpl(
@@ -453,7 +520,8 @@ class ConfigImplGenerator @Inject() (
     isInterfaceWithDefaults match {
       case None             => JOptional.empty()
       case Some(properties) =>
-        val hasAnyDefaultValue = properties.exists(_.hasDefault)
+        val hasAnyDefaultValue =
+          properties.exists(configStructureAnalysis.hasDefaultOrIsInitializable)
         if (!hasAnyDefaultValue) {
           JOptional.empty()
         } else {
@@ -470,23 +538,46 @@ class ConfigImplGenerator @Inject() (
             property <- properties
             if !property.hasDefault
           ) {
-            innerBuilder.addMethod(
-              MethodSpec
-                .methodBuilder(property.name)
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(classOf[Override])
-                .returns(
-                  configurationClassNameGenerator
-                    .publicPropertyClassName(property)
-                )
-                .addStatement(
-                  "throw $T.defaultValueProxyException($T.class, $S)",
-                  classOf[ConfigLoadingErrors],
-                  concreteConfigClassName,
-                  property.name
-                )
-                .build()
-            )
+            val methodBuilder = MethodSpec
+              .methodBuilder(property.name)
+              .addModifiers(Modifier.PUBLIC)
+              .addAnnotation(classOf[Override])
+              .returns(
+                configurationClassNameGenerator
+                  .publicPropertyClassName(property.typeMirror)
+              )
+
+            if (
+              configStructureAnalysis.isTypeInitializable(property.propertyType)
+            ) {
+              property.propertyType match {
+                case PropertyType.ConfigProperty(className, _) =>
+                  val concreteType =
+                    configurationClassNameGenerator.translateConfigClassName(
+                      className
+                    )
+                  methodBuilder.addStatement("return new $T()", concreteType)
+                case PropertyType.OptionalProperty(_) =>
+                  methodBuilder.addStatement(
+                    "return $T.empty()",
+                    classOf[java.util.Optional[?]]
+                  )
+                case other =>
+                  throw new IllegalStateException(
+                    s"Type marked initializable but has no default generator: $other"
+                  )
+              }
+            } else if (property.isNullable) {
+              methodBuilder.addStatement("return null")
+            } else {
+              methodBuilder.addStatement(
+                "throw $T.defaultValueProxyException($T.class, $S)",
+                classOf[ConfigLoadingErrors],
+                concreteConfigClassName,
+                property.name
+              )
+            }
+            innerBuilder.addMethod(methodBuilder.build())
           }
 
           typeSpecBuilder.addType(innerBuilder.build())

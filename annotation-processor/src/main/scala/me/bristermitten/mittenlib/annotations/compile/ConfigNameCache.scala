@@ -31,7 +31,9 @@ class ConfigNameCache:
   def put(ast: AbstractConfigStructure): Unit =
     astCache.put(ast.name(), ast)
 
-  def putDomain(ast: domain.ConfigStructure): Unit =
+  def putDomain(
+      ast: me.bristermitten.mittenlib.annotations.domain.ConfigStructure
+  ): Unit =
     domainCache.put(ast.name, ast)
 
   def lookupDomain(name: ClassName): Option[domain.ConfigStructure] =

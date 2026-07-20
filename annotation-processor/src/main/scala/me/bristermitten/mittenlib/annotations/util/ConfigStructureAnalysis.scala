@@ -2,12 +2,22 @@ package me.bristermitten.mittenlib.annotations.util
 
 import com.google.inject.{Inject, Singleton}
 import com.palantir.javapoet.ClassName
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure
+import me.bristermitten.mittenlib.annotations.ast.{
+  AbstractConfigStructure,
+  Property => AstProperty
+}
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache
 import me.bristermitten.mittenlib.annotations.domain.*
 
+import javax.lang.model.`type`.DeclaredType
+import javax.lang.model.`type`.TypeMirror
+import javax.lang.model.element.TypeElement
+
 @Singleton
-class ConfigStructureAnalysis @Inject() (cache: ConfigNameCache):
+class ConfigStructureAnalysis @Inject() (
+    private val cache: ConfigNameCache,
+    private val typesUtil: TypesUtil
+):
 
   def isDynamicallyInitializable(structure: ConfigStructure): Boolean =
     isDynamicallyInitializable(structure, Set.empty)
@@ -32,6 +42,27 @@ class ConfigStructureAnalysis @Inject() (cache: ConfigNameCache):
 
   def isTypeInitializable(tpe: PropertyType): Boolean =
     isTypeInitializable(tpe, Set.empty)
+
+  def isTypeInitializable(tpe: TypeMirror): Boolean =
+    if (typesUtil.isConfigType(tpe)) {
+      tpe match {
+        case declaredType: DeclaredType =>
+          val className = ClassName.get(
+            declaredType.asElement().asInstanceOf[TypeElement]
+          )
+          val opt = cache.lookupDomain(className)
+          opt.exists(isDynamicallyInitializable(_, Set.empty))
+        case _ => false
+      }
+    } else {
+      typesUtil.isOptional(tpe)
+    }
+
+  def hasDefaultOrIsInitializable(p: Property): Boolean =
+    p.hasDefault || isTypeInitializable(p.propertyType)
+
+  def hasDefaultOrIsInitializable(p: AstProperty): Boolean =
+    p.settings().hasDefaultValue() || isTypeInitializable(p.propertyType())
 
   private def isTypeInitializable(
       tpe: PropertyType,

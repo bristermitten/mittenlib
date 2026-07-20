@@ -23,7 +23,8 @@ import _root_.me.bristermitten.mittenlib.annotations.compile.ConfigurationClassN
 import _root_.me.bristermitten.mittenlib.annotations.parser.CustomDeserializers
 import _root_.me.bristermitten.mittenlib.annotations.util.{
   NewtypeUtil,
-  TypesUtil
+  TypesUtil,
+  ConfigStructureAnalysis
 }
 import _root_.me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors
 import _root_.me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization
@@ -43,7 +44,8 @@ import _root_.me.bristermitten.mittenlib.config.DeserializationContext
 class NonGenericTypeDeserializerGenerator @Inject() (
     private val typesUtil: TypesUtil,
     private val configurationClassNameGenerator: ConfigurationClassNameGenerator,
-    private val customDeserializers: CustomDeserializers
+    private val customDeserializers: CustomDeserializers,
+    private val configStructureAnalysis: ConfigStructureAnalysis
 ):
 
   private def getDeserializationFunction(
@@ -112,11 +114,18 @@ class NonGenericTypeDeserializerGenerator @Inject() (
   )(using BlockBuilder): Block[Terminated] =
     val fm = ~fromMap
     val safeTypeRef = TypeRef.of(safeType)
+    val instanceOfTypeRef = safeType match {
+      case p: ParameterizedTypeName => TypeRef.of(p.rawType)
+      case _                        => safeTypeRef
+    }
 
     // 3.1 Direct Type Match
     if (!fromMap.isInstanceOf[Expr.MethodCall]) {
-      if (property.settings().hasDefaultValue()) {
-        ifThen(fm.instanceOf(safeTypeRef)) {
+      if (
+        property.settings().hasDefaultValue() || configStructureAnalysis
+          .isTypeInitializable(elementType)
+      ) {
+        ifThen(fm.instanceOf(instanceOfTypeRef)) {
           return_(ResultExpr.ok(fm.cast(safeTypeRef)))
         }
       }
@@ -299,7 +308,8 @@ class NonGenericTypeDeserializerGenerator @Inject() (
     val context = StagedExpr
       .param[DeserializationContext](Types.DeserializationContext, "context")
 
-    val hasDefault = property.settings().hasDefaultValue()
+    val hasDefault =
+      configStructureAnalysis.hasDefaultOrIsInitializable(property)
     val dao = if (hasDefault && daoName != null) {
       Some(StagedExpr.param[Any](TypeRef.of(daoName), "dao"))
     } else {

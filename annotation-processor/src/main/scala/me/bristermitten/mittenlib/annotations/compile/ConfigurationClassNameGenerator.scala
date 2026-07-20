@@ -19,6 +19,7 @@ import me.bristermitten.mittenlib.annotations.domain.{
   ConfigStructure,
   Property => DomainProperty
 }
+import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis
 import me.bristermitten.mittenlib.config.Config
 import me.bristermitten.mittenlib.util.Strings
 import org.jspecify.annotations.Nullable
@@ -85,7 +86,8 @@ private case class NamingNode(
 )
 
 class ConfigurationClassNameGenerator @Inject() (
-    private val configNameCache: ConfigNameCache
+    private val configNameCache: ConfigNameCache,
+    private val configStructureAnalysis: ConfigStructureAnalysis
 ):
   import ConfigurationClassNameGenerator.*
 
@@ -142,6 +144,13 @@ class ConfigurationClassNameGenerator @Inject() (
       }
     } else {
       ast.name.peerClass(implSimpleName)
+    }
+
+  def translateConfigClassName(className: ClassName): ClassName =
+    configNameCache.lookupDomain(className) match {
+      case Some(ast) => translateConfigClassName(ast)
+      case None      =>
+        ConfigurationClassNameGenerator.translateConfigClassName(className)
     }
 
   def getPublicClassName(ast: AbstractConfigStructure): ClassName =
@@ -374,7 +383,7 @@ class ConfigurationClassNameGenerator @Inject() (
         val hasAnyDefaultValue = ast
           .properties()
           .asScala
-          .exists(property => property.settings().hasDefaultValue())
+          .exists(configStructureAnalysis.hasDefaultOrIsInitializable)
         if (!hasAnyDefaultValue) {
           null
         } else {

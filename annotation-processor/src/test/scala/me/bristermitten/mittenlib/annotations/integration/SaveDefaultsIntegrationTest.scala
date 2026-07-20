@@ -433,6 +433,54 @@ class SaveDefaultsIntegrationTest
     savedContent should include("name: default")
   }
 
+  test("testNestedDefaultConfigInstantiationFromEmptyConfig") {
+    val configFile = tempDir.resolve("nested-default-config.yml")
+    Files.writeString(configFile, "") // Empty config
+
+    val reader = injector.getInstance(classOf[ConfigReader])
+    val writer = injector.getInstance(classOf[YamlObjectWriter])
+    val saver = injector.getInstance(classOf[ConfigWriter])
+
+    val loaderKey = Key
+      .get(
+        TypeLiteral.get(
+          Types.newParameterizedType(
+            classOf[DeserializationFunction[_]],
+            classOf[NestedDefaultConfig]
+          )
+        )
+      )
+      .asInstanceOf[Key[DeserializationFunction[NestedDefaultConfig]]]
+
+    val saverKey = Key
+      .get(
+        TypeLiteral.get(
+          Types.newParameterizedType(
+            classOf[SerializationFunction[_]],
+            classOf[NestedDefaultConfig]
+          )
+        )
+      )
+      .asInstanceOf[Key[SerializationFunction[NestedDefaultConfig]]]
+
+    val loader = injector.getInstance(loaderKey)
+    val saverFunc = injector.getInstance(saverKey)
+
+    val provider = new FileBasedConfigProvider[NestedDefaultConfig](
+      configFile,
+      reader,
+      loader,
+      saver,
+      saverFunc,
+      writer
+    )
+
+    val config = provider.get()
+    config.auditLog() should not be null
+    config.auditLog().flushIntervalSeconds() shouldBe 5
+    config.auditLog().batchSize() shouldBe 100
+  }
+
   test("testDenyMissingResourceForNonDynamicConfig") {
     val configFile = tempDir.resolve("non-existent-config.yml")
 

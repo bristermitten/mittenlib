@@ -24,6 +24,7 @@ import _root_.me.bristermitten.mittenlib.annotations.ast.{
 import _root_.me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator
 import _root_.me.bristermitten.mittenlib.annotations.parser.CustomDeserializers
 import _root_.me.bristermitten.mittenlib.annotations.util.TypesUtil
+import _root_.me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis
 import _root_.me.bristermitten.mittenlib.config.CollectionsUtils
 import _root_.me.bristermitten.mittenlib.config.exception.ConfigLoadingErrors
 import _root_.me.bristermitten.mittenlib.util.Strings
@@ -38,7 +39,8 @@ class GenericTypeDeserializerGenerator @Inject() (
     private val typesUtil: TypesUtil,
     private val configurationClassNameGenerator: ConfigurationClassNameGenerator,
     private val customDeserializers: CustomDeserializers,
-    private val nonGenericTypeDeserializerGenerator: NonGenericTypeDeserializerGenerator
+    private val nonGenericTypeDeserializerGenerator: NonGenericTypeDeserializerGenerator,
+    private val configStructureAnalysis: ConfigStructureAnalysis
 ):
 
   private def getDeserializationFunction(
@@ -120,6 +122,20 @@ class GenericTypeDeserializerGenerator @Inject() (
           ),
           ctxVar
         )
+      } else if (canonicalName == classOf[java.util.Optional[?]].getName) {
+        val elementType = wrapped.getTypeArguments.get(0)
+        val innerFunction =
+          getDeserializationFunction(dtoType, property, elementType, depth + 1)
+        Expr.lambdaExpr(
+          Expr.staticCall(
+            TypeRef.of(classOf[CollectionsUtils]),
+            "deserializeOptional",
+            ctxVar.call("getData"),
+            ctxVar,
+            innerFunction
+          ),
+          ctxVar
+        )
       } else {
         throw new IllegalStateException(
           "Unexpected nested generic type: " + canonicalName
@@ -167,7 +183,8 @@ class GenericTypeDeserializerGenerator @Inject() (
             elementTypeElement.unwrap(),
             classOf[java.util.List[?]],
             classOf[java.util.Set[?]],
-            classOf[java.util.Map[?, ?]]
+            classOf[java.util.Map[?, ?]],
+            classOf[java.util.Optional[?]]
           )
       )
       .validateAndIssueMessages()
@@ -176,7 +193,8 @@ class GenericTypeDeserializerGenerator @Inject() (
     val context = StagedExpr
       .param[DeserializationContext](Types.DeserializationContext, "context")
 
-    val hasDefault = property.settings().hasDefaultValue()
+    val hasDefault =
+      configStructureAnalysis.hasDefaultOrIsInitializable(property)
     val dao = if (hasDefault && daoName != null) {
       Some(StagedExpr.param[Any](TypeRef.of(daoName), "dao"))
     } else {
@@ -247,6 +265,19 @@ class GenericTypeDeserializerGenerator @Inject() (
               TypeRef.of(TypeName.get(typesUtil.getSafeType(keyType))),
               "class"
             ),
+            fromMap,
+            context,
+            deserializationFunction
+          )
+        )
+      } else if (canonicalName == classOf[java.util.Optional[?]].getName) {
+        val optionType = wrappedElementType.getTypeArguments().get(0)
+        val deserializationFunction =
+          getDeserializationFunction(dtoType, property, optionType, 0)
+        return_(
+          Expr.staticCall(
+            TypeRef.of(classOf[CollectionsUtils]),
+            "deserializeOptional",
             fromMap,
             context,
             deserializationFunction

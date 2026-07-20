@@ -352,7 +352,10 @@ class ConfigLoaderGenerator @Inject() (
 
           case _ =>
             val hasAnyDefault =
-              ast.properties().asScala.exists(_.settings().hasDefaultValue())
+              ast
+                .properties()
+                .asScala
+                .exists(configStructureAnalysis.hasDefaultOrIsInitializable)
             val daoVarOpt = if (hasAnyDefault && daoName != null) {
               Some(
                 declare(
@@ -416,7 +419,10 @@ class ConfigLoaderGenerator @Inject() (
               }
 
               val deserializeMethodArguments: List[Expr[?]] =
-                if (daoName != null && property.settings().hasDefaultValue()) {
+                if (
+                  daoName != null && configStructureAnalysis
+                    .hasDefaultOrIsInitializable(property)
+                ) {
                   List(context, daoVarOpt.get)
                 } else {
                   List(context)

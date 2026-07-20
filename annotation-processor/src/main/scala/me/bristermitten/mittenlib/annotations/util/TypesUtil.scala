@@ -18,6 +18,7 @@ import javax.lang.model.`type`.TypeMirror
 import javax.lang.model.`type`.ExecutableType
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import me.bristermitten.mittenlib.annotations.compile.GeneratedTypeCache
 import me.bristermitten.mittenlib.annotations.exception.DTOReferenceException
 import me.bristermitten.mittenlib.config.Config
@@ -133,6 +134,10 @@ class TypesUtil @Inject() (
         getAnnotation(declaredType.asElement(), classOf[Config]) != null
       case _ =>
         false
+
+  def isOptional(mirror: TypeMirror): Boolean =
+    TypeMirrorWrapper.wrap(mirror).erasure().getQualifiedName ==
+      classOf[java.util.Optional[?]].getName
 
   /** Checks if a type is a newtype (annotated with @Newtype).
     *
