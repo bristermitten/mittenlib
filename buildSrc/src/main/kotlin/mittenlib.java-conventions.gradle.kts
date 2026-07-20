@@ -54,7 +54,7 @@ githook {
 
     hooks {
         create("pre-commit") {
-            task = "spotlessCheck"
+            task = "spotlessApply"
         }
     }
 }
