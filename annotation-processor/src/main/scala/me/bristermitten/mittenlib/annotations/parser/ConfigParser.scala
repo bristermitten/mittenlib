@@ -233,11 +233,35 @@ class ConfigParser @Inject() (
       val c1 = verifyZeroArgConstructor(element, properties)
       val c2 = verifySerializationRequirement(element, structure)
       val c3 = verifyDynamicInitializationRequirement(element, structure)
+      val c4 = verifyTransientMethods(element)
 
-      (c1, c2, c3).mapN { (_, _, _) =>
+      (c1, c2, c3, c4).mapN { (_, _, _, _) =>
         putInCache(structure, element)
         structure
       }
+    }
+  }
+
+  private def verifyTransientMethods(
+      element: TypeElement
+  ): ValidatedNel[ParserError, Unit] = {
+    val abstractTransientMethods = elementsFinder
+      .getAllMethods(element)
+      .filter(m => typesUtil.getAnnotation(m, classOf[ConfigTransient]) != null)
+      .filter(m => !m.isDefault && !m.getModifiers.contains(Modifier.STATIC))
+
+    if (abstractTransientMethods.nonEmpty) {
+      val errors = abstractTransientMethods.map { m =>
+        ParserError(
+          m,
+          s"Method '${m.getSimpleName}' in @Config interface '${element.getSimpleName}' is annotated with @ConfigTransient but is not a default method. @ConfigTransient methods on interface configs must be default methods."
+        )
+      }
+      cats.data.Validated.invalid(
+        cats.data.NonEmptyList.fromListUnsafe(errors)
+      )
+    } else {
+      ().validNel
     }
   }
 

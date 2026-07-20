@@ -47,3 +47,9 @@ object ConfigVerificationErrors:
         "You must provide a default configuration file (e.g. ${2}) in your jar's resources, " +
         "or provide default values for these properties to avoid runtime errors. If you understand the risks but do not want to change the type, set requireDynamicInitialization to false to set this to a warning rather than error."
     )
+
+  val TRANSIENT_METHOD_NOT_DEFAULT: ValidationMessage =
+    PlainValidationMessage.create(
+      "TRANSIENT_METHOD_NOT_DEFAULT",
+      "Method '${0}' in @Config interface '${1}' is annotated with @ConfigTransient but is not a default method. @ConfigTransient methods on interface configs must be default methods."
+    )

@@ -86,4 +86,56 @@ class SerializationRequirementTest extends AnyFunSuite with Matchers {
         "This config contains properties that cannot be serialized"
       )
   }
+
+  test("testOptionalSerializationSucceeds") {
+    val compilation: Compilation = javac()
+      .withProcessors(new ConfigProcessor())
+      .compile(
+        JavaFileObjects.forSourceString(
+          "me.bristermitten.mittenlib.tests.OptionalConfigDTO",
+          """
+            |package me.bristermitten.mittenlib.tests;
+            |
+            |import me.bristermitten.mittenlib.config.Config;
+            |import java.util.Optional;
+            |
+            |@Config(requireSerialization = true)
+            |public class OptionalConfigDTO {
+            |    public Optional<String> prefix;
+            |}
+            |""".stripMargin
+        )
+      )
+
+    assertCompilation(compilation).succeeded()
+  }
+
+  test("testConfigTransientDefaultMethodIgnoredForSerialization") {
+    val compilation: Compilation = javac()
+      .withProcessors(new ConfigProcessor())
+      .compile(
+        JavaFileObjects.forSourceString(
+          "me.bristermitten.mittenlib.tests.TransientHelperConfigDTO",
+          """
+            |package me.bristermitten.mittenlib.tests;
+            |
+            |import me.bristermitten.mittenlib.config.Config;
+            |import me.bristermitten.mittenlib.config.ConfigTransient;
+
+            |@Config(requireSerialization = true)
+            |public interface TransientHelperConfigDTO {
+            |    String world();
+            |    int x();
+
+            |    @ConfigTransient
+            |    default Thread spawnPoint() {
+            |        return null;
+            |    }
+            |}
+            |""".stripMargin
+        )
+      )
+
+    assertCompilation(compilation).succeeded()
+  }
 }

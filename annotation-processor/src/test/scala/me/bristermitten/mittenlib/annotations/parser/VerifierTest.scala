@@ -261,4 +261,32 @@ class VerifierTest extends AnyFunSuite with Matchers {
       "UnionConfigDTO MUST extend the union type"
     )
   }
+
+  test("testTransientMethodNotDefaultError") {
+    val compilation: Compilation = javac()
+      .withProcessors(new ConfigProcessor())
+      .compile(
+        JavaFileObjects.forSourceString(
+          "me.bristermitten.mittenlib.tests.TransientAbstractConfigDTO",
+          """
+            |package me.bristermitten.mittenlib.tests;
+            |import me.bristermitten.mittenlib.config.*;
+            |
+            |@Config
+            |public interface TransientAbstractConfigDTO {
+            |    @ConfigTransient
+            |    String invalidAbstractTransient();
+            |
+            |    int validProp();
+            |}
+            |""".stripMargin
+        )
+      )
+
+    assertCompilation(compilation).failed()
+    assertCompilation(compilation)
+      .hadErrorContaining(
+        "Method 'invalidAbstractTransient' in @Config interface 'TransientAbstractConfigDTO' is annotated with @ConfigTransient but is not a default method"
+      )
+  }
 }

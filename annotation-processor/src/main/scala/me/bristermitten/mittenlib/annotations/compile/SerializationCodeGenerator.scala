@@ -17,6 +17,7 @@ import me.bristermitten.mittenlib.config.{
   CollectionsUtils,
   SerializationContext
 }
+import me.bristermitten.mittenlib.config.ConfigTransient
 import me.bristermitten.mittenlib.config.extension.UseObjectMapperSerialization
 import me.bristermitten.mittenlib.config.tree.{DataTree, DataTreeTransforms}
 import me.bristermitten.mittenlib.util.Strings
@@ -68,11 +69,22 @@ class SerializationCodeGenerator @Inject() (
     }
     unsupported
 
+  private def isTransientElement(
+      element: javax.lang.model.element.Element
+  ): Boolean =
+    if (element == null) false
+    else
+      typesUtil.getAnnotation(element, classOf[ConfigTransient]) != null ||
+      element.getAnnotationMirrors.asScala.exists(m =>
+        m.getAnnotationType.asElement.getSimpleName.toString == "ConfigTransient"
+      )
+
   private def domainPropertyIsUnserializable(
       property: me.bristermitten.mittenlib.annotations.domain.Property
   ): Boolean =
     val propertyTypeMirror = property.typeMirror
     if (
+      isTransientElement(property.element) ||
       typesUtil.getAnnotation(
         property.element,
         classOf[UseObjectMapperSerialization]
@@ -87,11 +99,11 @@ class SerializationCodeGenerator @Inject() (
     if (wrappedType.hasTypeArguments) {
       val canonicalName = wrappedType.erasure().getQualifiedName()
       if (
-        typesUtil.isCollection(propertyTypeMirror) || canonicalName == classOf[
-          java.util.Map[?, ?]
-        ].getName
+        typesUtil.isCollection(propertyTypeMirror) ||
+        canonicalName == classOf[java.util.Map[?, ?]].getName ||
+        canonicalName == classOf[java.util.Optional[?]].getName
       ) {
-        return false // collections are serializable at domain level
+        return false // collections/optionals are serializable at domain level
       }
       return true
     }
@@ -106,6 +118,8 @@ class SerializationCodeGenerator @Inject() (
   private def propertyIsUnserializable(property: Property): Boolean =
     val propertyTypeMirror = property.propertyType()
     if (
+      (property
+        .source() != null && isTransientElement(property.source().element())) ||
       typesUtil.getAnnotation(
         property.source().element(),
         classOf[UseObjectMapperSerialization]
@@ -134,9 +148,9 @@ class SerializationCodeGenerator @Inject() (
     if (wrappedType.hasTypeArguments) {
       val canonicalName = wrappedType.erasure().getQualifiedName()
       if (
-        typesUtil.isCollection(propertyTypeMirror) || canonicalName == classOf[
-          java.util.Map[?, ?]
-        ].getName
+        typesUtil.isCollection(propertyTypeMirror) ||
+        canonicalName == classOf[java.util.Map[?, ?]].getName ||
+        canonicalName == classOf[java.util.Optional[?]].getName
       ) {
         val typeArguments = wrappedType.getTypeArguments.asScala
         for (typeArgument <- typeArguments) {
@@ -389,6 +403,27 @@ class SerializationCodeGenerator @Inject() (
           input,
           context,
           Expr.Lambda(scala.List(valVar, ctxVar), lambdaBlock)
+        )
+      } else if (canonicalName == classOf[java.util.Optional[?]].getName) {
+        val elementType = wrappedType.getTypeArguments.get(0)
+        val elVar = Var(s"el$depth", TypeRef.of(TypeName.get(elementType)))
+        val ctxVar = Var(s"ctx$depth", Types.SerializationContext)
+
+        val lambdaBlock = BlockBuilder.build {
+          val elementTarget = declare(
+            Types.DataTree,
+            s"res$depth",
+            generateSerialization(elementType, elVar, depth + 1)
+          )
+          return_(elementTarget)
+        }
+
+        Expr.staticCall(
+          Types.CollectionsUtils,
+          "serializeOptional",
+          input,
+          context,
+          Expr.Lambda(scala.List(elVar, ctxVar), lambdaBlock)
         )
       } else {
         throw new IllegalStateException(

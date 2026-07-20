@@ -15,6 +15,13 @@ import scala.jdk.CollectionConverters.*
 /** Helper class for working with {@link Elements} */
 class ElementsFinder @Inject() (private val elements: Elements):
 
+  private def isTransient(element: javax.lang.model.element.Element): Boolean =
+    element.getModifiers.contains(Modifier.TRANSIENT) ||
+      element.getAnnotation(classOf[ConfigTransient]) != null ||
+      element.getAnnotationMirrors.asScala.exists(mirror =>
+        mirror.getAnnotationType.asElement.getSimpleName.toString == "ConfigTransient"
+      )
+
   /** Get all the {@link VariableElement}s in a given {@link TypeElement} that
     * should be included in the generated config class.
     *
@@ -36,7 +43,7 @@ class ElementsFinder @Inject() (private val elements: Elements):
       .filter(_.getEnclosingElement == rootElement)
       .filter(_.getKind.isField)
       .map(_.asInstanceOf[VariableElement])
-      .filter(!_.getModifiers.contains(Modifier.TRANSIENT))
+      .filter(!isTransient(_))
       .filter(!_.getModifiers.contains(Modifier.STATIC))
       .toList
 
@@ -63,9 +70,7 @@ class ElementsFinder @Inject() (private val elements: Elements):
   ): List[ExecutableElement] =
     getAllMethods(rootElement)
       .filter(_.getParameters.isEmpty)
-      .filter(method =>
-        method.getAnnotation(classOf[ConfigTransient]) == null
-      ) // ignore transient
+      .filter(!isTransient(_)) // ignore transient
       .filter(method =>
         TypeMirrorWrapper
           .wrap(method.getEnclosingElement.asType())
