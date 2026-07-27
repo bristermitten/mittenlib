@@ -10,13 +10,6 @@ import org.scalatest.matchers.should.Matchers
 
 class StringifyTest extends AnyFunSuite with Matchers {
 
-  test("testPrivateConstructor") {
-    val constructor = classOf[Stringify].getDeclaredConstructor()
-    constructor.setAccessible(true)
-    val instance = constructor.newInstance()
-    instance should not be null
-  }
-
   test("testPrettyStringifyGenericElement") {
     val element = mock(classOf[Element])
     when(element.toString).thenReturn("SomeGenericElement")

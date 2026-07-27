@@ -8,10 +8,7 @@ import java.util.Optional
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.`type`.TypeMirror
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.{ConfigStructure, Property}
 import me.bristermitten.mittenlib.annotations.compile.deserializer.{
   GenericTypeDeserializerGenerator,
   NonGenericTypeDeserializerGenerator
@@ -37,15 +34,15 @@ class DeserializationCodeGenerator @Inject() (
 ):
 
   def createDeserializeMethodFor(
-      dtoType: TypeElement,
-      propertyAST: AbstractConfigStructure,
+      dtoClassName: ClassName,
+      propertyAST: ConfigStructure,
       property: Property,
       @Nullable daoName: ClassName
   ): MethodSpec =
-    val elementType = property.propertyType()
+    val elementType = property.typeMirror
     val elementResultType =
       configurationClassNameGenerator.publicPropertyClassName(
-        typesUtil.getBoxedType(property.propertyType())
+        typesUtil.getBoxedType(property.typeMirror)
       )
 
     val wrappedElementType = TypeMirrorWrapper.wrap(elementType)
@@ -57,7 +54,7 @@ class DeserializationCodeGenerator @Inject() (
       genericTypeDeserializerGenerator.generateDeserializeMethod(
         propertyAST,
         property,
-        dtoType,
+        dtoClassName,
         elementType,
         wrappedElementType,
         typeElementOpt.get(),
@@ -70,7 +67,7 @@ class DeserializationCodeGenerator @Inject() (
       nonGenericTypeDeserializerGenerator.generateDeserializeMethod(
         propertyAST,
         property,
-        dtoType,
+        dtoClassName,
         elementType,
         wrappedElementType,
         elementResultType,

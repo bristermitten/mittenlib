@@ -6,11 +6,7 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import java.util.{ArrayList, Optional}
 import javax.lang.model.element.{Modifier, TypeElement}
 import javax.lang.model.`type`.{DeclaredType, TypeMirror}
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  CustomSerializerInfo,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.{ConfigStructure, Property}
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers
 import me.bristermitten.mittenlib.annotations.util.{NewtypeUtil, TypesUtil}
 import me.bristermitten.mittenlib.config.{
@@ -23,10 +19,6 @@ import me.bristermitten.mittenlib.config.tree.{DataTree, DataTreeTransforms}
 import me.bristermitten.mittenlib.util.Strings
 import scala.jdk.CollectionConverters.*
 
-import me.bristermitten.mittenlib.annotations.domain.{
-  ConfigStructure => DomainConfigStructure
-}
-
 import _root_.me.bristermitten.mittenlib.codegen.dsl.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.BlockBuilder.*
 import _root_.me.bristermitten.mittenlib.codegen.dsl.given
@@ -38,32 +30,15 @@ class SerializationCodeGenerator @Inject() (
     private val methodNames: MethodNames
 ):
 
-  def isSerializationSupported(ast: AbstractConfigStructure): Boolean =
-    ast
-      .properties()
-      .asScala
-      .forall(property => !propertyIsUnserializable(property))
-
-  def isSerializationSupported(ast: DomainConfigStructure): Boolean =
-    ast.properties.forall(property => !domainPropertyIsUnserializable(property))
+  def isSerializationSupported(ast: ConfigStructure): Boolean =
+    ast.properties.forall(property => !propertyIsUnserializable(property))
 
   def getUnsupportedSerializationProperties(
-      ast: AbstractConfigStructure
-  ): java.util.List[String] =
-    val unsupported = new ArrayList[String]()
-    for (property <- ast.properties().asScala) {
-      if (propertyIsUnserializable(property)) {
-        unsupported.add(property.name() + " (" + property.propertyType() + ")")
-      }
-    }
-    unsupported
-
-  def getUnsupportedSerializationProperties(
-      ast: DomainConfigStructure
+      ast: ConfigStructure
   ): java.util.List[String] =
     val unsupported = new ArrayList[String]()
     for (property <- ast.properties) {
-      if (domainPropertyIsUnserializable(property)) {
+      if (propertyIsUnserializable(property)) {
         unsupported.add(property.name + " (" + property.typeMirror + ")")
       }
     }
@@ -79,7 +54,7 @@ class SerializationCodeGenerator @Inject() (
         m.getAnnotationType.asElement.getSimpleName.toString == "ConfigTransient"
       )
 
-  private def domainPropertyIsUnserializable(
+  private def propertyIsUnserializable(
       property: me.bristermitten.mittenlib.annotations.domain.Property
   ): Boolean =
     val propertyTypeMirror = property.typeMirror
@@ -115,78 +90,11 @@ class SerializationCodeGenerator @Inject() (
     }
     customSerializers.getCustomInfo(propertyTypeMirror).isEmpty
 
-  private def propertyIsUnserializable(property: Property): Boolean =
-    val propertyTypeMirror = property.propertyType()
-    if (
-      (property
-        .source() != null && isTransientElement(property.source().element())) ||
-      typesUtil.getAnnotation(
-        property.source().element(),
-        classOf[UseObjectMapperSerialization]
-      ) != null
-    ) {
-      return false
-    }
-
-    val wrappedType = TypeMirrorWrapper.wrap(propertyTypeMirror)
-
-    // Newtypes are serializable if their underlying type is serializable
-    if (typesUtil.isNewtype(propertyTypeMirror)) {
-      val underlyingType =
-        typesUtil.getNewtypeUnderlyingType(propertyTypeMirror)
-      return propertyIsUnserializable(
-        new Property(
-          property.name(),
-          underlyingType,
-          property.source(),
-          property.settings()
-        )
-      )
-    }
-
-    // Check generic types
-    if (wrappedType.hasTypeArguments) {
-      val canonicalName = wrappedType.erasure().getQualifiedName()
-      if (
-        typesUtil.isCollection(propertyTypeMirror) ||
-        canonicalName == classOf[java.util.Map[?, ?]].getName ||
-        canonicalName == classOf[java.util.Optional[?]].getName
-      ) {
-        val typeArguments = wrappedType.getTypeArguments.asScala
-        for (typeArgument <- typeArguments) {
-          if (
-            propertyIsUnserializable(
-              new Property(
-                property.name(),
-                typeArgument,
-                property.source(),
-                property.settings()
-              )
-            )
-          ) {
-            return true
-          }
-        }
-        return false
-      }
-      return true
-    }
-
-    if (typesUtil.isConfigType(propertyTypeMirror)) {
-      return false
-    }
-
-    if (isKnownSerializableType(wrappedType)) {
-      return false
-    }
-
-    customSerializers.getCustomInfo(propertyTypeMirror).isEmpty
-
   def addSerializeMethodsToSaver(
       typeSpecBuilder: TypeSpec.Builder,
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): Unit =
-    for (property <- ast.properties().asScala) {
+    for (property <- ast.properties) {
       val serializeMethod = createSerializeMethodFor(property)
       typeSpecBuilder.addMethod(serializeMethod)
     }
@@ -219,7 +127,7 @@ class SerializationCodeGenerator @Inject() (
     val methodName = methodNames.getSerializeMethodName(property)
     val propertyType = getSerializeParameterType(property)
     val useObjectMapper = typesUtil.getAnnotation(
-      property.source().element(),
+      property.element,
       classOf[UseObjectMapperSerialization]
     ) != null
 
@@ -232,7 +140,7 @@ class SerializationCodeGenerator @Inject() (
           |@param context the serialization context
           |@return the serialized DataTree representation
           |""".stripMargin,
-        property.name(),
+        property.name,
         classOf[DataTree]
       )
       .addModifiers(Modifier.PRIVATE)
@@ -244,7 +152,7 @@ class SerializationCodeGenerator @Inject() (
       val value = Var("value", TypeRef.of(propertyType))
       val context = Var("context", Types.SerializationContext)
 
-      if (property.settings().isNullable()) {
+      if (property.isNullable) {
         ifThen(value.isNull) {
           return_(Expr.staticCall(Types.DataTree, "null_"))
         }
@@ -262,7 +170,7 @@ class SerializationCodeGenerator @Inject() (
         val result = declare(
           Types.DataTree,
           "result",
-          generateSerialization(property.propertyType(), value, 0)
+          generateSerialization(property.typeMirror, value, 0)
         )
         return_(result)
       }
@@ -298,8 +206,8 @@ class SerializationCodeGenerator @Inject() (
 
     // Custom Serializer
     val customSerializerOptional = customSerializers.getCustomInfo(tpe)
-    if (customSerializerOptional.isPresent) {
-      val info = customSerializerOptional.get()
+    if (customSerializerOptional.isDefined) {
+      val info = customSerializerOptional.get
       val publicTypeName =
         configurationClassNameGenerator.publicPropertyClassName(tpe)
       val context = Var("context", Types.SerializationContext)

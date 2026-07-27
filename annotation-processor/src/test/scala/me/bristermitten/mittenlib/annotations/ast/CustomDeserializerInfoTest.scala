@@ -9,14 +9,13 @@ class CustomDeserializerInfoTest extends munit.FunSuite:
     val element1 = mock(classOf[TypeElement])
     val element2 = mock(classOf[TypeElement])
 
-    val info1 = CustomDeserializerInfo(element1, true, false, true)
-    val info2 = CustomDeserializerInfo(element1, true, false, true)
-    val info3 = CustomDeserializerInfo(element2, false, true, false)
+    val info1 = CustomDeserializerInfo(element1, true, false)
+    val info2 = CustomDeserializerInfo(element1, true, false)
+    val info3 = CustomDeserializerInfo(element2, false, true)
 
     assertEquals(info1.deserializerClass, element1)
     assertEquals(info1.isStatic, true)
     assertEquals(info1.isFallback, false)
-    assertEquals(info1.isGlobal, true)
 
     assertEquals(info1, info2)
     assertNotEquals(info1, info3)

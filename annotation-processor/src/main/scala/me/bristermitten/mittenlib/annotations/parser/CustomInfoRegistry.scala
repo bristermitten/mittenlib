@@ -1,10 +1,10 @@
 package me.bristermitten.mittenlib.annotations.parser
 
-import com.google.common.collect.HashMultimap
-import com.google.common.collect.Multimap
+import com.google.common.collect.{HashMultimap, Multimap}
 import com.palantir.javapoet.TypeName
-import java.util.Optional
+import io.toolisticon.aptk.tools.MessagerUtils
 import javax.lang.model.`type`.TypeMirror
+import scala.jdk.CollectionConverters.*
 
 abstract class CustomInfoRegistry[T]:
   private val infoMultimap: Multimap[TypeName, T] = HashMultimap.create()
@@ -12,12 +12,25 @@ abstract class CustomInfoRegistry[T]:
   def register(clazz: TypeName, info: T): Unit =
     infoMultimap.put(clazz, info)
 
-  def getCustomInfo(propertyType: TypeMirror): Optional[T] =
+  def getCustomInfo(propertyType: TypeMirror): Option[T] =
     val fromMap = infoMultimap.get(TypeName.get(propertyType))
     if (fromMap.isEmpty) {
-      Optional.empty()
+      None
     } else if (fromMap.size() > 1) {
-      throw new IllegalArgumentException("Not sure how to handle multiple yet")
+      MessagerUtils.error(
+        null: javax.lang.model.element.Element,
+        s"Multiple custom registrations found for type $propertyType"
+      )
+      Some(fromMap.iterator().next())
     } else {
-      Optional.of(fromMap.iterator().next())
+      Some(fromMap.iterator().next())
     }
+
+  def allInfos: Map[TypeName, List[T]] =
+    infoMultimap
+      .asMap()
+      .asScala
+      .map { case (k, v) =>
+        k -> v.asScala.toList
+      }
+      .toMap

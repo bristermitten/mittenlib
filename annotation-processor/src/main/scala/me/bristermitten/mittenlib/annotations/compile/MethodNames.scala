@@ -7,8 +7,7 @@ import javax.lang.model.element.{
   TypeElement,
   VariableElement
 }
-import me.bristermitten.mittenlib.annotations.ast.Property
-import me.bristermitten.mittenlib.annotations.domain.Property as DomainProperty
+import me.bristermitten.mittenlib.annotations.domain.Property
 import me.bristermitten.mittenlib.annotations.util.ElementsFinder
 import me.bristermitten.mittenlib.util.Strings
 
@@ -34,18 +33,6 @@ class MethodNames @Inject() (private val elementsFinder: ElementsFinder):
     )
 
   def safeMethodName(property: Property): String =
-    property.source() match {
-      case fieldSource: Property.PropertySource.FieldSource =>
-        val field = fieldSource.elementField
-        safeMethodName(
-          field,
-          field.getEnclosingElement.asInstanceOf[TypeElement]
-        )
-      case methodSource: Property.PropertySource.MethodSource =>
-        methodSource.element().getSimpleName.toString
-    }
-
-  def safeMethodName(property: DomainProperty): String =
     if (property.element.getKind.isField) {
       val field = property.element.asInstanceOf[VariableElement]
       safeMethodName(field, field.getEnclosingElement.asInstanceOf[TypeElement])
@@ -79,9 +66,9 @@ class MethodNames @Inject() (private val elementsFinder: ElementsFinder):
     names
 
   def getDeserializeMethodName(property: Property): String =
-    val name = Strings.capitalize(property.name())
+    val name = Strings.capitalize(property.name)
     DESERIALIZE_METHOD_PREFIX + name
 
   def getSerializeMethodName(property: Property): String =
-    val name = Strings.capitalize(property.name())
+    val name = Strings.capitalize(property.name)
     SERIALIZE_METHOD_PREFIX + name

@@ -9,15 +9,12 @@ import com.sun.source.util.Trees
 import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import io.toolisticon.aptk.tools.corematcher.AptkCoreMatchers
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper
-import me.bristermitten.mittenlib.annotations.domain.*
-import me.bristermitten.mittenlib.annotations.{ast => astpkg}
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  ASTSettings,
-  ASTParentReference,
-  ConfigTypeSource,
-  Property => ASTProperty,
-  ValidationConstraint
+import me.bristermitten.mittenlib.annotations.domain.{
+  ConfigSettings,
+  ConfigStructure,
+  Constraint,
+  Property,
+  PropertyType
 }
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache
 import me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator
@@ -59,6 +56,7 @@ class ConfigParser @Inject() (
     private val classNameGenerator: ConfigurationClassNameGenerator,
     private val serializationCodeGenerator: SerializationCodeGenerator,
     private val configStructureAnalysis: ConfigStructureAnalysis,
+    private val constraintChecker: ConstraintChecker,
     processingEnv: ProcessingEnvironment
 ):
   io.toolisticon.aptk.common.ToolingProvider.setTooling(processingEnv)
@@ -470,11 +468,14 @@ class ConfigParser @Inject() (
         )
       }
 
+    val className = Option(config.className()).filter(_.nonEmpty)
+
     ConfigSettings(
       namingPattern,
       source,
       config.requireSerialization(),
-      config.requireDynamicInitialization()
+      config.requireDynamicInitialization(),
+      className
     )
   }
 
@@ -597,55 +598,7 @@ class ConfigParser @Inject() (
 
   private def parseConstraints(
       construct: AnnotatedConstruct
-  ): List[Constraint] = {
-    construct.getAnnotationMirrors.asScala.flatMap { mirror =>
-      val qName = mirror.getAnnotationType.asElement
-        .asInstanceOf[TypeElement]
-        .getQualifiedName
-        .toString
-      qName match {
-        case "me.bristermitten.mittenlib.config.validation.Positive" |
-            "jakarta.validation.constraints.Positive" |
-            "javax.validation.constraints.Positive" =>
-          Some(Constraint.Positive)
-        case "me.bristermitten.mittenlib.config.validation.Negative" |
-            "jakarta.validation.constraints.Negative" |
-            "javax.validation.constraints.Negative" =>
-          Some(Constraint.Negative)
-        case "me.bristermitten.mittenlib.config.validation.Min" |
-            "jakarta.validation.constraints.Min" |
-            "javax.validation.constraints.Min" =>
-          val value = getAnnotationNumericValue(mirror, "value").getOrElse(0.0)
-          Some(Constraint.Min(value))
-        case "me.bristermitten.mittenlib.config.validation.Max" |
-            "jakarta.validation.constraints.Max" |
-            "javax.validation.constraints.Max" =>
-          val value = getAnnotationNumericValue(mirror, "value").getOrElse(0.0)
-          Some(Constraint.Max(value))
-        case "me.bristermitten.mittenlib.config.validation.Range" |
-            "org.hibernate.validator.constraints.Range" =>
-          val min = getAnnotationNumericValue(mirror, "min").getOrElse(0.0)
-          val max = getAnnotationNumericValue(mirror, "max").getOrElse(0.0)
-          Some(Constraint.Range(min, max))
-        case "me.bristermitten.mittenlib.config.validation.NotBlank" |
-            "jakarta.validation.constraints.NotBlank" |
-            "javax.validation.constraints.NotBlank" =>
-          Some(Constraint.NotBlank)
-        case "me.bristermitten.mittenlib.config.validation.ValidateWith" =>
-          getAnnotationValue[TypeMirror](mirror, "value").map { tpe =>
-            Constraint.Custom(
-              ClassName.get(
-                tpe
-                  .asInstanceOf[DeclaredType]
-                  .asElement()
-                  .asInstanceOf[TypeElement]
-              )
-            )
-          }
-        case _ => None
-      }
-    }.toList
-  }
+  ): List[Constraint] = constraintChecker.parseConstraints(construct)
 
   private def getAnnotationValue[T](
       mirror: AnnotationMirror,
@@ -946,136 +899,6 @@ class ConfigParser @Inject() (
       case u: ConfigStructure.Union        => u.parents
     }
 
-  private def buildEnclosedIn(name: ClassName): ASTParentReference = {
-    val enclosingName = name.enclosingClassName()
-    if (enclosingName == null) return null
-    val parentRef = buildEnclosedIn(enclosingName)
-    val enclosingDomain = configNameCache.lookupDomain(enclosingName)
-    val isInterface = enclosingDomain.exists {
-      case a: ConfigStructure.Atomic => a.isInterface
-      case _                         => false
-    }
-    val manualClassName = enclosingDomain.flatMap { ast =>
-      val enclosingElement = elements.getTypeElement(ast.name.canonicalName())
-      Option(typesUtil.getAnnotation(enclosingElement, classOf[Config]))
-        .filter(_.className().nonEmpty)
-        .map(_.className())
-    }.orNull
-    ASTParentReference(enclosingName, isInterface, manualClassName, parentRef)
-  }
-
-  private def createAbstractStructure(
-      ast: ConfigStructure,
-      element: TypeElement
-  ): AbstractConfigStructure = {
-    val name = ast.name
-    val configAnnotation = typesUtil.getAnnotation(element, classOf[Config])
-    val sourceAnnotation = typesUtil.getAnnotation(element, classOf[Source])
-    val namingPatternAnnotation =
-      typesUtil.getAnnotation(element, classOf[NamingPattern])
-    val astSettings = ASTSettings.ConfigASTSettings(
-      namingPatternAnnotation,
-      sourceAnnotation,
-      configAnnotation,
-      false
-    )
-    val enclosedIn = buildEnclosedIn(name)
-
-    val configTypeSource: ConfigTypeSource = if (element.getKind.isInterface) {
-      val parents = new java.util.ArrayList[TypeMirror]()
-      element.getInterfaces.forEach(parents.add)
-      ConfigTypeSource.InterfaceConfigTypeSource(element, parents)
-    } else {
-      val superclass = element.getSuperclass
-      val parentOpt =
-        if (
-          superclass.getKind != TypeKind.NONE && superclass.toString != "java.lang.Object"
-        ) {
-          java.util.Optional.of(superclass)
-        } else {
-          java.util.Optional.empty[TypeMirror]()
-        }
-      ConfigTypeSource.ClassConfigTypeSource(element, parentOpt)
-    }
-
-    // Get already-cached enclosed AbstractConfigStructures
-    val enclosedAst = new java.util.ArrayList[AbstractConfigStructure]()
-    for (enclosed <- ast.enclosed) {
-      configNameCache.lookupAST(enclosed.name).ifPresent(enclosedAst.add)
-    }
-
-    // Convert domain properties to AST properties
-    val astProperties = new java.util.ArrayList[ASTProperty]()
-    for (prop <- ast.properties) {
-      val propSource: ASTProperty.PropertySource =
-        if (prop.element.getKind.isField) {
-          ASTProperty.PropertySource.FieldSource(
-            prop.element.asInstanceOf[javax.lang.model.element.VariableElement]
-          )
-        } else {
-          ASTProperty.PropertySource.MethodSource(
-            prop.element
-              .asInstanceOf[javax.lang.model.element.ExecutableElement]
-          )
-        }
-      val fieldNamingPattern =
-        typesUtil.getAnnotation(prop.element, classOf[NamingPattern])
-      val effectiveNamingPattern =
-        if (fieldNamingPattern != null) fieldNamingPattern
-        else namingPatternAnnotation
-      val astPropSettings = ASTSettings.PropertyASTSettings(
-        effectiveNamingPattern,
-        typesUtil.getAnnotation(prop.element, classOf[ConfigName]),
-        typesUtil
-          .getAnnotation(prop.element, classOf[EnumParsingScheme]) match {
-          case null =>
-            me.bristermitten.mittenlib.config.EnumParsingSchemes.EXACT_MATCH
-          case a => a.value()
-        },
-        prop.isNullable,
-        prop.hasDefault,
-        new java.util.ArrayList[ValidationConstraint](),
-        new java.util.ArrayList[ValidationConstraint](),
-        new java.util.ArrayList[ValidationConstraint]()
-      )
-      astProperties.add(
-        ASTProperty(prop.name, prop.typeMirror, propSource, astPropSettings)
-      )
-    }
-
-    ast match {
-      case _: ConfigStructure.Union =>
-        AbstractConfigStructure.Union(
-          name,
-          configTypeSource,
-          astSettings,
-          enclosedIn,
-          new java.util.ArrayList[ClassName](),
-          enclosedAst,
-          astProperties
-        )
-      case i: ConfigStructure.Intersection =>
-        AbstractConfigStructure.Intersection(
-          name,
-          configTypeSource,
-          astSettings,
-          enclosedIn,
-          enclosedAst,
-          new java.util.ArrayList[ClassName](i.roots.asJava),
-          astProperties
-        )
-      case _ =>
-        AbstractConfigStructure.Atomic(
-          name,
-          configTypeSource,
-          astSettings,
-          enclosedAst,
-          enclosedIn,
-          astProperties
-        )
-    }
-  }
-
   private def putInCache(ast: ConfigStructure, element: TypeElement): Unit = {
     // Put domain entry first so enclosed configs can find this parent in buildEnclosedIn
     configNameCache.putDomain(ast)
@@ -1087,9 +910,8 @@ class ConfigParser @Inject() (
         putInCache(enclosed, enclosedElement)
       }
     }
-    // Create abstract AST after enclosed abstract ASTs are in cache
-    val abstractAst = createAbstractStructure(ast, element)
-    configNameCache.put(abstractAst)
+    // Generate concrete class name
+
     generatedTypeCache.put(
       element,
       classNameGenerator.getConcreteConfigClassName(ast).canonicalName()

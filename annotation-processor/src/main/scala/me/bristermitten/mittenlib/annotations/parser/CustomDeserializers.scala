@@ -68,7 +68,7 @@ class CustomDeserializers extends CustomInfoRegistry[CustomDeserializerInfo]:
       ) {
         MessagerUtils.error(
           deserializeMethod.unwrap(),
-          CustomDeserializersCompilerMessages.INVALID_STATIC_METHOD_SIGNATURE,
+          CustomDeserializersMessagesCompilerMessages.INVALID_STATIC_METHOD_SIGNATURE,
           deserializerFor
         )
         return
@@ -82,7 +82,7 @@ class CustomDeserializers extends CustomInfoRegistry[CustomDeserializerInfo]:
     if (!isStatic && !implementsCustomDeserializer) {
       MessagerUtils.error(
         customDeserializerType,
-        CustomDeserializersCompilerMessages.UNSUPPORTED_NON_STATIC
+        CustomDeserializersMessagesCompilerMessages.UNSUPPORTED_NON_STATIC
       )
       return
     }
@@ -93,8 +93,7 @@ class CustomDeserializers extends CustomInfoRegistry[CustomDeserializerInfo]:
     val customDeserializerInfo = CustomDeserializerInfo(
       customDeserializerType,
       isStatic,
-      isFallback,
-      false
+      isFallback
     )
 
     register(TypeName.get(deserializerFor), customDeserializerInfo)

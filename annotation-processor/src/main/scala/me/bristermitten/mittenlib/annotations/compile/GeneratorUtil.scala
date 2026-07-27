@@ -1,11 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile
 
 import com.palantir.javapoet.{ClassName, CodeBlock, MethodSpec}
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  ConfigTypeSource,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.{ConfigStructure, Property}
 import org.jspecify.annotations.Nullable
 import javax.lang.model.element.TypeElement
 import javax.lang.model.`type`.TypeMirror
@@ -13,48 +9,47 @@ import javax.lang.model.`type`.TypeMirror
 object GeneratorUtil:
 
   def getDaoName(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       classNameGenerator: ConfigurationClassNameGenerator
   ): ClassName =
-    ast.source() match {
-      case _: ConfigTypeSource.InterfaceConfigTypeSource =>
+    ast match {
+      case a: ConfigStructure.Atomic if a.isInterface =>
         classNameGenerator.getInnerDaoName(ast)
-      case _: ConfigTypeSource.ClassConfigTypeSource => ast.name()
+      case _ => ast.name
     }
 
   def addDaoInstantiationIfNecessary(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       methodBuilder: MethodSpec.Builder,
       @Nullable daoName: ClassName
   ): Unit =
-    val hasAnyDefault =
-      ast.properties().stream().anyMatch(p => p.settings().hasDefaultValue())
+    val hasAnyDefault = ast.properties.exists(_.hasDefault)
     if (daoName != null && hasAnyDefault) {
       methodBuilder.addStatement("$T dao = new $T()", daoName, daoName)
     }
 
   def getPropertyAccess(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       property: Property,
       configExpr: me.bristermitten.mittenlib.codegen.dsl.Expr[?],
       methodNames: MethodNames,
       useGetters: Boolean
   ): me.bristermitten.mittenlib.codegen.dsl.Expr[?] =
-    ast.source() match {
-      case _: ConfigTypeSource.InterfaceConfigTypeSource =>
-        configExpr.call(property.name())
-      case _: ConfigTypeSource.ClassConfigTypeSource =>
+    ast match {
+      case a: ConfigStructure.Atomic if a.isInterface =>
+        configExpr.call(property.name)
+      case _ =>
         if (useGetters) {
           configExpr.call(methodNames.safeMethodName(property))
         } else {
-          configExpr.field(property.name())
+          configExpr.field(property.name)
         }
     }
 
   def declareAndCheckFromMap(
-      propertyAST: AbstractConfigStructure,
+      propertyAST: ConfigStructure,
       property: Property,
-      dtoType: TypeElement,
+      dtoType: com.palantir.javapoet.ClassName,
       elementType: TypeMirror,
       context: me.bristermitten.mittenlib.codegen.dsl.StagedExpr[
         me.bristermitten.mittenlib.config.DeserializationContext
@@ -73,14 +68,14 @@ object GeneratorUtil:
 
     val data = declare(Types.DataTree, "$data", context.getData)
     val key = fieldNameGenerator.getConfigFieldName(property)
-    val fromMapName = property.name() + "FromMap"
+    val fromMapName = property.name + "FromMap"
 
     val fromMap = if (hasDefault) {
-      val defaultAccess = propertyAST.source() match {
-        case source: ConfigTypeSource.ClassConfigTypeSource =>
-          dao.get.field(property.name())
-        case source: ConfigTypeSource.InterfaceConfigTypeSource =>
-          dao.get.call(property.name())
+      val defaultAccess = propertyAST match {
+        case a: ConfigStructure.Atomic if !a.isInterface =>
+          dao.get.field(property.name)
+        case _ =>
+          dao.get.call(property.name)
       }
       declare(
         Types.Object,
@@ -91,7 +86,7 @@ object GeneratorUtil:
       declare(Types.DataTree, fromMapName, data.call("get", Expr.str(key)))
     }
 
-    if (property.settings().isNullable()) {
+    if (property.isNullable) {
       ifThen(fromMap.isNull) {
         return_(ResultExpr.ok(Expr.Null))
       }
@@ -102,7 +97,7 @@ object GeneratorUtil:
             Expr.staticCall(
               TypeRef.of(classOf[ConfigLoadingErrors]),
               "notFoundException",
-              Expr.str(property.name()),
+              Expr.str(property.name),
               Expr.str(TypeName.get(elementType).withoutAnnotations().toString),
               Expr.staticField(TypeRef.of(dtoType), "class"),
               Expr.str(key)

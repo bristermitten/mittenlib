@@ -19,10 +19,7 @@ import java.util.{
 import javax.annotation.processing.Generated
 import javax.lang.model.element.{Modifier, TypeElement}
 import javax.lang.model.`type`.TypeMirror
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.{ConfigStructure, Property}
 import me.bristermitten.mittenlib.annotations.config.ConfigProcessor
 import me.bristermitten.mittenlib.annotations.parser.CustomSerializers
 import me.bristermitten.mittenlib.annotations.util.TypesUtil
@@ -56,7 +53,7 @@ class ConfigSaverGenerator @Inject() (
     * @return
     *   a {@@@@@linkJavaFile} containing the generated saver class
     */
-  def emit(ast: AbstractConfigStructure): JavaFile =
+  def emit(ast: ConfigStructure): JavaFile =
     val saverClassName = classNameGenerator.getSerializerClassName(ast)
     val builder = createSaverBuilder(ast)
     JavaFile
@@ -73,7 +70,7 @@ class ConfigSaverGenerator @Inject() (
     *   a builder for the saver class
     */
   private def createSaverBuilder(
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): TypeSpec.Builder =
     val publicClassName = classNameGenerator.getPublicClassName(ast)
     val saverClassName = classNameGenerator.getSerializerClassName(ast)
@@ -102,9 +99,9 @@ class ConfigSaverGenerator @Inject() (
       .addModifiers(Modifier.PUBLIC)
 
     // Add child savers as dependencies recursively
-    for (property <- ast.properties().asScala) {
+    for (property <- ast.properties) {
       collectSaverDependencies(
-        property.propertyType(),
+        property.typeMirror,
         builder,
         constructorBuilder
       )
@@ -113,9 +110,9 @@ class ConfigSaverGenerator @Inject() (
     // Add custom serializers as dependencies recursively
     val injectedTypes = new JLinkedHashSet[TypeName]()
     val injectedFieldNames = new JLinkedHashMap[TypeName, String]()
-    for (property <- ast.properties().asScala) {
+    for (property <- ast.properties) {
       collectCustomSerializers(
-        property.propertyType(),
+        property.typeMirror,
         injectedTypes,
         injectedFieldNames
       )
@@ -166,7 +163,7 @@ class ConfigSaverGenerator @Inject() (
         Expr.new_(TypeRef.of(classOf[JLinkedHashMap[?, ?]]))
       )
 
-      for (property <- ast.properties().asScala) {
+      for (property <- ast.properties) {
         val key = fieldNameGenerator.getConfigFieldName(property)
         val serializeMethodName = methodNames.getSerializeMethodName(property)
 
@@ -199,7 +196,7 @@ class ConfigSaverGenerator @Inject() (
     serializationCodeGenerator.addSerializeMethodsToSaver(builder, ast)
 
     // Add nested classes
-    for (enclosed <- ast.enclosed().asScala) {
+    for (enclosed <- ast.enclosed) {
       builder.addType(
         createSaverBuilder(enclosed).addModifiers(Modifier.STATIC).build()
       )
@@ -212,7 +209,7 @@ class ConfigSaverGenerator @Inject() (
     * for default values when possible.
     */
   private def addGenerateDefaultMethod(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       builder: TypeSpec.Builder
   ): Unit =
     val method = MethodSpec
@@ -238,10 +235,8 @@ class ConfigSaverGenerator @Inject() (
         .param[SerializationContext](Types.SerializationContext, "context")
       val daoVar =
         if (
-          daoName != null && ast
-            .properties()
-            .asScala
-            .exists(_.settings().hasDefaultValue())
+          daoName != null && ast.properties
+            .exists(_.hasDefault)
         ) {
           Some(
             declare(TypeRef.of(daoName), "dao", Expr.new_(TypeRef.of(daoName)))
@@ -256,11 +251,11 @@ class ConfigSaverGenerator @Inject() (
         Expr.new_(TypeRef.of(classOf[JLinkedHashMap[?, ?]]))
       )
 
-      for (property <- ast.properties().asScala) {
+      for (property <- ast.properties) {
         val key = fieldNameGenerator.getConfigFieldName(property)
-        val propertyType = property.propertyType()
+        val propertyType = property.typeMirror
 
-        if (property.settings().hasDefaultValue()) {
+        if (property.hasDefault) {
           val propAccessExpr = GeneratorUtil.getPropertyAccess(
             ast,
             property,
@@ -294,7 +289,7 @@ class ConfigSaverGenerator @Inject() (
             )
           }
         } else if (typesUtil.isConfigType(propertyType)) {
-          if (property.settings().isNullable()) {
+          if (property.isNullable) {
             statement(
               map.call(
                 "put",
@@ -375,9 +370,10 @@ class ConfigSaverGenerator @Inject() (
       constructorBuilder: MethodSpec.Builder,
       tpe: TypeMirror
   ): Unit =
-    val astOpt = configNameCache.lookupAST(tpe)
+    val astOpt =
+      configNameCache.lookupDomain(TypeName.get(tpe).asInstanceOf[ClassName])
     if (astOpt.isEmpty) return
-    val ast = astOpt.get()
+    val ast = astOpt.get
 
     val publicChildClassName = classNameGenerator.getPublicClassName(ast)
     val fieldName = classNameGenerator.getSerializerProviderFieldName(tpe)
@@ -432,7 +428,7 @@ class ConfigSaverGenerator @Inject() (
   ): Unit =
     customSerializers
       .getCustomInfo(tpe)
-      .ifPresent(info => {
+      .foreach(info => {
         if (!info.isStatic) {
           val serializerClass = info.serializerClass
           val serializerClassName = ClassName.get(serializerClass)

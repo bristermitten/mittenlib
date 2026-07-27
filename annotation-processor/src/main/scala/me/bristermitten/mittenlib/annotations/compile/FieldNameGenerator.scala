@@ -1,10 +1,7 @@
 package me.bristermitten.mittenlib.annotations.compile
 
 import com.google.inject.Inject
-import me.bristermitten.mittenlib.annotations.ast.Property
-import me.bristermitten.mittenlib.annotations.domain.{
-  Property => DomainProperty
-}
+import me.bristermitten.mittenlib.annotations.domain.Property
 import me.bristermitten.mittenlib.config.names.ConfigName
 import me.bristermitten.mittenlib.config.names.NamingPattern
 import me.bristermitten.mittenlib.config.names.NamingPatternTransformer
@@ -13,13 +10,6 @@ import org.jspecify.annotations.Nullable
 class FieldNameGenerator @Inject() ():
 
   def getConfigFieldName(property: Property): String =
-    val configName = property.settings().configName()
-    val namingPattern = property.settings().namingPattern()
-    val fieldName = property.name()
-
-    getConfigFieldName(configName, namingPattern, fieldName)
-
-  def getConfigFieldName(property: DomainProperty): String =
     val configName = property.configName.orNull
     val namingPattern = property.namingPattern.orNull
     val fieldName = property.name

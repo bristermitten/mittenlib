@@ -11,11 +11,7 @@ import javax.lang.model.element.{
   TypeElement,
   VariableElement
 }
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  ConfigTypeSource,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.{ConfigStructure, Property}
 import me.bristermitten.mittenlib.annotations.util.{
   PrivateAnnotations,
   TypeSpecUtil
@@ -130,23 +126,21 @@ class AccessorGenerator @Inject() (
     */
   def createWithMethods(
       typeSpecBuilder: TypeSpec.Builder,
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): Unit =
-    for (field <- ast.properties().asScala) {
+    for (field <- ast.properties) {
       val configImplClassName =
-        configurationClassNameGenerator.generateConfigurationClassName(
-          ast.source().element()
-        )
+        configurationClassNameGenerator.translateConfigClassName(ast)
       val withMethodBuilder = MethodSpec
-        .methodBuilder("with" + Strings.capitalize(field.name()))
+        .methodBuilder("with" + Strings.capitalize(field.name))
         .addJavadoc(
           """Returns a new instance of this configuration with the {@code $L} property updated.
             |
             |@param $L the new value for the property
             |@return a new configuration instance with the updated value
             |""".stripMargin,
-          field.name(),
-          field.name()
+          field.name,
+          field.name
         )
         .addModifiers(Modifier.PUBLIC)
         .returns(configImplClassName)
@@ -154,34 +148,34 @@ class AccessorGenerator @Inject() (
           ParameterSpec
             .builder(
               configurationClassNameGenerator.publicPropertyClassName(field),
-              field.name()
+              field.name
             )
             .addModifiers(Modifier.FINAL)
             .build()
         )
 
       ast match {
-        case _: AbstractConfigStructure.Union =>
+        case _: ConfigStructure.Union =>
           // make the with method abstract and then alternatives can override it
           withMethodBuilder.addModifiers(Modifier.ABSTRACT)
           typeSpecBuilder.addMethod(withMethodBuilder.build())
         case _ =>
           // Create a string representing the constructor parameters
           var constructorParams = Strings.joinWith(
-            ast.properties(),
+            ast.properties.asJava,
             (f2: Property) => {
-              if (f2.name() == field.name()) {
-                f2.name()
+              if (f2.name == field.name) {
+                f2.name
               } else {
-                "this." + f2.name()
+                "this." + f2.name
               }
             },
             ", "
           )
 
-          ast.source() match {
-            case classSource: ConfigTypeSource.ClassConfigTypeSource
-                if classSource.parentField.isPresent =>
+          ast match {
+            case atomic: ConfigStructure.Atomic
+                if !atomic.isInterface && atomic.parentClass.isDefined =>
               val joiner = new StringJoiner(", ").add("this.parent")
               if (constructorParams.nonEmpty) {
                 joiner.add(constructorParams)

@@ -1,12 +1,13 @@
 package me.bristermitten.mittenlib.annotations.compile.deserializer
 
 import com.google.inject.Guice
+import com.palantir.javapoet.ClassName
 import com.palantir.javapoet.TypeName.*
 import io.toolisticon.aptk.common.ToolingProvider
 import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper
 import io.toolisticon.cute.Cute
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure
+import me.bristermitten.mittenlib.annotations.domain.ConfigStructure
 import me.bristermitten.mittenlib.annotations.compile.{
   ConfigNameCache,
   ConfigProcessorModule,
@@ -55,7 +56,7 @@ class GenericTypeDeserializerGeneratorTest extends AnyFunSuite with Matchers {
         val parser = injector.getInstance(classOf[ConfigParser])
         val cache = injector.getInstance(classOf[ConfigNameCache])
         val domainAst = parser.getParsedStructure(element)
-        val ast: AbstractConfigStructure = cache.lookupAST(domainAst.name).get()
+        val ast: ConfigStructure = cache.lookupDomain(domainAst.name).get
 
         val field = element.getEnclosedElements
           .stream()
@@ -65,7 +66,7 @@ class GenericTypeDeserializerGeneratorTest extends AnyFunSuite with Matchers {
           .asInstanceOf[VariableElement]
 
         val wrapper = TypeMirrorWrapper.wrap(field.asType())
-        val property = ast.properties().get(0)
+        val property = ast.properties.head
         val typeElementWrapper = TypeElementWrapper.wrap(
           processingEnvironment.getTypeUtils
             .asElement(
@@ -78,7 +79,7 @@ class GenericTypeDeserializerGeneratorTest extends AnyFunSuite with Matchers {
           generator.generateDeserializeMethod(
             ast,
             property,
-            element,
+            ClassName.get(element),
             field.asType(),
             wrapper,
             typeElementWrapper,
@@ -154,7 +155,7 @@ class GenericTypeDeserializerGeneratorTest extends AnyFunSuite with Matchers {
         )
 
         val domainAst = parser.getParsedStructure(element)
-        val ast: AbstractConfigStructure = cache.lookupAST(domainAst.name).get()
+        val ast: ConfigStructure = cache.lookupDomain(domainAst.name).get
 
         var i = 0
         element.getEnclosedElements
@@ -163,7 +164,7 @@ class GenericTypeDeserializerGeneratorTest extends AnyFunSuite with Matchers {
           .map(e => e.asInstanceOf[VariableElement])
           .forEach(field => {
             val wrapper = TypeMirrorWrapper.wrap(field.asType())
-            val property = ast.properties().get(i)
+            val property = ast.properties(i)
             i += 1
             val typeElementWrapper = TypeElementWrapper.wrap(
               processingEnvironment.getTypeUtils
@@ -176,7 +177,7 @@ class GenericTypeDeserializerGeneratorTest extends AnyFunSuite with Matchers {
             val result = generator.generateDeserializeMethod(
               ast,
               property,
-              element,
+              ClassName.get(element),
               field.asType(),
               wrapper,
               typeElementWrapper,

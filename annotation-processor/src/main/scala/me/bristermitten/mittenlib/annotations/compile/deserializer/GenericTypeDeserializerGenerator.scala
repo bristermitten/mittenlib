@@ -15,10 +15,8 @@ import io.toolisticon.aptk.tools.wrapper.{ElementWrapper, TypeElementWrapper}
 import java.util.Optional
 import javax.lang.model.element.{Modifier, TypeElement}
 import javax.lang.model.`type`.TypeMirror
-import _root_.me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  ConfigTypeSource,
-  CustomDeserializerInfo,
+import _root_.me.bristermitten.mittenlib.annotations.domain.{
+  ConfigStructure,
   Property
 }
 import _root_.me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator
@@ -44,15 +42,15 @@ class GenericTypeDeserializerGenerator @Inject() (
 ):
 
   private def getDeserializationFunction(
-      dtoType: TypeElement,
+      dtoType: ClassName,
       property: Property,
       tpe: TypeMirror,
       depth: Int
   ): Expr[?] =
     val wrapped = TypeMirrorWrapper.wrap(tpe)
     val customDeserializerOptional = customDeserializers.getCustomInfo(tpe)
-    if (customDeserializerOptional.isPresent) {
-      val info = customDeserializerOptional.get()
+    if (customDeserializerOptional.isDefined) {
+      val info = customDeserializerOptional.get
       if (info.isStatic) {
         val ctxVar = Var("ctx", Types.DeserializationContext)
         Expr.lambdaExpr(
@@ -161,9 +159,9 @@ class GenericTypeDeserializerGenerator @Inject() (
     }
 
   def generateDeserializeMethod(
-      propertyAST: AbstractConfigStructure,
+      propertyAST: ConfigStructure,
       property: Property,
-      dtoType: TypeElement,
+      dtoType: ClassName,
       elementType: TypeMirror,
       wrappedElementType: TypeMirrorWrapper,
       elementTypeElement: TypeElementWrapper,
@@ -173,7 +171,7 @@ class GenericTypeDeserializerGenerator @Inject() (
       methodNames: _root_.me.bristermitten.mittenlib.annotations.compile.MethodNames
   ): MethodSpec =
     ElementWrapper
-      .wrap(property.source().element())
+      .wrap(property.element)
       .validate()
       .asError()
       .check(el =>

@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.aptk.compilermessages.api)
     implementation(libs.aptk.annotationwrapper.api)
     annotationProcessor(libs.aptk.compilermessages.processor)
+    annotationProcessor(libs.aptk.annotationwrapper.processor)
     implementation(libs.bundles.autoservice)
     implementation(libs.chalk)
     @Suppress(
@@ -62,7 +63,7 @@ sourceSets {
 }
 
 tasks.compileJava {
-    enabled = false
+    enabled = true
 }
 
 tasks.withType<JavaCompile>().configureEach {

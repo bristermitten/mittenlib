@@ -208,8 +208,8 @@ class ConfigValidatorGenerator @Inject (
     val validateMethodDecl = MethodDecl.build(
       name = "validate",
       returnType = Types.Result(TypeRef.of(publicClassName)),
-      parameters = List(configParam),
-      modifiers = List(Modifier.PUBLIC),
+      parameters = scala.collection.immutable.List(configParam),
+      modifiers = scala.collection.immutable.List(Modifier.PUBLIC),
       annotations = Nil
     ) {
       val violations = declare(

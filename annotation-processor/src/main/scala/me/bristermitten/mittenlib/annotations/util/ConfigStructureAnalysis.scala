@@ -2,10 +2,6 @@ package me.bristermitten.mittenlib.annotations.util
 
 import com.google.inject.{Inject, Singleton}
 import com.palantir.javapoet.ClassName
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  Property => AstProperty
-}
 import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache
 import me.bristermitten.mittenlib.annotations.domain.*
 
@@ -21,9 +17,6 @@ class ConfigStructureAnalysis @Inject() (
 
   def isDynamicallyInitializable(structure: ConfigStructure): Boolean =
     isDynamicallyInitializable(structure, Set.empty)
-
-  def isDynamicallyInitializable(structure: AbstractConfigStructure): Boolean =
-    cache.lookupDomain(structure.name()).exists(isDynamicallyInitializable)
 
   private def isDynamicallyInitializable(
       structure: ConfigStructure,
@@ -44,6 +37,12 @@ class ConfigStructureAnalysis @Inject() (
     isTypeInitializable(tpe, Set.empty)
 
   def isTypeInitializable(tpe: TypeMirror): Boolean =
+    isTypeInitializable(tpe, Set.empty)
+
+  private def isTypeInitializable(
+      tpe: TypeMirror,
+      visited: Set[ClassName]
+  ): Boolean =
     if (typesUtil.isConfigType(tpe)) {
       tpe match {
         case declaredType: DeclaredType =>
@@ -51,7 +50,7 @@ class ConfigStructureAnalysis @Inject() (
             declaredType.asElement().asInstanceOf[TypeElement]
           )
           val opt = cache.lookupDomain(className)
-          opt.exists(isDynamicallyInitializable(_, Set.empty))
+          opt.exists(isDynamicallyInitializable(_, visited))
         case _ => false
       }
     } else {
@@ -60,9 +59,6 @@ class ConfigStructureAnalysis @Inject() (
 
   def hasDefaultOrIsInitializable(p: Property): Boolean =
     p.hasDefault || isTypeInitializable(p.propertyType)
-
-  def hasDefaultOrIsInitializable(p: AstProperty): Boolean =
-    p.settings().hasDefaultValue() || isTypeInitializable(p.propertyType())
 
   private def isTypeInitializable(
       tpe: PropertyType,
@@ -82,9 +78,6 @@ class ConfigStructureAnalysis @Inject() (
         p.propertyType
       ) && !p.isNullable)
     }
-
-  def needsValidation(structure: AbstractConfigStructure): Boolean =
-    cache.lookupDomain(structure.name()).exists(needsValidation)
 
   private def hasConstraints(pt: PropertyType): Boolean = pt match {
     case PropertyType.Primitive(_, cs)       => cs.nonEmpty

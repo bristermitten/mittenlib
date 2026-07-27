@@ -12,10 +12,7 @@ import io.toolisticon.aptk.tools.MessagerUtils
 import java.util.{List => JList, Map => JMap, Set => JSet}
 import javax.annotation.processing.Generated
 import javax.lang.model.element.Modifier
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.{ConfigStructure, Property}
 import me.bristermitten.mittenlib.annotations.util.ConfigStructureAnalysis
 import me.bristermitten.mittenlib.config.BindProperty
 import me.bristermitten.mittenlib.config.Configuration
@@ -36,7 +33,7 @@ class ConfigLoaderModuleGenerator @Inject() (
 ):
 
   def emit(
-      asts: JList[AbstractConfigStructure],
+      asts: JList[ConfigStructure],
       rootPackage: String
   ): JavaFile =
     if (asts.isEmpty) {
@@ -165,7 +162,7 @@ class ConfigLoaderModuleGenerator @Inject() (
 
   private def addFunctionBindings(
       configureMethod: MethodSpec.Builder,
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): Unit =
     val publicClassName = classNameGenerator.getPublicClassName(ast)
     val loaderClassName = classNameGenerator.getDeserializerClassName(ast)
@@ -197,20 +194,20 @@ class ConfigLoaderModuleGenerator @Inject() (
       configureMethod.addStatement("binder.bind($T.class)", validatorClassName)
     }
 
-    for (enclosed <- ast.enclosed().asScala) {
+    for (enclosed <- ast.enclosed) {
       addFunctionBindings(configureMethod, enclosed)
     }
 
   private def addProvidesMethods(
       builder: TypeSpec.Builder,
-      ast: AbstractConfigStructure,
-      parent: AbstractConfigStructure,
+      ast: ConfigStructure,
+      parent: ConfigStructure,
       isParentProvided: Boolean
   ): Unit =
     val publicClassName = classNameGenerator.getPublicClassName(ast)
     var isCurrentProvided = false
 
-    if (ast.settings().source() != null) {
+    if (ast.settings.source.isDefined) {
       isCurrentProvided = true
       val implClassName = classNameGenerator.translateConfigClassName(ast)
       val name = publicClassName.simpleName()
@@ -400,20 +397,19 @@ class ConfigLoaderModuleGenerator @Inject() (
       isCurrentProvided = addNestedProvidesMethod(builder, parent, ast)
     }
 
-    for (enclosed <- ast.enclosed().asScala) {
+    for (enclosed <- ast.enclosed) {
       addProvidesMethods(builder, enclosed, ast, isCurrentProvided)
     }
 
   private def addNestedProvidesMethod(
       builder: TypeSpec.Builder,
-      parent: AbstractConfigStructure,
-      child: AbstractConfigStructure
+      parent: ConfigStructure,
+      child: ConfigStructure
   ): Boolean =
     val parentPublicName = classNameGenerator.getPublicClassName(parent)
     val childPublicName = classNameGenerator.getPublicClassName(child)
 
-    val matchingProperties = parent
-      .properties()
+    val matchingProperties = parent.properties.asJava
       .stream()
       .filter(property =>
         classNameGenerator.publicPropertyClassName(property) == childPublicName
@@ -431,9 +427,7 @@ class ConfigLoaderModuleGenerator @Inject() (
     } else {
       // Check for @BindProperty
       val explicitBindings = matchingProperties
-        .filter(p =>
-          p.source().element().getAnnotation(classOf[BindProperty]) != null
-        )
+        .filter(p => p.element.getAnnotation(classOf[BindProperty]) != null)
 
       if (explicitBindings.size == 1) {
         propertyToBind = explicitBindings.head
@@ -441,7 +435,7 @@ class ConfigLoaderModuleGenerator @Inject() (
         if (explicitBindings.size > 1) {
           for (explicitBinding <- explicitBindings) {
             MessagerUtils.error(
-              explicitBinding.source().element(),
+              explicitBinding.element,
               "Multiple properties of type "
                 + childPublicName.simpleName()
                 + " are marked with @BindProperty. Only one can be bound to the type in Guice."
@@ -472,9 +466,11 @@ class ConfigLoaderModuleGenerator @Inject() (
     true
 
   private def findAllConfigsWithSource(
-      ast: AbstractConfigStructure
-  ): List[AbstractConfigStructure] =
-    val current = if (ast.settings().source() != null) List(ast) else Nil
+      ast: ConfigStructure
+  ): List[ConfigStructure] =
+    val current: scala.collection.immutable.List[ConfigStructure] =
+      if (ast.settings.source.isDefined) scala.collection.immutable.List(ast)
+      else Nil
     val children =
-      ast.enclosed().asScala.flatMap(findAllConfigsWithSource).toList
+      ast.enclosed.flatMap(findAllConfigsWithSource)
     current ++ children

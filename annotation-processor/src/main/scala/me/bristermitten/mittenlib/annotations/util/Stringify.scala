@@ -3,8 +3,6 @@ package me.bristermitten.mittenlib.annotations.util
 import javax.lang.model.element.Element
 import javax.lang.model.element.VariableElement
 
-class Stringify private ()
-
 /** Generic utilities for converting objects to strings. */
 object Stringify:
 

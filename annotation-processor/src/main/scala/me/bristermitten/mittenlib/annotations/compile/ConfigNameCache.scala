@@ -3,38 +3,32 @@ package me.bristermitten.mittenlib.annotations.compile
 import com.google.inject.Singleton
 import com.palantir.javapoet.ClassName
 import io.toolisticon.aptk.tools.TypeMirrorWrapper
-import me.bristermitten.mittenlib.annotations.ast.AbstractConfigStructure
-import me.bristermitten.mittenlib.annotations.domain
+import me.bristermitten.mittenlib.annotations.domain.ConfigStructure
 
-import java.util
-import java.util.{HashMap, Optional}
+import java.util.HashMap
 import javax.lang.model.`type`.{TypeKind, TypeMirror}
 
 @Singleton
 class ConfigNameCache:
-  private val astCache = new util.HashMap[ClassName, AbstractConfigStructure]()
-  private val domainCache =
-    new util.HashMap[ClassName, domain.ConfigStructure]()
+  private val cache = new HashMap[ClassName, ConfigStructure]()
 
-  def lookupAST(name: ClassName): Optional[AbstractConfigStructure] =
-    Optional.ofNullable(astCache.get(name))
+  def put(structure: ConfigStructure): Unit =
+    cache.put(structure.name, structure)
 
-  def lookupAST(mirror: TypeMirror): Optional[AbstractConfigStructure] =
+  def putDomain(structure: ConfigStructure): Unit =
+    put(structure)
+
+  def lookupDomain(name: ClassName): Option[ConfigStructure] =
+    Option(cache.get(name))
+
+  def lookupDomain(mirror: TypeMirror): Option[ConfigStructure] =
     if (mirror.getKind != TypeKind.DECLARED) {
-      Optional.empty()
+      None
     } else {
-      lookupAST(
+      lookupDomain(
         ClassName.bestGuess(TypeMirrorWrapper.wrap(mirror).getQualifiedName)
       )
     }
 
-  def put(ast: AbstractConfigStructure): Unit =
-    astCache.put(ast.name(), ast)
-
-  def putDomain(
-      ast: me.bristermitten.mittenlib.annotations.domain.ConfigStructure
-  ): Unit =
-    domainCache.put(ast.name, ast)
-
-  def lookupDomain(name: ClassName): Option[domain.ConfigStructure] =
-    Option(domainCache.get(name))
+  def clear(): Unit =
+    cache.clear()

@@ -5,12 +5,7 @@ import _root_.me.bristermitten.mittenlib.codegen.dsl.{*, given}
 import com.google.inject.{Inject, Provider}
 import com.palantir.javapoet.*
 import io.toolisticon.aptk.tools.TypeMirrorWrapper
-import me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  ConfigTypeSource,
-  CustomDeserializerInfo,
-  Property
-}
+import me.bristermitten.mittenlib.annotations.domain.*
 import me.bristermitten.mittenlib.annotations.parser.CustomDeserializers
 import me.bristermitten.mittenlib.annotations.util.{
   ConfigStructureAnalysis,
@@ -41,7 +36,8 @@ class ConfigLoaderGenerator @Inject() (
     private val deserializationCodeGenerator: DeserializationCodeGenerator,
     private val customDeserializers: CustomDeserializers,
     private val typesUtil: TypesUtil,
-    private val configStructureAnalysis: ConfigStructureAnalysis
+    private val configStructureAnalysis: ConfigStructureAnalysis,
+    private val configNameCache: ConfigNameCache
 ):
 
   /** Entry point for generating a [[JavaFile]] for a configuration loader.
@@ -51,7 +47,7 @@ class ConfigLoaderGenerator @Inject() (
     * @return
     *   a [[JavaFile]] containing the generated loader class
     */
-  def emit(ast: AbstractConfigStructure): JavaFile =
+  def emit(ast: ConfigStructure): JavaFile =
     val loaderClassName = classNameGenerator.getDeserializerClassName(ast)
     val builder = createLoaderBuilder(ast)
     addChildLoaderClasses(ast, builder)
@@ -70,7 +66,7 @@ class ConfigLoaderGenerator @Inject() (
     *   a builder for the loader class
     */
   private def createLoaderBuilder(
-      ast: AbstractConfigStructure
+      ast: ConfigStructure
   ): TypeSpec.Builder =
     val loaderClassName = classNameGenerator.getDeserializerClassName(ast)
     val publicClassName = classNameGenerator.getPublicClassName(ast)
@@ -90,7 +86,7 @@ class ConfigLoaderGenerator @Inject() (
         )
       )
 
-    if (ast.enclosedIn() != null) {
+    if (ast.name.enclosingClassName() != null) {
       builder.addModifiers(Modifier.STATIC)
     }
 
@@ -101,13 +97,11 @@ class ConfigLoaderGenerator @Inject() (
 
     // Add property deserialization methods
     val daoName = GeneratorUtil.getDaoName(ast, classNameGenerator)
-    val dtoType = ast.source().element()
-    val deserializeMethods = ast
-      .properties()
-      .asScala
+
+    val deserializeMethods = ast.properties
       .map(property =>
         deserializationCodeGenerator
-          .createDeserializeMethodFor(dtoType, ast, property, daoName)
+          .createDeserializeMethodFor(ast.name, ast, property, daoName)
       )
       .toList
 
@@ -122,10 +116,10 @@ class ConfigLoaderGenerator @Inject() (
     * structures.
     */
   private def addChildLoaderClasses(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       loaderBuilder: TypeSpec.Builder
   ): Unit =
-    for (child <- ast.enclosed().asScala) {
+    for (child <- ast.enclosed) {
       val childLoaderBuilder = createLoaderBuilder(child)
       addChildLoaderClasses(child, childLoaderBuilder)
       loaderBuilder.addType(childLoaderBuilder.build())
@@ -135,7 +129,7 @@ class ConfigLoaderGenerator @Inject() (
     * its dependencies.
     */
   private def addFieldsAndConstructor(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       builder: TypeSpec.Builder
   ): Unit =
     val constructor = MethodSpec
@@ -170,30 +164,33 @@ class ConfigLoaderGenerator @Inject() (
     val injectedTypes = new JLinkedHashSet[TypeName]()
     val injectedFieldNames = new JLinkedHashMap[TypeName, String]()
 
-    for (parent <- ast.source().parents().asScala) {
-      collectConfigTypes(parent, injectedTypes, injectedFieldNames)
-    }
-
     ast match {
-      case union: AbstractConfigStructure.Union =>
-        for (alternative <- union.alternatives.asScala) {
+      case a: ConfigStructure.Atomic =>
+        a.parentClass.foreach(p =>
+          collectConfigTypes(p, injectedTypes, injectedFieldNames)
+        )
+      case i: ConfigStructure.Intersection =>
+        i.roots.foreach(p =>
+          collectConfigTypes(p, injectedTypes, injectedFieldNames)
+        )
+      case union: ConfigStructure.Union =>
+        for (alternative <- union.alternatives) {
           collectConfigTypes(
-            alternative.source().element().asType(),
+            alternative.name,
             injectedTypes,
             injectedFieldNames
           )
         }
-      case _ =>
     }
 
-    for (property <- ast.properties().asScala) {
+    for (property <- ast.properties) {
       collectCustomDeserializers(
-        property.propertyType(),
+        property.typeMirror,
         injectedTypes,
         injectedFieldNames
       )
       collectConfigTypes(
-        property.propertyType(),
+        property.typeMirror,
         injectedTypes,
         injectedFieldNames
       )
@@ -239,6 +236,26 @@ class ConfigLoaderGenerator @Inject() (
       }
     }
 
+  private def collectConfigTypes(
+      className: ClassName,
+      injectedTypes: JSet[TypeName],
+      injectedFieldNames: JMap[TypeName, String]
+  ): Unit = {
+    val astOpt = configNameCache.lookupDomain(className)
+    if (astOpt.isEmpty) return
+    val subLoaderName = classNameGenerator.getDeserializerClassName(astOpt.get)
+    val providerType = ParameterizedTypeName.get(
+      ClassName.get(classOf[Provider[?]]),
+      subLoaderName
+    )
+    val fieldName = Strings.uncapitalize(
+      subLoaderName.simpleName()
+    ) + ConfigurationClassNameGenerator.PROVIDER_SUFFIX
+    if (injectedTypes.add(providerType)) {
+      injectedFieldNames.put(providerType, fieldName)
+    }
+  }
+
   /** Recursively traverses generic type arguments of a property's type to
     * discover non-static custom deserializers that need to be injected into the
     * generated loader.
@@ -250,7 +267,7 @@ class ConfigLoaderGenerator @Inject() (
   ): Unit =
     customDeserializers
       .getCustomInfo(tpe)
-      .ifPresent(info => {
+      .foreach(info => {
         if (!info.isStatic) {
           val deserializerClass = info.deserializerClass
           val fieldName =
@@ -273,7 +290,7 @@ class ConfigLoaderGenerator @Inject() (
     * deserialization of all properties.
     */
   private def addApplyMethod(
-      ast: AbstractConfigStructure,
+      ast: ConfigStructure,
       builder: TypeSpec.Builder,
       deserializeMethods: JList[MethodSpec],
       @Nullable daoName: ClassName
@@ -312,31 +329,36 @@ class ConfigLoaderGenerator @Inject() (
 
       tryCatch(Types.Exception) {
         ast match {
-          case union: AbstractConfigStructure.Union =>
-            for (
-              (alternative, idx) <- union.alternatives.asScala.zipWithIndex
-            ) {
-              val loaderFieldName =
-                classNameGenerator.getDeserializerProviderFieldName(
-                  alternative.source().element().asType()
+          case union: ConfigStructure.Union =>
+            for ((alternative, idx) <- union.alternatives.zipWithIndex) {
+              val astOpt = configNameCache.lookupDomain(alternative.name)
+              if (astOpt.isDefined) {
+                val loaderFieldName =
+                  Strings.uncapitalize(
+                    classNameGenerator
+                      .getDeserializerClassName(astOpt.get)
+                      .simpleName()
+                  ) + ConfigurationClassNameGenerator.PROVIDER_SUFFIX
+                val varName = s"var$idx"
+                val alternativePublicType =
+                  classNameGenerator.getPublicClassName(alternative)
+                val resultType = Types.Result(
+                  TypeRef.of(WildcardTypeName.subtypeOf(alternativePublicType))
                 )
-              val varName = s"var$idx"
-              val alternativePublicType =
-                classNameGenerator.getPublicClassName(alternative)
-              val resultType = Types.Result(
-                TypeRef.of(WildcardTypeName.subtypeOf(alternativePublicType))
-              )
-              val varRes = declare(
-                resultType,
-                s"${varName}Res",
-                Expr.This
-                  .field(loaderFieldName)
-                  .call("get")
-                  .call("apply", context)
-              )
+                val varRes = declare(
+                  resultType,
+                  s"${varName}Res",
+                  Expr.This
+                    .field(loaderFieldName)
+                    .call("get")
+                    .call("apply", context)
+                )
 
-              ifThen(varRes.call("isSuccess")) {
-                return_(varRes.cast(Types.Result(TypeRef.of(publicClassName))))
+                ifThen(varRes.call("isSuccess")) {
+                  return_(
+                    varRes.cast(Types.Result(TypeRef.of(publicClassName)))
+                  )
+                }
               }
             }
             return_(
@@ -352,9 +374,7 @@ class ConfigLoaderGenerator @Inject() (
 
           case _ =>
             val hasAnyDefault =
-              ast
-                .properties()
-                .asScala
+              ast.properties
                 .exists(configStructureAnalysis.hasDefaultOrIsInitializable)
             val daoVarOpt = if (hasAnyDefault && daoName != null) {
               Some(
@@ -369,10 +389,9 @@ class ConfigLoaderGenerator @Inject() (
             }
 
             val constructorVars = new JArrayList[Var[?]]()
-            val superClass = ast.source() match {
-              case c: ConfigTypeSource.ClassConfigTypeSource =>
-                if (c.parentField.isPresent) Some(c.parentField.get()) else None
-              case _ => None
+            val superClass = ast match {
+              case a: ConfigStructure.Atomic => a.parentClass
+              case _                         => None
             }
 
             var i = 0
@@ -381,33 +400,42 @@ class ConfigLoaderGenerator @Inject() (
               val varName = s"var$i"
               i += 1
 
-              val superLoaderFieldName =
-                classNameGenerator.getDeserializerProviderFieldName(parentType)
-              val superPublicType =
-                classNameGenerator.publicPropertyClassName(parentType)
+              val astOpt = configNameCache.lookupDomain(parentType)
+              if (astOpt.isDefined) {
+                val superLoaderFieldName =
+                  Strings.uncapitalize(
+                    classNameGenerator
+                      .getDeserializerClassName(astOpt.get)
+                      .simpleName()
+                  ) + ConfigurationClassNameGenerator.PROVIDER_SUFFIX
+                val superPublicType =
+                  classNameGenerator.getPublicClassName(astOpt.get)
 
-              val varRes = declare(
-                Types.Result(TypeRef.of(superPublicType)),
-                s"${varName}Res",
-                Expr.This
-                  .field(superLoaderFieldName)
-                  .call("get")
-                  .call("apply", context)
-              )
+                val varRes = declare(
+                  Types.Result(TypeRef.of(superPublicType)),
+                  s"${varName}Res",
+                  Expr.This
+                    .field(superLoaderFieldName)
+                    .call("get")
+                    .call("apply", context)
+                )
 
-              ifThen(varRes.call("isFailure")) {
-                return_(varRes.cast(Types.Result(TypeRef.of(publicClassName))))
+                ifThen(varRes.call("isFailure")) {
+                  return_(
+                    varRes.cast(Types.Result(TypeRef.of(publicClassName)))
+                  )
+                }
+
+                val parentVar = declare(
+                  TypeRef.of(superPublicType),
+                  varName,
+                  varRes.call("getOrThrow")
+                )
+                constructorVars.add(parentVar)
               }
-
-              val parentVar = declare(
-                TypeRef.of(superPublicType),
-                varName,
-                varRes.call("getOrThrow")
-              )
-              constructorVars.add(parentVar)
             }
 
-            for ((property, idx) <- ast.properties().asScala.zipWithIndex) {
+            for ((property, idx) <- ast.properties.zipWithIndex) {
               val varName = s"var$i"
               i += 1
 
@@ -415,17 +443,18 @@ class ConfigLoaderGenerator @Inject() (
               val returnType = deserializeMethod.returnType()
               val innerType = returnType match {
                 case pt: ParameterizedTypeName => pt.typeArguments().get(0)
-                case _ => TypeName.get(property.propertyType())
+                case _ => TypeName.get(property.typeMirror)
               }
 
-              val deserializeMethodArguments: List[Expr[?]] =
+              val deserializeMethodArguments
+                  : scala.collection.immutable.List[Expr[?]] =
                 if (
                   daoName != null && configStructureAnalysis
                     .hasDefaultOrIsInitializable(property)
                 ) {
-                  List(context, daoVarOpt.get)
+                  scala.collection.immutable.List(context, daoVarOpt.get)
                 } else {
-                  List(context)
+                  scala.collection.immutable.List(context)
                 }
 
               val varRes = declare(

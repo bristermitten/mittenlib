@@ -13,12 +13,11 @@ import io.toolisticon.aptk.tools.TypeMirrorWrapper
 import java.util.Optional
 import javax.lang.model.element.{Modifier, TypeElement}
 import javax.lang.model.`type`.{DeclaredType, TypeMirror}
-import _root_.me.bristermitten.mittenlib.annotations.ast.{
-  AbstractConfigStructure,
-  CustomDeserializerInfo,
-  Property
+import _root_.me.bristermitten.mittenlib.annotations.domain.{
+  ConfigStructure,
+  Property,
+  PropertyType
 }
-import _root_.me.bristermitten.mittenlib.annotations.ast.ConfigTypeSource
 import _root_.me.bristermitten.mittenlib.annotations.compile.ConfigurationClassNameGenerator
 import _root_.me.bristermitten.mittenlib.annotations.parser.CustomDeserializers
 import _root_.me.bristermitten.mittenlib.annotations.util.{
@@ -50,7 +49,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
 
   private def getDeserializationFunction(
       context: StagedExpr[DeserializationContext],
-      info: CustomDeserializerInfo,
+      info: me.bristermitten.mittenlib.annotations.ast.CustomDeserializerInfo,
       withDataExpression: Expr[?]
   ): Expr[?] =
     if (info.isStatic) {
@@ -105,7 +104,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
 
   def handleNonGenericType(
       property: Property,
-      dtoType: TypeElement,
+      dtoType: ClassName,
       elementType: TypeMirror,
       wrappedElementType: TypeMirrorWrapper,
       fromMap: Expr[?],
@@ -122,7 +121,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
     // 3.1 Direct Type Match
     if (!fromMap.isInstanceOf[Expr.MethodCall]) {
       if (
-        property.settings().hasDefaultValue() || configStructureAnalysis
+        property.hasDefault || configStructureAnalysis
           .isTypeInitializable(elementType)
       ) {
         ifThen(fm.instanceOf(instanceOfTypeRef)) {
@@ -150,22 +149,20 @@ class NonGenericTypeDeserializerGenerator @Inject() (
 
     // 3.3 Custom Deserializers (no fallback)
     val customDeserializerOptional =
-      customDeserializers.getCustomInfo(property.propertyType())
+      customDeserializers.getCustomInfo(property.typeMirror)
 
     if (
-      customDeserializerOptional.isPresent && !customDeserializerOptional
-        .get()
-        .isFallback
+      customDeserializerOptional.isDefined && !customDeserializerOptional.get.isFallback
     ) {
       return_(
         getDeserializationFunction(
           context,
-          customDeserializerOptional.get(),
+          customDeserializerOptional.get,
           DataTreeExpr.loadFrom(fm)
         )
       )
     } else if (wrappedElementType.isEnum) {
-      if (property.settings().hasDefaultValue()) {
+      if (property.hasDefault) {
         ifThen(fm.instanceOf(Types.String)) {
           addEnumDeserialisation(property, fm, safeType, fm)
         }
@@ -192,7 +189,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
           Types.Provider(
             Types.Function(
               Types.DeserializationContext,
-              Types.Result(Types.Object)
+              Types.Result(safeTypeRef)
             )
           ),
           loaderFieldName
@@ -234,20 +231,18 @@ class NonGenericTypeDeserializerGenerator @Inject() (
           )
       )
     } else if (
-      customDeserializerOptional.isPresent && customDeserializerOptional
-        .get()
-        .isFallback
+      customDeserializerOptional.isDefined && customDeserializerOptional.get.isFallback
     ) {
       return_(
         getDeserializationFunction(
           context,
-          customDeserializerOptional.get(),
+          customDeserializerOptional.get,
           DataTreeExpr.loadFrom(fm)
         )
       )
     } else {
       val useObjectMapperSerialization = typesUtil.getAnnotation(
-        property.source().element(),
+        property.element,
         classOf[UseObjectMapperSerialization]
       )
       if (useObjectMapperSerialization != null) {
@@ -270,7 +265,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
           )
         )
       } else {
-        if (property.settings().hasDefaultValue()) {
+        if (property.hasDefault) {
           val dataTreeType = Types.DataTree
           ifThen(!fm.instanceOf(dataTreeType)) {
             return_(
@@ -278,8 +273,8 @@ class NonGenericTypeDeserializerGenerator @Inject() (
                 Expr.staticCall(
                   TypeRef.of(classOf[ConfigLoadingErrors]),
                   "invalidPropertyTypeException",
-                  Expr.staticField(TypeRef.of(ClassName.get(dtoType)), "class"),
-                  Expr.str(property.name()),
+                  Expr.staticField(TypeRef.of(dtoType), "class"),
+                  Expr.str(property.name),
                   Expr.str(elementType.toString),
                   fm
                 )
@@ -294,9 +289,9 @@ class NonGenericTypeDeserializerGenerator @Inject() (
     }
 
   def generateDeserializeMethod(
-      propertyAST: AbstractConfigStructure,
+      propertyAST: ConfigStructure,
       property: Property,
-      dtoType: TypeElement,
+      dtoType: ClassName,
       elementType: TypeMirror,
       wrappedElementType: TypeMirrorWrapper,
       safeType: TypeName,
@@ -361,7 +356,11 @@ class NonGenericTypeDeserializerGenerator @Inject() (
     val safeTypeRef = TypeRef.of(safeType)
     val fm = ~fromMap
     val cv = ~convert
-    val enumValue = property.settings().enumParsingScheme() match
+    val enumParsingScheme = property.propertyType match {
+      case e: PropertyType.EnumType => e.scheme
+      case _                        => EnumParsingSchemes.EXACT_MATCH
+    }
+    val enumValue = enumParsingScheme match
       case EnumParsingSchemes.EXACT_MATCH =>
         declare(
           safeTypeRef,
@@ -393,7 +392,7 @@ class NonGenericTypeDeserializerGenerator @Inject() (
             TypeRef.of(classOf[ConfigLoadingErrors]),
             "invalidEnumException",
             Expr.staticField(safeTypeRef, "class"),
-            Expr.str(property.name()),
+            Expr.str(property.name),
             fm
           )
         )

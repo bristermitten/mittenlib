@@ -6,21 +6,17 @@ import com.palantir.javapoet.JavaFile
 import io.toolisticon.aptk.common.ToolingProvider
 import io.toolisticon.aptk.tools.AbstractAnnotationProcessor
 import io.toolisticon.aptk.tools.MessagerUtils
-import java.util.Comparator
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
-import javax.lang.model.element.Modifier
 import javax.lang.model.element.NestingKind
 import javax.lang.model.element.TypeElement
-import javax.lang.model.util.ElementFilter
 import me.bristermitten.mittenlib.annotations.compile.ConfigImplGenerator
 import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderGenerator
 import me.bristermitten.mittenlib.annotations.compile.ConfigLoaderModuleGenerator
-import me.bristermitten.mittenlib.annotations.compile.ConfigNameCache
 import me.bristermitten.mittenlib.annotations.compile.ConfigProcessorModule
 import me.bristermitten.mittenlib.annotations.compile.ConfigSaverGenerator
 import me.bristermitten.mittenlib.annotations.compile.ConfigValidatorGenerator
@@ -38,17 +34,12 @@ import me.bristermitten.mittenlib.config.Newtype
 import me.bristermitten.mittenlib.config.extension.CustomDeserializerFor
 import me.bristermitten.mittenlib.config.extension.CustomSerializerFor
 import scala.jdk.CollectionConverters.*
-import scala.jdk.OptionConverters.*
 
 import cats.data.ValidatedNel
 import cats.implicits.*
 
 /** Annotation processor for generating configuration classes from DTO classes
-  * marked with {@link Config}. This processor handles the compilation-time
-  * generation of implementation classes for configuration DTOs, creating
-  * strongly typed configuration objects with proper getters, equals, hashCode,
-  * and toString methods. The processor only processes top-level classes (not
-  * nested classes).
+  * marked with {@link Config}.
   */
 @SupportedAnnotationTypes(
   Array(
@@ -60,10 +51,6 @@ import cats.implicits.*
 @AutoService(Array(classOf[Processor]))
 class ConfigProcessor extends AbstractAnnotationProcessor:
 
-  /** Processes annotations and generates configuration implementation classes.
-    * This method is called by the Java compiler during the annotation
-    * processing phase.
-    */
   override def processAnnotations(
       annotations: java.util.Set[? <: TypeElement],
       roundEnv: RoundEnvironment
@@ -116,7 +103,7 @@ class ConfigProcessor extends AbstractAnnotationProcessor:
         true
 
       case cats.data.Validated.Valid((validNewtypes, validConfigs)) =>
-        // 3. Pure code generation (Mapping ASTs to JavaFiles)
+        // 3. Code generation
         val newtypeGenerator = NewtypeImplGenerator()
         val generator = injector.getInstance(classOf[ConfigImplGenerator])
         val loaderGenerator =
@@ -128,8 +115,6 @@ class ConfigProcessor extends AbstractAnnotationProcessor:
           injector.getInstance(classOf[ConfigLoaderModuleGenerator])
         val classNameGenerator =
           injector.getInstance(classOf[ConfigurationClassNameGenerator])
-        val configNameCache =
-          injector.getInstance(classOf[ConfigNameCache])
 
         val filesToWrite = List.newBuilder[JavaFile]
 
@@ -141,22 +126,13 @@ class ConfigProcessor extends AbstractAnnotationProcessor:
         // Emit config implementation, loaders, savers, and validators
         validConfigs.foreach { ast =>
           filesToWrite += generator.emit(ast)
-          val rawAst = configNameCache
-            .lookupAST(ast.name)
-            .toScala
-            .getOrElse(
-              throw new IllegalStateException(
-                "Config not in AST cache: " + ast.name
-              )
-            )
-          filesToWrite += loaderGenerator.emit(rawAst)
-          filesToWrite += saverGenerator.emit(rawAst)
+          filesToWrite += loaderGenerator.emit(ast)
+          filesToWrite += saverGenerator.emit(ast)
           filesToWrite += validatorGenerator.emit(ast)
         }
 
         // Emit loader module
         if (validConfigs.nonEmpty) {
-          // Sort configs for stability
           val sortedConfigs = validConfigs.sortBy { ast =>
             val pubClass = classNameGenerator.getPublicClassName(ast)
             (pubClass.packageName(), pubClass.simpleName())
@@ -168,17 +144,13 @@ class ConfigProcessor extends AbstractAnnotationProcessor:
             )
             .minBy(_.length)
 
-          val rawSortedConfigs = sortedConfigs
-            .flatMap(ast => configNameCache.lookupAST(ast.name).toScala)
-            .asJava
-
           filesToWrite += moduleGenerator.emit(
-            rawSortedConfigs,
+            sortedConfigs.asJava,
             rootPackage
           )
         }
 
-        // 4. Impure shell: Write files to Filer
+        // 4. Write files to Filer
         try filesToWrite.result().foreach(_.writeTo(processingEnv.getFiler))
         catch
           case e: Exception =>
