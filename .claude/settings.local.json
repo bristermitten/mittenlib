@@ -19,7 +19,13 @@
       "Bash(rtk ./gradlew :annotation-processor:jar --rerun-tasks)",
       "Bash(rtk ./gradlew :annotation-processor:compileTestJava --rerun-tasks --stacktrace)",
       "Bash(grep -v \"^\\\\[rtk\\\\]\\\\|^>\\\\|^$\")",
-      "Bash(rtk gradlew *)"
+      "Bash(rtk gradlew *)",
+      "Bash(./gradlew build *)",
+      "Bash(grep -E '^D.*Test\\\\.java$')",
+      "Bash(grep -E '^A.*Test\\\\.scala$')",
+      "Bash(xargs -I{} sh -c 'echo \"--{}\"; head -c 300 \"{}\"')",
+      "Bash(./gradlew test *)",
+      "Bash(javap -cp codegen-dsl/build/classes/scala/test 'me.bristermitten.mittenlib.codegen.dsl.BlockBuilderTest')"
     ]
   }
 }
