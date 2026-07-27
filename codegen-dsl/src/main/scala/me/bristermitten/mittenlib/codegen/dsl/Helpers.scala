@@ -42,6 +42,12 @@ object Types:
     TypeRef.of("me.bristermitten.mittenlib.util", "Result")
   val DataTree: TypeRef[?] =
     TypeRef.of("me.bristermitten.mittenlib.config.tree", "DataTree")
+  val DataTreeNull: TypeRef[?] =
+    TypeRef.of(
+      "me.bristermitten.mittenlib.config.tree",
+      "DataTree",
+      "DataTreeNull"
+    )
   val DataTreeTransforms: TypeRef[?] =
     TypeRef.of("me.bristermitten.mittenlib.config.tree", "DataTreeTransforms")
   val DeserializationContext: TypeRef[?] =

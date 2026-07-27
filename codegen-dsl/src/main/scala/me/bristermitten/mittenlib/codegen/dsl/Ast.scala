@@ -39,6 +39,9 @@ object TypeRef:
   def of(name: TypeElement): TypeRef[Any] = Simple(ClassName.get(name))
 
   def of(pkg: String, n: String): TypeRef[Any] = Simple(ClassName.get(pkg, n))
+  def of(pkg: String, n: String, m: String): TypeRef[Any] = Simple(
+    ClassName.get(pkg, n, m)
+  )
 
 // ─── Var ──────────────────────────────────────────────────────────────────────
 

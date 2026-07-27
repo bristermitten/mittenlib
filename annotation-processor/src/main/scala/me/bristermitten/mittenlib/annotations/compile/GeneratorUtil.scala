@@ -87,7 +87,7 @@ object GeneratorUtil:
     }
 
     if (property.isNullable) {
-      ifThen(fromMap.isNull) {
+      ifThen(fromMap.isNull || fromMap.instanceOf(Types.DataTreeNull)) {
         return_(ResultExpr.ok(Expr.Null))
       }
     } else {
